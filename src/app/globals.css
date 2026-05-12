@@ -3235,3 +3235,80 @@ footer {
     display: none;
   }
 }
+
+/* --- REFINED MOBILE POLISH --- */
+
+@media (max-width: 640px) {
+  /* Product Cards: More compact for mobile */
+  .pg-4, .pg-3 {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 0 4px;
+  }
+  .pc {
+    border-radius: 8px;
+  }
+  .pc-img {
+    height: 180px;
+    font-size: 60px;
+  }
+  .pc-b {
+    padding: 10px;
+  }
+  .pc-nm {
+    font-size: 12px;
+    margin-bottom: 4px;
+    height: 34px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .pc-price {
+    font-size: 13px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .pnow { font-weight: 700; }
+  .pc-add {
+    font-size: 11px;
+    height: 34px;
+    margin-top: 8px;
+  }
+  .pc-rat { font-size: 10px; }
+  .pc-clrs { margin: 6px 0; gap: 4px; }
+  .cdot { width: 12px; height: 12px; }
+
+  /* Footer: Proper stacking */
+  .ft-t {
+    flex-direction: column;
+    gap: 30px;
+  }
+  .ft-logo {
+    text-align: center;
+    align-items: center;
+  }
+  .ft-desc { text-align: center; margin: 15px auto; }
+  .ft-soc { justify-content: center; }
+  .ft-b {
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+  }
+
+  /* PD Page */
+  .pdp-main-img {
+    height: 300px;
+    font-size: 80px;
+  }
+  .pdp-info h1 { font-size: 26px; }
+  .pdp-acts {
+    flex-direction: column;
+  }
+  .qty-box { width: 100%; justify-content: center; }
+  .btn-p { width: 100%; justify-content: center; }
+
+  /* Sections */
+  .sec-t { font-size: 24px; }
+  .sec-s { font-size: 13px; }
+}

@@ -32,8 +32,8 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
     <div id="hdr">
       <div className="hdr-row">
         <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
-          <button className="ha mob-only" style={{ display: "none" }} onClick={() => setMn(!mn)}>
-            {mn ? "✕" : "☰"}
+          <button className="ha mob-only" style={{ display: "none" }} onClick={() => setMn(true)}>
+            ☰
           </button>
           <Link href="/" className="logo">
             <span className="lw">
@@ -120,6 +120,10 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
       </div>
 
       <div id="nav" className={mn ? " mob-on" : ""}>
+        <div className="mob-nav-hd" style={{ display: 'none' }}>
+           <span className="logo-sm">Medvastr</span>
+           <button className="mn-close" onClick={() => setMn(false)}>✕</button>
+        </div>
         <div className="nav-in">
           <div className={`nav-group${mo === "men" ? " mob-open" : ""}`}>
             <div className="nl" onClick={() => setMo(mo === "men" ? null : "men")}>
@@ -154,11 +158,32 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
 
       <style jsx>{`
         @media (max-width: 1024px) {
-          .mob-only {
+          .mob-only { display: flex !important; }
+          .mob-hide { display: none !important; }
+          .mob-nav-hd {
             display: flex !important;
+            padding: 20px;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--bdr);
+            background: var(--off);
           }
-          .mob-hide {
-            display: none !important;
+          .logo-sm {
+            font-family: var(--serif);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--t);
+          }
+          .mn-close {
+            width: 36px;
+            height: 36px;
+            background: var(--wh);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: var(--s1);
           }
         }
       `}</style>
