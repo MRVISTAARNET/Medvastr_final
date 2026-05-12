@@ -15,6 +15,7 @@ function ProductsContent() {
   const [minP, setMinP] = useState("");
   const [maxP, setMaxP] = useState("");
   const [pg, setPg] = useState(1);
+  const [mobF, setMobF] = useState(false); // Mobile Filter Open
 
   useEffect(() => {
     setCat(initCat);
@@ -92,21 +93,27 @@ function ProductsContent() {
             <div className="sec-t">{activeCatLabel}</div>
             <div className="sec-s">{f.length} products crafted for healthcare professionals</div>
           </div>
+          <button className="mob-filter-btn" onClick={() => setMobF(true)}>
+            ⚙️ Filters
+          </button>
         </div>
 
         <div className="products-layout">
           {/* SIDEBAR */}
-          <div className="sidebar">
+          <div className={`sidebar${mobF ? " mob-on" : ""}`}>
             <div className="sb-header">
               <div className="sb-title">
                 <span className="sb-title-ico">⚙️</span>
                 Filter Products
               </div>
-              {hasFilters && (
-                <button className="sb-clear" onClick={reset}>
-                  ✕ Clear All
-                </button>
-              )}
+              <div style={{ display: "flex", gap: 10 }}>
+                {hasFilters && (
+                  <button className="sb-clear" onClick={reset}>
+                    ✕ Clear
+                  </button>
+                )}
+                <button className="mob-filter-close" onClick={() => setMobF(false)}>✕</button>
+              </div>
             </div>
 
             <div className="sb-section">
@@ -121,6 +128,7 @@ function ProductsContent() {
                     onClick={() => {
                       setCat(c.id);
                       setPg(1);
+                      setMobF(false);
                     }}
                   >
                     <div className="sb-chip-left">
@@ -182,29 +190,6 @@ function ProductsContent() {
                   </div>
                 ))}
               </div>
-              <div className="price-row">
-                <input
-                  className="price-inp"
-                  type="number"
-                  placeholder="Min ₹"
-                  value={minP}
-                  onChange={(e) => {
-                    setMinP(e.target.value);
-                    setPg(1);
-                  }}
-                />
-                <span className="price-sep">—</span>
-                <input
-                  className="price-inp"
-                  type="number"
-                  placeholder="Max ₹"
-                  value={maxP}
-                  onChange={(e) => {
-                    setMaxP(e.target.value);
-                    setPg(1);
-                  }}
-                />
-              </div>
             </div>
 
             <div className="sb-section">
@@ -233,6 +218,8 @@ function ProductsContent() {
                 <option value="nw">🆕 Newest First</option>
               </select>
             </div>
+            
+            <button className="btn-p" style={{ width: '100%', marginTop: 20 }} onClick={() => setMobF(false)}>Apply Filters</button>
           </div>
 
           {/* PRODUCTS AREA */}
@@ -358,6 +345,54 @@ function ProductsContent() {
           </div>
         </div>
       </div>
+      
+      <style jsx>{`
+        .mob-filter-btn {
+          display: none;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 16px;
+          background: var(--wh);
+          border: 1.5px solid var(--bdr);
+          border-radius: 6px;
+          font-size: 13px;
+          font-weight: 600;
+        }
+        .mob-filter-close {
+          width: 30px;
+          height: 30px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: var(--warm);
+          border-radius: 50%;
+          font-size: 14px;
+        }
+        @media (max-width: 1024px) {
+          .mob-filter-btn { display: flex; }
+          .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--wh);
+            z-index: 2000;
+            padding: 20px;
+            overflow-y: auto;
+            display: none;
+          }
+          .sidebar.mob-on { display: block; }
+          .sb-header {
+             display: flex;
+             justify-content: space-between;
+             align-items: center;
+             margin-bottom: 25px;
+             padding-bottom: 15px;
+             border-bottom: 1px solid var(--bdr);
+          }
+        }
+      `}</style>
     </div>
   );
 }

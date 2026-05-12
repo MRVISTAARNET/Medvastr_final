@@ -17,6 +17,9 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
   const { cart, wishlist } = useApp();
   const [q, setQ] = useState("");
   const [sd, setSd] = useState(false);
+  const [mn, setMn] = useState(false); // Mobile Nav
+  const [mS, setMs] = useState(false); // Mobile Search
+  const [mo, setMo] = useState<string | null>(null); // Mobile Open Group
 
   const res = q
     ? PRODUCTS.filter((p) => p.name.toLowerCase().includes(q.toLowerCase())).slice(0, 6)
@@ -28,14 +31,19 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
   return (
     <div id="hdr">
       <div className="hdr-row">
-        <Link href="/" className="logo">
-          <span className="lw">
-            Medva<span>str</span>
-          </span>
-          <span className="lt">Premium Medical Apparel</span>
-        </Link>
+        <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
+          <button className="ha mob-only" style={{ display: "none" }} onClick={() => setMn(!mn)}>
+            {mn ? "✕" : "☰"}
+          </button>
+          <Link href="/" className="logo">
+            <span className="lw">
+              Medva<span>str</span>
+            </span>
+            <span className="lt">Premium Medical Apparel</span>
+          </Link>
+        </div>
 
-        <div className="srch-col">
+        <div className={`srch-col${mS ? " mob-on" : ""}`}>
           <div className="srch-box">
             <span className="srch-ico">🔍</span>
             <input
@@ -62,7 +70,17 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
                 <>
                   <div className="s-hd">Products</div>
                   {res.map((p) => (
-                    <Link href={`/product/${p.id}`} className="s-row" key={p.id} onClick={() => { setQ(""); setSd(false); }}>
+                    <Link
+                      href={`/product/${p.id}`}
+                      className="s-row"
+                      key={p.id}
+                      onClick={() => {
+                        setQ("");
+                        setSd(false);
+                        setMs(false);
+                        setMn(false);
+                      }}
+                    >
                       <div className="s-thumb" style={{ background: p.bg }}>
                         {p.emo}
                       </div>
@@ -79,6 +97,9 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
         </div>
 
         <div className="hdr-acts">
+          <button className="ha mob-only" style={{ display: "none" }} onClick={() => setMs(!mS)}>
+            🔍
+          </button>
           <button className="ha" onClick={onAcct} title="Account">
             {user ? (
               <span style={{ fontSize: 14, fontWeight: 700, color: "var(--t)", fontFamily: "var(--serif)" }}>
@@ -93,21 +114,21 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             {wc > 0 && <span className="ha-badge">{wc}</span>}
           </button>
           <button className="cart-pill" onClick={onCart}>
-            🛒 Cart <span className="cart-n">{cc}</span>
+            🛒 <span className="mob-hide">Cart</span> <span className="cart-n">{cc}</span>
           </button>
         </div>
       </div>
 
-      <div id="nav">
+      <div id="nav" className={mn ? " mob-on" : ""}>
         <div className="nav-in">
-          <div className="nav-group">
-            <div className="nl">
+          <div className={`nav-group${mo === "men" ? " mob-open" : ""}`}>
+            <div className="nl" onClick={() => setMo(mo === "men" ? null : "men")}>
               Men <span className="nav-arrow">▾</span>
             </div>
             <MegaMenu gender="men" />
           </div>
-          <div className="nav-group">
-            <div className="nl">
+          <div className={`nav-group${mo === "women" ? " mob-open" : ""}`}>
+            <div className="nl" onClick={() => setMo(mo === "women" ? null : "women")}>
               Women <span className="nav-arrow">▾</span>
             </div>
             <MegaMenu gender="women" />
@@ -123,13 +144,24 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             { l: "About Us", href: "/about" },
             { l: "Blogs", href: "/blog" },
           ].map((n) => (
-            <Link key={n.l} href={n.href} className="nl">
+            <Link key={n.l} href={n.href} className="nl" onClick={() => setMn(false)}>
               {n.l}
               {n.pill === "new" && <span className="ntag">NEW</span>}
             </Link>
           ))}
         </div>
       </div>
+
+      <style jsx>{`
+        @media (max-width: 1024px) {
+          .mob-only {
+            display: flex !important;
+          }
+          .mob-hide {
+            display: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
