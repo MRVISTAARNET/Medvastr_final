@@ -3395,3 +3395,55 @@ img, video, iframe, .promo-duo, .feat-strip {
   flex: 0 0 calc(50% - 20px);
 }
 
+
+/* --- HOME PAGE SECTION POLISH --- */
+
+@media (max-width: 768px) {
+  /* Make Product Grids Horizontal Scroll on Home Page only */
+  .hero + .trust + .sec .pg-4, 
+  .sec .pg-4, 
+  .sec .pg-3,
+  .rev-g,
+  .comm-cards {
+    display: flex !important;
+    overflow-x: auto !important;
+    gap: 12px;
+    padding: 0 20px 20px !important;
+    margin: 0 -20px !important;
+    scrollbar-width: none;
+  }
+  
+  .sec .pg-4 > *, .sec .pg-3 > * {
+    flex: 0 0 240px !important; /* Fixed width for horizontal cards */
+    max-width: none !important;
+  }
+
+  /* Compact Footer */
+  .ft { padding-top: 40px !important; }
+  .ft-logo .lw { font-size: 20px; }
+  .ft-desc { font-size: 12px; line-height: 1.5; margin-bottom: 20px; }
+  .ft-col-h { font-size: 11px; margin-bottom: 12px; }
+  .ft-link { font-size: 12px; margin-bottom: 8px; }
+  .ft-b { padding: 20px; font-size: 11px; border-top: 1px solid rgba(255,255,255,0.05); }
+  
+  /* Sections Padding */
+  .sec { padding: 30px 20px !important; }
+  .sec-t { font-size: 20px !important; margin-bottom: 4px; }
+  .sec-s { font-size: 12px !important; margin-bottom: 15px; }
+  
+  /* Feature Strip (Section 9/11) */
+  .feat-strip {
+    display: flex !important;
+    overflow-x: auto !important;
+    padding: 20px !important;
+    margin: 0 -20px !important;
+    gap: 20px;
+    background: var(--ink2);
+    scrollbar-width: none;
+  }
+  .fit {
+    flex: 0 0 160px;
+    text-align: center;
+    flex-direction: column;
+  }
+}
