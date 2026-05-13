@@ -4,10 +4,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { SLIDES } from "@/lib/data";
 
 interface HeroProps {
-  onShop: () => void;
+  onShop?: () => void;
 }
 
-export default function Hero({ onShop }: HeroProps) {
+export default function Hero({ onShop = () => {} }: HeroProps) {
   const [cur, setCur] = useState(0);
   const [au, setAu] = useState(true);
   const t = useRef<NodeJS.Timeout | null>(null);

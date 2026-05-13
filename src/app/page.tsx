@@ -24,14 +24,21 @@ export default function Home() {
   const activeProducts = PRODUCTS.filter((p) => {
     const tab = TABS.find((t) => t.id === activeTab);
     if (!tab) return false;
-    if (tab.type === "scrubs") return p.category === "Scrubs" && p.fabric === tab.fab;
-    if (tab.type === "stethoscope") return p.category === "Stethoscopes";
-    if (tab.type === "labcoat") return p.category === "Lab Coats";
-    if (tab.type === "jacket") return p.category === "Jackets";
+    if (tab.type === "scrubs") return p.type === "scrubs" && p.fab === tab.fab;
+    if (tab.type === "stethoscope") return p.type === "stethoscope";
+    if (tab.type === "labcoat") return p.type === "labcoat";
+    if (tab.type === "jacket") return p.type === "jacket";
     return false;
   }).slice(0, 4);
 
-  const newArr = PRODUCTS.filter((p) => p.isNew).slice(0, 4);
+  const newArr = PRODUCTS.filter((p) => p.badge === "New").slice(0, 4);
+
+  const TRUST_BADGES = [
+    { i: "🚚", t: "Free Shipping", s: "On orders above ₹1999" },
+    { i: "🔄", t: "Easy Exchange", s: "7-day seamless policy" },
+    { i: "🛡️", t: "Secure Payment", s: "100% encrypted checkout" },
+    { i: "📞", t: "Dedicated Support", s: "Expert help available" },
+  ];
 
   return (
     <div className="pg">
@@ -168,22 +175,8 @@ export default function Home() {
       <VideoSection />
       <PressSection />
 
-      <BulkOrderBanner />
       <AboutHomeSection />
-
-      {/* NEW HERO BANNER */}
-      <div className="hero-banner-big">
-        <div className="hbb-in">
-          <div className="hbb-tag">★ TRUSTED BY THE BEST</div>
-          <h2 className="hbb-h">50,000+ Healthcare Heroes Choose Medvastr</h2>
-          <p className="hbb-p">From AIIMS surgeons to private clinic nurses, India's medical community trusts Medvastr for comfort that lasts a lifetime.</p>
-          <div className="hbb-stats">
-            <div><strong>50k+</strong> Users</div>
-            <div><strong>200+</strong> Cities</div>
-            <div><strong>4.9★</strong> Rating</div>
-          </div>
-        </div>
-      </div>
+      <BulkOrderBanner />
 
       {/* Reviews (Refined) */}
       <div className="rev-sec">
@@ -207,7 +200,7 @@ export default function Home() {
       {/* Trust Badges */}
       <div className="trust-sec">
         <div className="trust-in">
-          {B.map((b, i) => (
+          {TRUST_BADGES.map((b, i) => (
             <div key={i} className="trit">
               <span className="trit-ico">{b.i}</span>
               <span>
