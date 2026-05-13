@@ -2309,10 +2309,7 @@ textarea {
   max-width: 1560px;
   margin: 0 auto;
   padding: 88px 44px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 72px;
-  align-items: center;
+  display: block;
 }
 
 .about-tag {
