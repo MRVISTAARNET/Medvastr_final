@@ -32,7 +32,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
     <div id="hdr">
       <div className="hdr-row">
         <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
-          <button className="ha mob-only" style={{ display: "none" }} onClick={() => setMn(true)}>
+          <button className="ha mob-only" onClick={() => setMn(true)}>
             ☰
           </button>
           <Link href="/" className="logo">
@@ -121,7 +121,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
 
       {/* Mobile Nav Drawer */}
       <div className={`mob-drawer-ov${mn ? " on" : ""}`} onClick={() => setMn(false)} />
-      <div id="nav" className={mn ? " mob-on" : ""}>
+      <div id="nav" className={`mob-only ${mn ? " mob-on" : ""}`}>
         <div className="mob-nav-hd mob-only">
            <button className="mn-close" onClick={() => setMn(false)}>✕</button>
         </div>

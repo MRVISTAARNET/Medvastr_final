@@ -29,6 +29,14 @@
   --s4: 0 24px 72px rgba(0, 0, 0, 0.16);
 }
 
+.mob-only { display: none !important; }
+.mob-hide { display: block; }
+
+@media (max-width: 1024px) {
+  .mob-only { display: flex !important; }
+  .mob-hide { display: none !important; }
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
