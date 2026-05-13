@@ -128,12 +128,10 @@ export default function Home() {
         </div>
 
         {tabProducts.length > 0 ? (
-          <div className="pg-4-wrap">
-            <div className="pg-4">
-              {tabProducts.map((p) => (
-                <ProductCard key={p.id} p={p} />
-              ))}
-            </div>
+          <div className="pg-4">
+            {tabProducts.map((p) => (
+              <ProductCard key={p.id} p={p} />
+            ))}
           </div>
         ) : (
           <div style={{ textAlign: "center", padding: "48px 20px", color: "var(--lt)" }}>
@@ -180,34 +178,30 @@ export default function Home() {
             View All →
           </Link>
         </div>
-        <div className="pg-4-wrap">
-          <div className="pg-4">
-            {newArr.map((p) => (
-              <ProductCard key={p.id} p={p} />
-            ))}
-          </div>
+        <div className="pg-4">
+          {newArr.map((p) => (
+            <ProductCard key={p.id} p={p} />
+          ))}
         </div>
       </div>
 
-      <div className="feat-strip-wrap">
-        <div className="feat-strip">
-          {[
-            ["🧪", "Lab Tested", "Quality certified"],
-            ["⏰", "12-Hour Ready", "Long-shift comfort"],
-            ["🛡️", "Anti-Distraction", "Built for focus"],
-            ["👜", "Up to 9 Pockets", "Everything you need"],
-            ["⚗️", "ecoflex™", "4-way stretch"],
-            ["🚀", "200+ Washes", "Colour stays vivid"],
-          ].map(([ico, t, s]) => (
-            <div className="fit" key={t}>
-              <span className="fit-ico">{ico}</span>
-              <span>
-                <span className="fit-t">{t}</span>
-                <span className="fit-s">{s}</span>
-              </span>
-            </div>
-          ))}
-        </div>
+      <div className="feat-strip">
+        {[
+          ["🧪", "Lab Tested", "Quality certified"],
+          ["⏰", "12-Hour Ready", "Long-shift comfort"],
+          ["🛡️", "Anti-Distraction", "Built for focus"],
+          ["👜", "Up to 9 Pockets", "Everything you need"],
+          ["⚗️", "ecoflex™", "4-way stretch"],
+          ["🚀", "200+ Washes", "Colour stays vivid"],
+        ].map(([ico, t, s]) => (
+          <div className="fit" key={t}>
+            <span className="fit-ico">{ico}</span>
+            <span>
+              <span className="fit-t">{t}</span>
+              <span className="fit-s">{s}</span>
+            </span>
+          </div>
+        ))}
       </div>
 
       <VideoSection />
@@ -220,40 +214,38 @@ export default function Home() {
             <h2 className="comm-t">50,000+ Healthcare Heroes Choose Medvastr</h2>
             <p className="comm-s">Real stories from real doctors, nurses and healthcare professionals</p>
           </div>
-          <div className="comm-cards-wrap">
-            <div className="comm-cards">
-              {[
-                {
-                  emo: "👨‍⚕️",
-                  q: "Switched to Medvastr 6 months ago and never looked back. The ecoflex fabric moves with me through every surgery.",
-                  au: "Dr. Anil Kumar",
-                  ro: "Cardiac Surgeon, AIIMS Delhi",
-                  tag: "ecoflex™ User",
-                },
-                {
-                  emo: "👩‍⚕️",
-                  q: "As a female surgeon, finding scrubs that fit properly was always a challenge. Medvastr finally solved that.",
-                  au: "Dr. Meera Patel",
-                  ro: "Neurosurgeon, KEM Hospital Mumbai",
-                  tag: "Women's Slim Fit",
-                },
-                {
-                  emo: "👩‍⚕️",
-                  q: "After switching my team of 40 nurses to Medvastr bulk orders, complaints about uniforms dropped to zero.",
-                  au: "Sr. Nurse Priya Nair",
-                  ro: "Head of Nursing, Apollo Chennai",
-                  tag: "Bulk Order 50+ Pieces",
-                },
-              ].map((x, i) => (
-                <div className="comm-card" key={i}>
-                  <div className="comm-av">{x.emo}</div>
-                  <div className="comm-q">"{x.q}"</div>
-                  <div className="comm-au">{x.au}</div>
-                  <div className="comm-ro">{x.ro}</div>
-                  <div className="comm-pill">✓ {x.tag}</div>
-                </div>
-              ))}
-            </div>
+          <div className="comm-cards">
+            {[
+              {
+                emo: "👨‍⚕️",
+                q: "Switched to Medvastr 6 months ago and never looked back. The ecoflex fabric moves with me through every surgery.",
+                au: "Dr. Anil Kumar",
+                ro: "Cardiac Surgeon, AIIMS Delhi",
+                tag: "ecoflex™ User",
+              },
+              {
+                emo: "👩‍⚕️",
+                q: "As a female surgeon, finding scrubs that fit properly was always a challenge. Medvastr finally solved that.",
+                au: "Dr. Meera Patel",
+                ro: "Neurosurgeon, KEM Hospital Mumbai",
+                tag: "Women's Slim Fit",
+              },
+              {
+                emo: "👩‍⚕️",
+                q: "After switching my team of 40 nurses to Medvastr bulk orders, complaints about uniforms dropped to zero.",
+                au: "Sr. Nurse Priya Nair",
+                ro: "Head of Nursing, Apollo Chennai",
+                tag: "Bulk Order 50+ Pieces",
+              },
+            ].map((x, i) => (
+              <div className="comm-card" key={i}>
+                <div className="comm-av">{x.emo}</div>
+                <div className="comm-q">"{x.q}"</div>
+                <div className="comm-au">{x.au}</div>
+                <div className="comm-ro">{x.ro}</div>
+                <div className="comm-pill">✓ {x.tag}</div>
+              </div>
+            ))}
           </div>
           <div className="comm-stats">
             {[
@@ -304,22 +296,20 @@ export default function Home() {
               ))}
             </div>
           </div>
-          <div className="rev-g-wrap">
-            <div className="rev-g">
-              {REVIEWS.map((r, i) => (
-                <div className="rv" key={i}>
-                  <div className="rv-stars">{"★".repeat(r.r)}</div>
-                  <div className="rv-txt">"{r.txt}"</div>
-                  <div className="rv-auth">
-                    <div className="rv-av">{r.av}</div>
-                    <div>
-                      <div className="rv-nm">{r.name}</div>
-                      <div className="rv-rl">{r.role}</div>
-                    </div>
+          <div className="rev-g">
+            {REVIEWS.map((r, i) => (
+              <div className="rv" key={i}>
+                <div className="rv-stars">{"★".repeat(r.r)}</div>
+                <div className="rv-txt">"{r.txt}"</div>
+                <div className="rv-auth">
+                  <div className="rv-av">{r.av}</div>
+                  <div>
+                    <div className="rv-nm">{r.name}</div>
+                    <div className="rv-rl">{r.role}</div>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -337,28 +327,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        .pg-4-wrap, .comm-cards-wrap, .rev-g-wrap, .feat-strip-wrap {
-          margin: 0 -20px;
-          padding: 0 20px;
-          overflow: hidden;
-        }
-        @media (max-width: 768px) {
-           .pg-4-wrap, .comm-cards-wrap, .rev-g-wrap, .feat-strip-wrap {
-              overflow-x: auto;
-              scroll-behavior: smooth;
-              -webkit-overflow-scrolling: touch;
-              padding-bottom: 20px;
-           }
-           .pg-4, .comm-cards, .rev-g {
-              display: flex;
-              gap: 16px;
-              width: max-content;
-              padding-right: 40px; /* Essential to prevent right-side cutoff */
-           }
-        }
-      `}</style>
     </div>
   );
 }

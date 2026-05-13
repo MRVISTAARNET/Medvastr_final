@@ -3523,10 +3523,9 @@ footer {
   }
 }
 
-/* --- CRITICAL RESPONSIVE FIXES --- */
+/* --- UNIFIED MOBILE & RESPONSIVE FIXES (MRVISTAARNET) --- */
 
-body,
-html {
+body, html {
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;
@@ -3538,22 +3537,26 @@ html {
 }
 
 @media (max-width: 768px) {
-
-  /* Horizontal Scroll for Sections */
+  /* GLOBAL HORIZONTAL SCROLL UTILITY */
   .trust-in,
   .cat-g,
   .clr-row,
   .tabs,
   .rev-g,
-  .comm-cards {
+  .comm-cards,
+  .pg-4,
+  .pg-3,
+  .feat-strip {
     display: flex !important;
+    flex-wrap: nowrap !important;
     overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
-    gap: 15px;
-    padding: 10px 20px 20px !important;
+    gap: 16px;
+    padding: 0 20px 20px !important;
     margin: 0 -20px !important;
     scrollbar-width: none;
-    -ms-overflow-style: none;
+    width: calc(100% + 40px) !important;
   }
 
   .trust-in::-webkit-scrollbar,
@@ -3561,383 +3564,111 @@ html {
   .clr-row::-webkit-scrollbar,
   .tabs::-webkit-scrollbar,
   .rev-g::-webkit-scrollbar,
-  .comm-cards::-webkit-scrollbar {
+  .comm-cards::-webkit-scrollbar,
+  .pg-4::-webkit-scrollbar,
+  .pg-3::-webkit-scrollbar,
+  .feat-strip::-webkit-scrollbar {
     display: none;
   }
 
-  .trit,
-  .cat-c,
-  .clr-sw,
-  .rv,
-  .comm-card {
-    flex: 0 0 75%;
+  /* PREVENT RIGHT SIDE CROP (THE SPACER FIX) */
+  .trust-in::after,
+  .cat-g::after,
+  .clr-row::after,
+  .tabs::after,
+  .rev-g::after,
+  .comm-cards::after,
+  .pg-4::after,
+  .pg-3::after,
+  .feat-strip::after {
+    content: '';
+    flex: 0 0 20px;
+    min-width: 20px;
+    height: 1px;
+    pointer-events: none;
+  }
+
+  /* CARD SIZES & ALIGNMENT */
+  .trit, .cat-c, .clr-sw, .rv, .comm-card, .pc {
+    flex: 0 0 auto !important;
     scroll-snap-align: start;
-    max-width: 280px;
-  }
-
-  .cat-c {
-    flex: 0 0 140px;
-  }
-
-  .clr-sw {
-    flex: 0 0 80px;
-    text-align: center;
-  }
-
-  .tabs {
-    padding: 0 20px !important;
-    margin-bottom: 20px !important;
-  }
-
-  .tab {
-    flex-shrink: 0;
-  }
-
-  /* Fix for overflowing containers */
-  .sec,
-  .rev-sec,
-  .comm-sec {
-    padding-left: 20px;
-    padding-right: 20px;
-    width: 100%;
-    overflow: hidden;
-  }
-
-  .hdr-row {
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  /* Footer Refinement */
-  .ft-t {
-    padding: 40px 20px;
-  }
-
-  /* Hero Slider Fix */
-  .hero {
-    overflow: hidden;
-  }
-
-  .hero-slide {
-    width: 100vw;
-  }
-}
-
-/* Ensure no elements break the viewport */
-img,
-video,
-iframe,
-.promo-duo,
-.feat-strip {
-  max-width: 100% !important;
-}
-
-.feat-strip {
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
-
-.fit {
-  flex: 0 0 calc(50% - 20px);
-}
-
-
-/* --- HOME PAGE SECTION POLISH --- */
-
-@media (max-width: 768px) {
-
-  /* Make Product Grids Horizontal Scroll on Home Page only */
-  .hero+.trust+.sec .pg-4,
-  .sec .pg-4,
-  .sec .pg-3,
-  .rev-g,
-  .comm-cards {
-    display: flex !important;
-    overflow-x: auto !important;
-    gap: 12px;
-    padding: 0 20px 20px !important;
-    margin: 0 -20px !important;
-    scrollbar-width: none;
-  }
-
-  .sec .pg-4>*,
-  .sec .pg-3>* {
-    flex: 0 0 240px !important;
-    /* Fixed width for horizontal cards */
     max-width: none !important;
   }
 
-  /* Compact Footer */
-  .ft {
-    padding-top: 40px !important;
+  /* Specific Widths for Mobile */
+  .pc { width: 260px !important; } /* Product Cards */
+  .rv, .comm-card { width: 280px !important; } /* Reviews/Community */
+  .trit { min-width: 220px; }
+  .cat-c { flex: 0 0 140px !important; }
+  .clr-sw { flex: 0 0 80px !important; text-align: center; }
+
+  /* Sections Padding & Spacing */
+  .sec, .rev-sec, .comm-sec, .clr-sec {
+    padding: 40px 20px !important;
+    overflow: hidden;
   }
 
-  .ft-logo .lw {
-    font-size: 20px;
-  }
+  .sec-t { font-size: 22px !important; margin-bottom: 6px; }
+  .sec-s { font-size: 13px !important; opacity: 0.7; }
 
-  .ft-desc {
-    font-size: 12px;
-    line-height: 1.5;
-    margin-bottom: 20px;
-  }
-
-  .ft-col-h {
-    font-size: 11px;
-    margin-bottom: 12px;
-  }
-
-  .ft-link {
-    font-size: 12px;
-    margin-bottom: 8px;
-  }
-
-  .ft-b {
-    padding: 20px;
-    font-size: 11px;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-  }
-
-  /* Sections Padding */
-  .sec {
-    padding: 30px 20px !important;
-  }
-
-  .sec-t {
-    font-size: 20px !important;
-    margin-bottom: 4px;
-  }
-
-  .sec-s {
-    font-size: 12px !important;
-    margin-bottom: 15px;
-  }
-
-  /* Feature Strip (Section 9/11) */
-  .feat-strip {
-    display: flex !important;
-    overflow-x: auto !important;
-    padding: 20px !important;
-    margin: 0 -20px !important;
-    gap: 20px;
-    background: var(--ink2);
-    scrollbar-width: none;
-  }
-
-  .fit {
-    flex: 0 0 160px;
-    text-align: center;
-    flex-direction: column;
-  }
-}
-/* --- MARQUEE ANIMATION --- */
-.marquee-w {
-  overflow: hidden;
-  position: relative;
-  width: 100%;
-  padding: 20px 0;
-}
-.marquee-in {
-  display: flex;
-  width: max-content;
-  animation: mq-f 30s linear infinite;
-}
-.marquee-in:hover {
-  animation-play-state: paused;
-}
-@keyframes mq-f {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-/* --- REFINED HORIZONTAL SCROLL --- */
-@media (max-width: 768px) {
-  .snap-row {
-    display: flex !important;
-    overflow-x: auto !important;
-    scroll-snap-type: x mandatory;
-    gap: 15px;
-    padding: 0 20px 20px !important;
-    margin: 0 -20px !important;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-  }
-  .snap-row::-webkit-scrollbar { display: none; }
-  .snap-item {
-    flex: 0 0 calc(100% - 60px) !important; /* Proper padding on right */
-    scroll-snap-align: center;
-    max-width: 320px;
-  }
-  
-  /* Fix for the "inside on right" issue */
-  .snap-row::after {
-    content: '';
-    flex: 0 0 20px;
-  }
-  
-  /* Shop By Color: 1 row only */
+  /* Colour Selection Row Fix */
   .clr-row {
-    flex-wrap: nowrap !important;
-    justify-content: flex-start !important;
-    padding-bottom: 10px;
+    display: flex !important;
+    grid-template-columns: none !important;
   }
-  .clr-sw {
-    flex: 0 0 70px !important;
-  }
-}
 
-/* --- FOOTER COLLAPSE --- */
-.ft-col-h {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-}
-@media (min-width: 769px) {
-  .ft-col-ico { display: none; }
-}
-@media (max-width: 768px) {
-  .ft-lnks { display: none; }
-  .ft-lnks.on { display: block; }
-}
-
-/* --- HERO MOBILE POLISH --- */
-@media (max-width: 768px) {
-  .hero-slide {
-    padding: 40px 20px;
-    height: auto;
-    min-height: 480px;
-  }
-  .slide-h1 { font-size: 32px; }
-  .slide-p { font-size: 14px; }
-  .slide-stats { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 15px; }
-}
-
-/* --- REFINED MOBILE RESPONSIVENESS (MRVISTAARNET) --- */
-
-/* Animation for Marquee */
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-.press-logos-marquee {
-  display: flex;
-  width: max-content;
-  animation: marquee 20s linear infinite;
-}
-
-/* Fix Right-side Cutoff in Horizontal Scrolling */
-.trust-in, .cat-g, .clr-row, .tabs, .rev-g, .comm-cards, .pg-4, .pg-3, .feat-strip {
-  padding-right: 44px !important; /* Add space on the right so last card isn't cut off */
-}
-
-@media (max-width: 768px) {
-  /* Navbar Mobile Menu Animation */
+  /* Navbar Mobile Animation */
   #nav {
     transition: transform 0.4s var(--ease), visibility 0.4s;
     transform: translateX(-100%);
     visibility: hidden;
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 85%;
-    height: 100vh;
+    top: 0; left: 0;
+    width: 85%; height: 100vh;
     background: white;
     z-index: 10000;
     box-shadow: 20px 0 60px rgba(0,0,0,0.15);
     display: block !important;
   }
-  
-  #nav.mob-on {
-    transform: translateX(0);
-    visibility: visible;
-  }
+  #nav.mob-on { transform: translateX(0); visibility: visible; }
 
-  /* Free Delivery side-by-side */
-  .trust-in {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    overflow-x: auto;
-    gap: 20px;
-    padding: 15px 20px !important;
-  }
-  .trit {
-    flex: 0 0 auto;
-    min-width: 200px;
-  }
-
-  /* Colour Categories Grid */
-  .clr-row {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    padding: 0 20px !important;
-    width: 100%;
-    overflow-x: visible !important;
-  }
-  .clr-sw {
-    flex-direction: column;
-    text-align: center;
-    gap: 6px;
-  }
-  .sw-c { width: 40px; height: 40px; margin: 0 auto; }
-  .sw-l { font-size: 10px; }
-
-  /* Lab Tested Sections */
-  .feat-strip {
-    display: grid !important;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    padding: 20px !important;
-  }
-  .fit {
-    flex: 0 0 100%;
-    text-align: left;
-    margin-bottom: 0;
-  }
-}
-
-/* Hero Section Design Refresh */
-.hero-slide {
-  position: relative;
-  overflow: hidden;
-}
-.slide-bg {
-  opacity: 0.9;
-  filter: saturate(1.1);
-}
-.slide-h1 {
-  font-family: var(--serif);
-  letter-spacing: -0.02em;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-/* Footer Dropdowns on Mobile */
-@media (max-width: 768px) {
+  /* Footer Mobile Refinement */
   .ft-col h4 {
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    padding: 15px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
     margin-bottom: 0;
+    font-size: 14px;
   }
-  .ft-col h4::after {
-    content: '?';
-    font-size: 10px;
-    transition: transform 0.3s;
-  }
-  .ft-col.open h4::after {
-    transform: rotate(180deg);
-  }
-  .ft-lnks {
-    display: none;
-    padding: 10px 0;
-  }
-  .ft-col.open .ft-lnks {
-    display: block;
+  .ft-col h4::after { content: '▾'; transition: transform 0.3s; }
+  .ft-col.open h4::after { transform: rotate(180deg); }
+  .ft-lnks { display: none; padding: 10px 0 20px; }
+  .ft-col.open .ft-lnks { display: block; }
+}
+
+/* MARQUEE ANIMATION */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.press-logos-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 25s linear infinite;
+}
+
+/* HERO SLIDER POLISH */
+@media (max-width: 768px) {
+  .hero-slide { min-height: 460px; padding: 40px 20px; }
+  .slide-h1 { font-size: 30px; line-height: 1.1; }
+  .slide-p { font-size: 14px; margin: 15px 0 25px; }
+  .slide-stats-glass {
+    grid-template-columns: repeat(2, 1fr) !important;
+    width: 100%;
+    margin-top: 30px !important;
   }
 }
+
