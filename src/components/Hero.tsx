@@ -31,52 +31,7 @@ export default function Hero({ onShop }: HeroProps) {
       <div className="hero-track" style={{ transform: `translateX(-${cur * 100}%)` }}>
         {SLIDES.map((s, i) => (
           <div className="hero-slide" key={i}>
-            <div className="slide-bg" style={{ backgroundImage: `url(${s.img})`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
-              <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)' }} />
-            </div>
-            <div className="slide-body">
-              <div className="slide-txt">
-                <div className="slide-ey">⚕ {s.ey}</div>
-                <h1 className="slide-h1">
-                  {s.h}
-                  {s.em && <em style={{ display: 'block', color: 'var(--wh)', fontStyle: 'italic', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>{s.em}</em>}
-                </h1>
-                <p className="slide-p" style={{ textShadow: '0 1px 5px rgba(0,0,0,0.5)' }}>{s.p}</p>
-                <div className="slide-btns">
-                  <button className="btn-p" onClick={onShop}>
-                    {s.c1}
-                  </button>
-                  <button className="btn-g" onClick={onShop}>
-                    {s.c2}
-                  </button>
-                </div>
-                <div className="slide-dots">
-                  {SLIDES.map((_, j) => (
-                    <button
-                      key={j}
-                      className={`sdot${cur === j ? " on" : ""}`}
-                      onClick={() => {
-                        setCur(j);
-                        setAu(false);
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-              <div className="slide-stats-glass">
-                {[
-                  ["50K+", "Doctors"],
-                  ["4.8★", "Rating"],
-                  ["30+", "Colours"],
-                  ["200+", "Washes"],
-                ].map(([n, l]) => (
-                  <div className="sst-g" key={l}>
-                    <span className="sst-n">{n}</span>
-                    <div className="sst-l">{l}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <div className="slide-bg" style={{ backgroundImage: `url(${s.img})`, backgroundSize: 'cover', backgroundPosition: 'center', height: '100%' }} />
           </div>
         ))}
       </div>
