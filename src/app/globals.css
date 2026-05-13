@@ -3949,7 +3949,7 @@ body, html {
 .about-home-in {
   max-width: none;
   margin: 0;
-  padding: 0 5%;
+  padding: 0 44px; /* Reduced side spacing to match header alignment */
 }
 
 .about-tag {
