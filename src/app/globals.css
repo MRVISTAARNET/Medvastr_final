@@ -3902,7 +3902,7 @@ body, html {
   left: 0;
   width: 100%;
   height: 60px;
-  background: linear-gradient(transparent, var(--off));
+  background: linear-gradient(transparent, #fdf9f0);
   pointer-events: none;
   transition: opacity 0.3s;
 }
@@ -3947,9 +3947,9 @@ body, html {
 }
 
 .about-home-in {
-  max-width: 1560px;
-  margin: 0 auto;
-  padding: 0 44px;
+  max-width: none;
+  margin: 0;
+  padding: 0 5%;
 }
 
 .about-tag {
