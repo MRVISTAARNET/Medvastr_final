@@ -63,7 +63,7 @@ export default function AboutHomeSection() {
 
       <style jsx>{`
         .about-home {
-          background: white;
+          background: var(--g3);
           padding: 100px 0;
           border-top: 1px solid var(--bdr);
         }

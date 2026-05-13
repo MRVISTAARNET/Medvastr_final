@@ -19,43 +19,23 @@ export default function Home() {
     { id: "stethoscope", label: "Stethoscope", type: "stethoscope" },
     { id: "labcoat", label: "Lab Coats", type: "labcoat" },
     { id: "jacket", label: "DRIFT Jacket", type: "jacket" },
-    { id: "underscrub", label: "Underscrubs", type: "underscrub" },
   ];
 
-  const tabProducts = (() => {
+  const activeProducts = PRODUCTS.filter((p) => {
     const tab = TABS.find((t) => t.id === activeTab);
-    if (!tab) return [];
-    let p = PRODUCTS.filter((x) => x.type === tab.type);
-    if (tab.fab) p = p.filter((x) => x.fab === tab.fab);
-    return p.slice(0, 8);
-  })();
+    if (!tab) return false;
+    if (tab.type === "scrubs") return p.category === "Scrubs" && p.fabric === tab.fab;
+    if (tab.type === "stethoscope") return p.category === "Stethoscopes";
+    if (tab.type === "labcoat") return p.category === "Lab Coats";
+    if (tab.type === "jacket") return p.category === "Jackets";
+    return false;
+  }).slice(0, 4);
 
-  const newArr = PRODUCTS.filter((p) => ["New", "New Launch"].includes(p.badge)).slice(0, 4);
+  const newArr = PRODUCTS.filter((p) => p.isNew).slice(0, 4);
 
   return (
-    <div className="page">
-      <Hero onShop={() => (window.location.href = "/products")} />
-
-      <div className="trust">
-        <div className="trust-in">
-          {[
-            ["🚚", "Free Delivery", "Orders above ₹999"],
-            ["🔄", "Easy Returns", "7-day hassle-free"],
-            ["🔒", "Secure Payment", "100% safe"],
-            ["📞", "24/7 Support", B.phone],
-            ["💳", "COD Available", "Pay at doorstep"],
-            ["⭐", "Earn Rewards", "Every purchase"],
-          ].map(([ico, t, s], i) => (
-            <div className="trit" key={i}>
-              <div className="trit-ico">{ico}</div>
-              <div>
-                <div className="trit-t">{t}</div>
-                <div className="trit-s">{s}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+    <div className="pg">
+      <Hero />
 
       {/* CATEGORIES */}
       <div className="sec">
@@ -70,23 +50,14 @@ export default function Home() {
         </div>
         <div className="cat-g">
           {[
-            ["#dde3f0", "👨‍⚕️", "Men's Scrubs"],
-            ["#f0dde4", "👩‍⚕️", "Women's Scrubs"],
-            ["#ddf0e8", "🥼", "Classic Scrubs"],
-            ["#ddedf5", "💪", "ecoflex™ Scrubs"],
-            ["#f0f0f0", "🩺", "Stethoscope"],
-            ["#dde3f0", "🧥", "DRIFT Jacket", true],
-            ["#f8f8f8", "🥼", "Lab Coats"],
-            ["#f0dde4", "👕", "Underscrubs"],
-          ].map(([bg, em, nm, isN]) => (
-            <Link href="/products" className="cat-c" key={nm as string}>
-              <div className="cat-img" style={{ background: bg as string }}>
-                {em}
-              </div>
-              <div className="cat-l">
-                {nm}
-                {isN && <span className="pn">NEW</span>}
-              </div>
+            { n: "Men's Scrubs", e: "👨‍⚕️", c: "Scrubs", g: "Men", bg: "#eef2f8" },
+            { n: "Women's Scrubs", e: "👩‍⚕️", c: "Scrubs", g: "Women", bg: "#f8f0f2" },
+            { n: "Classic Scrubs", e: "🥼", c: "Scrubs", bg: "#e8f8f6" },
+            { n: "Stethoscopes", e: "🩺", c: "Stethoscopes", bg: "#fdf3e0" },
+          ].map((cat, i) => (
+            <Link href={`/products?cat=${cat.c}${cat.g ? `&gen=${cat.g}` : ""}`} className="cat-c" key={i} style={{ background: cat.bg }}>
+              <div className="cat-e">{cat.e}</div>
+              <div className="cat-n">{cat.n}</div>
             </Link>
           ))}
         </div>
@@ -109,45 +80,34 @@ export default function Home() {
       </div>
 
       {/* BESTSELLING */}
-      <div className="sec">
+      <div className="sec" style={{ background: "var(--off)" }}>
         <div className="sec-hd">
           <div>
             <div className="sec-t">Bestselling Scrubs</div>
             <div className="sec-s">Most loved by healthcare professionals across India</div>
           </div>
-          <Link href={`/products?cat=${TABS.find((t) => t.id === activeTab)?.type || "all"}`} className="va">
-            View All {TABS.find((t) => t.id === activeTab)?.label || "Scrubs"} →
+          <Link href="/products" className="va">
+            View All Bestsellers →
           </Link>
         </div>
 
         <div className="tabs">
           {TABS.map((t) => (
-            <div key={t.id} className={`tab${activeTab === t.id ? " on" : ""}`} onClick={() => setActiveTab(t.id)}>
+            <div key={t.id} className={`tab ${activeTab === t.id ? "on" : ""}`} onClick={() => setActiveTab(t.id)}>
               {t.label}
             </div>
           ))}
         </div>
 
-        {tabProducts.length > 0 ? (
-          <div className="pg-4">
-            {tabProducts.map((p) => (
-              <ProductCard key={p.id} p={p} />
-            ))}
-          </div>
-        ) : (
-          <div style={{ textAlign: "center", padding: "48px 20px", color: "var(--lt)" }}>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>🔍</div>
-            <div style={{ fontSize: 16, fontWeight: 600, color: "var(--ink2)", marginBottom: 8 }}>Coming Soon</div>
-            <div style={{ fontSize: 14 }}>More products in this category will be available soon.</div>
-            <Link href="/products" className="btn-t" style={{ marginTop: 16 }}>
-              Browse All Products →
-            </Link>
-          </div>
-        )}
+        <div className="pg-4">
+          {activeProducts.map((p) => (
+            <ProductCard key={p.id} p={p} />
+          ))}
+        </div>
       </div>
 
       {/* PROMO */}
-      <div className="promo-duo">
+      <div className="promo-grid">
         <div className="promo-h" style={{ background: "#091220" }}>
           <div className="promo-em">🩺</div>
           <div className="promo-ey">New Collection</div>
@@ -208,111 +168,54 @@ export default function Home() {
       <VideoSection />
       <PressSection />
 
-      {/* Community */}
-      <div className="comm-sec">
-        <div className="comm-in">
-          <div className="comm-hd">
-            <h2 className="comm-t">50,000+ Healthcare Heroes Choose Medvastr</h2>
-            <p className="comm-s">Real stories from real doctors, nurses and healthcare professionals</p>
+      <BulkOrderBanner />
+      <AboutHomeSection />
+
+      {/* NEW HERO BANNER */}
+      <div className="hero-banner-big">
+        <div className="hbb-in">
+          <div className="hbb-tag">★ TRUSTED BY THE BEST</div>
+          <h2 className="hbb-h">50,000+ Healthcare Heroes Choose Medvastr</h2>
+          <p className="hbb-p">From AIIMS surgeons to private clinic nurses, India's medical community trusts Medvastr for comfort that lasts a lifetime.</p>
+          <div className="hbb-stats">
+            <div><strong>50k+</strong> Users</div>
+            <div><strong>200+</strong> Cities</div>
+            <div><strong>4.9★</strong> Rating</div>
           </div>
-          <div className="comm-cards">
+        </div>
+      </div>
+
+      {/* Reviews (Refined) */}
+      <div className="rev-sec">
+        <div className="rev-in">
+          <div className="rev-grid">
             {[
-              {
-                emo: "👨‍⚕️",
-                q: "Switched to Medvastr 6 months ago and never looked back. The ecoflex fabric moves with me through every surgery.",
-                au: "Dr. Anil Kumar",
-                ro: "Cardiac Surgeon, AIIMS Delhi",
-                tag: "ecoflex™ User",
-              },
-              {
-                emo: "👩‍⚕️",
-                q: "As a female surgeon, finding scrubs that fit properly was always a challenge. Medvastr finally solved that.",
-                au: "Dr. Meera Patel",
-                ro: "Neurosurgeon, KEM Hospital Mumbai",
-                tag: "Women's Slim Fit",
-              },
-              {
-                emo: "👩‍⚕️",
-                q: "After switching my team of 40 nurses to Medvastr bulk orders, complaints about uniforms dropped to zero.",
-                au: "Sr. Nurse Priya Nair",
-                ro: "Head of Nursing, Apollo Chennai",
-                tag: "Bulk Order 50+ Pieces",
-              },
-            ].map((x, i) => (
-              <div className="comm-card" key={i}>
-                <div className="comm-av">{x.emo}</div>
-                <div className="comm-q">"{x.q}"</div>
-                <div className="comm-au">{x.au}</div>
-                <div className="comm-ro">{x.ro}</div>
-                <div className="comm-pill">✓ {x.tag}</div>
-              </div>
-            ))}
-          </div>
-          <div className="comm-stats">
-            {[
-              ["50,000+", "Happy Customers"],
-              ["4.8 ★", "Average Rating"],
-              ["200+", "Cities Delivered"],
-              ["₹2Cr+", "Products Sold"],
-            ].map(([n, l]) => (
-              <div className="cst" key={l}>
-                <span className="cst-n">{n}</span>
-                <div className="cst-l">{l}</div>
+              { q: "The best scrubs I've owned in 10 years of practice. Fabric is incredible.", a: "Dr. Sandeep Shah", r: "Surgeon" },
+              { q: "Finally a brand that understands Indian sizes and climate. Highly recommended.", a: "Dr. Anjali Rao", r: "Pediatrician" },
+              { q: "Our entire hospital staff is now in Medvastr. The bulk order process was seamless.", a: "Sr. John D'Souza", r: "Hospital Admin" }
+            ].map((r, i) => (
+              <div className="rev-card" key={i}>
+                <div className="rev-q">"{r.q}"</div>
+                <div className="rev-a">{r.a}</div>
+                <div className="rev-r">{r.r}</div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      <BulkOrderBanner />
-      <AboutHomeSection />
-
-      {/* Reviews */}
-      <div className="rev-sec">
-        <div className="rev-in">
-          <div className="sec-hd">
-            <div>
-              <div className="sec-t">What Doctors Are Saying</div>
-              <div className="sec-s">Trusted by 50,000+ healthcare professionals</div>
+      {/* Trust Badges */}
+      <div className="trust-sec">
+        <div className="trust-in">
+          {B.map((b, i) => (
+            <div key={i} className="trit">
+              <span className="trit-ico">{b.i}</span>
+              <span>
+                <div className="trit-t">{b.t}</div>
+                <div className="trit-s">{b.s}</div>
+              </span>
             </div>
-            <div className="rev-stats-top" style={{ display: "flex", gap: 34, flexWrap: "wrap" }}>
-              {[
-                ["50K+", "Customers"],
-                ["4.8★", "Rating"],
-                ["200+", "Cities"],
-              ].map(([n, l]) => (
-                <div key={l} style={{ textAlign: "center" }}>
-                  <div
-                    style={{
-                      fontFamily: "var(--serif)",
-                      fontSize: 25,
-                      fontWeight: 700,
-                      color: "var(--ink)",
-                      letterSpacing: "-.03em",
-                    }}
-                  >
-                    {n}
-                  </div>
-                  <div style={{ fontSize: 11.5, color: "var(--lt)", marginTop: 2 }}>{l}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="rev-g">
-            {REVIEWS.map((r, i) => (
-              <div className="rv" key={i}>
-                <div className="rv-stars">{"★".repeat(r.r)}</div>
-                <div className="rv-txt">"{r.txt}"</div>
-                <div className="rv-auth">
-                  <div className="rv-av">{r.av}</div>
-                  <div>
-                    <div className="rv-nm">{r.name}</div>
-                    <div className="rv-rl">{r.role}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
       </div>
 

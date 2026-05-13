@@ -3802,3 +3802,30 @@ body, html {
   .comm-card { padding: 30px; }
   .comm-q { font-size: 15px; min-height: auto; }
 }
+
+/* Hero Banner Big */
+.hero-banner-big { background: var(--ink); color: white; padding: 100px 0; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
+.hbb-in { max-width: 900px; margin: 0 auto; padding: 0 44px; }
+.hbb-tag { font-size: 12px; font-weight: 800; color: var(--t2); letter-spacing: 2.5px; margin-bottom: 20px; }
+.hbb-h { font-family: var(--serif); font-size: 52px; margin-bottom: 25px; line-height: 1.1; letter-spacing: -0.02em; }
+.hbb-p { font-size: 19px; color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 44px; }
+.hbb-stats { display: flex; justify-content: center; gap: 60px; }
+.hbb-stats div { font-size: 14px; color: rgba(255,255,255,0.5); font-weight: 600; }
+.hbb-stats strong { display: block; font-size: 28px; color: white; font-family: var(--serif); margin-bottom: 4px; }
+
+/* Refined Reviews */
+.rev-sec { background: var(--wh); padding: 100px 0; }
+.rev-in { max-width: 1560px; margin: 0 auto; padding: 0 44px; }
+.rev-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+.rev-card { padding: 40px; border-radius: 24px; background: var(--off); border: 1.5px solid var(--bdr); transition: transform 0.3s; }
+.rev-card:hover { transform: translateY(-8px); border-color: var(--t); }
+.rev-q { font-size: 17px; color: var(--ink2); line-height: 1.8; font-style: italic; margin-bottom: 24px; min-height: 100px; font-weight: 500; }
+.rev-a { font-weight: 800; color: var(--ink); font-size: 15px; }
+.rev-r { font-size: 12.5px; color: var(--lt); margin-top: 2px; }
+
+@media (max-width: 768px) {
+  .hbb-h { font-size: 32px; }
+  .hbb-stats { gap: 20px; flex-direction: column; }
+  .rev-grid { grid-template-columns: 1fr; gap: 20px; }
+  .rev-card { padding: 30px; }
+}
