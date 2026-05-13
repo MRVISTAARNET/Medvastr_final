@@ -36,7 +36,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             ☰
           </button>
           <Link href="/" className="logo">
-            <span className="lw-new">medvastr</span>
+            <img src="/logo.jpg" alt="Medvastr" style={{ height: 45, width: "auto", objectFit: "contain" }} />
           </Link>
         </div>
 
