@@ -6,7 +6,6 @@ export const B = {
   ig: "https://www.instagram.com/medvastr/",
   fb: "https://www.facebook.com/medvastr/",
   li: "https://www.linkedin.com/company/medvastr/",
-  yt: "https://www.youtube.com/@medvastr/",
 };
 
 export const COLS = [

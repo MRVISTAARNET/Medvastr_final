@@ -122,8 +122,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
       {/* Mobile Nav Drawer */}
       <div className={`mob-drawer-ov${mn ? " on" : ""}`} onClick={() => setMn(false)} />
       <div id="nav" className={mn ? " mob-on" : ""}>
-        <div className="mob-nav-hd">
-           <span className="logo-sm">Medva<span>str</span></span>
+        <div className="mob-nav-hd" style={{ display: 'none' }}>
            <button className="mn-close" onClick={() => setMn(false)}>✕</button>
         </div>
         <div className="nav-in">
@@ -180,20 +179,12 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
 
           .mob-nav-hd {
             display: flex !important;
-            padding: 24px;
-            justify-content: space-between;
+            padding: 20px 24px;
+            justify-content: flex-end;
             align-items: center;
             border-bottom: 1px solid var(--bdr);
             background: var(--wh);
           }
-          .logo-sm {
-            font-family: var(--serif);
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--ink);
-            letter-spacing: -0.04em;
-          }
-          .logo-sm span { color: var(--t); }
           .mn-close {
             width: 40px;
             height: 40px;

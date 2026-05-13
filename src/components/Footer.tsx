@@ -30,14 +30,16 @@ export default function Footer() {
             📍 {B.addr}
           </div>
           <div className="ft-soc">
-            {[['📸', B.ig], ['f', B.fb], ['in', B.li], ['▶', B.yt]].map(([l, h]) => (
+            {[['📸', B.ig], ['f', B.fb], ['in', B.li]].map(([l, h]) => (
               <a key={l} href={h} target="_blank" rel="noopener" className="ft-s-a">{l}</a>
             ))}
           </div>
         </div>
 
         <div className={`ft-col${openCol === 'men' ? ' open' : ''}`}>
-          <h4 onClick={() => toggle('men')}>Men</h4>
+          <h4 onClick={() => toggle('men')}>
+            Men <span className="ft-arr">▾</span>
+          </h4>
           <ul className="ft-lnks">
             {[
               ["V-Neck Scrubs", "scrubs"], ["Mandarin Collar", "scrubs"], ["ecoflex™ Scrubs", "scrubs"], ["Lab Coats", "labcoat"], ["DRIFT Jacket", "jacket"], ["Accessories", "accessories"]
@@ -48,7 +50,9 @@ export default function Footer() {
         </div>
 
         <div className={`ft-col${openCol === 'women' ? ' open' : ''}`}>
-          <h4 onClick={() => toggle('women')}>Women</h4>
+          <h4 onClick={() => toggle('women')}>
+            Women <span className="ft-arr">▾</span>
+          </h4>
           <ul className="ft-lnks">
             {[
               ["V-Neck Scrubs", "scrubs"], ["Mandarin Collar", "scrubs"], ["ecoflex™ Scrubs", "scrubs"], ["Lab Coats", "labcoat"], ["DRIFT Jacket", "jacket"], ["Hijab", "accessories"]
@@ -59,7 +63,9 @@ export default function Footer() {
         </div>
 
         <div className={`ft-col${openCol === 'help' ? ' open' : ''}`}>
-          <h4 onClick={() => toggle('help')}>Help</h4>
+          <h4 onClick={() => toggle('help')}>
+            Help <span className="ft-arr">▾</span>
+          </h4>
           <ul className="ft-lnks">
             {[
               ["Track My Order", "track"], ["Returns & Exchanges", "returns"], ["Size Guide", "sizeguide"], ["Bulk Orders", "bulk"], ["Contact Us", "contact"], ["Breakpoint 24/7", "breakpoint"]
@@ -70,7 +76,9 @@ export default function Footer() {
         </div>
 
         <div className={`ft-col${openCol === 'company' ? ' open' : ''}`}>
-          <h4 onClick={() => toggle('company')}>Company</h4>
+          <h4 onClick={() => toggle('company')}>
+            Company <span className="ft-arr">▾</span>
+          </h4>
           <ul className="ft-lnks">
             {[
               ["About Us", "about"], ["Blog & Resources", "blog"], ["Sustainability", "sustainability"], ["Privacy Policy", "privacy"], ["Terms of Service", "terms"], ["Refund Policy", "refund"]
@@ -136,6 +144,9 @@ export default function Footer() {
           .ft-lnks { display: none; padding-bottom: 20px; }
           .ft-col.open .ft-lnks { display: block; }
           .ft-btm { flex-direction: column; text-align: center; gap: 30px; margin-top: 40px; }
+          .ft-arr { display: inline-block; transition: transform 0.3s; margin-left: 6px; font-size: 10px; opacity: 0.5; }
+          .ft-col.open .ft-arr { transform: rotate(180deg); opacity: 1; color: var(--t); }
+          .ft-col h4 { display: flex; justify-content: space-between; align-items: center; }
         }
       `}</style>
     </footer>

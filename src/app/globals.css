@@ -3542,6 +3542,7 @@ body, html {
 }
 
 @media (max-width: 768px) {
+
   /* GLOBAL HORIZONTAL SCROLL UTILITY (FIXED CROPPING) */
   .trust-in,
   .cat-g,
@@ -3557,12 +3558,39 @@ body, html {
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch;
     scroll-snap-type: x mandatory;
-    gap: 12px;
-    padding: 0 0 15px !important; /* symmetrical */
-    margin: 0 !important;
+    gap: 16px;
+    padding: 0 20px 20px !important;
+    margin: 0 -20px !important;
     scrollbar-width: none;
-    width: 100% !important;
+    width: calc(100% + 40px) !important;
   }
+
+  /* Feat Strip Mobile Overrides */
+  .feat-strip {
+    background: var(--t);
+    color: white;
+    padding: 20px !important;
+    margin: 30px -20px !important;
+  }
+  .fit {
+    flex: 0 0 160px !important;
+    gap: 10px !important;
+  }
+  .fit-ico { font-size: 20px !important; }
+  .fit-t { font-size: 13px !important; display: block; font-weight: 700; }
+  .fit-s { font-size: 11px !important; opacity: 0.8; }
+
+  /* Video Section Mobile Polish */
+  .vid-sec { padding: 40px 20px !important; }
+  .vid-t { font-size: 28px !important; margin: 15px 0 !important; }
+  .vid-s { font-size: 14px !important; line-height: 1.6 !important; }
+  .vid-pl { height: 200px !important; }
+  .vid-perks { 
+    grid-template-columns: repeat(2, 1fr) !important; 
+    gap: 15px !important;
+    margin-top: 30px !important;
+  }
+  .vp { font-size: 12px !important; padding: 10px !important; }
 
   .trust-in::-webkit-scrollbar,
   .cat-g::-webkit-scrollbar,
