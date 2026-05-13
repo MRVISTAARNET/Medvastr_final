@@ -17,14 +17,25 @@ export default function VideoSection() {
           stretch flexibility.
         </p>
 
-        <div className="vid-pl" style={{ cursor: 'default' }}>
-          <div className="vid-ph" style={{ opacity: 1 }}>
-            <div className="play-r" style={{ background: 'var(--t)' }}>✓</div>
-            <div className="play-l">
-              <strong>Premium Quality Tested</strong>
-              <div style={{ fontSize: 12, opacity: 0.7, marginTop: 4 }}>Lab certified for durability & comfort</div>
+        <div className="vid-pl" onClick={() => setPlay(true)}>
+          {!play ? (
+            <div className="vid-ph">
+              <div className="play-r">▶</div>
+              <div className="play-l">
+                Play <strong>Video</strong>
+              </div>
             </div>
-          </div>
+          ) : (
+            <iframe
+              width="100%"
+              height="100%"
+              src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
+              title="Medvastr Video"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          )}
         </div>
 
         <div className="vid-perks">

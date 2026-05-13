@@ -3813,3 +3813,131 @@ iframe,
   .slide-p { font-size: 14px; }
   .slide-stats { display: grid; grid-template-columns: 1fr 1fr; width: 100%; gap: 15px; }
 }
+
+/* --- REFINED MOBILE RESPONSIVENESS (MRVISTAARNET) --- */
+
+/* Animation for Marquee */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.press-logos-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 20s linear infinite;
+}
+
+/* Fix Right-side Cutoff in Horizontal Scrolling */
+.trust-in, .cat-g, .clr-row, .tabs, .rev-g, .comm-cards, .pg-4, .pg-3, .feat-strip {
+  padding-right: 44px !important; /* Add space on the right so last card isn't cut off */
+}
+
+@media (max-width: 768px) {
+  /* Navbar Mobile Menu Animation */
+  #nav {
+    transition: transform 0.4s var(--ease), visibility 0.4s;
+    transform: translateX(-100%);
+    visibility: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 85%;
+    height: 100vh;
+    background: white;
+    z-index: 10000;
+    box-shadow: 20px 0 60px rgba(0,0,0,0.15);
+    display: block !important;
+  }
+  
+  #nav.mob-on {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  /* Free Delivery side-by-side */
+  .trust-in {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    gap: 20px;
+    padding: 15px 20px !important;
+  }
+  .trit {
+    flex: 0 0 auto;
+    min-width: 200px;
+  }
+
+  /* Colour Categories Grid */
+  .clr-row {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 0 20px !important;
+    width: 100%;
+    overflow-x: visible !important;
+  }
+  .clr-sw {
+    flex-direction: column;
+    text-align: center;
+    gap: 6px;
+  }
+  .sw-c { width: 40px; height: 40px; margin: 0 auto; }
+  .sw-l { font-size: 10px; }
+
+  /* Lab Tested Sections */
+  .feat-strip {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    padding: 20px !important;
+  }
+  .fit {
+    flex: 0 0 100%;
+    text-align: left;
+    margin-bottom: 0;
+  }
+}
+
+/* Hero Section Design Refresh */
+.hero-slide {
+  position: relative;
+  overflow: hidden;
+}
+.slide-bg {
+  opacity: 0.9;
+  filter: saturate(1.1);
+}
+.slide-h1 {
+  font-family: var(--serif);
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Footer Dropdowns on Mobile */
+@media (max-width: 768px) {
+  .ft-col h4 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 0;
+  }
+  .ft-col h4::after {
+    content: '?';
+    font-size: 10px;
+    transition: transform 0.3s;
+  }
+  .ft-col.open h4::after {
+    transform: rotate(180deg);
+  }
+  .ft-lnks {
+    display: none;
+    padding: 10px 0;
+  }
+  .ft-col.open .ft-lnks {
+    display: block;
+  }
+}

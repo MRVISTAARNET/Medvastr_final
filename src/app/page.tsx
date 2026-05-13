@@ -36,7 +36,7 @@ export default function Home() {
       <Hero onShop={() => (window.location.href = "/products")} />
 
       <div className="trust">
-        <div className="trust-in snap-row">
+        <div className="trust-in">
           {[
             ["🚚", "Free Delivery", "Orders above ₹999"],
             ["🔄", "Easy Returns", "7-day hassle-free"],
@@ -45,7 +45,7 @@ export default function Home() {
             ["💳", "COD Available", "Pay at doorstep"],
             ["⭐", "Earn Rewards", "Every purchase"],
           ].map(([ico, t, s], i) => (
-            <div className="trit snap-item" key={i}>
+            <div className="trit" key={i}>
               <div className="trit-ico">{ico}</div>
               <div>
                 <div className="trit-t">{t}</div>
@@ -67,7 +67,7 @@ export default function Home() {
             View All →
           </Link>
         </div>
-        <div className="cat-g snap-row">
+        <div className="cat-g">
           {[
             ["#dde3f0", "👨‍⚕️", "Men's Scrubs"],
             ["#f0dde4", "👩‍⚕️", "Women's Scrubs"],
@@ -78,7 +78,7 @@ export default function Home() {
             ["#f8f8f8", "🥼", "Lab Coats"],
             ["#f0dde4", "👕", "Underscrubs"],
           ].map(([bg, em, nm, isN]) => (
-            <Link href="/products" className="cat-c snap-item" key={nm as string}>
+            <Link href="/products" className="cat-c" key={nm as string}>
               <div className="cat-img" style={{ background: bg as string }}>
                 {em}
               </div>
@@ -96,9 +96,9 @@ export default function Home() {
         <div className="clr-in">
           <div className="clr-t">Shop By Colours</div>
           <div className="clr-s">16 shades across all categories</div>
-          <div className="clr-row snap-row">
+          <div className="clr-row">
             {COLS.map((c, i) => (
-              <Link href="/products" className="clr-sw snap-item" key={i}>
+              <Link href="/products" className="clr-sw" key={i}>
                 <div className="sw-c" style={{ background: c.h }} />
                 <div className="sw-l">{c.n}</div>
               </Link>
@@ -112,14 +112,14 @@ export default function Home() {
         <div className="sec-hd">
           <div>
             <div className="sec-t">Bestselling Scrubs</div>
-            <div className="sec-s">Most loved by professionals</div>
+            <div className="sec-s">Most loved by healthcare professionals across India</div>
           </div>
           <Link href={`/products?cat=${TABS.find((t) => t.id === activeTab)?.type || "all"}`} className="va">
             View All →
           </Link>
         </div>
 
-        <div className="tabs snap-row">
+        <div className="tabs">
           {TABS.map((t) => (
             <div key={t.id} className={`tab${activeTab === t.id ? " on" : ""}`} onClick={() => setActiveTab(t.id)}>
               {t.label}
@@ -128,18 +128,21 @@ export default function Home() {
         </div>
 
         {tabProducts.length > 0 ? (
-          <div className="pg-4 snap-row">
-            {tabProducts.map((p) => (
-              <div className="snap-item" key={p.id}>
-                <ProductCard p={p} />
-              </div>
-            ))}
+          <div className="pg-4-wrap">
+            <div className="pg-4">
+              {tabProducts.map((p) => (
+                <ProductCard key={p.id} p={p} />
+              ))}
+            </div>
           </div>
         ) : (
           <div style={{ textAlign: "center", padding: "48px 20px", color: "var(--lt)" }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>🔍</div>
             <div style={{ fontSize: 16, fontWeight: 600, color: "var(--ink2)", marginBottom: 8 }}>Coming Soon</div>
-            <div style={{ fontSize: 14 }}>More products will be available soon.</div>
+            <div style={{ fontSize: 14 }}>More products in this category will be available soon.</div>
+            <Link href="/products" className="btn-t" style={{ marginTop: 16 }}>
+              Browse All Products →
+            </Link>
           </div>
         )}
       </div>
@@ -152,7 +155,7 @@ export default function Home() {
           <div className="promo-tt">6sense Stethoscope</div>
           <div className="promo-bd">30-day free trial. Dual-head design. 10,000+ doctors.</div>
           <Link href="/products?cat=stethoscope" className="btn-t">
-            Shop Now →
+            Shop Stethoscope →
           </Link>
         </div>
         <div className="promo-h" style={{ background: "var(--g)" }}>
@@ -161,7 +164,7 @@ export default function Home() {
           <div className="promo-tt">The DRIFT Jacket</div>
           <div className="promo-bd">Anti-distraction. Lab tested. India's first medical outerwear.</div>
           <Link href="/products?cat=jacket" className="btn-d">
-            Shop Now →
+            Shop DRIFT Jacket →
           </Link>
         </div>
       </div>
@@ -171,38 +174,40 @@ export default function Home() {
         <div className="sec-hd">
           <div>
             <div className="sec-t">New Arrivals</div>
-            <div className="sec-s">Fresh additions to Medvastr</div>
+            <div className="sec-s">Fresh additions to the Medvastr collection</div>
           </div>
           <Link href="/products" className="va">
             View All →
           </Link>
         </div>
-        <div className="pg-4 snap-row">
-          {newArr.map((p) => (
-            <div className="snap-item" key={p.id}>
-              <ProductCard p={p} />
-            </div>
-          ))}
+        <div className="pg-4-wrap">
+          <div className="pg-4">
+            {newArr.map((p) => (
+              <ProductCard key={p.id} p={p} />
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="feat-strip snap-row">
-        {[
-          ["🧪", "Lab Tested", "Quality certified"],
-          ["⏰", "12-Hour Ready", "Long-shift comfort"],
-          ["🛡️", "Anti-Distraction", "Built for focus"],
-          ["👜", "Up to 9 Pockets", "Everything you need"],
-          ["⚗️", "ecoflex™", "4-way stretch"],
-          ["🚀", "200+ Washes", "Colour stays vivid"],
-        ].map(([ico, t, s]) => (
-          <div className="fit snap-item" key={t}>
-            <span className="fit-ico">{ico}</span>
-            <span>
-              <span className="fit-t">{t}</span>
-              <span className="fit-s">{s}</span>
-            </span>
-          </div>
-        ))}
+      <div className="feat-strip-wrap">
+        <div className="feat-strip">
+          {[
+            ["🧪", "Lab Tested", "Quality certified"],
+            ["⏰", "12-Hour Ready", "Long-shift comfort"],
+            ["🛡️", "Anti-Distraction", "Built for focus"],
+            ["👜", "Up to 9 Pockets", "Everything you need"],
+            ["⚗️", "ecoflex™", "4-way stretch"],
+            ["🚀", "200+ Washes", "Colour stays vivid"],
+          ].map(([ico, t, s]) => (
+            <div className="fit" key={t}>
+              <span className="fit-ico">{ico}</span>
+              <span>
+                <span className="fit-t">{t}</span>
+                <span className="fit-s">{s}</span>
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
 
       <VideoSection />
@@ -212,39 +217,54 @@ export default function Home() {
       <div className="comm-sec">
         <div className="comm-in">
           <div className="comm-hd">
-            <h2 className="comm-t">50,000+ Healthcare Heroes</h2>
-            <p className="comm-s">Real stories from real doctors</p>
+            <h2 className="comm-t">50,000+ Healthcare Heroes Choose Medvastr</h2>
+            <p className="comm-s">Real stories from real doctors, nurses and healthcare professionals</p>
           </div>
-          <div className="comm-cards snap-row">
+          <div className="comm-cards-wrap">
+            <div className="comm-cards">
+              {[
+                {
+                  emo: "👨‍⚕️",
+                  q: "Switched to Medvastr 6 months ago and never looked back. The ecoflex fabric moves with me through every surgery.",
+                  au: "Dr. Anil Kumar",
+                  ro: "Cardiac Surgeon, AIIMS Delhi",
+                  tag: "ecoflex™ User",
+                },
+                {
+                  emo: "👩‍⚕️",
+                  q: "As a female surgeon, finding scrubs that fit properly was always a challenge. Medvastr finally solved that.",
+                  au: "Dr. Meera Patel",
+                  ro: "Neurosurgeon, KEM Hospital Mumbai",
+                  tag: "Women's Slim Fit",
+                },
+                {
+                  emo: "👩‍⚕️",
+                  q: "After switching my team of 40 nurses to Medvastr bulk orders, complaints about uniforms dropped to zero.",
+                  au: "Sr. Nurse Priya Nair",
+                  ro: "Head of Nursing, Apollo Chennai",
+                  tag: "Bulk Order 50+ Pieces",
+                },
+              ].map((x, i) => (
+                <div className="comm-card" key={i}>
+                  <div className="comm-av">{x.emo}</div>
+                  <div className="comm-q">"{x.q}"</div>
+                  <div className="comm-au">{x.au}</div>
+                  <div className="comm-ro">{x.ro}</div>
+                  <div className="comm-pill">✓ {x.tag}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="comm-stats">
             {[
-              {
-                emo: "👨‍⚕️",
-                q: "Switched to Medvastr 6 months ago and never looked back.",
-                au: "Dr. Anil Kumar",
-                ro: "Cardiac Surgeon",
-                tag: "ecoflex™ User",
-              },
-              {
-                emo: "👩‍⚕️",
-                q: "As a female surgeon, finding scrubs that fit was a challenge. Medvastr solved that.",
-                au: "Dr. Meera Patel",
-                ro: "Neurosurgeon",
-                tag: "Women's Slim Fit",
-              },
-              {
-                emo: "👩‍⚕️",
-                q: "After switching my team to Medvastr bulk orders, complaints dropped to zero.",
-                au: "Sr. Nurse Priya Nair",
-                ro: "Head of Nursing",
-                tag: "Bulk Order User",
-              },
-            ].map((x, i) => (
-              <div className="comm-card snap-item" key={i}>
-                <div className="comm-av">{x.emo}</div>
-                <div className="comm-q">"{x.q}"</div>
-                <div className="comm-au">{x.au}</div>
-                <div className="comm-ro">{x.ro}</div>
-                <div className="comm-pill">✓ {x.tag}</div>
+              ["50,000+", "Happy Customers"],
+              ["4.8 ★", "Average Rating"],
+              ["200+", "Cities Delivered"],
+              ["₹2Cr+", "Products Sold"],
+            ].map(([n, l]) => (
+              <div className="cst" key={l}>
+                <span className="cst-n">{n}</span>
+                <div className="cst-l">{l}</div>
               </div>
             ))}
           </div>
@@ -258,24 +278,48 @@ export default function Home() {
         <div className="rev-in">
           <div className="sec-hd">
             <div>
-              <div className="sec-t">What Doctors Say</div>
-              <div className="sec-s">Trusted across India</div>
+              <div className="sec-t">What Doctors Are Saying</div>
+              <div className="sec-s">Trusted by 50,000+ healthcare professionals</div>
+            </div>
+            <div className="rev-stats-top" style={{ display: "flex", gap: 34, flexWrap: "wrap" }}>
+              {[
+                ["50K+", "Customers"],
+                ["4.8★", "Rating"],
+                ["200+", "Cities"],
+              ].map(([n, l]) => (
+                <div key={l} style={{ textAlign: "center" }}>
+                  <div
+                    style={{
+                      fontFamily: "var(--serif)",
+                      fontSize: 25,
+                      fontWeight: 700,
+                      color: "var(--ink)",
+                      letterSpacing: "-.03em",
+                    }}
+                  >
+                    {n}
+                  </div>
+                  <div style={{ fontSize: 11.5, color: "var(--lt)", marginTop: 2 }}>{l}</div>
+                </div>
+              ))}
             </div>
           </div>
-          <div className="rev-g snap-row">
-            {REVIEWS.map((r, i) => (
-              <div className="rv snap-item" key={i}>
-                <div className="rv-stars">{"★".repeat(r.r)}</div>
-                <div className="rv-txt">"{r.txt}"</div>
-                <div className="rv-auth">
-                  <div className="rv-av">{r.av}</div>
-                  <div>
-                    <div className="rv-nm">{r.name}</div>
-                    <div className="rv-rl">{r.role}</div>
+          <div className="rev-g-wrap">
+            <div className="rev-g">
+              {REVIEWS.map((r, i) => (
+                <div className="rv" key={i}>
+                  <div className="rv-stars">{"★".repeat(r.r)}</div>
+                  <div className="rv-txt">"{r.txt}"</div>
+                  <div className="rv-auth">
+                    <div className="rv-av">{r.av}</div>
+                    <div>
+                      <div className="rv-nm">{r.name}</div>
+                      <div className="rv-rl">{r.role}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -283,13 +327,38 @@ export default function Home() {
       <div className="nl-sec">
         <div style={{ maxWidth: 1560, margin: "0 auto" }}>
           <div className="nl-t">Get 10% Off Your First Order</div>
-          <div className="nl-s">Subscribe for exclusive deals and tips.</div>
+          <div className="nl-s">Subscribe for exclusive deals, new arrivals and healthcare style tips.</div>
           <div className="nl-form">
-            <input className="nl-inp" type="email" placeholder="Enter your email" />
+            <input className="nl-inp" type="email" placeholder="Enter your email address" />
             <button className="nl-go">Subscribe</button>
+          </div>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,.26)", marginTop: 13 }}>
+            Use code <strong style={{ color: "var(--g2)" }}>MEDVASTR10</strong> at checkout.
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        .pg-4-wrap, .comm-cards-wrap, .rev-g-wrap, .feat-strip-wrap {
+          margin: 0 -20px;
+          padding: 0 20px;
+          overflow: hidden;
+        }
+        @media (max-width: 768px) {
+           .pg-4-wrap, .comm-cards-wrap, .rev-g-wrap, .feat-strip-wrap {
+              overflow-x: auto;
+              scroll-behavior: smooth;
+              -webkit-overflow-scrolling: touch;
+              padding-bottom: 20px;
+           }
+           .pg-4, .comm-cards, .rev-g {
+              display: flex;
+              gap: 16px;
+              width: max-content;
+              padding-right: 40px; /* Essential to prevent right-side cutoff */
+           }
+        }
+      `}</style>
     </div>
   );
 }

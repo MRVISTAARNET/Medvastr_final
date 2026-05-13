@@ -119,6 +119,11 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
         </div>
       </div>
 
+      {/* Overlay */}
+      {mn && <div className="mob-ov" onClick={() => setMn(false)} style={{
+        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', z-index: 9999
+      }} />}
+
       <div id="nav" className={mn ? " mob-on" : ""}>
         <div className="mob-nav-hd" style={{ display: 'none' }}>
            <span className="logo-sm">Medvastr</span>
@@ -162,29 +167,42 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
           .mob-hide { display: none !important; }
           .mob-nav-hd {
             display: flex !important;
-            padding: 20px;
+            padding: 24px;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--bdr);
-            background: var(--off);
+            background: var(--wh);
           }
           .logo-sm {
             font-family: var(--serif);
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 700;
-            color: var(--t);
+            color: var(--ink);
           }
           .mn-close {
-            width: 36px;
-            height: 36px;
-            background: var(--wh);
+            width: 40px;
+            height: 40px;
+            background: var(--off);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
-            box-shadow: var(--s1);
+            font-size: 18px;
+            color: var(--ink2);
           }
+          .nav-in {
+             flex-direction: column;
+             padding: 10px 24px;
+             align-items: flex-start;
+          }
+          .nl {
+             width: 100%;
+             padding: 16px 0;
+             font-size: 15px;
+             border-bottom: 1px solid var(--bdr2);
+          }
+          .nl::after { display: none; }
+          .nav-group { width: 100%; }
         }
       `}</style>
     </div>
