@@ -4185,3 +4185,8 @@ body, html {
 }
 
 .rv { border-radius: 0 !important; }
+
+.main-header-wrapper { position: sticky; top: 0; z-index: 1000; background: var(--wh); box-shadow: var(--s1); }
+#hdr { position: relative !important; top: auto !important; box-shadow: none !important; }
+#nav { padding-top: 2px !important; }
+.nl { padding: 10px 14px !important; }
