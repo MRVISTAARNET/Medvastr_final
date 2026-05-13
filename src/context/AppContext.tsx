@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useReducer, useState, useCallback, useEffect } from "react";
-import { Product, PRODUCTS } from "@/lib/data";
+import { Product } from "@/lib/data";
 
 interface CartItem extends Product {
   k: string;
@@ -28,6 +28,8 @@ const AppContext = createContext<AppContextType | null>(null);
 
 function cartReducer(state: CartItem[], action: any): CartItem[] {
   switch (action.type) {
+    case "SET":
+      return action.data;
     case "ADD": {
       const { p, ci, sz } = action;
       const k = `${p.id}-${ci}-${sz}`;
@@ -41,7 +43,7 @@ function cartReducer(state: CartItem[], action: any): CartItem[] {
           ...p,
           k,
           col: p.clrs[ci] || p.clrs[0],
-          colNm: "Color", // Simplified for now, can be improved with cn()
+          colNm: "Color",
           size: sz,
           qty: 1,
         },
@@ -52,7 +54,7 @@ function cartReducer(state: CartItem[], action: any): CartItem[] {
         .map((i, idx) => (idx === action.index ? { ...i, qty: Math.max(0, i.qty + action.delta) } : i))
         .filter((i) => i.qty > 0);
     case "DEL":
-      return state.filter((_, idx) => idx === action.index);
+      return state.filter((_, idx) => idx !== action.index);
     case "CLR":
       return [];
     default:
@@ -65,6 +67,23 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [wishlist, setWishlist] = useState<number[]>([]);
   const [toastMsg, setToastMsg] = useState("");
   const [toastKind, setToastKind] = useState<"ok" | "bad" | "">("");
+
+  // Load from Storage
+  useEffect(() => {
+    const savedCart = localStorage.getItem("mv_cart");
+    const savedWish = localStorage.getItem("mv_wish");
+    if (savedCart) dispatch({ type: "SET", data: JSON.parse(savedCart) });
+    if (savedWish) setWishlist(JSON.parse(savedWish));
+  }, []);
+
+  // Save to Storage
+  useEffect(() => {
+    localStorage.setItem("mv_cart", JSON.stringify(cart));
+  }, [cart]);
+
+  useEffect(() => {
+    localStorage.setItem("mv_wish", JSON.stringify(wishlist));
+  }, [wishlist]);
 
   const toast = useCallback((msg: string, kind: "ok" | "bad" | "" = "") => {
     setToastMsg(msg);

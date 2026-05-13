@@ -18,65 +18,34 @@ export default function ProductDetailPage() {
   if (!p) return <div className="page sec">Product not found.</div>;
 
   const wished = wishlist.includes(p.id);
-
   const related = PRODUCTS.filter((x) => x.type === p.type && x.id !== p.id).slice(0, 4);
 
   return (
     <div className="page">
       <div className="sec">
         {/* Breadcrumb */}
-        <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 12.5, color: "var(--lt)", marginBottom: 28 }}>
-          <span style={{ cursor: "pointer", color: "var(--t)" }}>Home</span>
+        <div className="pdp-bc">
+          <span onClick={() => (window.location.href = "/")}>Home</span>
           <span>›</span>
-          <span style={{ cursor: "pointer", color: "var(--t)" }}>{p.type.charAt(0).toUpperCase() + p.type.slice(1)}</span>
+          <span onClick={() => (window.location.href = "/products")}>{p.type}</span>
           <span>›</span>
-          <strong style={{ color: "var(--ink)" }}>{p.name}</strong>
+          <strong>{p.name}</strong>
         </div>
 
-        <div className="pdp-grid" style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: 60 }}>
+        <div className="pdp-grid">
           {/* Gallery */}
           <div className="pdp-gal">
-            <div
-              className="pdp-main-img"
-              style={{
-                background: p.bg,
-                aspectRatio: "1/1.1",
-                borderRadius: 24,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 160,
-                border: "1.5px solid var(--bdr)",
-                position: "relative",
-                overflow: "hidden",
-              }}
-            >
-              {p.emo}
+            <div className="pdp-main-img" style={{ background: p.bg }}>
+              <span className="pdp-emo-main">{p.emo}</span>
               {p.badge && (
-                <div
-                  className={`pc-badge pb-${p.badge.toLowerCase().replace(" ", "")}`}
-                  style={{ top: 24, left: 24, padding: "6px 14px", fontSize: 11 }}
-                >
+                <div className={`pc-badge pb-${p.badge.toLowerCase().replace(" ", "")} pdp-badge`}>
                   {p.badge}
                 </div>
               )}
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14, marginTop: 14 }}>
+            <div className="pdp-thumbs">
               {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  style={{
-                    background: p.bg,
-                    aspectRatio: "1",
-                    borderRadius: 12,
-                    border: i === 1 ? "2px solid var(--t)" : "1.5px solid var(--bdr)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 40,
-                    opacity: i === 1 ? 1 : 0.4,
-                  }}
-                >
+                <div key={i} className={`pdp-thumb${i === 1 ? " on" : ""}`} style={{ background: p.bg }}>
                   {p.emo}
                 </div>
               ))}
@@ -85,84 +54,54 @@ export default function ProductDetailPage() {
 
           {/* Info */}
           <div className="pdp-info">
-            <div style={{ fontSize: 11, fontWeight: 800, color: "var(--lt)", letterSpacing: 2.5, textTransform: "uppercase", marginBottom: 8 }}>
-              {p.fab || "Premium"} Collection
-            </div>
-            <h1 style={{ fontFamily: "var(--serif)", fontSize: 44, fontWeight: 700, color: "var(--ink)", marginBottom: 12, lineHeight: 1.1, letterSpacing: "-.03em" }}>
-              {p.name}
-            </h1>
-            <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 24 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 14, fontWeight: 600 }}>
+            <div className="pdp-tag">{p.fab || "Premium"} Collection</div>
+            <h1 className="pdp-h">{p.name}</h1>
+            
+            <div className="pdp-meta">
+              <div className="pdp-stars">
                 <span className="stars">{"★".repeat(Math.floor(p.rating))}</span>
                 {p.rating}
               </div>
-              <div style={{ fontSize: 13, color: "var(--lt)" }}>{p.rev.toLocaleString()} Verified Reviews</div>
-              <div style={{ width: 1.5, height: 14, background: "var(--bdr)" }} />
-              <div style={{ fontSize: 13, color: "var(--t)", fontWeight: 700 }}>✓ In Stock</div>
+              <div className="pdp-rev-c">{p.rev.toLocaleString()} Verified Reviews</div>
+              <div className="pdp-stock">✓ In Stock</div>
             </div>
 
-            <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 32 }}>
-              <span style={{ fontSize: 32, fontWeight: 800, color: "var(--ink)" }}>{fmt(p.price)}</span>
-              {p.origPrice && <span style={{ fontSize: 18, color: "var(--lt)", textDecoration: "line-through" }}>{fmt(p.origPrice)}</span>}
-              <span style={{ fontSize: 12, color: "var(--lt)" }}>Inclusive of all taxes</span>
+            <div className="pdp-price-row">
+              <span className="pdp-price">{fmt(p.price)}</span>
+              {p.origPrice && <span className="pdp-orig">{fmt(p.origPrice)}</span>}
+              <span className="pdp-tax">Inclusive of all taxes</span>
             </div>
 
-            <div style={{ background: "var(--warm)", border: "1.5px solid var(--bdr)", borderRadius: 16, padding: 24, marginBottom: 32 }}>
+            <div className="pdp-box">
               {/* COLOUR */}
-              <div style={{ marginBottom: 20 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-                  <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>
-                    Colour: <span style={{ color: "var(--ink)" }}>{cn(p.clrs[ci])}</span>
-                  </label>
-                </div>
-                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <div className="pdp-opt">
+                <label className="pdp-opt-l">
+                  Colour: <span>{cn(p.clrs[ci])}</span>
+                </label>
+                <div className="pdp-clrs">
                   {p.clrs.map((c, i) => (
                     <div
                       key={i}
                       onClick={() => setCi(i)}
-                      style={{
-                        width: 36,
-                        height: 36,
-                        borderRadius: "50%",
-                        background: c,
-                        border: "3px solid white",
-                        outline: ci === i ? "2px solid var(--ink)" : "1.5px solid transparent",
-                        cursor: "pointer",
-                        transition: "all .15s",
-                        transform: ci === i ? "scale(1.1)" : "none",
-                      }}
+                      className={`pdp-clr-sw${ci === i ? " on" : ""}`}
+                      style={{ background: c }}
                     />
                   ))}
                 </div>
               </div>
 
               {/* SIZE */}
-              <div style={{ marginBottom: 24 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-                  <label style={{ fontSize: 12, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1 }}>Size</label>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: "var(--t)", cursor: "pointer", textDecoration: "underline" }}>Size Guide</span>
+              <div className="pdp-opt">
+                <div className="pdp-opt-hd">
+                  <label className="pdp-opt-l">Size</label>
+                  <span className="pdp-sg">Size Guide</span>
                 </div>
-                <div style={{ display: "flex", gap: 7, flexWrap: "wrap" }}>
+                <div className="pdp-sizes">
                   {SIZES.map((s) => (
                     <div
                       key={s}
                       onClick={() => setSz(s)}
-                      style={{
-                        height: 42,
-                        minWidth: 50,
-                        padding: "0 14px",
-                        borderRadius: 8,
-                        background: sz === s ? "var(--ink)" : "white",
-                        color: sz === s ? "white" : "var(--ink)",
-                        border: "1.5px solid var(--bdr)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: 13,
-                        fontWeight: 700,
-                        cursor: "pointer",
-                        transition: "all .16s",
-                      }}
+                      className={`pdp-sz-sw${sz === s ? " on" : ""}`}
                     >
                       {s}
                     </div>
@@ -171,15 +110,14 @@ export default function ProductDetailPage() {
               </div>
 
               {/* ACTIONS */}
-              <div style={{ display: "flex", gap: 12 }}>
-                <div style={{ display: "flex", alignItems: "center", border: "1.5px solid var(--bdr)", borderRadius: 8, background: "white", overflow: "hidden" }}>
-                  <button onClick={() => setQty((q) => Math.max(1, q - 1))} style={{ width: 44, height: 52, fontSize: 18 }}>–</button>
-                  <span style={{ minWidth: 40, textAlign: "center", fontWeight: 700 }}>{qty}</span>
-                  <button onClick={() => setQty((q) => q + 1)} style={{ width: 44, height: 52, fontSize: 18 }}>+</button>
+              <div className="pdp-acts">
+                <div className="pdp-qty">
+                  <button onClick={() => setQty((q) => Math.max(1, q - 1))}>–</button>
+                  <span>{qty}</span>
+                  <button onClick={() => setQty((q) => q + 1)}>+</button>
                 </div>
                 <button
-                  className="btn-p"
-                  style={{ flex: 1, height: 54, fontSize: 15, borderRadius: 8 }}
+                  className="btn-p pdp-add"
                   onClick={() => {
                     addToCart(p, ci, sz);
                     toast(`${p.short} added to your bag!`, "ok");
@@ -188,32 +126,22 @@ export default function ProductDetailPage() {
                   Add to Bag — {fmt(p.price * qty)}
                 </button>
                 <button
+                  className={`pdp-wish${wished ? " on" : ""}`}
                   onClick={() => toggleWishlist(p.id)}
-                  style={{
-                    width: 54,
-                    height: 54,
-                    borderRadius: 8,
-                    border: "1.5px solid var(--bdr)",
-                    background: "white",
-                    fontSize: 20,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
                 >
                   {wished ? "❤️" : "🤍"}
                 </button>
               </div>
             </div>
 
-            {/* DETAILS ACCORDION (Simplified) */}
-            <div style={{ borderTop: "1.5px solid var(--bdr)", paddingTop: 20 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, cursor: "pointer" }}>
-                <h3 style={{ fontSize: 14, fontWeight: 700 }}>Product Description</h3>
+            {/* DETAILS */}
+            <div className="pdp-desc-sec">
+              <div className="pdp-desc-hd">
+                <h3>Product Description</h3>
                 <span>–</span>
               </div>
-              <p style={{ fontSize: 14, color: "var(--ink2)", lineHeight: 1.8, marginBottom: 20 }}>{p.desc}</p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              <p className="pdp-desc-p">{p.desc}</p>
+              <div className="pdp-specs">
                 {[
                   ["Fabric", p.fabD],
                   ["Stretch", p.stretch],
@@ -222,9 +150,9 @@ export default function ProductDetailPage() {
                   ["Weight", p.wt],
                   ["Care", p.care],
                 ].map(([l, v]) => (
-                  <div key={l} style={{ padding: "12px 14px", background: "var(--cool)", borderRadius: 8 }}>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: "var(--lt)", textTransform: "uppercase", letterSpacing: 1, marginBottom: 2 }}>{l}</div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: "var(--ink)" }}>{v}</div>
+                  <div key={l} className="pdp-spec">
+                    <div className="pdp-spec-l">{l}</div>
+                    <div className="pdp-spec-v">{v}</div>
                   </div>
                 ))}
               </div>
@@ -233,7 +161,7 @@ export default function ProductDetailPage() {
         </div>
 
         {/* RELATED */}
-        <div style={{ marginTop: 80 }}>
+        <div className="pdp-rel">
           <div className="sec-hd">
             <div>
               <div className="sec-t">Complete the Look</div>
