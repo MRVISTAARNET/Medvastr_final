@@ -415,7 +415,6 @@ textarea {
   z-index: 800;
   display: flex;
   overflow: visible;
-  padding-top: 10px;
 }
 
 .nav-in {
@@ -4036,10 +4035,11 @@ body, html {
 
 /* Bulk Banner */
 .bulk-banner {
-  margin: 0;
-}
-.bulk-banner-wrap {
-  margin: 60px auto !important;
+  background: var(--ink3);
+  margin: 64px 0;
+  padding: 80px 24px;
+  position: relative;
+  overflow: hidden;
 }
 
 .bulk-in {
@@ -4184,17 +4184,3 @@ body, html {
 }
 
 .rv { border-radius: 0 !important; }
-.main-header-wrapper { 
-  position: sticky !important; 
-  top: 0 !important; 
-  z-index: 9999 !important; 
-  background: var(--wh); 
-  box-shadow: var(--s1); 
-  width: 100%; 
-  left: 0; 
-  right: 0; 
-}
-main { padding-top: 0px; }
-#hdr { position: relative !important; top: auto !important; box-shadow: none !important; border-bottom: none !important; }
-#nav { padding-top: 0 !important; border-top: 1px solid var(--bdr) !important; }
-.nl { padding: 8px 14px !important; }
