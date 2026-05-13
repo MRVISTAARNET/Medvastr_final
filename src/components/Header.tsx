@@ -39,7 +39,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             <span className="lw">
               Medva<span>str</span>
             </span>
-            <span className="lt">Premium Medical Apparel</span>
+            <span className="lt">Wear Wellness</span>
           </Link>
         </div>
 
@@ -119,14 +119,11 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
         </div>
       </div>
 
-      {/* Overlay */}
-      {mn && <div className="mob-ov" onClick={() => setMn(false)} style={{
-        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 9999
-      }} />}
-
+      {/* Mobile Nav Drawer */}
+      <div className={`mob-drawer-ov${mn ? " on" : ""}`} onClick={() => setMn(false)} />
       <div id="nav" className={mn ? " mob-on" : ""}>
-        <div className="mob-nav-hd" style={{ display: 'none' }}>
-           <span className="logo-sm">Medvastr</span>
+        <div className="mob-nav-hd">
+           <span className="logo-sm">Medva<span>str</span></span>
            <button className="mn-close" onClick={() => setMn(false)}>✕</button>
         </div>
         <div className="nav-in">
@@ -134,13 +131,17 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             <div className="nl" onClick={() => setMo(mo === "men" ? null : "men")}>
               Men <span className="nav-arrow">▾</span>
             </div>
-            <MegaMenu gender="men" />
+            <div className="nav-sub">
+               <MegaMenu gender="men" />
+            </div>
           </div>
           <div className={`nav-group${mo === "women" ? " mob-open" : ""}`}>
             <div className="nl" onClick={() => setMo(mo === "women" ? null : "women")}>
               Women <span className="nav-arrow">▾</span>
             </div>
-            <MegaMenu gender="women" />
+            <div className="nav-sub">
+               <MegaMenu gender="women" />
+            </div>
           </div>
           {[
             { l: "ecoflex™", href: "/products?cat=scrubs" },
@@ -165,6 +166,18 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
         @media (max-width: 1024px) {
           .mob-only { display: flex !important; }
           .mob-hide { display: none !important; }
+          
+          .mob-drawer-ov {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s;
+          }
+          .mob-drawer-ov.on { opacity: 1; visibility: visible; }
+
           .mob-nav-hd {
             display: flex !important;
             padding: 24px;
@@ -175,10 +188,12 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
           }
           .logo-sm {
             font-family: var(--serif);
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 700;
             color: var(--ink);
+            letter-spacing: -0.04em;
           }
+          .logo-sm span { color: var(--t); }
           .mn-close {
             width: 40px;
             height: 40px;
@@ -192,17 +207,13 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
           }
           .nav-in {
              flex-direction: column;
-             padding: 10px 24px;
-             align-items: flex-start;
+             padding: 10px 0 !important;
           }
-          .nl {
-             width: 100%;
-             padding: 16px 0;
-             font-size: 15px;
-             border-bottom: 1px solid var(--bdr2);
-          }
-          .nl::after { display: none; }
           .nav-group { width: 100%; }
+          .nav-sub { display: none; background: var(--off); }
+          .nav-group.mob-open .nav-sub { display: block; }
+          .nav-arrow { transition: transform 0.3s; }
+          .nav-group.mob-open .nav-arrow { transform: rotate(180deg); }
         }
       `}</style>
     </div>

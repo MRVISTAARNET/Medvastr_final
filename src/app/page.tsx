@@ -64,7 +64,7 @@ export default function Home() {
             <div className="sec-s">Everything a medical professional needs, all in one place</div>
           </div>
           <Link href="/products" className="va">
-            View All →
+            View All Categories →
           </Link>
         </div>
         <div className="cat-g">
@@ -115,7 +115,7 @@ export default function Home() {
             <div className="sec-s">Most loved by healthcare professionals across India</div>
           </div>
           <Link href={`/products?cat=${TABS.find((t) => t.id === activeTab)?.type || "all"}`} className="va">
-            View All →
+            View All {TABS.find((t) => t.id === activeTab)?.label || "Scrubs"} →
           </Link>
         </div>
 
@@ -175,7 +175,7 @@ export default function Home() {
             <div className="sec-s">Fresh additions to the Medvastr collection</div>
           </div>
           <Link href="/products" className="va">
-            View All →
+            View All New Arrivals →
           </Link>
         </div>
         <div className="pg-4">
