@@ -20,6 +20,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
   const [mn, setMn] = useState(false); // Mobile Nav
   const [mS, setMs] = useState(false); // Mobile Search
   const [mo, setMo] = useState<string | null>(null); // Mobile Open Group
+  const [doM, setDoM] = useState<string | null>(null); // Desktop Open Mega
 
   const res = q
     ? PRODUCTS.filter((p) => p.name.toLowerCase().includes(q.toLowerCase())).slice(0, 6)
@@ -29,9 +30,9 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
   const wc = wishlist.length;
 
   return (
-    <div id="hdr">
+    <div id="hdr" onMouseLeave={() => setDoM(null)}>
       <div className="hdr-row">
-        <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
           <button className="ha mob-only" onClick={() => setMn(true)}>
             ☰
           </button>
@@ -41,6 +42,14 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             </span>
             <span className="lt">Wear Wellness</span>
           </Link>
+          
+          {/* Desktop Nav Links */}
+          <div className="desk-nav mob-hide">
+             <div className="dn-l" onMouseEnter={() => setDoM("men")}>Men</div>
+             <div className="dn-l" onMouseEnter={() => setDoM("women")}>Women</div>
+             <Link href="/products?cat=scrubs" className="dn-l">ecoflex™</Link>
+             <Link href="/products?cat=stethoscope" className="dn-l">Stethoscope</Link>
+          </div>
         </div>
 
         <div className={`srch-col${mS ? " mob-on" : ""}`}>
@@ -119,6 +128,13 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
         </div>
       </div>
 
+      {/* Desktop Mega Menu Dropdown */}
+      {doM && (
+        <div className="desk-mega-wrap mob-hide" onMouseEnter={() => setDoM(doM)} onMouseLeave={() => setDoM(null)}>
+           <MegaMenu gender={doM as "men" | "women"} />
+        </div>
+      )}
+
       {/* Mobile Nav Drawer */}
       <div className={`mob-drawer-ov${mn ? " on" : ""}`} onClick={() => setMn(false)} />
       <div id="nav" className={mn ? " mob-on" : ""}>
@@ -164,6 +180,16 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
 
       <style jsx>{`
         .mob-only { display: none; }
+        .desk-nav { display: flex; gap: 24px; margin-left: 20px; align-items: center; }
+        .dn-l { font-size: 13.5px; font-weight: 700; color: var(--ink); text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: color 0.2s; }
+        .dn-l:hover { color: var(--t); }
+        .desk-mega-wrap { 
+          position: absolute; top: 100%; left: 0; width: 100%; 
+          background: white; border-top: 1px solid var(--bdr); border-bottom: 1px solid var(--bdr);
+          box-shadow: 0 20px 40px rgba(0,0,0,0.08); z-index: 800; animation: megaIn 0.25s var(--ease);
+        }
+        @keyframes megaIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: none; } }
+
         @media (max-width: 1024px) {
           .mob-only { display: flex !important; }
           .mob-hide { display: none !important; }
@@ -176,7 +202,6 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.4s;
-            backdrop-filter: blur(4px);
           }
           .mob-drawer-ov.on { opacity: 1; visibility: visible; }
 
