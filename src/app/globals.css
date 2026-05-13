@@ -3817,7 +3817,7 @@ body, html {
 .rev-sec { background: var(--wh); padding: 100px 0; }
 .rev-in { max-width: 1560px; margin: 0 auto; padding: 0 44px; }
 .rev-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
-.rev-card { padding: 40px; border-radius: 24px; background: var(--off); border: 1.5px solid var(--bdr); transition: transform 0.3s; }
+.rev-card { padding: 40px; border-radius: 0; background: var(--off); border: 1.5px solid var(--bdr); transition: transform 0.3s; }
 .rev-card:hover { transform: translateY(-8px); border-color: var(--t); }
 .rev-q { font-size: 17px; color: var(--ink2); line-height: 1.8; font-style: italic; margin-bottom: 24px; min-height: 100px; font-weight: 500; }
 .rev-a { font-weight: 800; color: var(--ink); font-size: 15px; }
@@ -3949,7 +3949,7 @@ body, html {
 .about-home-in {
   max-width: none;
   margin: 0;
-  padding: 0; 
+  padding: 0 20px; 
 }
 
 .about-tag {
@@ -3975,3 +3975,6 @@ body, html {
   color: var(--ink2);
   margin-bottom: 24px;
 }
+
+.rv { border-radius: 0 !important; }
+
