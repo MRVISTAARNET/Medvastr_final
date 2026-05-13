@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 
 export default function VideoSection() {
-  const [play, setPlay] = useState(false);
 
   return (
     <div className="vid-sec">
@@ -17,25 +16,13 @@ export default function VideoSection() {
           stretch flexibility.
         </p>
 
-        <div className="vid-pl" onClick={() => setPlay(true)}>
-          {!play ? (
-            <div className="vid-ph">
-              <div className="play-r">▶</div>
-              <div className="play-l">
-                Play <strong>Video</strong>
-              </div>
+        <div className="vid-pl">
+          <div className="vid-ph">
+            <div className="play-r">▶</div>
+            <div className="play-l">
+              Brand <strong>Film</strong>
             </div>
-          ) : (
-            <iframe
-              width="100%"
-              height="100%"
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-              title="Medvastr Video"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            ></iframe>
-          )}
+          </div>
         </div>
 
         <div className="vid-perks">

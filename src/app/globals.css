@@ -3699,7 +3699,6 @@ body, html {
 #mob-nav { display: none !important; }
 
 @media (max-width: 768px) {
-  #nav { display: none !important; }
   #mob-nav { 
     width: 85% !important; max-width: 340px !important; background: rgba(255, 255, 255, 0.98) !important;
     backdrop-filter: blur(15px); border-right: 1px solid var(--bdr); box-shadow: 20px 0 50px rgba(0,0,0,0.1) !important;
@@ -3713,6 +3712,9 @@ body, html {
   .nav-sub { background: var(--warm) !important; padding: 10px 0; display: none; }
   .nav-group.mob-open .nav-sub { display: block; }
   .nav-in::after { content: "Customer Support\A+91 99203 14164\A\Amedvastr@gmail.com"; white-space: pre-wrap; display: block; padding: 40px 24px; font-size: 13px; color: var(--ink); font-weight: 600; line-height: 1.8; border-top: 1px solid var(--bdr); margin-top: 20px; }
+
+  /* Shop by Colour — start from left on mobile */
+  .clr-row { justify-content: flex-start !important; }
 }
 
 /* --- CHECKOUT --- */
