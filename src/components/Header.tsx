@@ -97,7 +97,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
         </div>
 
         <div className="hdr-acts">
-          <button className="ha mob-only" style={{ display: "none" }} onClick={() => setMs(!mS)}>
+          <button className="ha mob-only" onClick={() => setMs(!mS)}>
             🔍
           </button>
           <button className="ha" onClick={onAcct} title="Account">
@@ -121,7 +121,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
 
       {/* Mobile Nav Drawer */}
       <div className={`mob-drawer-ov${mn ? " on" : ""}`} onClick={() => setMn(false)} />
-      <div id="nav" className={`mob-only ${mn ? " mob-on" : ""}`}>
+      <div id="mob-nav" className={mn ? " mob-on" : ""}>
         <div className="mob-nav-hd mob-only">
            <button className="mn-close" onClick={() => setMn(false)}>✕</button>
         </div>
