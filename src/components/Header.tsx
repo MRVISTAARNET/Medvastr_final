@@ -121,7 +121,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
 
       {/* Mobile Nav Drawer */}
       <div className={`mob-drawer-ov${mn ? " on" : ""}`} onClick={() => setMn(false)} />
-      <div id="mob-nav" className={mn ? " mob-on" : ""}>
+      <div id="nav" className={mn ? " mob-on" : ""}>
         <div className="mob-nav-hd mob-only">
            <button className="mn-close" onClick={() => setMn(false)}>✕</button>
         </div>
