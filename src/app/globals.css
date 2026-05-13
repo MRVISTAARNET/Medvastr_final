@@ -3582,8 +3582,8 @@ body, html {
   .pg-3::after,
   .feat-strip::after {
     content: '';
-    flex: 0 0 20px;
-    min-width: 20px;
+    flex: 0 0 30px;
+    min-width: 30px;
     height: 1px;
     pointer-events: none;
   }
@@ -3598,9 +3598,9 @@ body, html {
   /* Specific Widths for Mobile */
   .pc { width: 260px !important; } /* Product Cards */
   .rv, .comm-card { width: 280px !important; } /* Reviews/Community */
-  .trit { min-width: 220px; }
-  .cat-c { flex: 0 0 140px !important; }
-  .clr-sw { flex: 0 0 80px !important; text-align: center; }
+  .trit { min-width: 240px; } /* Trust Indicators: wider to peek next item */
+  .cat-c { flex: 0 0 160px !important; }
+  .clr-sw { flex: 0 0 75px !important; text-align: center; }
 
   /* Sections Padding & Spacing */
   .sec, .rev-sec, .comm-sec, .clr-sec {
@@ -3608,45 +3608,79 @@ body, html {
     overflow: hidden;
   }
 
-  .sec-t { font-size: 22px !important; margin-bottom: 6px; }
-  .sec-s { font-size: 13px !important; opacity: 0.7; }
+  .sec-t { font-size: 24px !important; margin-bottom: 8px; font-weight: 700; }
+  .sec-s { font-size: 14px !important; opacity: 0.8; line-height: 1.4; }
 
-  /* Colour Selection Row Fix */
+  /* Colour Selection Row: Single Line Fix */
   .clr-row {
     display: flex !important;
     grid-template-columns: none !important;
+    padding-bottom: 15px !important;
   }
 
-  /* Navbar Mobile Animation */
+  /* Navbar Mobile Menu Redesign */
   #nav {
-    transition: transform 0.4s var(--ease), visibility 0.4s;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
     transform: translateX(-100%);
     visibility: hidden;
     position: fixed;
     top: 0; left: 0;
-    width: 85%; height: 100vh;
+    width: 80%; height: 100vh;
     background: white;
     z-index: 10000;
-    box-shadow: 20px 0 60px rgba(0,0,0,0.15);
-    display: block !important;
+    box-shadow: 15px 0 50px rgba(0,0,0,0.12);
+    display: flex !important;
+    flex-direction: column;
   }
   #nav.mob-on { transform: translateX(0); visibility: visible; }
+  
+  .nav-in {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 0 !important;
+    display: flex;
+    flex-direction: column;
+  }
 
-  /* Footer Mobile Refinement */
-  .ft-col h4 {
+  .nl {
+    padding: 16px 24px !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    border-bottom: 1px solid #f0f0f0;
+    color: var(--ink) !important;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor: pointer;
-    padding: 18px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    margin-bottom: 0;
-    font-size: 14px;
   }
-  .ft-col h4::after { content: '▾'; transition: transform 0.3s; }
-  .ft-col.open h4::after { transform: rotate(180deg); }
-  .ft-lnks { display: none; padding: 10px 0 20px; }
-  .ft-col.open .ft-lnks { display: block; }
+  .nl:active { background: #f8f8f8; }
+  .nl .ntag { background: var(--t); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+
+  /* Footer Mobile Visibility Fix */
+  footer {
+    padding: 50px 20px 40px !important;
+  }
+  .ft-brand {
+    text-align: left !important;
+    margin-bottom: 40px;
+  }
+  .ft-logo { font-size: 28px !important; }
+  .ft-desc { margin: 15px 0 !important; text-align: left !important; font-size: 14px; color: rgba(255,255,255,0.6); }
+  .ft-col h4 {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 20px 0 !important;
+    margin: 0 !important;
+    font-size: 14px !important;
+    letter-spacing: 1px;
+  }
+  .ft-lnks {
+    padding: 0 0 20px !important;
+  }
+  .ft-btm {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 30px;
+    margin-top: 30px;
+  }
 }
 
 /* MARQUEE ANIMATION */
@@ -3662,13 +3696,15 @@ body, html {
 
 /* HERO SLIDER POLISH */
 @media (max-width: 768px) {
-  .hero-slide { min-height: 460px; padding: 40px 20px; }
-  .slide-h1 { font-size: 30px; line-height: 1.1; }
-  .slide-p { font-size: 14px; margin: 15px 0 25px; }
+  .hero-slide { min-height: 480px; padding: 50px 20px; }
+  .slide-h1 { font-size: 34px; line-height: 1.1; font-weight: 800; }
+  .slide-p { font-size: 15px; margin: 18px 0 30px; line-height: 1.5; }
   .slide-stats-glass {
     grid-template-columns: repeat(2, 1fr) !important;
     width: 100%;
-    margin-top: 30px !important;
+    margin-top: 40px !important;
+    padding: 20px !important;
+    background: rgba(255,255,255,0.08) !important;
   }
 }
 
