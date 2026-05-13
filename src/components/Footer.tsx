@@ -1,12 +1,20 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { B } from "@/lib/data";
 
 export default function Footer() {
+  const [openCol, setOpenCol] = useState<string | null>(null);
+
+  const toggle = (id: string) => {
+    if (window.innerWidth <= 768) {
+      setOpenCol(openCol === id ? null : id);
+    }
+  };
+
   return (
-    <footer>
+    <footer className="ft">
       <div className="ft-g">
         <div>
           <div className="ft-logo">
@@ -14,8 +22,7 @@ export default function Footer() {
           </div>
           <span className="ft-tag">Premium Medical Apparel</span>
           <p className="ft-desc">
-            India's leading medical apparel brand. Built for doctors, nurses and healthcare professionals who give
-            everything every single day.
+            India's leading medical apparel brand. Built for doctors, nurses and healthcare professionals.
           </p>
           <div className="ft-contact">
             📞 <a href={`tel:${B.phone}`}>{B.phone}</a>
@@ -31,89 +38,84 @@ export default function Footer() {
             <a href={B.yt} target="_blank" rel="noopener" className="ft-s-a">▶</a>
           </div>
         </div>
-        <div className="ft-col">
-          <h4>Men</h4>
-          <ul className="ft-lnks">
-            {[
+
+        {[
+          {
+            id: "men",
+            h: "Men",
+            links: [
               ["V-Neck Scrubs", "scrubs"],
               ["Mandarin Collar", "scrubs"],
-              ["Longsleeve Scrubs", "scrubs"],
               ["ecoflex™ Scrubs", "scrubs"],
               ["Lab Coats", "labcoat"],
               ["Underscrubs", "underscrub"],
               ["DRIFT Jacket", "jacket"],
               ["Accessories", "accessories"],
-              ["LAST CHANCE", "all"],
-            ].map(([l, cat]) => (
-              <li key={l}>
-                <Link href={`/products?cat=${cat}`}>{l}</Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="ft-col">
-          <h4>Women</h4>
-          <ul className="ft-lnks">
-            {[
+            ],
+          },
+          {
+            id: "women",
+            h: "Women",
+            links: [
               ["V-Neck Scrubs", "scrubs"],
               ["Mandarin Collar", "scrubs"],
-              ["Longsleeve Scrubs", "scrubs"],
               ["ecoflex™ Scrubs", "scrubs"],
               ["Lab Coats", "labcoat"],
               ["Underscrubs", "underscrub"],
               ["DRIFT Jacket", "jacket"],
               ["Hijab", "accessories"],
-              ["LAST CHANCE", "all"],
-            ].map(([l, cat]) => (
-              <li key={l}>
-                <Link href={`/products?cat=${cat}`}>{l}</Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="ft-col">
-          <h4>Help</h4>
-          <ul className="ft-lnks">
-            {[
+            ],
+          },
+          {
+            id: "help",
+            h: "Help",
+            links: [
               ["Track My Order", "track"],
               ["Returns & Exchanges", "returns"],
               ["Size Guide", "sizeguide"],
               ["Bulk Orders", "bulk"],
               ["Contact Us", "contact"],
-              ["Breakpoint 24/7", "breakpoint"],
-              ["Careers", "careers"],
-            ].map(([l, p]) => (
-              <li key={l}>
-                <Link href={`/${p}`}>{l}</Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="ft-col">
-          <h4>Company</h4>
-          <ul className="ft-lnks">
-            {[
+            ],
+          },
+          {
+            id: "comp",
+            h: "Company",
+            links: [
               ["About Us", "about"],
               ["Blog & Resources", "blog"],
-              ["Press Kit", "press"],
               ["Sustainability", "sustainability"],
               ["Privacy Policy", "privacy"],
               ["Terms of Service", "terms"],
-              ["Shipping Policy", "shipping"],
-              ["Refund Policy", "refund"],
-            ].map(([l, p]) => (
-              <li key={l}>
-                <Link href={`/${p}`}>{l}</Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+            ],
+          },
+        ].map((col) => (
+          <div className="ft-col" key={col.id}>
+            <div className="ft-col-h" onClick={() => toggle(col.id)}>
+              <h4>{col.h}</h4>
+              <span className="ft-col-ico">{openCol === col.id ? "−" : "+"}</span>
+            </div>
+            <ul className={`ft-lnks${openCol === col.id ? " on" : ""}`}>
+              {col.links.map(([l, p]) => (
+                <li key={l}>
+                  <Link href={p.startsWith("/") ? p : `/products?cat=${p}`}>{l}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
+
       <div className="ft-btm">
-        <div>© 2026 Medvastr. All rights reserved. Made with ❤️ for India's Healthcare Heroes.</div>
-        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
+        <div>
+          © 2026 Medvastr. All rights reserved. 
+          <br className="mob-only" />
+          <span style={{ marginLeft: 10 }}>
+            Made by <a href="https://mrvistaarnet.com" target="_blank" rel="noopener" style={{ color: 'var(--t)', fontWeight: 600 }}>MRVISTAARNET</a>
+          </span>
+        </div>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center", marginTop: 10 }}>
           <span style={{ opacity: 0.5, fontSize: 11 }}>Payments:</span>
-          {["UPI", "Visa", "MC", "Amex", "COD", "EMI", "NB"].map((p) => (
+          {["UPI", "Visa", "MC", "Amex", "COD"].map((p) => (
             <span key={p} className="pay-p">
               {p}
             </span>

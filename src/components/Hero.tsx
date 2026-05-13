@@ -31,21 +31,20 @@ export default function Hero({ onShop }: HeroProps) {
       <div className="hero-track" style={{ transform: `translateX(-${cur * 100}%)` }}>
         {SLIDES.map((s, i) => (
           <div className="hero-slide" key={i}>
-            <div className="slide-bg" style={{ background: `linear-gradient(132deg,${s.g1} 52%,${s.g2})` }} />
+            <div className="slide-bg" style={{ background: `linear-gradient(135deg, ${s.g1} 0%, ${s.g2} 100%)` }} />
             <div className="slide-body">
               <div className="slide-txt">
                 <div className="slide-ey">⚕ {s.ey}</div>
                 <h1 className="slide-h1">
                   {s.h}
-                  {s.em && <em>{s.em}</em>}
                 </h1>
                 <p className="slide-p">{s.p}</p>
                 <div className="slide-btns">
-                  <button className="btn-p" onClick={onShop}>
-                    {s.c1} →
+                  <button className="btn-p" onClick={onShop} style={{ padding: '0 40px', borderRadius: 999 }}>
+                    Shop Now →
                   </button>
-                  <button className="btn-g" onClick={onShop}>
-                    {s.c2}
+                  <button className="btn-g" onClick={onShop} style={{ borderRadius: 999 }}>
+                    View Collection
                   </button>
                 </div>
                 <div className="slide-dots">
@@ -63,10 +62,10 @@ export default function Hero({ onShop }: HeroProps) {
               </div>
               <div className="slide-stats">
                 {[
-                  ["50K+", "Happy Doctors"],
-                  ["4.8★", "Avg Rating"],
+                  ["50K+", "Doctors"],
+                  ["4.8★", "Rating"],
                   ["30+", "Colours"],
-                  ["200+", "Wash Tests"],
+                  ["200+", "Washes"],
                 ].map(([n, l]) => (
                   <div className="sst" key={l}>
                     <span className="sst-n">{n}</span>
@@ -78,12 +77,8 @@ export default function Hero({ onShop }: HeroProps) {
           </div>
         ))}
       </div>
-      <button className="hero-arr hero-p" onClick={() => go(-1)}>
-        ‹
-      </button>
-      <button className="hero-arr hero-n" onClick={() => go(1)}>
-        ›
-      </button>
+      <button className="hero-arr hero-p" onClick={() => go(-1)}>‹</button>
+      <button className="hero-arr hero-n" onClick={() => go(1)}>›</button>
     </div>
   );
 }
