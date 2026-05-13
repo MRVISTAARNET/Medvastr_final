@@ -36,10 +36,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             ☰
           </button>
           <Link href="/" className="logo">
-            <span className="lw">
-              Medva<span>str</span>
-            </span>
-            <span className="lt">Wear Wellness</span>
+            <span className="lw-new">medvastr</span>
           </Link>
         </div>
 

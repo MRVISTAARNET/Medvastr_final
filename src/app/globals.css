@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap');
+
 :root {
   --ink: #0c1017;
   --ink2: #171e2e;
@@ -189,6 +191,18 @@ textarea {
   font-weight: 500;
   display: block;
   margin-top: 2px;
+}
+
+/* New Logo Wordmark */
+.lw-new {
+  font-family: 'Nunito', 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: #2B2D6E;
+  letter-spacing: -0.02em;
+  display: block;
+  line-height: 1;
+  text-transform: lowercase;
 }
 
 /* Search */
@@ -421,8 +435,8 @@ textarea {
 
 .nav-in {
   max-width: 1560px;
-  margin: 0;
-  padding: 0 16px;
+  margin: 0 auto;
+  padding: 0 44px;
   display: flex;
   align-items: center;
   overflow-x: clip;
