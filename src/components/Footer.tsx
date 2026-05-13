@@ -138,8 +138,8 @@ export default function Footer() {
           .ft-g { grid-template-columns: 1fr; gap: 0; }
           .ft-brand { margin-bottom: 40px; text-align: center; }
           .ft-desc { margin: 15px auto; text-align: center; }
-          .ft-soc { justify-content: center; margin-top: 20px; }
-          .ft-col { border-bottom: 1px solid rgba(255,255,255,0.06); width: 100%; }
+          .ft-soc { justify-content: center; }
+          .ft-col { border-bottom: 1px solid rgba(255,255,255,0.06); }
           .ft-col h4 { margin-bottom: 0; padding: 18px 0; }
           .ft-lnks { display: none; padding-bottom: 20px; }
           .ft-col.open .ft-lnks { display: block; }
