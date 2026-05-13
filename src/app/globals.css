@@ -168,17 +168,14 @@ textarea {
 }
 
 .lw {
-  font-family: var(--serif);
-  font-size: 28px;
-  font-weight: 700;
+  font-family: var(--sans);
+  font-size: 26px;
+  font-weight: 800;
   color: var(--ink);
-  letter-spacing: -0.04em;
+  letter-spacing: -0.05em;
   display: block;
   line-height: 1;
-}
-
-.lw span {
-  color: var(--t);
+  text-transform: lowercase;
 }
 
 .lt {
@@ -3727,6 +3724,7 @@ body, html {
   .nav-in::after { content: "Customer Support\A+91 99203 14164\A\Amedvastr@gmail.com"; white-space: pre-wrap; display: block; padding: 40px 24px; font-size: 13px; color: var(--ink); font-weight: 600; line-height: 1.8; border-top: 1px solid var(--bdr); margin-top: 20px; }
 
   /* Shop by Colour — start from left on mobile */
+  .clr-in { padding: 0 16px !important; }
   .clr-row { justify-content: flex-start !important; padding-left: 0 !important; margin-left: 0 !important; gap: 12px !important; }
 }
 
