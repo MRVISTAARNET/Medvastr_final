@@ -4036,11 +4036,10 @@ body, html {
 
 /* Bulk Banner */
 .bulk-banner {
-  background: var(--ink3);
-  margin: 64px 0;
-  padding: 80px 24px;
-  position: relative;
-  overflow: hidden;
+  margin: 0;
+}
+.bulk-banner-wrap {
+  margin: 60px auto !important;
 }
 
 .bulk-in {
