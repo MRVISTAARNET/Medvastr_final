@@ -3776,3 +3776,29 @@ body, html {
   .success-h { font-size: 30px; }
   .success-acts { flex-direction: column; }
 }
+
+/* Community Section */
+.comm-sec { background: var(--off); padding: 80px 0; border-top: 1px solid var(--bdr); }
+.comm-in { max-width: 1560px; margin: 0 auto; padding: 0 44px; }
+.comm-hd { text-align: center; margin-bottom: 60px; }
+.comm-t { font-family: var(--serif); font-size: 42px; color: var(--ink); margin-bottom: 15px; letter-spacing: -0.02em; }
+.comm-s { color: var(--lt); font-size: 16px; max-width: 600px; margin: 0 auto; }
+.comm-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+.comm-card { background: var(--wh); padding: 44px; border-radius: 28px; border: 1.5px solid var(--bdr); position: relative; transition: all 0.35s var(--ease); box-shadow: var(--s1); }
+.comm-card:hover { transform: translateY(-10px); box-shadow: var(--s4); border-color: var(--t); }
+.comm-av { font-size: 44px; margin-bottom: 24px; }
+.comm-q { font-size: 16.5px; color: var(--ink2); line-height: 1.8; font-style: italic; margin-bottom: 30px; min-height: 120px; font-weight: 500; }
+.comm-au { font-weight: 800; color: var(--ink); font-size: 16px; margin-bottom: 4px; }
+.comm-ro { font-size: 13.5px; color: var(--lt); margin-bottom: 20px; font-weight: 500; }
+.comm-pill { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; background: var(--t4); color: var(--t); border-radius: 999px; font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+@media (max-width: 1024px) {
+  .comm-cards { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .comm-in { padding: 0 20px; }
+  .comm-t { font-size: 30px; }
+  .comm-card { padding: 30px; }
+  .comm-q { font-size: 15px; min-height: auto; }
+}
