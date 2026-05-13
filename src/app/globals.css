@@ -3937,3 +3937,41 @@ body, html {
 
 .rv-nm, .rev-a, .comm-au { font-weight: 800 !important; color: var(--ink) !important; font-size: 16px !important; }
 .rv-rl, .rev-r, .comm-ro { font-size: 13px !important; color: var(--lt) !important; margin-top: 4px !important; }
+
+
+/* About Home Section (Introduction) */
+.about-home {
+  background: #fdf9f0;
+  padding: 80px 0;
+  border-top: 1px solid var(--bdr);
+}
+
+.about-home-in {
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: 0 44px;
+}
+
+.about-tag {
+  color: var(--t);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 13px;
+  margin-bottom: 15px;
+}
+
+.about-h {
+  font-family: var(--serif);
+  font-size: 40px;
+  color: var(--ink);
+  margin-bottom: 30px;
+  line-height: 1.2;
+}
+
+.about-p {
+  font-size: 18px;
+  line-height: 1.8;
+  color: var(--ink2);
+  margin-bottom: 24px;
+}

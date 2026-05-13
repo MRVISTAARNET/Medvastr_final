@@ -208,62 +208,6 @@ export default function Home() {
       <VideoSection />
       <PressSection />
 
-      {/* Community */}
-      <div className="comm-sec">
-        <div className="comm-in">
-          <div className="comm-hd">
-            <h2 className="comm-t">50,000+ Healthcare Heroes Choose Medvastr</h2>
-            <p className="comm-s">Real stories from real doctors, nurses and healthcare professionals</p>
-          </div>
-          <div className="comm-cards">
-            {[
-              {
-                emo: "👨‍⚕️",
-                q: "Switched to Medvastr 6 months ago and never looked back. The ecoflex fabric moves with me through every surgery.",
-                au: "Dr. Anil Kumar",
-                ro: "Cardiac Surgeon, AIIMS Delhi",
-                tag: "ecoflex™ User",
-              },
-              {
-                emo: "👩‍⚕️",
-                q: "As a female surgeon, finding scrubs that fit properly was always a challenge. Medvastr finally solved that.",
-                au: "Dr. Meera Patel",
-                ro: "Neurosurgeon, KEM Hospital Mumbai",
-                tag: "Women's Slim Fit",
-              },
-              {
-                emo: "👩‍⚕️",
-                q: "After switching my team of 40 nurses to Medvastr bulk orders, complaints about uniforms dropped to zero.",
-                au: "Sr. Nurse Priya Nair",
-                ro: "Head of Nursing, Apollo Chennai",
-                tag: "Bulk Order 50+ Pieces",
-              },
-            ].map((x, i) => (
-              <div className="comm-card" key={i}>
-                <div className="comm-av">{x.emo}</div>
-                <div className="comm-q">"{x.q}"</div>
-                <div className="comm-au">{x.au}</div>
-                <div className="comm-ro">{x.ro}</div>
-                <div className="comm-pill">✓ {x.tag}</div>
-              </div>
-            ))}
-          </div>
-          <div className="comm-stats">
-            {[
-              ["50,000+", "Happy Customers"],
-              ["4.8 ★", "Average Rating"],
-              ["200+", "Cities Delivered"],
-              ["₹2Cr+", "Products Sold"],
-            ].map(([n, l]) => (
-              <div className="cst" key={l}>
-                <span className="cst-n">{n}</span>
-                <div className="cst-l">{l}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
       <BulkOrderBanner />
       <AboutHomeSection />
 
