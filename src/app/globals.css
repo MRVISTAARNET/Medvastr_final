@@ -150,7 +150,7 @@ textarea {
   max-width: 1560px;
   margin: 0 auto;
   padding: 0 44px;
-  height: 60px;
+  height: 54px;
   display: grid;
   grid-template-columns: 220px 1fr 220px;
   align-items: center;
@@ -432,7 +432,7 @@ textarea {
 }
 
 .nl {
-  padding: 10px 14px;
+  padding: 8px 14px;
   font-size: 13px;
   font-weight: 500;
   color: var(--ink2);
@@ -4035,17 +4035,18 @@ body, html {
 
 /* Bulk Banner */
 .bulk-banner {
-  background: url('/ChatGPT Image May 13, 2026, 03_34_16 PM.png') center/cover no-repeat;
+  background: url('/ChatGPT Image May 13, 2026, 04_40_07 PM.png') center/contain no-repeat;
   margin: 64px 0;
   width: 100%;
-  aspect-ratio: 1920 / 400;
+  aspect-ratio: 16 / 4;
   position: relative;
   overflow: hidden;
+  background-color: #fbfaf8; /* Match background if image is contain */
 }
 
 @media (max-width: 768px) {
   .bulk-banner {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 16 / 9;
     margin: 40px 0;
   }
 }
