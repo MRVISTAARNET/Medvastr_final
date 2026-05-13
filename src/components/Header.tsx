@@ -121,7 +121,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
 
       {/* Overlay */}
       {mn && <div className="mob-ov" onClick={() => setMn(false)} style={{
-        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', z-index: 9999
+        position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 9999
       }} />}
 
       <div id="nav" className={mn ? " mob-on" : ""}>
