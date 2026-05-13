@@ -3681,9 +3681,9 @@ body, html {
   .pdp-emo-main { font-size: 100px; }
   .pdp-h { font-size: 30px !important; }
   .pdp-price { font-size: 26px !important; }
-  .pdp-acts { display: flex; flex-direction: column; gap: 12px; }
-  .pdp-qty { width: 100%; justify-content: space-between; }
-  .pdp-add { width: 100%; height: 58px; }
+  .pdp-acts { display: flex; flex-direction: column; gap: 14px; }
+  .pdp-qty { width: 100%; justify-content: space-between; height: 62px; }
+  .pdp-add { width: 100%; height: 64px; font-size: 18px; }
   .pdp-wish { position: absolute; top: 15px; right: 15px; z-index: 10; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: none; }
   .pdp-specs { grid-template-columns: 1fr; }
   .pdp-rel { margin-top: 60px; }
@@ -3701,8 +3701,8 @@ body, html {
 @media (max-width: 1024px) {
   #nav {
     display: flex !important;
-    width: 85% !important; max-width: 340px !important; background: rgba(255, 255, 255, 0.98) !important;
-    backdrop-filter: blur(15px); border-right: 1px solid var(--bdr); box-shadow: 20px 0 50px rgba(0,0,0,0.1) !important;
+    width: 85% !important; max-width: 340px !important; background: #ffffff !important;
+    border-right: 1px solid var(--bdr); box-shadow: 20px 0 50px rgba(0,0,0,0.1) !important;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s; transform: translateX(-100%); 
     visibility: hidden; position: fixed; top: 0; left: 0; height: 100vh; z-index: 10000; flex-direction: column;
   }
