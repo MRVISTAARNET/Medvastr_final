@@ -8,7 +8,6 @@ export default function ContactPage() {
     ["📸", "Instagram", B.ig],
     ["f", "Facebook", B.fb],
     ["in", "LinkedIn", B.li],
-    ["▶", "YouTube", B.yt],
   ];
 
   return (
