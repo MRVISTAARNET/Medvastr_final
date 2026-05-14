@@ -1,37 +1,31 @@
 # dependencies
-**/node_modules
-/.pnp
+node_modules
+.pnp
 .pnp.*
 .yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/versions
 
 # testing
-**/coverage
+coverage
 
 # next.js
-**/.next/
-**/out/
+.next/
+out/
 
 # production
-**/build
-**/dist
+build
+dist
 
 # backend
-**/target/
+backend/target/
 **/*.class
 **/*.jar
 **/*.war
-**/*.ear
 **/*.log
 
 # IDEs
 .idea/
 .vscode/
 *.swp
-*.swo
 *.DS_Store
 
 # env files
