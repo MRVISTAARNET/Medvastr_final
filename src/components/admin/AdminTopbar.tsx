@@ -13,14 +13,30 @@ interface Props {
 
 const AdminTopbar = ({ title, sub, action }: Props) => {
   const [time, setTime] = useState('');
+  const [health, setHealth] = useState<'UP' | 'DOWN'>('DOWN');
 
   useEffect(() => {
+    const checkHealth = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/health`);
+        const data = await res.json();
+        if (data.status === "UP") setHealth('UP');
+      } catch (e) {
+        setHealth('DOWN');
+      }
+    };
+    checkHealth();
+    const hInt = setInterval(checkHealth, 30000);
+
     const updateTime = () => {
       setTime(new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }));
     };
     updateTime();
     const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      clearInterval(hInt);
+    };
   }, []);
 
   return (
@@ -36,7 +52,9 @@ const AdminTopbar = ({ title, sub, action }: Props) => {
         <div className="topbar-sub">{sub}</div>
       </div>
       <div className="topbar-right">
-        <div className="tb-badge">🟢 Live</div>
+        <div className={`tb-badge ${health === 'UP' ? 'b-grn' : 'b-red'}`}>
+          {health === 'UP' ? '🟢 API Online' : '🔴 API Offline'}
+        </div>
         <div className="tb-time">{time}</div>
         {action && (
           <button className="btn-primary" onClick={action.onClick}>

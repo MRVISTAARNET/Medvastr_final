@@ -73,20 +73,51 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [toastMsg, setToastMsg] = useState("");
   const [toastKind, setToastKind] = useState<"ok" | "bad" | "">("");
 
-  // Load from Storage
+  // Load from Storage & API
   useEffect(() => {
     const savedCart = localStorage.getItem("mv_cart");
     const savedWish = localStorage.getItem("mv_wish");
-    const savedProducts = localStorage.getItem("mv_products");
     
     if (savedCart) dispatch({ type: "SET", data: JSON.parse(savedCart) });
     if (savedWish) setWishlist(JSON.parse(savedWish));
-    if (savedProducts) {
+
+    // Fetch products from backend
+    const fetchProducts = async () => {
       try {
-        const parsed = JSON.parse(savedProducts);
-        if (parsed && parsed.length > 0) setProducts(parsed);
-      } catch (e) {}
-    }
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products?size=100`);
+        const data = await res.json();
+        if (data.status === "SUCCESS") {
+          // Map backend DTO to frontend Product interface
+          const mapped: Product[] = data.data.content.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            short: p.name.split(' ').slice(-2).join(' '),
+            fab: p.fabric,
+            type: p.type,
+            gen: p.gender,
+            price: p.price,
+            origPrice: p.originalPrice,
+            rating: p.rating,
+            rev: p.reviewCount,
+            badge: p.badge,
+            clrs: p.variants?.map((v: any) => v.colorHex).filter((v: any, i: number, a: any[]) => a.indexOf(v) === i) || [],
+            emo: p.emoji || '🥼',
+            bg: p.bgColor || '#f0f0f0',
+            desc: p.description,
+            fabD: p.fabricDetail || '',
+            stretch: p.stretchType || '',
+            pockets: p.pocketCount || 0,
+            care: p.careInstructions || '',
+            wt: p.weight || '',
+            fit: p.fit || '',
+          }));
+          setProducts(mapped);
+        }
+      } catch (e) {
+        console.error("Failed to fetch products:", e);
+      }
+    };
+    fetchProducts();
   }, []);
 
   // Save to Storage
@@ -97,10 +128,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     localStorage.setItem("mv_wish", JSON.stringify(wishlist));
   }, [wishlist]);
-
-  useEffect(() => {
-    localStorage.setItem("mv_products", JSON.stringify(products));
-  }, [products]);
 
   const toast = useCallback((msg: string, kind: "ok" | "bad" | "" = "") => {
     setToastMsg(msg);
@@ -135,17 +162,70 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     [toast]
   );
 
-  const addProduct = useCallback((p: Product) => {
-    setProducts((prev) => [p, ...prev]);
-  }, []);
+  const addProduct = useCallback(async (p: Product) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: p.name,
+          description: p.desc,
+          price: p.price,
+          type: p.type,
+          gender: p.gen,
+          badge: p.badge,
+          emoji: p.emo,
+          bgColor: p.bg
+        })
+      });
+      const data = await res.json();
+      if (data.status === "SUCCESS") {
+        setProducts((prev) => [p, ...prev]); // Optimistic update or refetch
+        toast("Product added to backend!", "ok");
+      }
+    } catch (e) {
+      toast("Failed to add product", "bad");
+    }
+  }, [toast]);
 
-  const updateProduct = useCallback((p: Product) => {
-    setProducts((prev) => prev.map((item) => (item.id === p.id ? p : item)));
-  }, []);
+  const updateProduct = useCallback(async (p: Product) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${p.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: p.name,
+          description: p.desc,
+          price: p.price,
+          type: p.type,
+          gender: p.gen,
+          badge: p.badge,
+          emoji: p.emo,
+          bgColor: p.bg
+        })
+      });
+      if (res.ok) {
+        setProducts((prev) => prev.map((item) => (item.id === p.id ? p : item)));
+        toast("Product updated!", "ok");
+      }
+    } catch (e) {
+      toast("Update failed", "bad");
+    }
+  }, [toast]);
 
-  const deleteProduct = useCallback((id: number) => {
-    setProducts((prev) => prev.filter((item) => item.id !== id));
-  }, []);
+  const deleteProduct = useCallback(async (id: number) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, {
+        method: "DELETE"
+      });
+      if (res.ok) {
+        setProducts((prev) => prev.filter((item) => item.id !== id));
+        toast("Product deleted!", "ok");
+      }
+    } catch (e) {
+      toast("Delete failed", "bad");
+    }
+  }, [toast]);
 
   return (
     <AppContext.Provider
