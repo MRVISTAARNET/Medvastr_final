@@ -86,7 +86,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products?size=100`);
         const data = await res.json();
-        if (data.status === "SUCCESS") {
+        if (data.success) {
           // Map backend DTO to frontend Product interface
           const mapped: Product[] = data.data.content.map((p: any) => ({
             id: p.id,
@@ -179,7 +179,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         })
       });
       const data = await res.json();
-      if (data.status === "SUCCESS") {
+      if (data.success) {
         setProducts((prev) => [p, ...prev]); // Optimistic update or refetch
         toast("Product added to backend!", "ok");
       }

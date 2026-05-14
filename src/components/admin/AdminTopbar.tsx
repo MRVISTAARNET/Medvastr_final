@@ -20,7 +20,7 @@ const AdminTopbar = ({ title, sub, action }: Props) => {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/health`);
         const data = await res.json();
-        if (data.status === "UP") setHealth('UP');
+        if (data.success) setHealth('UP');
       } catch (e) {
         setHealth('DOWN');
       }
