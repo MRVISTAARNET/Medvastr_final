@@ -8,10 +8,12 @@ import VideoSection from "@/components/VideoSection";
 import AboutHomeSection from "@/components/AboutHomeSection";
 import BulkOrderBanner from "@/components/BulkOrderBanner";
 import PressSection from "@/components/PressSection";
-import { PRODUCTS, COLS, REVIEWS, B } from "@/lib/data";
+import { COLS, REVIEWS, B } from "@/lib/data";
+import { useApp } from "@/context/AppContext";
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState("scrubs");
+  const { products } = useApp();
 
   const TABS = [
     { id: "scrubs", label: "Classic Scrubs", type: "scrubs", fab: "Classic" },
@@ -25,12 +27,12 @@ export default function Home() {
   const tabProducts = (() => {
     const tab = TABS.find((t) => t.id === activeTab);
     if (!tab) return [];
-    let p = PRODUCTS.filter((x) => x.type === tab.type);
+    let p = products.filter((x) => x.type === tab.type);
     if (tab.fab) p = p.filter((x) => x.fab === tab.fab);
     return p.slice(0, 8);
   })();
 
-  const newArr = PRODUCTS.filter((p) => ["New", "New Launch"].includes(p.badge)).slice(0, 4);
+  const newArr = products.filter((p) => p.badge && ["New", "New Launch"].includes(p.badge)).slice(0, 4);
 
   return (
     <div className="page">

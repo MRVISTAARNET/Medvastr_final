@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useReducer, useState, useCallback, useEffect } from "react";
-import { Product } from "@/lib/data";
+import { Product, PRODUCTS } from "@/lib/data";
 
 interface CartItem extends Product {
   k: string;
@@ -14,11 +14,15 @@ interface CartItem extends Product {
 interface AppContextType {
   cart: CartItem[];
   wishlist: number[];
+  products: Product[];
   addToCart: (p: Product, ci?: number, sz?: string) => void;
   updateCartQty: (index: number, delta: number) => void;
   removeFromCart: (index: number) => void;
   clearCart: () => void;
   toggleWishlist: (id: number) => void;
+  addProduct: (p: Product) => void;
+  updateProduct: (p: Product) => void;
+  deleteProduct: (id: number) => void;
   toast: (msg: string, kind?: "ok" | "bad" | "") => void;
   toastMsg: string;
   toastKind: "ok" | "bad" | "";
@@ -42,7 +46,7 @@ function cartReducer(state: CartItem[], action: any): CartItem[] {
         {
           ...p,
           k,
-          col: p.clrs[ci] || p.clrs[0],
+          col: p.clrs?.[ci] || p.clrs?.[0] || "#000",
           colNm: "Color",
           size: sz,
           qty: 1,
@@ -65,6 +69,7 @@ function cartReducer(state: CartItem[], action: any): CartItem[] {
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [cart, dispatch] = useReducer(cartReducer, []);
   const [wishlist, setWishlist] = useState<number[]>([]);
+  const [products, setProducts] = useState<Product[]>(PRODUCTS);
   const [toastMsg, setToastMsg] = useState("");
   const [toastKind, setToastKind] = useState<"ok" | "bad" | "">("");
 
@@ -72,8 +77,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const savedCart = localStorage.getItem("mv_cart");
     const savedWish = localStorage.getItem("mv_wish");
+    const savedProducts = localStorage.getItem("mv_products");
+    
     if (savedCart) dispatch({ type: "SET", data: JSON.parse(savedCart) });
     if (savedWish) setWishlist(JSON.parse(savedWish));
+    if (savedProducts) {
+      try {
+        const parsed = JSON.parse(savedProducts);
+        if (parsed && parsed.length > 0) setProducts(parsed);
+      } catch (e) {}
+    }
   }, []);
 
   // Save to Storage
@@ -84,6 +97,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     localStorage.setItem("mv_wish", JSON.stringify(wishlist));
   }, [wishlist]);
+
+  useEffect(() => {
+    localStorage.setItem("mv_products", JSON.stringify(products));
+  }, [products]);
 
   const toast = useCallback((msg: string, kind: "ok" | "bad" | "" = "") => {
     setToastMsg(msg);
@@ -118,16 +135,32 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     [toast]
   );
 
+  const addProduct = useCallback((p: Product) => {
+    setProducts((prev) => [p, ...prev]);
+  }, []);
+
+  const updateProduct = useCallback((p: Product) => {
+    setProducts((prev) => prev.map((item) => (item.id === p.id ? p : item)));
+  }, []);
+
+  const deleteProduct = useCallback((id: number) => {
+    setProducts((prev) => prev.filter((item) => item.id !== id));
+  }, []);
+
   return (
     <AppContext.Provider
       value={{
         cart,
         wishlist,
+        products,
         addToCart,
         updateCartQty,
         removeFromCart,
         clearCart,
         toggleWishlist,
+        addProduct,
+        updateProduct,
+        deleteProduct,
         toast,
         toastMsg,
         toastKind,

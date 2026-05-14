@@ -3,11 +3,13 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
-import { PRODUCTS, COLS, fmt } from "@/lib/data";
+import { COLS, fmt } from "@/lib/data";
+import { useApp } from "@/context/AppContext";
 
 function ProductsContent() {
   const searchParams = useSearchParams();
   const initCat = searchParams.get("cat") || "all";
+  const { products } = useApp();
 
   const [cat, setCat] = useState(initCat);
   const [gen, setGen] = useState("all");
@@ -24,7 +26,7 @@ function ProductsContent() {
 
   const PER = 9;
 
-  let f = PRODUCTS.filter((p) => {
+  let f = products.filter((p) => {
     if (cat !== "all" && p.type !== cat) return false;
     if (gen !== "all" && p.gen !== "unisex" && p.gen !== gen) return false;
     if (minP && p.price < parseInt(minP)) return false;
@@ -34,7 +36,7 @@ function ProductsContent() {
 
   if (sort === "pa") f = [...f].sort((a, b) => a.price - b.price);
   else if (sort === "pd") f = [...f].sort((a, b) => b.price - a.price);
-  else if (sort === "rt") f = [...f].sort((a, b) => b.rating - a.rating);
+  else if (sort === "rt") f = [...f].sort((a, b) => (b.rating || 0) - (a.rating || 0));
   else if (sort === "nw") f = [...f].sort((a, b) => b.id - a.id);
 
   const pages = Math.ceil(f.length / PER);
@@ -49,14 +51,27 @@ function ProductsContent() {
     setPg(1);
   };
 
+  const uniqueTypes = Array.from(new Set(products.map(p => p.type)));
+  
+  const typeConfigs: Record<string, { ico: string; l: string }> = {
+    scrubs: { ico: "🥼", l: "Scrubs" },
+    stethoscope: { ico: "🩺", l: "Stethoscope" },
+    labcoat: { ico: "🥼", l: "Lab Coats" },
+    jacket: { ico: "🧥", l: "DRIFT Jacket" },
+    underscrub: { ico: "👕", l: "Underscrubs" },
+    accessories: { ico: "🧢", l: "Accessories" }
+  };
+
+  const dynamicCats = uniqueTypes.map(t => ({
+    id: t,
+    ico: typeConfigs[t]?.ico || "🏷️",
+    l: typeConfigs[t]?.l || t.charAt(0).toUpperCase() + t.slice(1),
+    n: products.filter(p => p.type === t).length
+  }));
+
   const cats = [
-    { id: "all", ico: "🏷️", l: "All Products", n: PRODUCTS.length },
-    { id: "scrubs", ico: "🥼", l: "Scrubs", n: PRODUCTS.filter((p) => p.type === "scrubs").length },
-    { id: "stethoscope", ico: "🩺", l: "Stethoscope", n: PRODUCTS.filter((p) => p.type === "stethoscope").length },
-    { id: "labcoat", ico: "🥼", l: "Lab Coats", n: PRODUCTS.filter((p) => p.type === "labcoat").length },
-    { id: "jacket", ico: "🧥", l: "DRIFT Jacket", n: PRODUCTS.filter((p) => p.type === "jacket").length },
-    { id: "underscrub", ico: "👕", l: "Underscrubs", n: PRODUCTS.filter((p) => p.type === "underscrub").length },
-    { id: "accessories", ico: "🧢", l: "Accessories", n: PRODUCTS.filter((p) => p.type === "accessories").length },
+    { id: "all", ico: "🏷️", l: "All Products", n: products.length },
+    ...dynamicCats
   ];
 
   const activeCatLabel = cats.find((c) => c.id === cat)?.l || "All Products";

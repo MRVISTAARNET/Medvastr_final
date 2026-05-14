@@ -1,0 +1,77 @@
+'use client';
+
+import React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+const AdminSidebar = () => {
+  const pathname = usePathname();
+
+  const links = [
+    { section: 'Overview', items: [
+      { name: 'Dashboard', icon: '📊', href: '/admin' },
+      { name: 'Analytics', icon: '📈', href: '/admin/analytics' },
+    ]},
+    { section: 'Store', items: [
+      { name: 'Orders', icon: '📦', href: '/admin/orders', badge: '34' },
+      { name: 'Products', icon: '🥼', href: '/admin/products' },
+      { name: 'Categories', icon: '🏷️', href: '/admin/categories' },
+      { name: 'Inventory', icon: '📋', href: '/admin/inventory' },
+    ]},
+    { section: 'Customers', items: [
+      { name: 'Customers', icon: '👥', href: '/admin/customers', badge: '892' },
+      { name: 'Reviews', icon: '⭐', href: '/admin/reviews' },
+    ]},
+    { section: 'Finance', items: [
+      { name: 'Revenue', icon: '💰', href: '/admin/revenue' },
+      { name: 'Promo Codes', icon: '🎟️', href: '/admin/promos' },
+    ]},
+    { section: 'Settings', items: [
+      { name: 'Settings', icon: '⚙️', href: '/admin/settings' },
+    ]},
+  ];
+
+  return (
+    <div id="admin-sidebar">
+      <div className="sb-logo">
+        <div className="sb-logo-t">Medva<span>str</span></div>
+        <div className="sb-logo-s">Admin Dashboard</div>
+      </div>
+      <div className="sb-user">
+        <div className="sb-user-av">A</div>
+        <div>
+          <div className="sb-user-name">Admin</div>
+          <div className="sb-user-role">Super Administrator</div>
+        </div>
+      </div>
+      <div className="sb-nav">
+        {links.map((sec, idx) => (
+          <React.Fragment key={idx}>
+            <div className="sb-section">{sec.section}</div>
+            {sec.items.map((item, i) => (
+              <Link 
+                key={i} 
+                href={item.href} 
+                className={`sb-link ${pathname === item.href ? 'active' : ''}`}
+              >
+                <span className="sb-link-ico">{item.icon}</span>
+                {item.name}
+                {item.badge && <span className="sb-link-cnt">{item.badge}</span>}
+              </Link>
+            ))}
+          </React.Fragment>
+        ))}
+      </div>
+      <div className="sb-bottom">
+        <Link href="/" target="_blank" className="sb-link" style={{ marginBottom: '4px' }}>
+          <span className="sb-link-ico">🌐</span>View Live Site
+        </Link>
+        <button className="sb-logout" onClick={() => { localStorage.removeItem('adm_token'); window.location.href = '/admin/login'; }}>
+          <span style={{ fontSize: '17px' }}>🚪</span>Sign Out
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default AdminSidebar;

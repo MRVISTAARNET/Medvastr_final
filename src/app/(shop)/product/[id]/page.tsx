@@ -8,9 +8,9 @@ import ProductCard from "@/components/ProductCard";
 
 export default function ProductDetailPage() {
   const { id } = useParams();
-  const { addToCart, wishlist, toggleWishlist, toast } = useApp();
+  const { products, addToCart, wishlist, toggleWishlist, toast } = useApp();
 
-  const p = PRODUCTS.find((x) => x.id === parseInt(id as string));
+  const p = products.find((x) => x.id === parseInt(id as string));
   const [ci, setCi] = useState(0);
   const [sz, setSz] = useState("M");
   const [qty, setQty] = useState(1);
@@ -18,7 +18,7 @@ export default function ProductDetailPage() {
   if (!p) return <div className="page sec">Product not found.</div>;
 
   const wished = wishlist.includes(p.id);
-  const related = PRODUCTS.filter((x) => x.type === p.type && x.id !== p.id).slice(0, 4);
+  const related = products.filter((x) => x.type === p.type && x.id !== p.id).slice(0, 4);
 
   return (
     <div className="page">

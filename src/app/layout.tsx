@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Plus_Jakarta_Sans } from "next/font/google";
+import { Cormorant_Garamond, Plus_Jakarta_Sans, Inter } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-inter",
+});
 import "./globals.css";
-import ClientLayout from "@/components/ClientLayout";
 
 const serif = Cormorant_Garamond({
   subsets: ["latin"],
@@ -27,9 +32,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${serif.variable} ${sans.variable}`}>
+    <html lang="en" className={`${serif.variable} ${sans.variable} ${inter.variable}`}>
       <body style={{ fontFamily: "var(--font-sans)" }}>
-        <ClientLayout>{children}</ClientLayout>
+        {children}
       </body>
     </html>
   );
