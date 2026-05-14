@@ -15,6 +15,7 @@ interface AppContextType {
   cart: CartItem[];
   wishlist: number[];
   products: Product[];
+  categories: any[];
   addToCart: (p: Product, ci?: number, sz?: string) => void;
   updateCartQty: (index: number, delta: number) => void;
   removeFromCart: (index: number) => void;
