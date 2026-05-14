@@ -34,8 +34,14 @@ const AdminSidebar = () => {
   return (
     <div id="admin-sidebar">
       <div className="sb-logo">
-        <div className="sb-logo-t">Medva<span>str</span></div>
-        <div className="sb-logo-s">Admin Dashboard</div>
+        <div className="sb-logo-t">Med<span>vastr</span></div>
+        <div className="sb-logo-s">ADMIN DASHBOARD</div>
+        <button className="mobile-sidebar-close" onClick={() => {
+          const sidebar = document.getElementById('admin-sidebar');
+          if (sidebar) sidebar.classList.remove('mobile-show');
+        }}>
+          ✕
+        </button>
       </div>
       <div className="sb-user">
         <div className="sb-user-av">A</div>

@@ -494,15 +494,90 @@ a { text-decoration: none; color: inherit; }
 .mini-val { font-size: 13px; font-weight: 700; color: var(--navy); white-space: nowrap }
 
 /* ══════════════════ RESPONSIVE ══════════════════ */
+.mobile-menu-trigger { display: none }
+.mobile-sidebar-close { display: none }
+
 @media(max-width: 1100px) {
   :root { --sidebar: 220px }
   .stats-grid { grid-template-columns: repeat(2, 1fr) }
   .charts-row { grid-template-columns: 1fr }
 }
+
 @media(max-width: 768px) {
-  #admin-sidebar { display: none }
+  :root { --sidebar: 260px }
+  
+  #admin-sidebar { 
+    position: fixed;
+    left: -260px;
+    top: 0;
+    bottom: 0;
+    z-index: 2000;
+    transition: left .3s ease;
+  }
+  
+  #admin-sidebar.mobile-show {
+    left: 0;
+  }
+  
+  #admin-main { margin-left: 0 !important; width: 100% }
+  
+  .mobile-menu-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background: var(--bg2);
+    border-radius: 8px;
+    font-size: 20px;
+    color: var(--navy);
+    cursor: pointer;
+  }
+  
+  .sb-logo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .mobile-sidebar-close {
+    display: flex;
+    background: rgba(255,255,255,.1);
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
   .stats-grid { grid-template-columns: 1fr 1fr }
   .quick-actions { grid-template-columns: 1fr 1fr }
-  .admin-content { padding: 20px }
-  .topbar { padding: 0 20px }
+  .admin-content { padding: 15px }
+  .topbar { padding: 0 15px; gap: 12px }
+  .topbar-title { font-size: 16px }
+  .topbar-sub { display: none }
+  .tb-badge { display: none }
+  
+  .table-card { overflow-x: auto }
+  .admin-table { min-width: 600px }
+  
+  .fg-row { grid-template-columns: 1fr }
+  
+  .modal { width: 95%; padding: 0 }
+  .modal-hd { padding: 15px 20px }
+  .modal-body { padding: 15px 20px }
+  .modal-foot { padding: 12px 20px }
+}
+
+@media(max-width: 480px) {
+  .stats-grid { grid-template-columns: 1fr }
+  .quick-actions { grid-template-columns: 1fr }
+  .stat-card { padding: 15px }
+  .stat-n { font-size: 24px }
+  
+  .table-hd { flex-direction: column; align-items: flex-start }
+  .table-hd-right { width: 100% }
+  .tbl-search { width: 100% }
 }

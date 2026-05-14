@@ -25,6 +25,12 @@ const AdminTopbar = ({ title, sub, action }: Props) => {
 
   return (
     <div className="topbar">
+      <button className="mobile-menu-trigger" onClick={() => {
+        const sidebar = document.getElementById('admin-sidebar');
+        if (sidebar) sidebar.classList.toggle('mobile-show');
+      }}>
+        ☰
+      </button>
       <div>
         <div className="topbar-title">{title}</div>
         <div className="topbar-sub">{sub}</div>
