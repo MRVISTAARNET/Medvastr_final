@@ -8,7 +8,9 @@ import Link from 'next/link';
 export default function AdminDashboard() {
   const s = MOCK_ADMIN.stats;
   const recentOrders = MOCK_ADMIN.orders.slice(0, 5);
-  const maxRevenue = Math.max(...MOCK_ADMIN.monthlyRevenue.map(m => m.v));
+  const maxRevenue = MOCK_ADMIN.monthlyRevenue.length > 0 
+    ? Math.max(...MOCK_ADMIN.monthlyRevenue.map(m => m.v)) 
+    : 100;
 
   const statusBadge = (s: string) => {
     const map: any = {

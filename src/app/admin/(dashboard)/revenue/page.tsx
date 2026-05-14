@@ -7,7 +7,7 @@ import { MOCK_ADMIN, fmt, fmtNum } from '@/lib/adminData';
 export default function AdminRevenue() {
   const s = MOCK_ADMIN.stats;
   const monthly = MOCK_ADMIN.monthlyRevenue;
-  const maxRevenue = Math.max(...monthly.map(m => m.v));
+  const maxRevenue = monthly.length > 0 ? Math.max(...monthly.map(m => m.v)) : 100;
 
   return (
     <>
@@ -19,7 +19,7 @@ export default function AdminRevenue() {
         <div className="panel">
           <div className="stats-grid" style={{ marginBottom: '22px' }}>
             <StatCard ico="💰" label="Total Revenue" val={fmt(s.revenue)} sub="All time" dir="up" bg="#daf3ef" />
-            <StatCard ico="📅" label="This Month" val={fmt(monthly[5].v)} sub="+23.5%" dir="up" bg="#dbeafe" />
+            <StatCard ico="📅" label="This Month" val={fmt(monthly[5]?.v || 0)} sub="+23.5%" dir="up" bg="#dbeafe" />
             <StatCard ico="🛒" label="Avg Order Value" val={fmt(s.avgOrder)} sub="Per transaction" dir="up" bg="#fef5e4" />
             <StatCard ico="✅" label="Successful Payments" val="98.2%" sub="Payment success rate" dir="up" bg="#ede9fe" />
           </div>
