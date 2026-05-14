@@ -25,30 +25,40 @@ export default function AdminProducts() {
     const type = (document.getElementById('p-type') as HTMLSelectElement)?.value;
     const price = parseFloat((document.getElementById('p-price') as HTMLInputElement)?.value) || 0;
     const originalPrice = parseFloat((document.getElementById('p-oprice') as HTMLInputElement)?.value) || undefined;
-    const badge = (document.getElementById('p-badge') as HTMLSelectElement)?.value || undefined;
+    const badge = (document.getElementById('p-badge') as HTMLSelectElement)?.value || '';
+    const desc = (document.getElementById('p-desc') as HTMLTextAreaElement)?.value || '';
+    const gender = (document.getElementById('p-gender') as HTMLSelectElement)?.value || 'unisex';
+    const fabric = (document.getElementById('p-fabric') as HTMLInputElement)?.value || '';
+    const fit = (document.getElementById('p-fit') as HTMLInputElement)?.value || '';
+    const catId = parseInt((document.getElementById('p-cat') as HTMLSelectElement)?.value) || undefined;
+    const imgUrl = (document.getElementById('p-img') as HTMLInputElement)?.value || '';
+    const emoji = (document.getElementById('p-emo') as HTMLInputElement)?.value || '📦';
     
     if (name && price) {
+      const pData: any = {
+        name,
+        type,
+        price,
+        originalPrice,
+        badge,
+        desc,
+        gen: gender,
+        fab: fabric,
+        fit,
+        catId,
+        imgs: imgUrl ? [imgUrl] : [],
+        emo: emoji,
+        bg: '#f0f0f0',
+        rating: editingProduct?.rating || 0,
+        rev: editingProduct?.rev || 0,
+        active: true
+      };
+
       if (editingProduct) {
-        updateProduct({ ...editingProduct, name, type, price, originalPrice, badge });
-        alert(`Product ${name} Updated Successfully!`);
+        updateProduct({ ...editingProduct, ...pData });
+        alert(`Product Updated Successfully!`);
       } else {
-        const newProduct = {
-          id: Date.now(),
-          name,
-          type,
-          price,
-          originalPrice,
-          badge,
-          rating: 0,
-          active: true,
-          emo: '📦',
-          gen: 'unisex',
-          clrs: ['#000'],
-          szs: ['M'],
-          imgs: ['/images/placeholder.jpg'],
-          bg: '#f0f0f0'
-        };
-        addProduct(newProduct as any);
+        addProduct({ ...pData, id: Date.now() });
         alert('Product Added Successfully!');
       }
     }
@@ -65,6 +75,8 @@ export default function AdminProducts() {
     setEditingProduct(null);
     setIsModalOpen(true);
   };
+
+  const { categories } = useApp();
 
   return (
     <>
@@ -91,70 +103,77 @@ export default function AdminProducts() {
                 <button className="btn-primary" onClick={openAddModal}>+ Add Product</button>
               </div>
             </div>
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Product</th><th>Type</th><th>Price</th><th>Stock</th><th>Rating</th><th>Badge</th><th>Status</th><th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredProducts.map((p) => (
-                  <tr key={p.id}>
-                    <td>
-                      <div className="td-flex">
-                        <div className="td-avatar">{p.emo || '🥼'}</div>
-                        <div>
-                          <div className="td-name">{p.name}</div>
-                          <div className="td-meta">ID: {p.id}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td><span className="badge b-blue">{p.type}</span></td>
-                    <td className="td-bold">{fmt(p.price)}</td>
-                    <td><span className={((p as any).stock || 0) < 50 ? 'badge b-warn' : 'badge b-gray'}>{((p as any).stock || '—')}</span></td>
-                    <td>
-                      <span style={{ color: '#f59e0b', letterSpacing: '-1px' }}>{getStars(p.rating || 0)}</span> 
-                      <span style={{ fontSize: '12px', color: 'var(--txt3)', marginLeft: '6px' }}>{p.rating || 0}</span>
-                    </td>
-                    <td>{p.badge ? <span className="badge b-purple">{p.badge}</span> : '-'}</td>
-                    <td>{(p as any).active ? <span className="badge b-grn">Active</span> : <span className="badge b-red">Inactive</span>}</td>
-                    <td>
-                      <div className="act-btns">
-                        <div className="act-btn edit" title="Edit" onClick={() => openEditModal(p)}>✏️</div>
-                        <div className="act-btn del" title="Delete" onClick={() => { if(confirm(`Delete ${p.name}?`)) deleteProduct(p.id) }}>🗑️</div>
-                      </div>
-                    </td>
+            <div style={{ overflowX: 'auto' }}>
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Product</th><th>Type</th><th>Price</th><th>Rating</th><th>Badge</th><th>Status</th><th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filteredProducts.map((p) => (
+                    <tr key={p.id}>
+                      <td>
+                        <div className="td-flex">
+                          <div className="td-avatar">{p.emo || '🥼'}</div>
+                          <div>
+                            <div className="td-name">{p.name}</div>
+                            <div className="td-meta">ID: {p.id}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td><span className="badge b-blue">{p.type}</span></td>
+                      <td className="td-bold">{fmt(p.price)}</td>
+                      <td>
+                        <span style={{ color: '#f59e0b', letterSpacing: '-1px' }}>{getStars(p.rating || 0)}</span> 
+                        <span style={{ fontSize: '12px', color: 'var(--txt3)', marginLeft: '6px' }}>{p.rating || 0}</span>
+                      </td>
+                      <td>{p.badge ? <span className="badge b-purple">{p.badge}</span> : '-'}</td>
+                      <td>{(p as any).active ? <span className="badge b-grn">Active</span> : <span className="badge b-red">Inactive</span>}</td>
+                      <td>
+                        <div className="act-btns">
+                          <div className="act-btn edit" title="Edit" onClick={() => openEditModal(p)}>✏️</div>
+                          <div className="act-btn del" title="Delete" onClick={() => { if(confirm(`Delete ${p.name}?`)) deleteProduct(p.id) }}>🗑️</div>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
 
       {isModalOpen && (
         <div className="modal-bg" onClick={(e) => { if (e.target === e.currentTarget) setIsModalOpen(false) }}>
-          <div className="modal">
+          <div className="modal" style={{ maxWidth: '700px' }}>
             <div className="modal-hd">
               <div className="modal-title">{editingProduct ? 'Edit Product' : 'Add New Product'}</div>
               <button className="modal-x" onClick={() => setIsModalOpen(false)}>✕</button>
             </div>
             <div className="modal-body">
               <div className="fg-row">
-                <div className="fg">
+                <div className="fg" style={{ flex: 2 }}>
                   <label>Product Name</label>
                   <input type="text" id="p-name" defaultValue={editingProduct?.name || ''} placeholder="Men's Classic V-Neck Scrub" />
                 </div>
                 <div className="fg">
-                  <label>Type</label>
-                  <select id="p-type" defaultValue={editingProduct?.type || 'scrubs'}>
-                    <option value="scrubs">Scrubs</option>
-                    <option value="labcoat">Lab Coat</option>
-                    <option value="stethoscope">Stethoscope</option>
-                    <option value="jacket">DRIFT Jacket</option>
-                    <option value="underscrub">Underscrubs</option>
-                    <option value="accessories">Accessories</option>
+                  <label>Category</label>
+                  <select id="p-cat" defaultValue={editingProduct?.catId || ''}>
+                    <option value="">Select Category</option>
+                    {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
+                </div>
+              </div>
+              <div className="fg-row">
+                <div className="fg">
+                  <label>Type Key</label>
+                  <input type="text" id="p-type" defaultValue={editingProduct?.type || 'scrubs'} placeholder="scrubs / labcoat / jacket" />
+                </div>
+                <div className="fg">
+                  <label>Emoji</label>
+                  <input type="text" id="p-emo" defaultValue={editingProduct?.emo || '🥼'} placeholder="🥼" />
                 </div>
               </div>
               <div className="fg-row">
@@ -170,7 +189,7 @@ export default function AdminProducts() {
               <div className="fg-row">
                 <div className="fg">
                   <label>Gender</label>
-                  <select id="p-gender" defaultValue={editingProduct?.gender || 'unisex'}>
+                  <select id="p-gender" defaultValue={editingProduct?.gen || 'unisex'}>
                     <option value="men">Men</option>
                     <option value="women">Women</option>
                     <option value="unisex">Unisex</option>
@@ -189,13 +208,17 @@ export default function AdminProducts() {
                 </div>
               </div>
               <div className="fg">
+                <label>Main Image URL</label>
+                <input type="text" id="p-img" defaultValue={editingProduct?.imgs?.[0] || ''} placeholder="https://example.com/image.jpg" />
+              </div>
+              <div className="fg">
                 <label>Description</label>
-                <textarea id="p-desc" defaultValue={editingProduct?.description || ''} placeholder="Product description..."></textarea>
+                <textarea id="p-desc" defaultValue={editingProduct?.desc || ''} placeholder="Product description..." style={{ height: '80px' }}></textarea>
               </div>
               <div className="fg-row">
                 <div className="fg">
                   <label>Fabric</label>
-                  <input type="text" id="p-fabric" defaultValue={editingProduct?.fabric || ''} placeholder="Classic / ecoflex™ / Modal" />
+                  <input type="text" id="p-fabric" defaultValue={editingProduct?.fab || ''} placeholder="Classic / ecoflex™" />
                 </div>
                 <div className="fg">
                   <label>Fit</label>

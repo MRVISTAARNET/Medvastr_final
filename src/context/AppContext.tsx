@@ -69,7 +69,8 @@ function cartReducer(state: CartItem[], action: any): CartItem[] {
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [cart, dispatch] = useReducer(cartReducer, []);
   const [wishlist, setWishlist] = useState<number[]>([]);
-  const [products, setProducts] = useState<Product[]>(PRODUCTS);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [toastMsg, setToastMsg] = useState("");
   const [toastKind, setToastKind] = useState<"ok" | "bad" | "">("");
 
@@ -110,6 +111,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             care: p.careInstructions || '',
             wt: p.weight || '',
             fit: p.fit || '',
+            imgs: p.imageUrls || [],
+            catId: p.categoryId,
           }));
           setProducts(mapped);
         }
@@ -117,7 +120,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         console.error("Failed to fetch products:", e);
       }
     };
+
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`);
+        const data = await res.json();
+        if (data.success) {
+          setCategories(data.data);
+        }
+      } catch (e) {
+        console.error("Failed to fetch categories:", e);
+      }
+    };
+
     fetchProducts();
+    fetchCategories();
   }, []);
 
   // Save to Storage
@@ -175,7 +192,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           gender: p.gen,
           badge: p.badge,
           emoji: p.emo,
-          bgColor: p.bg
+          bgColor: p.bg,
+          fabricDetail: p.fabD,
+          stretchType: p.stretch,
+          pocketCount: p.pockets,
+          careInstructions: p.care,
+          weight: p.wt,
+          fit: p.fit,
+          categoryId: p.catId,
+          imageUrls: p.imgs
         })
       });
       const data = await res.json();
@@ -201,7 +226,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           gender: p.gen,
           badge: p.badge,
           emoji: p.emo,
-          bgColor: p.bg
+          bgColor: p.bg,
+          fabricDetail: p.fabD,
+          stretchType: p.stretch,
+          pocketCount: p.pockets,
+          careInstructions: p.care,
+          weight: p.wt,
+          fit: p.fit,
+          categoryId: p.catId,
+          imageUrls: p.imgs
         })
       });
       if (res.ok) {
@@ -233,6 +266,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         cart,
         wishlist,
         products,
+        categories,
         addToCart,
         updateCartQty,
         removeFromCart,
