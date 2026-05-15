@@ -143,16 +143,27 @@ export default function Home() {
         )}
       </div>
 
-      {/* PROMO 
+      {/* PROMO */}
       <div className="promo-duo">
         <div className="promo-h" style={{ background: "#091220" }}>
-          ...
+          <div className="promo-em">🩺</div>
+          <div className="promo-ey">New Collection</div>
+          <div className="promo-tt">6sense Stethoscope</div>
+          <div className="promo-bd">30-day free trial. Dual-head design. 10,000+ doctors.</div>
+          <Link href="/products?cat=stethoscope" className="btn-t">
+            Shop Stethoscope →
+          </Link>
         </div>
         <div className="promo-h" style={{ background: "var(--g)" }}>
-          ...
+          <div className="promo-em">🧥</div>
+          <div className="promo-ey">New Launch 2026</div>
+          <div className="promo-tt">The DRIFT Jacket</div>
+          <div className="promo-bd">Anti-distraction. Lab tested. India's first medical outerwear.</div>
+          <Link href="/products?cat=jacket" className="btn-d">
+            Shop DRIFT Jacket →
+          </Link>
         </div>
       </div>
-      */}
 
       {/* NEW ARRIVALS */}
       <div className="sec">

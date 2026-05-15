@@ -124,36 +124,35 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
            <button className="mn-close" onClick={() => setMn(false)}>✕</button>
         </div>
         <div className="nav-in">
-          <div className={`nav-group${mo === "linen" ? " mob-open" : ""}`}>
-            <div className="nl" onClick={() => setMo(mo === "linen" ? null : "linen")}>
-              Hospital Linen <span className="nav-arrow">▾</span>
+          <div className={`nav-group${mo === "men" ? " mob-open" : ""}`}>
+            <div className="nl" onClick={() => setMo(mo === "men" ? null : "men")}>
+              Men <span className="nav-arrow">▾</span>
             </div>
             <div className="nav-sub">
                <MegaMenu gender="men" />
             </div>
           </div>
-          <div className={`nav-group${mo === "uniforms" ? " mob-open" : ""}`}>
-            <div className="nl" onClick={() => setMo(mo === "uniforms" ? null : "uniforms")}>
-              Uniforms & Gowns <span className="nav-arrow">▾</span>
+          <div className={`nav-group${mo === "women" ? " mob-open" : ""}`}>
+            <div className="nl" onClick={() => setMo(mo === "women" ? null : "women")}>
+              Women <span className="nav-arrow">▾</span>
             </div>
             <div className="nav-sub">
                <MegaMenu gender="women" />
             </div>
           </div>
           {[
+            { l: "Men", href: "/products?cat=men" },
+            { l: "Women", href: "/products?cat=women" },
             { l: "Linen & Bedding", href: "/products?cat=linen" },
-            { l: "Patient Wear", href: "/products?cat=patient" },
+            { l: "Surgical Wear", href: "/products?cat=surgical" },
             { l: "Stethoscope", href: "/products?cat=stethoscope" },
-            { l: "Surgical Gowns", href: "/products?cat=surgical" },
-            { l: "Breakpoint 24/7", href: "/breakpoint", pill: "new" },
             { l: "Bulk Offers", href: "/bulk" },
-            { l: "Hospital Uniforms", href: "/products?cat=uniforms" },
             { l: "About Us", href: "/about" },
             { l: "Blogs", href: "/blog" },
           ].map((n) => (
             <Link key={n.l} href={n.href} className="nl" onClick={() => setMn(false)}>
               {n.l}
-              {n.pill === "new" && <span className="ntag">NEW</span>}
+              {(n as any).pill === "new" && <span className="ntag">NEW</span>}
             </Link>
           ))}
         </div>

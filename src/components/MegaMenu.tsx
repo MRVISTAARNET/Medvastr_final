@@ -12,88 +12,70 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
 
   const quickLinks = G
     ? [
-        { l: "All Linen", cat: "linen" },
-        { l: "Hospital Gowns", cat: "surgical" },
+        { l: "Flexy Fit Scrub", cat: "men" },
+        { l: "Green OT Gown", cat: "surgical" },
         { l: "Diagnostic", cat: "stethoscope" },
-        { l: "Uniforms", cat: "uniforms" },
+        { l: "Green Linen Sheet", cat: "linen" },
         { l: "New Arrivals", cat: "all" },
         { l: "Best Sellers", cat: "all" },
       ]
     : [
-        { l: "All Linen", cat: "linen" },
-        { l: "Hospital Gowns", cat: "surgical" },
+        { l: "Flexy Fit Scrub", cat: "women" },
+        { l: "Green OT Gown", cat: "surgical" },
         { l: "Diagnostic", cat: "stethoscope" },
-        { l: "Uniforms", cat: "uniforms" },
+        { l: "Green Linen Sheet", cat: "linen" },
         { l: "New Arrivals", cat: "all" },
         { l: "Best Sellers", cat: "all" },
       ];
 
   const scrubs = [
-    { l: "Scrubs with Logo" },
-    { l: "Nurse Uniform with Logo" },
+    { l: "Flexy Fit 'V' Scrub" },
+    { l: "Scrub Suit with Logo" },
+    { l: "Nurse Uniform" },
     { l: "Premium Doctor Apron" },
     { l: "Customized Uniforms" },
-    { l: "Full Set Uniforms" },
   ];
 
   const labCoats = [
-    { l: "Linen Towel" },
-    { l: "Green Sheet" },
+    { l: "Linen Towel (50x50)" },
+    { l: "Green Sheet (100x100)" },
+    { l: "Green Sheet (150x150)" },
     { l: "Green Sheet with Hole" },
     { l: "Cardiac Trolley Sheet" },
     { l: "Single Bed Blanket" },
   ];
 
   const accessories = G
-    ? [{ l: "Stethoscope" }, { l: "Scrub Cap" }, { l: "Face Masks" }]
-    : [{ l: "Stethoscope" }, { l: "Scrub Cap" }, { l: "Face Masks" }];
+    ? [{ l: "Stethoscope" }, { l: "Green Surgery Cap" }]
+    : [{ l: "Stethoscope" }, { l: "Green Surgery Cap" }];
 
-  const colours = G
-    ? [
-        { l: "Ceil Blue", h: "#7b9db3" },
-        { l: "Navy", h: "#1a2744" },
-        { l: "Eucalyptus", h: "#7aab8a" },
-        { l: "Black", h: "#1a1a1a" },
-        { l: "Maroon", h: "#7a3535" },
-        { l: "Wine", h: "#7b1c3c" },
-        { l: "Steel Grey", h: "#607d8b" },
-        { l: "Forest Green", h: "#1d6e55" },
-        { l: "Heather Grey", h: "#9e9e9e" },
-        { l: "Olive", h: "#6b7f6b" },
-        { l: "Charcoal", h: "#3a3a3a" },
-        { l: "Military Green", h: "#4a5e3a" },
-      ]
-    : [
-        { l: "Ceil Blue", h: "#7b9db3" },
-        { l: "Navy", h: "#1a2744" },
-        { l: "Galaxy Blue", h: "#2c3e7a" },
-        { l: "Black", h: "#1a1a1a" },
-        { l: "Steel Grey", h: "#607d8b" },
-        { l: "Wine", h: "#7b1c3c" },
-        { l: "Pastel Lilac", h: "#c4a4b8" },
-        { l: "Forest Green", h: "#1d6e55" },
-        { l: "Hot Pink", h: "#e8437a" },
-        { l: "Maroon", h: "#7a3535" },
-        { l: "Mauve", h: "#b58ca8" },
-        { l: "Eucalyptus", h: "#7aab8a" },
-        { l: "Heather Grey", h: "#9e9e9e" },
-        { l: "Olive", h: "#6b7f6b" },
-        { l: "Military Green", h: "#4a5e3a" },
-      ];
-
-  const fabric = [
-    { l: "100% Cotton" },
-    { l: "PC Cotton Blend" },
-    { l: "Woolen Materials" },
+  const colours = [
+    { l: "Dark Blue", h: "#1a2b4a" },
+    { l: "Light Blue", h: "#add8e6" },
+    { l: "Maroon", h: "#800000" },
+    { l: "Wine", h: "#722f37" },
+    { l: "Navy", h: "#1a2744" },
+    { l: "Eucalyptus", h: "#7aab8a" },
+    { l: "Black", h: "#1a1a1a" },
+    { l: "Steel Grey", h: "#607d8b" },
+    { l: "Forest Green", h: "#1d6e55" },
+    { l: "Heather Grey", h: "#9e9e9e" },
+    { l: "Olive", h: "#6b7f6b" },
+    { l: "Military Green", h: "#4a5e3a" },
   ];
 
-  const pockets = [{ l: "Free Size" }, { l: "XS / S / M / L" }, { l: "XL / XXL / 3XL" }];
+  const fabric = [
+    { l: "100% Pure Cotton" },
+    { l: "Premium PC Cotton" },
+    { l: "Camel Brown Wool" },
+  ];
+
+  const pockets = [{ l: "Free Size" }, { l: "S / M / L / XL" }, { l: "XXL / 3XL" }];
 
   const apparel = [
-    { l: "Surgeon Gown" }, 
+    { l: "Green OT Gown" }, 
     { l: "Maternity Gown" }, 
-    { l: "Patient Dress" },
-    { l: "OT Hospital Gown" }
+    { l: "Hospital Gown" }
   ];
 
   return (
