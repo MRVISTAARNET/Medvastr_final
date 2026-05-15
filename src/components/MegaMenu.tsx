@@ -101,11 +101,10 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
         {quickLinks.map((q, i) => (
           <div
             key={i}
-            className={`mega-top-link${q.nw ? " is-new" : ""}${q.red ? " is-red" : ""}`}
+            className={`mega-top-link${q.red ? " is-red" : ""}`}
             style={q.red ? { borderColor: "var(--red)", color: "var(--red)", background: "#fdecea" } : {}}
           >
             {q.l}
-            {q.nw && <span className="ntag">NEW</span>}
           </div>
         ))}
       </div>
@@ -153,7 +152,6 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
               <li key={x.l}>
                 <span>
                   {x.l}
-                  {x.nw && <span className="nnt">NEW</span>}
                 </span>
               </li>
             ))}
@@ -171,11 +169,6 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
                 <div className="mclr-d" style={{ background: c.h }} />
                 <span className="mclr-n">
                   {c.l}
-                  {c.nw && (
-                    <span className="nnt" style={{ marginLeft: 4 }}>
-                      NEW
-                    </span>
-                  )}
                 </span>
               </div>
             ))}

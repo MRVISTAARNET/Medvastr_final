@@ -28,7 +28,6 @@ export default function Home() {
     const tab = TABS.find((t) => t.id === activeTab);
     if (!tab) return [];
     let p = products.filter((x) => x.type === tab.type);
-    if (tab.fab) p = p.filter((x) => x.fab === tab.fab);
     return p.slice(0, 8);
   })();
 
@@ -84,7 +83,6 @@ export default function Home() {
               </div>
               <div className="cat-l">
                 {nm}
-                {isN && <span className="pn">NEW</span>}
               </div>
             </Link>
           ))}
