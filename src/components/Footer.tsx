@@ -36,26 +36,26 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className={`ft-col${openCol === 'men' ? ' open' : ''}`}>
-          <h4 onClick={() => toggle('men')}>
-            Men <span className="ft-arr">▾</span>
+        <div className={`ft-col${openCol === 'linen' ? ' open' : ''}`}>
+          <h4 onClick={() => toggle('linen')}>
+            Bedding & Linen <span className="ft-arr">▾</span>
           </h4>
           <ul className="ft-lnks">
             {[
-              ["V-Neck Scrubs", "scrubs"], ["Mandarin Collar", "scrubs"], ["ecoflex™ Scrubs", "scrubs"], ["Lab Coats", "labcoat"], ["DRIFT Jacket", "jacket"], ["Accessories", "accessories"]
+              ["Linen Towel", "linen"], ["Green Sheets", "linen"], ["Cardiac Sheets", "linen"], ["Bed Blankets", "linen"], ["Doctor Aprons", "uniforms"], ["Diagnostic", "stethoscope"]
             ].map(([l, cat]) => (
               <li key={l}><Link href={`/products?cat=${cat}`}>{l}</Link></li>
             ))}
           </ul>
         </div>
 
-        <div className={`ft-col${openCol === 'women' ? ' open' : ''}`}>
-          <h4 onClick={() => toggle('women')}>
-            Women <span className="ft-arr">▾</span>
+        <div className={`ft-col${openCol === 'gowns' ? ' open' : ''}`}>
+          <h4 onClick={() => toggle('gowns')}>
+            Uniforms & Gowns <span className="ft-arr">▾</span>
           </h4>
           <ul className="ft-lnks">
             {[
-              ["V-Neck Scrubs", "scrubs"], ["Mandarin Collar", "scrubs"], ["ecoflex™ Scrubs", "scrubs"], ["Lab Coats", "labcoat"], ["DRIFT Jacket", "jacket"], ["Hijab", "accessories"]
+              ["Surgeon Gowns", "surgical"], ["Maternity Gowns", "surgical"], ["Patient Dress", "surgical"], ["Nurse Uniforms", "uniforms"], ["Scrubs with Logo", "uniforms"], ["OT Gowns", "surgical"]
             ].map(([l, cat]) => (
               <li key={l}><Link href={`/products?cat=${cat}`}>{l}</Link></li>
             ))}

@@ -12,41 +12,41 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
 
   const quickLinks = G
     ? [
-        { l: "All Men", cat: "all" },
-        // { l: "DRIFT Jacket", cat: "jacket", nw: true },
-        { l: "Stethoscope", cat: "stethoscope" },
-        { l: "LAST CHANCE", cat: "all", red: true },
-        // { l: "Plus Size", cat: "scrubs" },
+        { l: "All Linen", cat: "linen" },
+        { l: "Hospital Gowns", cat: "surgical" },
+        { l: "Diagnostic", cat: "stethoscope" },
+        { l: "Uniforms", cat: "uniforms" },
         { l: "New Arrivals", cat: "all" },
-        // { l: "ecoflex™ 2-way", cat: "scrubs" },
-        // { l: "ecoflex™ 4-way", cat: "scrubs" },
+        { l: "Best Sellers", cat: "all" },
       ]
     : [
-        { l: "All Women", cat: "all" },
-        // { l: "DRIFT Jacket", cat: "jacket", nw: true },
-        { l: "Stethoscope", cat: "stethoscope" },
-        { l: "LAST CHANCE", cat: "all", red: true },
-        // { l: "Plus Size", cat: "scrubs" },
+        { l: "All Linen", cat: "linen" },
+        { l: "Hospital Gowns", cat: "surgical" },
+        { l: "Diagnostic", cat: "stethoscope" },
+        { l: "Uniforms", cat: "uniforms" },
         { l: "New Arrivals", cat: "all" },
-        // { l: "ecoflex™ 2-way", cat: "scrubs" },
-        // { l: "ecoflex™ 4-way", cat: "scrubs" },
+        { l: "Best Sellers", cat: "all" },
       ];
 
   const scrubs = [
     { l: "Scrubs with Logo" },
     { l: "Nurse Uniform with Logo" },
+    { l: "Premium Doctor Apron" },
+    { l: "Customized Uniforms" },
+    { l: "Full Set Uniforms" },
   ];
 
   const labCoats = [
     { l: "Linen Towel" },
     { l: "Green Sheet" },
+    { l: "Green Sheet with Hole" },
     { l: "Cardiac Trolley Sheet" },
     { l: "Single Bed Blanket" },
   ];
 
   const accessories = G
-    ? [{ l: "Stethoscope" }, { l: "Scrub Cap" }]
-    : [{ l: "Stethoscope" }, { l: "Scrub Cap" }];
+    ? [{ l: "Stethoscope" }, { l: "Scrub Cap" }, { l: "Face Masks" }]
+    : [{ l: "Stethoscope" }, { l: "Scrub Cap" }, { l: "Face Masks" }];
 
   const colours = G
     ? [
@@ -61,7 +61,7 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
         { l: "Heather Grey", h: "#9e9e9e" },
         { l: "Olive", h: "#6b7f6b" },
         { l: "Charcoal", h: "#3a3a3a" },
-        { l: "Military Green", h: "#4a5e3a", nw: true },
+        { l: "Military Green", h: "#4a5e3a" },
       ]
     : [
         { l: "Ceil Blue", h: "#7b9db3" },
@@ -78,13 +78,13 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
         { l: "Eucalyptus", h: "#7aab8a" },
         { l: "Heather Grey", h: "#9e9e9e" },
         { l: "Olive", h: "#6b7f6b" },
-        { l: "Military Green", h: "#4a5e3a", nw: true },
+        { l: "Military Green", h: "#4a5e3a" },
       ];
 
   const fabric = [
     { l: "100% Cotton" },
-    { l: "PC Cotton" },
-    { l: "Wool (Blankets)" },
+    { l: "PC Cotton Blend" },
+    { l: "Woolen Materials" },
   ];
 
   const pockets = [{ l: "Free Size" }, { l: "XS / S / M / L" }, { l: "XL / XXL / 3XL" }];
@@ -92,7 +92,8 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
   const apparel = [
     { l: "Surgeon Gown" }, 
     { l: "Maternity Gown" }, 
-    { l: "Patient Dress" }
+    { l: "Patient Dress" },
+    { l: "OT Hospital Gown" }
   ];
 
   return (
@@ -101,8 +102,8 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
         {quickLinks.map((q, i) => (
           <div
             key={i}
-            className={`mega-top-link${q.red ? " is-red" : ""}`}
-            style={q.red ? { borderColor: "var(--red)", color: "var(--red)", background: "#fdecea" } : {}}
+            className={`mega-top-link${(q as any).red ? " is-red" : ""}`}
+            style={(q as any).red ? { borderColor: "var(--red)", color: "var(--red)", background: "#fdecea" } : {}}
           >
             {q.l}
           </div>

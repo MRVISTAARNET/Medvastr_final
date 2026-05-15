@@ -124,17 +124,17 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
            <button className="mn-close" onClick={() => setMn(false)}>✕</button>
         </div>
         <div className="nav-in">
-          <div className={`nav-group${mo === "men" ? " mob-open" : ""}`}>
-            <div className="nl" onClick={() => setMo(mo === "men" ? null : "men")}>
-              Men <span className="nav-arrow">▾</span>
+          <div className={`nav-group${mo === "linen" ? " mob-open" : ""}`}>
+            <div className="nl" onClick={() => setMo(mo === "linen" ? null : "linen")}>
+              Hospital Linen <span className="nav-arrow">▾</span>
             </div>
             <div className="nav-sub">
                <MegaMenu gender="men" />
             </div>
           </div>
-          <div className={`nav-group${mo === "women" ? " mob-open" : ""}`}>
-            <div className="nl" onClick={() => setMo(mo === "women" ? null : "women")}>
-              Women <span className="nav-arrow">▾</span>
+          <div className={`nav-group${mo === "uniforms" ? " mob-open" : ""}`}>
+            <div className="nl" onClick={() => setMo(mo === "uniforms" ? null : "uniforms")}>
+              Uniforms & Gowns <span className="nav-arrow">▾</span>
             </div>
             <div className="nav-sub">
                <MegaMenu gender="women" />

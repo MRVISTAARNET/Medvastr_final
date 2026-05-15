@@ -70,15 +70,15 @@ export const SLIDES = [
     c1: "Shop Now",
     c2: "Learn More",
   },
-  /* {
+  {
     img: "/Frame_427318647_b55627fb-fb8e-4269-ad82-14a24ef28647.webp",
-    ey: "New Collection",
-    h: "Move Freely in",
-    em: " ecoflex™",
-    p: "4-way stretch technology designed for the most demanding medical environments.",
-    c1: "Explore ecoflex™",
-    c2: "All Colours",
-  }, */
+    ey: "Supply List 2026",
+    h: "Premium Hospital",
+    em: " Linen",
+    p: "High-quality, durable and lab-tested linen designed for demanding healthcare environments.",
+    c1: "Explore Linen",
+    c2: "View All",
+  },
   {
     img: "/Steth_Landing_Page_Banner_Desktop_1.webp",
     ey: "Diagnostic Excellence",
