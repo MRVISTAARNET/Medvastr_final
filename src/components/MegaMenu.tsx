@@ -33,23 +33,20 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
       ];
 
   const scrubs = [
-    { l: "V-Neck Scrubs" },
-    // { l: "Mandarin Collar Scrubs" },
-    // { l: "Longsleeve Scrubs" },
-    // { l: "ecoflex™ Joggers" },
-    // { l: "Shop All Scrubs" },
+    { l: "Scrubs with Logo" },
+    { l: "Nurse Uniform with Logo" },
   ];
 
   const labCoats = [
-    { l: "Chief" },
-    // { l: "Focus" },
-    { l: "Everyday" },
-    // { l: "Shop All Aprons" },
+    { l: "Linen Towel" },
+    { l: "Green Sheet" },
+    { l: "Cardiac Trolley Sheet" },
+    { l: "Single Bed Blanket" },
   ];
 
   const accessories = G
-    ? [/* { l: "Stethoscope" }, */ { l: "Scrub Cap" }]
-    : [/* { l: "Stethoscope" }, */ { l: "Scrub Cap" } /*, { l: "Hijab" } */];
+    ? [{ l: "Stethoscope" }, { l: "Scrub Cap" }]
+    : [{ l: "Stethoscope" }, { l: "Scrub Cap" }];
 
   const colours = G
     ? [
@@ -85,17 +82,17 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
       ];
 
   const fabric = [
-    { l: "Classic 2-way Scrub" },
-    // { l: "ecoflex™ 2-way stretch" },
-    // { l: "ecoflex™ 4-way stretch" },
+    { l: "100% Cotton" },
+    { l: "PC Cotton" },
+    { l: "Wool (Blankets)" },
   ];
 
-  const pockets = [{ l: "5 Pocket" } /*, { l: "8 Pocket" }, { l: "9 Pocket" } */];
+  const pockets = [{ l: "Free Size" }, { l: "XS / S / M / L" }, { l: "XL / XXL / 3XL" }];
 
   const apparel = [
-    // { l: "DRIFT Jacket", nw: true }, 
-    // { l: "Underscrubs" }, 
-    // { l: "T-shirt" }
+    { l: "Surgeon Gown" }, 
+    { l: "Maternity Gown" }, 
+    { l: "Patient Dress" }
   ];
 
   return (
@@ -116,7 +113,7 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
       <div className="mega-in">
         <div className="mcol">
           <div className="mcol-sub">
-            Scrubs <span style={{ fontSize: 10, color: "var(--t)", fontWeight: 700 }}>→</span>
+            Uniforms & Scrubs <span style={{ fontSize: 10, color: "var(--t)", fontWeight: 700 }}>→</span>
           </div>
           <ul>
             {scrubs.map((x) => (
@@ -126,7 +123,7 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
             ))}
           </ul>
           <div className="mcol-sub" style={{ marginTop: 18 }}>
-            Accessories
+            Diagnostic & Caps
           </div>
           <ul>
             {accessories.map((x) => (
@@ -139,7 +136,7 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
 
         <div className="mcol">
           <div className="mcol-sub">
-            Lab Coat Aprons <span style={{ fontSize: 10, color: "var(--t)", fontWeight: 700 }}>→</span>
+            Linen & Bedding <span style={{ fontSize: 10, color: "var(--t)", fontWeight: 700 }}>→</span>
           </div>
           <ul>
             {labCoats.map((x) => (
@@ -149,7 +146,7 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
             ))}
           </ul>
           <div className="mcol-sub" style={{ marginTop: 18 }}>
-            Apparel
+            Surgical & Patient Wear
           </div>
           <ul>
             {apparel.map((x) => (
@@ -186,7 +183,7 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
         </div>
 
         <div className="mcol">
-          <div className="mcol-sub">Shop By Fabric</div>
+          <div className="mcol-sub">Materials</div>
           <ul>
             {fabric.map((x) => (
               <li key={x.l}>
@@ -195,7 +192,7 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
             ))}
           </ul>
           <div className="mcol-sub" style={{ marginTop: 18 }}>
-            By Pockets
+            Sizes
           </div>
           <ul>
             {pockets.map((x) => (

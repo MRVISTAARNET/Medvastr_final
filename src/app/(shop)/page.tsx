@@ -16,10 +16,10 @@ export default function Home() {
   const { products } = useApp();
 
   const TABS = [
-    { id: "scrubs", label: "Classic 2-way Scrub", type: "scrubs", fab: "Classic" },
-    // { id: "ecoflex", label: "ecoflex™ Scrubs", type: "scrubs", fab: "ecoflex™" },
-    { id: "stethoscope", label: "Stethoscope", type: "stethoscope" },
-    { id: "labcoat", label: "Lab Coats", type: "labcoat" },
+    { id: "uniforms", label: "Uniforms & Scrubs", type: "uniforms" },
+    { id: "linen", label: "Linen & Bedding", type: "linen" },
+    { id: "surgical", label: "Surgical Wear", type: "surgical" },
+    { id: "diagnostic", label: "Diagnostic & Caps", type: "diagnostic" },
     // { id: "jacket", label: "DRIFT Jacket", type: "jacket" },
     // { id: "underscrub", label: "Underscrubs", type: "underscrub" },
   ];
@@ -72,15 +72,12 @@ export default function Home() {
         </div>
         <div className="cat-g">
           {[
-            ["#dde3f0", "👨‍⚕️", "Men's Scrubs"],
-            ["#f0dde4", "👩‍⚕️", "Women's Scrubs"],
-            ["#ddf0e8", "🥼", "Classic 2-way Scrub"],
-            // ["#ddedf5", "💪", "ecoflex™ Scrubs"],
-            ["#f0f0f0", "🩺", "Stethoscope"],
-            // ["#dde3f0", "🧥", "DRIFT Jacket", true],
-            ["#f8f8f8", "🥼", "Lab Coats"],
-            // ["#f0dde4", "👕", "Underscrubs"],
-          ].map(([bg, em, nm, isN]) => (
+            ["#dde3f0", "👨‍⚕️", "Uniforms & Scrubs"],
+            ["#f0dde4", "🥼", "Linen & Bedding"],
+            ["#ddf0e8", "🧥", "Surgical Wear"],
+            ["#f0f0f0", "🩺", "Diagnostic & Caps"],
+            ["#f8f8f8", "🛏️", "Bedding Supplies"],
+          ].map(([bg, em, nm]) => (
             <Link href="/products" className="cat-c" key={nm as string}>
               <div className="cat-img" style={{ background: bg as string }}>
                 {em}
