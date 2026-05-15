@@ -62,7 +62,6 @@ const AdminSidebar = () => {
               >
                 <span className="sb-link-ico">{item.icon}</span>
                 {item.name}
-                {item.badge && <span className="sb-link-cnt">{item.badge}</span>}
               </Link>
             ))}
           </React.Fragment>
