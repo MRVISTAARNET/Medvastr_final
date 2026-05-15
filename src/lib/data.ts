@@ -2,7 +2,7 @@ export const B = {
   name: "Medvastr",
   phone: "9920314164",
   email: "medvastr@gmail.com",
-  addr: "LL 001, Gagan Shopping Arcade, Gokuldham, Goregaon East, Mumbai – 400063",
+  addr: "F 81-B, Express Zone, Malad East, Mumbai – 400063",
   ig: "https://www.instagram.com/medvastr/",
   fb: "https://www.facebook.com/medvastr/",
   li: "https://www.linkedin.com/company/medvastr/",

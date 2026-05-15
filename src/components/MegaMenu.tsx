@@ -95,7 +95,7 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
       <div className="mega-in">
         <div className="mcol">
           <div className="mcol-sub">
-            Uniforms & Scrubs <span style={{ fontSize: 10, color: "var(--t)", fontWeight: 700 }}>→</span>
+            Flexy Fit 'V' Scrub <span style={{ fontSize: 10, color: "var(--t)", fontWeight: 700 }}>→</span>
           </div>
           <ul>
             {scrubs.map((x) => (
@@ -168,14 +168,24 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
             ))}
           </ul>
           <div className="mcol-sub" style={{ marginTop: 18 }}>
-            Sizes
+            By Size
           </div>
           <ul>
-            {pockets.map((x) => (
-              <li key={x.l}>
-                <span>{x.l}</span>
-              </li>
-            ))}
+            {G ? (
+              <>
+                <li><span>M</span></li>
+                <li><span>L</span></li>
+                <li><span>XL</span></li>
+                <li><span>XXL</span></li>
+              </>
+            ) : (
+              <>
+                <li><span>S</span></li>
+                <li><span>M</span></li>
+                <li><span>L</span></li>
+                <li><span>XL</span></li>
+              </>
+            )}
           </ul>
         </div>
 

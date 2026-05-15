@@ -146,21 +146,21 @@ export default function Home() {
       {/* PROMO */}
       <div className="promo-duo">
         <div className="promo-h" style={{ background: "#091220" }}>
-          <div className="promo-em">🩺</div>
-          <div className="promo-ey">New Collection</div>
-          <div className="promo-tt">6sense Stethoscope</div>
-          <div className="promo-bd">30-day free trial. Dual-head design. 10,000+ doctors.</div>
-          <Link href="/products?cat=stethoscope" className="btn-t">
-            Shop Stethoscope →
+          <div className="promo-em">👕</div>
+          <div className="promo-ey">Bestseller</div>
+          <div className="promo-tt">Flexy Fit 'V' Scrub</div>
+          <div className="promo-bd">Available in Dark Blue, Light Blue, Maroon & Wine. Sizes M to XXL.</div>
+          <Link href="/products?cat=scrubs" className="btn-t">
+            Shop Flexy Fit Scrub →
           </Link>
         </div>
-        <div className="promo-h" style={{ background: "var(--g)" }}>
-          <div className="promo-em">🧥</div>
-          <div className="promo-ey">New Launch 2026</div>
-          <div className="promo-tt">The DRIFT Jacket</div>
-          <div className="promo-bd">Anti-distraction. Lab tested. India's first medical outerwear.</div>
-          <Link href="/products?cat=jacket" className="btn-d">
-            Shop DRIFT Jacket →
+        <div className="promo-h" style={{ background: "#2d6a4f" }}>
+          <div className="promo-em">🥼</div>
+          <div className="promo-ey">New Collection</div>
+          <div className="promo-tt">Green OT Gown</div>
+          <div className="promo-bd">Free size. 100% Cotton. Ideal for OT & surgical environments.</div>
+          <Link href="/products?cat=surgical" className="btn-d">
+            Shop Green OT Gown →
           </Link>
         </div>
       </div>

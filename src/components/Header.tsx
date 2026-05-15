@@ -141,8 +141,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             </div>
           </div>
           {[
-            { l: "Men", href: "/products?cat=men" },
-            { l: "Women", href: "/products?cat=women" },
+            { l: "Flexy Fit Scrub", href: "/products?cat=scrubs" },
             { l: "Linen & Bedding", href: "/products?cat=linen" },
             { l: "Surgical Wear", href: "/products?cat=surgical" },
             { l: "Stethoscope", href: "/products?cat=stethoscope" },
@@ -152,7 +151,6 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
           ].map((n) => (
             <Link key={n.l} href={n.href} className="nl" onClick={() => setMn(false)}>
               {n.l}
-              {(n as any).pill === "new" && <span className="ntag">NEW</span>}
             </Link>
           ))}
         </div>
