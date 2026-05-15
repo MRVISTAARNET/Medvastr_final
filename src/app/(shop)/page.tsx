@@ -221,27 +221,7 @@ export default function Home() {
               <div className="sec-t">What Doctors Are Saying</div>
               <div className="sec-s">Trusted by 50,000+ healthcare professionals</div>
             </div>
-            <div className="rev-stats-top" style={{ display: "flex", gap: 34, flexWrap: "wrap" }}>
-              {[
-                ["50K+", "Customers"],
-                ["4.8★", "Rating"],
-                ["200+", "Cities"],
-              ].map(([n, l]) => (
-                <div key={l} style={{ textAlign: "center" }}>
-                  <div
-                    style={{
-                      fontFamily: "var(--serif)",
-                      fontSize: 25,
-                      fontWeight: 700,
-                      color: "var(--ink)",
-                      letterSpacing: "-.03em",
-                    }}
-                  >
-                    {n}
-                  </div>
-                  <div style={{ fontSize: 11.5, color: "var(--lt)", marginTop: 2 }}>{l}</div>
-                </div>
-              ))}
+            <div className="rev-stats-top" style={{ display: "none" }}>
             </div>
           </div>
           <div className="rev-g">

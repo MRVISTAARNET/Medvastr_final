@@ -1,15 +1,63 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { MOCK_ADMIN, fmt, fmtNum, fmtDate } from '@/lib/adminData';
+import { INITIAL_ADMIN_DATA, fmt, fmtNum, fmtDate } from '@/lib/adminData';
 import Link from 'next/link';
 
 export default function AdminDashboard() {
-  const s = MOCK_ADMIN.stats;
-  const recentOrders = MOCK_ADMIN.orders.slice(0, 5);
-  const maxRevenue = MOCK_ADMIN.monthlyRevenue.length > 0 
-    ? Math.max(...MOCK_ADMIN.monthlyRevenue.map(m => m.v)) 
+  const [data, setData] = useState(INITIAL_ADMIN_DATA);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const token = localStorage.getItem('adm_token');
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/dashboard`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const json = await res.json();
+        if (json.success) {
+          const d = json.data;
+          setData({
+            ...INITIAL_ADMIN_DATA,
+            stats: {
+              revenue: d.totalRevenue,
+              orders: d.totalOrders,
+              customers: d.totalCustomers,
+              products: d.totalProducts,
+              pendingOrders: d.ordersToday, // Using today's orders as pending for now
+              avgOrder: d.totalOrders > 0 ? d.totalRevenue / d.totalOrders : 0,
+              growth: 0,
+              ratingAvg: 4.8
+            },
+            orders: d.recentOrders.map((o: any) => ({
+              id: o.id,
+              num: o.orderNumber,
+              customer: 'Customer', // Backend might need to provide name
+              email: '—',
+              items: 0,
+              total: o.totalAmount,
+              status: o.status,
+              date: o.createdAt,
+              city: '—',
+              payment: '—'
+            }))
+          });
+        }
+      } catch (e) {
+        console.error("Dashboard fetch failed", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
+
+  const s = data.stats;
+  const recentOrders = data.orders.slice(0, 5);
+  const maxRevenue = data.monthlyRevenue.length > 0 
+    ? Math.max(...data.monthlyRevenue.map(m => m.v)) 
     : 100;
 
   const statusBadge = (s: string) => {
@@ -73,7 +121,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div className="bar-chart">
-                {MOCK_ADMIN.monthlyRevenue.map((m, i) => (
+                {data.monthlyRevenue.map((m, i) => (
                   <div className="bar-col" key={i}>
                     <div className="bar" style={{ height: `${Math.round((m.v / maxRevenue) * 170)}px` }}>
                       <div className="bar-tooltip">{fmt(m.v)}</div>
@@ -89,7 +137,7 @@ export default function AdminDashboard() {
                 <div><div className="chart-title">Top Products</div><div className="chart-sub">By revenue this month</div></div>
               </div>
               <div className="mini-list">
-                {MOCK_ADMIN.topProducts.slice(0, 5).map((p, i) => (
+                {data.topProducts.slice(0, 5).map((p, i) => (
                   <div className="mini-item" key={i}>
                     <div className={`mini-rank ${i === 0 ? 'gold-rank' : ''}`}>{i + 1}</div>
                     <div className="mini-info">

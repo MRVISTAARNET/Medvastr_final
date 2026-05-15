@@ -1,4 +1,4 @@
-export interface MockStats {
+export interface AdminStats {
   revenue: number;
   orders: number;
   customers: number;
@@ -9,23 +9,23 @@ export interface MockStats {
   ratingAvg: number;
 }
 
-export interface MockRevenue { m: string; v: number; }
-export interface MockTopProduct { name: string; sales: number; revenue: number; emoji: string; }
-export interface MockOrder { id: number; num: string; customer: string; email: string; items: number; total: number; status: string; date: string; city: string; payment: string; }
-export interface MockProduct { id: number; name: string; type: string; price: number; badge: string; rating: number; reviews: number; active: boolean; emoji: string; stock: number; }
-export interface MockCustomer { id: number; name: string; email: string; phone: string; orders: number; spent: number; city: string; joined: string; role: string; }
-export interface MockPromo { id: number; code: string; discount: number; type: string; minOrder: number; uses: number; maxUses: number; active: boolean; expiry: string; }
-export interface MockReview { id: number; product: string; customer: string; rating: number; text: string; date: string; status: string; }
+export interface AdminRevenue { m: string; v: number; }
+export interface AdminTopProduct { name: string; sales: number; revenue: number; emoji: string; }
+export interface AdminOrder { id: number; num: string; customer: string; email: string; items: number; total: number; status: string; date: string; city: string; payment: string; }
+export interface AdminProduct { id: number; name: string; type: string; price: number; badge: string; rating: number; reviews: number; active: boolean; emoji: string; stock: number; }
+export interface AdminCustomer { id: number; name: string; email: string; phone: string; orders: number; spent: number; city: string; joined: string; role: string; }
+export interface AdminPromo { id: number; code: string; discount: number; type: string; minOrder: number; uses: number; maxUses: number; active: boolean; expiry: string; }
+export interface AdminReview { id: number; product: string; customer: string; rating: number; text: string; date: string; status: string; }
 
-export const MOCK_ADMIN: {
-  stats: MockStats;
-  monthlyRevenue: MockRevenue[];
-  topProducts: MockTopProduct[];
-  orders: MockOrder[];
-  products: MockProduct[];
-  customers: MockCustomer[];
-  promos: MockPromo[];
-  reviews: MockReview[];
+export const INITIAL_ADMIN_DATA: {
+  stats: AdminStats;
+  monthlyRevenue: AdminRevenue[];
+  topProducts: AdminTopProduct[];
+  orders: AdminOrder[];
+  products: AdminProduct[];
+  customers: AdminCustomer[];
+  promos: AdminPromo[];
+  reviews: AdminReview[];
 } = {
   stats: { 
     revenue: 0, 

@@ -2,14 +2,14 @@
 
 import React, { useState } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { MOCK_ADMIN, fmt, fmtNum, fmtDate } from '@/lib/adminData';
+import { INITIAL_ADMIN_DATA, fmt, fmtNum, fmtDate } from '@/lib/adminData';
 
 export default function AdminOrders() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('ALL');
   const [page, setPage] = useState(0);
 
-  const orders = MOCK_ADMIN.orders;
+  const orders = INITIAL_ADMIN_DATA.orders;
   const filteredOrders = orders.filter(o => {
     const matchesSearch = !search || o.num.toLowerCase().includes(search.toLowerCase()) || o.customer.toLowerCase().includes(search.toLowerCase());
     const matchesFilter = filter === 'ALL' || o.status === filter;

@@ -2,10 +2,10 @@
 
 import React from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { MOCK_ADMIN, fmt } from '@/lib/adminData';
+import { INITIAL_ADMIN_DATA, fmt } from '@/lib/adminData';
 
 export default function AdminInventory() {
-  const products = MOCK_ADMIN.products;
+  const products = INITIAL_ADMIN_DATA.products;
 
   return (
     <>

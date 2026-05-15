@@ -2,11 +2,11 @@
 
 import React, { useState } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { MOCK_ADMIN, fmt, fmtNum, fmtDate } from '@/lib/adminData';
+import { INITIAL_ADMIN_DATA, fmt, fmtNum, fmtDate } from '@/lib/adminData';
 
 export default function AdminPromos() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [promos, setPromos] = useState(MOCK_ADMIN.promos);
+  const [promos, setPromos] = useState(INITIAL_ADMIN_DATA.promos);
 
   const handleSave = () => {
     const code = (document.getElementById('promo-code') as HTMLInputElement)?.value?.toUpperCase();

@@ -2,11 +2,11 @@
 
 import React from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { MOCK_ADMIN, fmt, fmtNum } from '@/lib/adminData';
+import { INITIAL_ADMIN_DATA, fmt, fmtNum } from '@/lib/adminData';
 
 export default function AdminRevenue() {
-  const s = MOCK_ADMIN.stats;
-  const monthly = MOCK_ADMIN.monthlyRevenue;
+  const s = INITIAL_ADMIN_DATA.stats;
+  const monthly = INITIAL_ADMIN_DATA.monthlyRevenue;
   const maxRevenue = monthly.length > 0 ? Math.max(...monthly.map(m => m.v)) : 100;
 
   return (

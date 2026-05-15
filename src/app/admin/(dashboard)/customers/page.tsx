@@ -2,10 +2,10 @@
 
 import React from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { MOCK_ADMIN, fmt, fmtNum, fmtDate } from '@/lib/adminData';
+import { INITIAL_ADMIN_DATA, fmt, fmtNum, fmtDate } from '@/lib/adminData';
 
 export default function AdminCustomers() {
-  const customers = MOCK_ADMIN.customers;
+  const customers = INITIAL_ADMIN_DATA.customers;
   const maxSpent = Math.max(...customers.map((c) => c.spent || 0));
   const avgOrders = (
     customers.reduce((s, c) => s + (c.orders || 0), 0) / customers.length

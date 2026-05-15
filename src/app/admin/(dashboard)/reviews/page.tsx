@@ -2,7 +2,7 @@
 
 import React from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { MOCK_ADMIN, fmtDate } from '@/lib/adminData';
+import { INITIAL_ADMIN_DATA, fmtDate } from '@/lib/adminData';
 
 const getStars = (r: number) => {
   const full = Math.floor(r);
@@ -10,7 +10,7 @@ const getStars = (r: number) => {
 };
 
 export default function AdminReviews() {
-  const reviews = MOCK_ADMIN.reviews;
+  const reviews = INITIAL_ADMIN_DATA.reviews;
 
   return (
     <>

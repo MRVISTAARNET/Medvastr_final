@@ -2,19 +2,13 @@
 
 import React from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { MOCK_ADMIN, fmt } from '@/lib/adminData';
+import { INITIAL_ADMIN_DATA, fmt } from '@/lib/adminData';
 
 export default function AdminAnalytics() {
-  const max = MOCK_ADMIN.monthlyRevenue.length > 0 
-    ? Math.max(...MOCK_ADMIN.monthlyRevenue.map((m) => m.v))
+  const max = INITIAL_ADMIN_DATA.monthlyRevenue.length > 0 
+    ? Math.max(...INITIAL_ADMIN_DATA.monthlyRevenue.map((m) => m.v))
     : 100;
-  const categoryData = [
-    { name: 'Scrubs', val: 52, color: '#12b49a' },
-    { name: 'ecoflex™', val: 24, color: '#0a8b79' },
-    { name: 'Stethoscope', val: 10, color: '#c08a2e' },
-    { name: 'Lab Coats', val: 8, color: '#6d28d9' },
-    { name: 'DRIFT Jacket', val: 6, color: '#1d4ed8' },
-  ];
+  const categoryData: any[] = [];
   const circumference = 2 * Math.PI * 58;
   let dashOffset = 0;
   const donutSegments = categoryData.map((d) => {
@@ -33,10 +27,10 @@ export default function AdminAnalytics() {
       <div className="admin-content">
         <div className="panel">
           <div className="stats-grid" style={{ marginBottom: '22px' }}>
-            <StatCard ico="💰" label="Monthly Revenue" val={fmt(MOCK_ADMIN.monthlyRevenue[5]?.v || 0)} sub="+23.5% vs last month" dir="up" bg="#daf3ef" />
-            <StatCard ico="📦" label="Monthly Orders" val="342" sub="+18% vs last month" dir="up" bg="#dbeafe" />
-            <StatCard ico="🔄" label="Avg Order Value" val={fmt(MOCK_ADMIN.stats.avgOrder)} sub="Per transaction" dir="up" bg="#fef5e4" />
-            <StatCard ico="👥" label="New Customers" val="124" sub="This month" dir="up" bg="#ede9fe" />
+            <StatCard ico="💰" label="Monthly Revenue" val={fmt(INITIAL_ADMIN_DATA.monthlyRevenue[5]?.v || 0)} sub="No data" dir="neu" bg="#daf3ef" />
+            <StatCard ico="📦" label="Monthly Orders" val="0" sub="No data" dir="neu" bg="#dbeafe" />
+            <StatCard ico="🔄" label="Avg Order Value" val={fmt(INITIAL_ADMIN_DATA.stats.avgOrder)} sub="Per transaction" dir="neu" bg="#fef5e4" />
+            <StatCard ico="👥" label="New Customers" val="0" sub="This month" dir="neu" bg="#ede9fe" />
           </div>
 
           <div className="charts-row">
@@ -44,18 +38,22 @@ export default function AdminAnalytics() {
               <div className="chart-hd">
                 <div>
                   <div className="chart-title">Revenue Trend</div>
-                  <div className="chart-sub">Oct 2025 – Mar 2026</div>
+                  <div className="chart-sub">No data available</div>
                 </div>
               </div>
               <div className="bar-chart">
-                {MOCK_ADMIN.monthlyRevenue.map((m, i) => (
+                {INITIAL_ADMIN_DATA.monthlyRevenue.length > 0 ? INITIAL_ADMIN_DATA.monthlyRevenue.map((m, i) => (
                   <div className="bar-col" key={i}>
                     <div className="bar" style={{ height: `${Math.round((m.v / max) * 170)}px` }}>
                       <div className="bar-tooltip">{fmt(m.v)}</div>
                     </div>
                     <div className="bar-label">{m.m}</div>
                   </div>
-                ))}
+                )) : (
+                  <div style={{ height: '170px', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', color: 'var(--lt)' }}>
+                    Waiting for real data...
+                  </div>
+                )}
               </div>
             </div>
             <div className="chart-card">
@@ -83,18 +81,20 @@ export default function AdminAnalytics() {
                   ))}
                 </svg>
                 <div className="donut-center">
-                  <div className="donut-n">100%</div>
+                  <div className="donut-n">0%</div>
                   <div className="donut-l">by category</div>
                 </div>
               </div>
               <div className="donut-legend">
-                {categoryData.map((d, i) => (
+                {categoryData.length > 0 ? categoryData.map((d, i) => (
                   <div className="dl-item" key={i}>
                     <div className="dl-dot" style={{ background: d.color }}></div>
                     <div className="dl-name">{d.name}</div>
                     <div className="dl-val">{d.val}%</div>
                   </div>
-                ))}
+                )) : (
+                  <div style={{ textAlign: 'center', color: 'var(--lt)', fontSize: '12px', marginTop: '10px' }}>No category data</div>
+                )}
               </div>
             </div>
           </div>
@@ -117,7 +117,7 @@ export default function AdminAnalytics() {
                 </tr>
               </thead>
               <tbody>
-                {MOCK_ADMIN.topProducts.map((p, i) => (
+                {INITIAL_ADMIN_DATA.topProducts.map((p, i) => (
                   <tr key={i}>
                     <td>
                       <div className={`mini-rank ${i === 0 ? 'gold-rank' : ''}`}>{i + 1}</div>

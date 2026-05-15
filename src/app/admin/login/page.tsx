@@ -20,13 +20,26 @@ export default function AdminLogin() {
     setLoading(true);
     setError('');
 
-    // Mock login logic as per the provided HTML
-    if (email === 'admin@medvastr.com' && password === 'Admin@123') {
-      localStorage.setItem('adm_token', 'demo-jwt-token-medvastr-admin-2026');
-      localStorage.setItem('adm_user', JSON.stringify({ name: 'Admin', email, role: 'ADMIN' }));
-      router.push('/admin');
-    } else {
-      setError('Invalid email or password. Try admin@medvastr.com / Admin@123');
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (data.success && data.data.user.role === 'ADMIN') {
+        localStorage.setItem('adm_token', data.data.token);
+        localStorage.setItem('adm_user', JSON.stringify(data.data.user));
+        router.push('/admin');
+      } else if (data.success && data.data.user.role !== 'ADMIN') {
+        setError('Access denied. Admin privileges required.');
+        setLoading(false);
+      } else {
+        setError(data.message || 'Invalid email or password.');
+        setLoading(false);
+      }
+    } catch (e) {
+      setError('Connection failed. Please check your backend.');
       setLoading(false);
     }
   };
