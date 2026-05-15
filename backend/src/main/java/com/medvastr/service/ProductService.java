@@ -158,6 +158,38 @@ public class ProductService {
         });
     }
 
+    @Transactional
+    public ReviewDTO addReview(Long pid, ReviewRequest r, com.medvastr.model.User user) {
+        Product p = productRepo.findById(pid).orElseThrow(() -> new RuntimeException("Product not found"));
+        com.medvastr.model.Review rev = com.medvastr.model.Review.builder()
+            .product(p)
+            .user(user)
+            .rating(r.getRating())
+            .title(r.getTitle())
+            .body(r.getBody())
+            .approved(true)
+            .verified(true)
+            .build();
+        
+        reviewRepo.save(rev);
+        
+        // Update product stats
+        double avg = reviewRepo.avgRating(pid).orElse(r.getRating().doubleValue());
+        p.setRating(BigDecimal.valueOf(avg));
+        p.setReviewCount(p.getReviewCount() + 1);
+        productRepo.save(p);
+
+        return ReviewDTO.builder()
+            .id(rev.getId())
+            .userName(user.getFirstName() + " " + user.getLastName().charAt(0) + ".")
+            .rating(rev.getRating())
+            .title(rev.getTitle())
+            .body(rev.getBody())
+            .verified(true)
+            .createdAt(rev.getCreatedAt())
+            .build();
+    }
+
     public Page<ReviewDTO> getReviews(Long pid, Pageable p) {
         return reviewRepo.findByProductIdAndApprovedTrueOrderByCreatedAtDesc(pid, p)
             .map(r -> ReviewDTO.builder()

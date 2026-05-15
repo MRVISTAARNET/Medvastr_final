@@ -1,17 +1,49 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { INITIAL_ADMIN_DATA, fmt, fmtNum, fmtDate } from '@/lib/adminData';
+import { fmt, fmtNum, fmtDate } from '@/lib/adminData';
 
 export default function AdminCustomers() {
-  const customers = INITIAL_ADMIN_DATA.customers;
-  const maxSpent = Math.max(...customers.map((c) => c.spent || 0));
-  const avgOrders = (
+  const [customers, setCustomers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem('adm_token');
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users?size=100`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          setCustomers(data.data.content.map((u: any) => ({
+            id: u.id,
+            name: `${u.firstName} ${u.lastName}`,
+            email: u.email,
+            phone: u.phone,
+            orders: 0,
+            spent: 0,
+            city: '—',
+            joined: u.createdAt,
+            role: u.role
+          })));
+        }
+      } catch (e) {
+        console.error("Failed to fetch users");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  const maxSpent = customers.length > 0 ? Math.max(...customers.map((c) => c.spent || 0)) : 0;
+  const avgOrders = customers.length > 0 ? (
     customers.reduce((s, c) => s + (c.orders || 0), 0) / customers.length
-  ).toFixed(1);
-  const avgSpent =
-    customers.reduce((s, c) => s + (c.spent || 0), 0) / customers.length;
+  ).toFixed(1) : '0';
+  const avgSpent = customers.length > 0 ?
+    customers.reduce((s, c) => s + (c.spent || 0), 0) / customers.length : 0;
 
   return (
     <>
@@ -22,10 +54,10 @@ export default function AdminCustomers() {
       <div className="admin-content">
         <div className="panel">
           <div className="stats-grid" style={{ marginBottom: '22px' }}>
-            <StatCard ico="👥" label="Total Customers" val={fmtNum(customers.length)} sub="registered accounts" dir="up" bg="#dbeafe" />
-            <StatCard ico="🏆" label="Top Spender" val={fmt(maxSpent)} sub="Nurse Anita Rao" dir="up" bg="#fef5e4" />
+            <StatCard ico="👥" label="Total Customers" val={fmtNum(customers.length)} sub="registered accounts" dir="neu" bg="#dbeafe" />
+            <StatCard ico="🏆" label="Top Spender" val={fmt(maxSpent)} sub="Highest lifetime value" dir="neu" bg="#fef5e4" />
             <StatCard ico="📦" label="Avg Orders" val={avgOrders} sub="per customer" dir="neu" bg="#daf3ef" />
-            <StatCard ico="💰" label="Avg Spend" val={fmt(avgSpent)} sub="per customer" dir="up" bg="#ede9fe" />
+            <StatCard ico="💰" label="Avg Spend" val={fmt(avgSpent)} sub="per customer" dir="neu" bg="#ede9fe" />
           </div>
 
           <div className="table-card">

@@ -13,13 +13,13 @@ const AdminSidebar = () => {
       { name: 'Analytics', icon: '📈', href: '/admin/analytics' },
     ]},
     { section: 'Store', items: [
-      { name: 'Orders', icon: '📦', href: '/admin/orders', badge: '34' },
+      { name: 'Orders', icon: '📦', href: '/admin/orders' },
       { name: 'Products', icon: '🥼', href: '/admin/products' },
       { name: 'Categories', icon: '🏷️', href: '/admin/categories' },
       { name: 'Inventory', icon: '📋', href: '/admin/inventory' },
     ]},
     { section: 'Customers', items: [
-      { name: 'Customers', icon: '👥', href: '/admin/customers', badge: '892' },
+      { name: 'Customers', icon: '👥', href: '/admin/customers' },
       { name: 'Reviews', icon: '⭐', href: '/admin/reviews' },
     ]},
     { section: 'Finance', items: [

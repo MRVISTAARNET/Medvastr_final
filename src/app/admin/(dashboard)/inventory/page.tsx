@@ -1,11 +1,36 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { INITIAL_ADMIN_DATA, fmt } from '@/lib/adminData';
+import { fmt } from '@/lib/adminData';
 
 export default function AdminInventory() {
-  const products = INITIAL_ADMIN_DATA.products;
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products?size=100`);
+        const data = await res.json();
+        if (data.success) {
+          setProducts(data.data.content.map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            emoji: p.emoji || '📦',
+            type: p.type,
+            price: p.price,
+            stock: p.variants ? p.variants.reduce((s: number, v: any) => s + v.stockQuantity, 0) : 0
+          })));
+        }
+      } catch (e) {
+        console.error("Failed to fetch products");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   return (
     <>

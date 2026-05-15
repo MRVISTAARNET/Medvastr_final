@@ -1,33 +1,53 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
 
 export default function AdminCategories() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [cats, setCats] = useState([
-    { id: 1, name: 'Scrubs', slug: 'scrubs', products: 10, active: true },
-    { id: 2, name: 'Lab Coats', slug: 'labcoat', products: 2, active: true },
-    { id: 3, name: 'Stethoscope', slug: 'stethoscope', products: 2, active: true },
-    { id: 4, name: 'DRIFT Jacket', slug: 'jacket', products: 2, active: true },
-    { id: 5, name: 'Underscrubs', slug: 'underscrub', products: 2, active: true },
-    { id: 6, name: 'Accessories', slug: 'accessories', products: 2, active: true },
-  ]);
+  const [cats, setCats] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleSave = () => {
+  const fetchCats = async () => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`);
+      const data = await res.json();
+      if (data.success) setCats(data.data);
+    } catch (e) {
+      console.error("Failed to fetch categories");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCats();
+  }, []);
+
+  const handleSave = async () => {
     const name = (document.getElementById('cat-name') as HTMLInputElement)?.value;
     const slug = (document.getElementById('cat-slug') as HTMLInputElement)?.value;
+    const desc = (document.getElementById('cat-desc') as HTMLTextAreaElement)?.value;
     
     if (name) {
-      const newCat = {
-        id: Date.now(),
-        name,
-        slug: slug || name.toLowerCase().replace(/ /g, '-'),
-        products: 0,
-        active: true
-      };
-      setCats([...cats, newCat]);
-      alert('Category Added Successfully!');
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            name, 
+            slug: slug || name.toLowerCase().replace(/ /g, '-'),
+            description: desc 
+          })
+        });
+        const data = await res.json();
+        if (data.success) {
+          fetchCats();
+          alert('Category Added Successfully!');
+        }
+      } catch (e) {
+        alert('Failed to add category');
+      }
     }
     setIsModalOpen(false);
   };
@@ -66,9 +86,9 @@ export default function AdminCategories() {
                     <td>
                       <span className="td-mono">{c.slug}</span>
                     </td>
-                    <td>{c.products} products</td>
+                    <td>{c.productCount || 0} products</td>
                     <td>
-                      {c.active ? (
+                      {c.active !== false ? (
                         <span className="badge b-grn">Active</span>
                       ) : (
                         <span className="badge b-red">Inactive</span>

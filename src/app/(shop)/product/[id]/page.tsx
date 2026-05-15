@@ -157,6 +157,68 @@ export default function ProductDetailPage() {
                 ))}
               </div>
             </div>
+
+            {/* REVIEWS */}
+            <div className="pdp-rev-sec" style={{ marginTop: '40px', borderTop: '1px solid #eee', paddingTop: '30px' }}>
+              <div className="pdp-desc-hd">
+                <h3>Customer Reviews</h3>
+                <div style={{ color: 'var(--teal)', fontWeight: 600 }}>{p.rev} Verified Reviews</div>
+              </div>
+              
+              <div style={{ background: '#f9f9f9', padding: '24px', borderRadius: '12px', marginTop: '20px' }}>
+                <h4 style={{ marginBottom: '16px' }}>Share your feedback</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div className="fg">
+                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 600 }}>Rating</label>
+                    <select id="rev-rating" className="pdp-box" style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #ddd' }}>
+                      <option value="5">5 Stars - Excellent</option>
+                      <option value="4">4 Stars - Very Good</option>
+                      <option value="3">3 Stars - Good</option>
+                      <option value="2">2 Stars - Fair</option>
+                      <option value="1">1 Star - Poor</option>
+                    </select>
+                  </div>
+                  <div className="fg">
+                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 600 }}>Review Body</label>
+                    <textarea id="rev-body" placeholder="What did you like or dislike?" style={{ width: '100%', height: '100px', padding: '12px', borderRadius: '8px', border: '1px solid #ddd', resize: 'none' }}></textarea>
+                  </div>
+                  <button 
+                    className="btn-p" 
+                    style={{ width: '100%', padding: '14px', borderRadius: '8px' }}
+                    onClick={async () => {
+                      const rating = (document.getElementById('rev-rating') as HTMLSelectElement).value;
+                      const body = (document.getElementById('rev-body') as HTMLTextAreaElement).value;
+                      if (!body) return alert('Please enter your review body');
+                      
+                      try {
+                        const token = localStorage.getItem('token');
+                        if (!token) return alert('Please login to submit a review');
+                        
+                        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${p.id}/reviews`, {
+                          method: 'POST',
+                          headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                          },
+                          body: JSON.stringify({ rating: parseInt(rating), title: 'Product Review', body })
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                          alert('Review submitted successfully! It will appear after moderation.');
+                          (document.getElementById('rev-body') as HTMLTextAreaElement).value = '';
+                        } else {
+                          alert(data.message || 'Error submitting review');
+                        }
+                      } catch (e) {
+                        alert('Connection error. Are you logged in?');
+                      }
+                    }}
+                  >
+                    Submit Review
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

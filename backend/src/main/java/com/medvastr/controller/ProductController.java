@@ -2,7 +2,9 @@ package com.medvastr.controller;
 
 import com.medvastr.dto.*;
 import com.medvastr.service.ProductService;
+import com.medvastr.service.UserService;
 import lombok.RequiredArgsConstructor;
+import java.security.Principal;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -18,6 +20,7 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class ProductController {
     private final ProductService s;
+    private final UserService userService;
 
     @GetMapping
     public ResponseEntity<ApiResponse<Page<ProductDTO>>> getAll(
@@ -95,5 +98,15 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         return ResponseEntity.ok(ApiResponse.ok("Reviews", s.getReviews(id, PageRequest.of(page, size))));
+    }
+
+    @PostMapping("/{id}/reviews")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<ReviewDTO>> addReview(
+            @PathVariable Long id,
+            @RequestBody ReviewRequest r,
+            Principal principal) {
+        com.medvastr.model.User user = userService.getByEmail(principal.getName());
+        return ResponseEntity.status(201).body(ApiResponse.ok("Review added", s.addReview(id, r, user)));
     }
 }

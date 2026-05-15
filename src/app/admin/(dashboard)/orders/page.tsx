@@ -1,15 +1,47 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { INITIAL_ADMIN_DATA, fmt, fmtNum, fmtDate } from '@/lib/adminData';
+import { fmt, fmtNum, fmtDate } from '@/lib/adminData';
 
 export default function AdminOrders() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('ALL');
   const [page, setPage] = useState(0);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const orders = INITIAL_ADMIN_DATA.orders;
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const token = localStorage.getItem('adm_token');
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders?size=100`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          setOrders(data.data.content.map((o: any) => ({
+            id: o.id,
+            num: o.orderNumber,
+            customer: o.shippingName || 'Unknown',
+            email: o.shippingPhone || '',
+            items: 0,
+            total: o.totalAmount,
+            status: o.status,
+            date: o.createdAt,
+            city: o.shippingCity || '—',
+            payment: o.paymentMethod || 'COD'
+          })));
+        }
+      } catch (e) {
+        console.error("Failed to fetch orders");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOrders();
+  }, []);
+
   const filteredOrders = orders.filter(o => {
     const matchesSearch = !search || o.num.toLowerCase().includes(search.toLowerCase()) || o.customer.toLowerCase().includes(search.toLowerCase());
     const matchesFilter = filter === 'ALL' || o.status === filter;
