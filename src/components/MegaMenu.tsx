@@ -13,43 +13,43 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
   const quickLinks = G
     ? [
         { l: "All Men", cat: "all" },
-        { l: "DRIFT Jacket", cat: "jacket", nw: true },
+        // { l: "DRIFT Jacket", cat: "jacket", nw: true },
         { l: "Stethoscope", cat: "stethoscope" },
         { l: "LAST CHANCE", cat: "all", red: true },
-        { l: "Plus Size", cat: "scrubs" },
+        // { l: "Plus Size", cat: "scrubs" },
         { l: "New Arrivals", cat: "all" },
-        { l: "ecoflex™ 2-way", cat: "scrubs" },
-        { l: "ecoflex™ 4-way", cat: "scrubs" },
+        // { l: "ecoflex™ 2-way", cat: "scrubs" },
+        // { l: "ecoflex™ 4-way", cat: "scrubs" },
       ]
     : [
         { l: "All Women", cat: "all" },
-        { l: "DRIFT Jacket", cat: "jacket", nw: true },
+        // { l: "DRIFT Jacket", cat: "jacket", nw: true },
         { l: "Stethoscope", cat: "stethoscope" },
         { l: "LAST CHANCE", cat: "all", red: true },
-        { l: "Plus Size", cat: "scrubs" },
+        // { l: "Plus Size", cat: "scrubs" },
         { l: "New Arrivals", cat: "all" },
-        { l: "ecoflex™ 2-way", cat: "scrubs" },
-        { l: "ecoflex™ 4-way", cat: "scrubs" },
+        // { l: "ecoflex™ 2-way", cat: "scrubs" },
+        // { l: "ecoflex™ 4-way", cat: "scrubs" },
       ];
 
   const scrubs = [
     { l: "V-Neck Scrubs" },
-    { l: "Mandarin Collar Scrubs" },
-    { l: "Longsleeve Scrubs" },
-    { l: "ecoflex™ Joggers" },
-    { l: "Shop All Scrubs" },
+    // { l: "Mandarin Collar Scrubs" },
+    // { l: "Longsleeve Scrubs" },
+    // { l: "ecoflex™ Joggers" },
+    // { l: "Shop All Scrubs" },
   ];
 
   const labCoats = [
     { l: "Chief" },
-    { l: "Focus" },
+    // { l: "Focus" },
     { l: "Everyday" },
-    { l: "Shop All Aprons" },
+    // { l: "Shop All Aprons" },
   ];
 
   const accessories = G
-    ? [{ l: "Stethoscope" }, { l: "Scrub Cap" }]
-    : [{ l: "Stethoscope" }, { l: "Scrub Cap" }, { l: "Hijab" }];
+    ? [/* { l: "Stethoscope" }, */ { l: "Scrub Cap" }]
+    : [/* { l: "Stethoscope" }, */ { l: "Scrub Cap" } /*, { l: "Hijab" } */];
 
   const colours = G
     ? [
@@ -85,14 +85,18 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
       ];
 
   const fabric = [
-    { l: "Classic Scrubs" },
-    { l: "ecoflex™ 2-way stretch" },
-    { l: "ecoflex™ 4-way stretch" },
+    { l: "Classic 2-way Scrub" },
+    // { l: "ecoflex™ 2-way stretch" },
+    // { l: "ecoflex™ 4-way stretch" },
   ];
 
-  const pockets = [{ l: "5 Pocket" }, { l: "8 Pocket" }, { l: "9 Pocket" }];
+  const pockets = [{ l: "5 Pocket" } /*, { l: "8 Pocket" }, { l: "9 Pocket" } */];
 
-  const apparel = [{ l: "DRIFT Jacket", nw: true }, { l: "Underscrubs" }, { l: "T-shirt" }];
+  const apparel = [
+    // { l: "DRIFT Jacket", nw: true }, 
+    // { l: "Underscrubs" }, 
+    // { l: "T-shirt" }
+  ];
 
   return (
     <div className="mega">

@@ -141,13 +141,13 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             </div>
           </div>
           {[
-            { l: "ecoflex™", href: "/products?cat=scrubs" },
-            { l: "DRIFT Jacket", href: "/products?cat=jacket", pill: "new" },
+            // { l: "ecoflex™", href: "/products?cat=scrubs" },
+            // { l: "DRIFT Jacket", href: "/products?cat=jacket", pill: "new" },
             { l: "Stethoscope", href: "/products?cat=stethoscope" },
-            { l: "Lab Coat Aprons", href: "/products?cat=labcoat" },
+            // { l: "Lab Coat Aprons", href: "/products?cat=labcoat" },
             { l: "Breakpoint 24/7", href: "/breakpoint", pill: "new" },
             { l: "Bulk Offers", href: "/bulk" },
-            { l: "Plus Size", href: "/products?cat=scrubs" },
+            // { l: "Plus Size", href: "/products?cat=scrubs" },
             { l: "About Us", href: "/about" },
             { l: "Blogs", href: "/blog" },
           ].map((n) => (

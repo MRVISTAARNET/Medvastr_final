@@ -70,7 +70,7 @@ export const SLIDES = [
     c1: "Shop Now",
     c2: "Learn More",
   },
-  {
+  /* {
     img: "/Frame_427318647_b55627fb-fb8e-4269-ad82-14a24ef28647.webp",
     ey: "New Collection",
     h: "Move Freely in",
@@ -78,7 +78,7 @@ export const SLIDES = [
     p: "4-way stretch technology designed for the most demanding medical environments.",
     c1: "Explore ecoflex™",
     c2: "All Colours",
-  },
+  }, */
   {
     img: "/Steth_Landing_Page_Banner_Desktop_1.webp",
     ey: "Diagnostic Excellence",

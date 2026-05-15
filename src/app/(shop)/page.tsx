@@ -16,12 +16,12 @@ export default function Home() {
   const { products } = useApp();
 
   const TABS = [
-    { id: "scrubs", label: "Classic Scrubs", type: "scrubs", fab: "Classic" },
-    { id: "ecoflex", label: "ecoflex™ Scrubs", type: "scrubs", fab: "ecoflex™" },
+    { id: "scrubs", label: "Classic 2-way Scrub", type: "scrubs", fab: "Classic" },
+    // { id: "ecoflex", label: "ecoflex™ Scrubs", type: "scrubs", fab: "ecoflex™" },
     { id: "stethoscope", label: "Stethoscope", type: "stethoscope" },
     { id: "labcoat", label: "Lab Coats", type: "labcoat" },
-    { id: "jacket", label: "DRIFT Jacket", type: "jacket" },
-    { id: "underscrub", label: "Underscrubs", type: "underscrub" },
+    // { id: "jacket", label: "DRIFT Jacket", type: "jacket" },
+    // { id: "underscrub", label: "Underscrubs", type: "underscrub" },
   ];
 
   const tabProducts = (() => {
@@ -74,12 +74,12 @@ export default function Home() {
           {[
             ["#dde3f0", "👨‍⚕️", "Men's Scrubs"],
             ["#f0dde4", "👩‍⚕️", "Women's Scrubs"],
-            ["#ddf0e8", "🥼", "Classic Scrubs"],
-            ["#ddedf5", "💪", "ecoflex™ Scrubs"],
+            ["#ddf0e8", "🥼", "Classic 2-way Scrub"],
+            // ["#ddedf5", "💪", "ecoflex™ Scrubs"],
             ["#f0f0f0", "🩺", "Stethoscope"],
-            ["#dde3f0", "🧥", "DRIFT Jacket", true],
+            // ["#dde3f0", "🧥", "DRIFT Jacket", true],
             ["#f8f8f8", "🥼", "Lab Coats"],
-            ["#f0dde4", "👕", "Underscrubs"],
+            // ["#f0dde4", "👕", "Underscrubs"],
           ].map(([bg, em, nm, isN]) => (
             <Link href="/products" className="cat-c" key={nm as string}>
               <div className="cat-img" style={{ background: bg as string }}>
@@ -148,27 +148,16 @@ export default function Home() {
         )}
       </div>
 
-      {/* PROMO */}
+      {/* PROMO 
       <div className="promo-duo">
         <div className="promo-h" style={{ background: "#091220" }}>
-          <div className="promo-em">🩺</div>
-          <div className="promo-ey">New Collection</div>
-          <div className="promo-tt">6sense Stethoscope</div>
-          <div className="promo-bd">30-day free trial. Dual-head design. 10,000+ doctors.</div>
-          <Link href="/products?cat=stethoscope" className="btn-t">
-            Shop Stethoscope →
-          </Link>
+          ...
         </div>
         <div className="promo-h" style={{ background: "var(--g)" }}>
-          <div className="promo-em">🧥</div>
-          <div className="promo-ey">New Launch 2026</div>
-          <div className="promo-tt">The DRIFT Jacket</div>
-          <div className="promo-bd">Anti-distraction. Lab tested. India's first medical outerwear.</div>
-          <Link href="/products?cat=jacket" className="btn-d">
-            Shop DRIFT Jacket →
-          </Link>
+          ...
         </div>
       </div>
+      */}
 
       {/* NEW ARRIVALS */}
       <div className="sec">
