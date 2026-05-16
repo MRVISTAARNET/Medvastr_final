@@ -411,6 +411,8 @@ textarea {
 #nav {
   background: var(--wh);
   border-bottom: 1px solid var(--bdr);
+  border-top: 1px solid rgba(0,0,0,0.06);
+  margin-top: 4px;
   position: relative;
   z-index: 800;
   display: flex;
@@ -1460,6 +1462,7 @@ textarea {
   max-width: 1560px;
   margin: 0 auto;
   padding: 0 44px;
+  text-align: center;
 }
 
 .clr-t {
@@ -1481,6 +1484,7 @@ textarea {
   display: flex;
   gap: 17px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .clr-sw {
@@ -3959,7 +3963,7 @@ body, html {
 
   /* Shop by Colour — start from left on mobile */
   .clr-in { padding: 0 16px !important; }
-  .clr-row { justify-content: flex-start !important; padding-left: 0 !important; margin-left: 0 !important; gap: 12px !important; }
+  .clr-row { justify-content: center !important; padding-left: 0 !important; margin-left: 0 !important; gap: 12px !important; }
 }
 
 /* --- CHECKOUT --- */
