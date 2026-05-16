@@ -12,7 +12,7 @@ export default function AboutHomeSection() {
         <div style={{ width: "100%" }}>
           <div className="about-tag">⚕ Introduction</div>
           <h2 className="about-h">
-            Medvastr: Stylish & Functional Medical Scrubs, Lab Coats, and Stethoscopes for Men & Women!
+            Medvastr: Stylish & Functional Medical Scrubs and Lab Coats for Men & Women!
           </h2>
           
           <div className={`about-rich-text ${showAll ? "expanded" : ""}`}>
@@ -65,9 +65,6 @@ export default function AboutHomeSection() {
                 <li><strong>Plain Scrub Caps:</strong> Opt for a classic and understated look with our plain caps in various colors.</li>
               </ul>
 
-              <h3>Medvastr’s 6sense Stethoscope</h3>
-              <p>Building on our commitment to providing comprehensive solutions for medical professionals, Medvastr recognizes the critical role of diagnostic tools like the stethoscope. While our primary focus lies in crafting stylish and functional apparel such as medical scrubs, lab coats, and underscrubs, we understand the importance of reliable equipment in your daily practice.</p>
-              <p>For those seeking advanced auscultation technology, we invite you to explore the features and benefits of the 6sense Stethoscope, a valuable tool that complements our high-quality medical wear.</p>
 
               <div className="about-faqs">
                 <h3>Frequently Asked Questions</h3>

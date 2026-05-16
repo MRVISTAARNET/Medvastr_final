@@ -27,7 +27,7 @@ export default function TrackPage() {
           <div>
             <div style={{ fontSize: 14, fontWeight: 700 }}>Need help tracking?</div>
             <div style={{ fontSize: 13, color: "var(--lt)" }}>
-              Call us at <a href={`tel:${B.phone}`} style={{ color: "var(--t)", fontWeight: 700 }}>{B.phone}</a> (24/7)
+              Call us at <a href={`tel:${B.phone1}`} style={{ color: "var(--t)", fontWeight: 700 }}>{B.phone1}</a> (24/7)
             </div>
           </div>
         </div>

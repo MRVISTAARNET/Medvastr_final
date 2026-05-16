@@ -16,7 +16,7 @@ export default function BulkPage() {
         <p>Work with a dedicated account manager for your procurement needs.</p>
         <div style={{ marginTop: 40, padding: 30, background: "var(--warm)", borderRadius: 12 }}>
           <div style={{ fontWeight: 700, fontSize: 18, marginBottom: 8 }}>Get a Quote Today</div>
-          <p style={{ margin: 0 }}>Email us at <strong>{B.email}</strong> or call <strong>{B.phone}</strong></p>
+          <p style={{ margin: 0 }}>Email us at <strong>{B.email}</strong> or call <strong>{B.phone1}</strong></p>
         </div>
       </div>
     </GenericPage>

@@ -17,7 +17,7 @@ export default function ContactPage() {
           <h3 style={{ fontSize: 18, marginBottom: 24 }}>Get in touch</h3>
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             {[
-              { ico: "📞", l: "Phone", v: B.phone, href: `tel:${B.phone}` },
+              { ico: "📞", l: "Phone", v: `${B.phone1} | ${B.phone2} | ${B.landline}`, href: `tel:${B.phone1}` },
               { ico: "✉️", l: "Email", v: B.email, href: `mailto:${B.email}` },
               { ico: "📍", l: "Address", v: B.addr },
             ].map((i) => (

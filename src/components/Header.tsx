@@ -45,7 +45,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
           <div className="srch-box">
             <span className="srch-ico">🔍</span>
             <input
-              placeholder="Search scrubs, stethoscopes, lab coats..."
+              placeholder="Search scrubs, lab coats, gowns..."
               value={q}
               onChange={(e) => {
                 setQ(e.target.value);
@@ -140,11 +140,46 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
                <MegaMenu gender="women" />
             </div>
           </div>
+          <div className={`nav-group${mo === "flexy" ? " mob-open" : ""}`}>
+            <div className="nl" onClick={() => setMo(mo === "flexy" ? null : "flexy")}>
+              Flexy Fit 'V' Scrub <span className="nav-arrow">▾</span>
+            </div>
+            <div className="nav-sub" style={{ padding: "20px 44px", display: "flex", gap: 40, minWidth: 480 }}>
+              <div>
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: "var(--lt)", marginBottom: 10 }}>Men's Sizes</div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  {["M","L","XL","XXL"].map(s => (
+                    <Link key={s} href="/products?cat=scrubs" onClick={() => setMn(false)} style={{ padding: "6px 12px", border: "1.5px solid var(--bdr)", borderRadius: 6, fontSize: 12, fontWeight: 600 }}>{s}</Link>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: "var(--lt)", marginBottom: 10 }}>Women's Sizes</div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  {["S","M","L","XL"].map(s => (
+                    <Link key={s} href="/products?cat=scrubs" onClick={() => setMn(false)} style={{ padding: "6px 12px", border: "1.5px solid var(--bdr)", borderRadius: 6, fontSize: 12, fontWeight: 600 }}>{s}</Link>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: "var(--lt)", marginBottom: 10 }}>Colours</div>
+                <div style={{ display: "flex", gap: 8 }}>
+                  {[["Dark Blue","#1a2b4a"],["Light Blue","#add8e6"],["Maroon","#800000"],["Wine","#722f37"]].map(([n,h]) => (
+                    <div key={n} title={n} style={{ width: 20, height: 20, borderRadius: "50%", background: h, border: "2px solid rgba(0,0,0,0.1)", cursor: "pointer" }} />
+                  ))}
+                </div>
+              </div>
+              <div style={{ alignSelf: "center" }}>
+                <Link href="/products?cat=scrubs" onClick={() => setMn(false)} className="btn-t" style={{ fontSize: 12, height: 36, padding: "0 16px" }}>
+                  Buy Now →
+                </Link>
+              </div>
+            </div>
+          </div>
           {[
-            { l: "Flexy Fit Scrub", href: "/products?cat=scrubs" },
             { l: "Linen & Bedding", href: "/products?cat=linen" },
             { l: "Surgical Wear", href: "/products?cat=surgical" },
-            { l: "Stethoscope", href: "/products?cat=stethoscope" },
+            // { l: "Stethoscope", href: "/products?cat=stethoscope" },
             { l: "Bulk Offers", href: "/bulk" },
             { l: "About Us", href: "/about" },
             { l: "Blogs", href: "/blog" },

@@ -25,7 +25,7 @@ export default function Footer() {
             India's leading medical apparel brand. Built for doctors, nurses and healthcare professionals.
           </p>
           <div className="ft-contact">
-            📞 <a href={`tel:${B.phone}`}>{B.phone}</a><br/>
+            📞 <a href={`tel:${B.phone1}`}>{B.phone1}</a> | <a href={`tel:${B.phone2}`}>{B.phone2}</a> | {B.landline}<br/>
             ✉️ <a href={`mailto:${B.email}`}>{B.email}</a><br/>
             📍 {B.addr}
           </div>
@@ -42,7 +42,7 @@ export default function Footer() {
           </h4>
           <ul className="ft-lnks">
             {[
-              ["Flexy Fit Scrub", "men"], ["Green Sheets", "linen"], ["Cardiac Sheets", "linen"], ["Bed Blankets", "linen"], ["Doctor Aprons", "uniforms"], ["Diagnostic", "stethoscope"]
+              ["Flexy Fit Scrub", "men"], ["Green Sheets", "linen"], ["Cardiac Sheets", "linen"], ["Bed Blankets", "linen"]
             ].map(([l, cat]) => (
               <li key={l}><Link href={`/products?cat=${cat}`}>{l}</Link></li>
             ))}
@@ -55,7 +55,7 @@ export default function Footer() {
           </h4>
           <ul className="ft-lnks">
             {[
-              ["Flexy Fit Scrub", "women"], ["Maternity Gowns", "surgical"], ["Patient Dress", "surgical"], ["Nurse Uniforms", "uniforms"], ["Scrubs with Logo", "uniforms"], ["OT Gowns", "surgical"]
+              ["Flexy Fit Scrub", "women"], ["Maternity Gowns", "surgical"], ["Patient Dress", "surgical"], ["Scrubs with Logo", "uniforms"], ["OT Gowns", "surgical"]
             ].map(([l, cat]) => (
               <li key={l}><Link href={`/products?cat=${cat}`}>{l}</Link></li>
             ))}
@@ -68,7 +68,7 @@ export default function Footer() {
           </h4>
           <ul className="ft-lnks">
             {[
-              ["Track My Order", "track"], ["Returns & Exchanges", "returns"], ["Size Guide", "sizeguide"], ["Bulk Orders", "bulk"], ["Contact Us", "contact"], ["Breakpoint 24/7", "breakpoint"]
+              ["Track My Order", "track"], ["Returns & Exchanges", "returns"], ["Size Guide", "sizeguide"], ["Bulk Orders", "bulk"], ["Contact Us", "contact"]
             ].map(([l, p]) => (
               <li key={l}><Link href={`/${p}`}>{l}</Link></li>
             ))}

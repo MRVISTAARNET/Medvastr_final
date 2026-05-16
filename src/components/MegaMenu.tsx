@@ -14,7 +14,6 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
     ? [
         { l: "Flexy Fit Scrub", cat: "men" },
         { l: "Green OT Gown", cat: "surgical" },
-        { l: "Diagnostic", cat: "stethoscope" },
         { l: "Green Linen Sheet", cat: "linen" },
         { l: "New Arrivals", cat: "all" },
         { l: "Best Sellers", cat: "all" },
@@ -22,7 +21,6 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
     : [
         { l: "Flexy Fit Scrub", cat: "women" },
         { l: "Green OT Gown", cat: "surgical" },
-        { l: "Diagnostic", cat: "stethoscope" },
         { l: "Green Linen Sheet", cat: "linen" },
         { l: "New Arrivals", cat: "all" },
         { l: "Best Sellers", cat: "all" },
@@ -31,8 +29,6 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
   const scrubs = [
     { l: "Flexy Fit 'V' Scrub" },
     { l: "Scrub Suit with Logo" },
-    { l: "Nurse Uniform" },
-    { l: "Premium Doctor Apron" },
     { l: "Customized Uniforms" },
   ];
 
@@ -46,22 +42,14 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
   ];
 
   const accessories = G
-    ? [{ l: "Stethoscope" }, { l: "Green Surgery Cap" }]
-    : [{ l: "Stethoscope" }, { l: "Green Surgery Cap" }];
+    ? [{ l: "Green Surgery Cap" }]
+    : [{ l: "Green Surgery Cap" }];
 
   const colours = [
     { l: "Dark Blue", h: "#1a2b4a" },
     { l: "Light Blue", h: "#add8e6" },
     { l: "Maroon", h: "#800000" },
     { l: "Wine", h: "#722f37" },
-    { l: "Navy", h: "#1a2744" },
-    { l: "Eucalyptus", h: "#7aab8a" },
-    { l: "Black", h: "#1a1a1a" },
-    { l: "Steel Grey", h: "#607d8b" },
-    { l: "Forest Green", h: "#1d6e55" },
-    { l: "Heather Grey", h: "#9e9e9e" },
-    { l: "Olive", h: "#6b7f6b" },
-    { l: "Military Green", h: "#4a5e3a" },
   ];
 
   const fabric = [
@@ -74,8 +62,7 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
 
   const apparel = [
     { l: "Green OT Gown" }, 
-    { l: "Maternity Gown" }, 
-    { l: "Hospital Gown" }
+    { l: "Maternity Gown" }
   ];
 
   return (
@@ -105,7 +92,7 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
             ))}
           </ul>
           <div className="mcol-sub" style={{ marginTop: 18 }}>
-            Diagnostic & Caps
+            Caps
           </div>
           <ul>
             {accessories.map((x) => (

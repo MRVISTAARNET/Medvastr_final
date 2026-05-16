@@ -28,8 +28,8 @@ export default function GenericPage({ title, desc, children }: GenPageProps) {
                 {B.email}
               </a>{" "}
               or call{" "}
-              <a href={`tel:${B.phone}`} style={{ color: "var(--t)", fontWeight: 700 }}>
-                {B.phone}
+              <a href={`tel:${B.phone1}`} style={{ color: "var(--t)", fontWeight: 700 }}>
+                {B.phone1}
               </a>
               .
             </p>

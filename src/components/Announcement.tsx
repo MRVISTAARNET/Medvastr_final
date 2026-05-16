@@ -11,7 +11,7 @@ export default function Announcement() {
     "✓ Bulk discounts for hospitals & clinics",
     "✓ 200+ wash guarantee",
     // "✓ <b>NEW:</b> DRIFT Jacket Available",
-    `✓ Call us: ${B.phone}`,
+    `✓ Call us: ${B.phone1}`,
     "✓ Code MEDVASTR10 — 10% off first order",
   ];
 

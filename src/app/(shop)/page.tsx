@@ -43,7 +43,7 @@ export default function Home() {
             ["🚚", "Free Delivery", "Orders above ₹999"],
             ["🔄", "Easy Returns", "7-day hassle-free"],
             ["🔒", "Secure Payment", "100% safe"],
-            ["📞", "24/7 Support", B.phone],
+            ["📞", "24/7 Support", B.phone1],
             ["💳", "COD Available", "Pay at doorstep"],
             ["⭐", "Earn Rewards", "Every purchase"],
           ].map(([ico, t, s], i) => (

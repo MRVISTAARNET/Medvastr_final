@@ -28,7 +28,7 @@ export default function AdminSettings() {
                 </div>
                 <div className="fg">
                   <label>Phone</label>
-                  <input type="tel" defaultValue="9920314164" className="tbl-search" style={{ width: '100%', height: '44px' }} />
+                  <input type="tel" defaultValue="8976488911" className="tbl-search" style={{ width: '100%', height: '44px' }} />
                 </div>
                 <div className="fg">
                   <label>Address</label>
@@ -44,7 +44,7 @@ export default function AdminSettings() {
                       resize: 'vertical',
                       color: 'var(--txt)',
                     }}
-                    defaultValue="LL 001, Gagan Shopping Arcade, Gokuldham, Goregaon East, Mumbai – 400063"
+                    defaultValue="F 81-B, Express Zone, Malad East, Mumbai – 400063"
                   />
                 </div>
                 <button className="btn-primary">Save Changes</button>

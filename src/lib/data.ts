@@ -1,6 +1,8 @@
 export const B = {
   name: "Medvastr",
-  phone: "9920314164",
+  phone1: "8976488911",
+  phone2: "9920314164",
+  landline: "022 46089785",
   email: "medvastr@gmail.com",
   addr: "F 81-B, Express Zone, Malad East, Mumbai – 400063",
   ig: "https://www.instagram.com/medvastr/",
@@ -79,7 +81,7 @@ export const SLIDES = [
     c1: "Explore Linen",
     c2: "View All",
   },
-  {
+  /* {
     img: "/Steth_Landing_Page_Banner_Desktop_1.webp",
     ey: "Diagnostic Excellence",
     h: "6sense Stethoscopes",
@@ -87,7 +89,7 @@ export const SLIDES = [
     p: "Unmatched acoustic clarity. 30-day free trial. Trusted by 10,000+ doctors.",
     c1: "Shop Stethoscope",
     c2: "View Features",
-  },
+  }, */
 ];
 
 export const REVIEWS: any[] = [];
