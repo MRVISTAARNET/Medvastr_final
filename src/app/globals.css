@@ -522,6 +522,7 @@ textarea {
   padding: 24px 34px;
   display: flex;
   gap: 40px;
+  width: max-content;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -1462,7 +1463,6 @@ textarea {
   max-width: 1560px;
   margin: 0 auto;
   padding: 0 44px;
-  text-align: center;
 }
 
 .clr-t {
@@ -1484,7 +1484,6 @@ textarea {
   display: flex;
   gap: 17px;
   flex-wrap: wrap;
-  justify-content: center;
 }
 
 .clr-sw {

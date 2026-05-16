@@ -189,7 +189,6 @@ export default function Home() {
           ["⏰", "12-Hour Ready", "Long-shift comfort"],
           ["🛡️", "Anti-Distraction", "Built for focus"],
           ["👜", "Up to 9 Pockets", "Everything you need"],
-          ["⚗️", "ecoflex™", "4-way stretch"],
           ["🚀", "200+ Washes", "Colour stays vivid"],
         ].map(([ico, t, s]) => (
           <div className="fit" key={t}>
