@@ -140,11 +140,11 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
                <MegaMenu gender="women" />
             </div>
           </div>
-          <div className={`nav-group${mo === "flexy" ? " mob-open" : ""}`}>
+          <div className={`nav-group flexy-group${mo === "flexy" ? " mob-open" : ""}`} style={{ position: "relative", whiteSpace: "nowrap" }}>
             <div className="nl" onClick={() => setMo(mo === "flexy" ? null : "flexy")}>
               Flexy Fit 'V' Scrub <span className="nav-arrow">▾</span>
             </div>
-            <div className="nav-sub" style={{ padding: "20px 44px", display: "flex", gap: 40, minWidth: 480 }}>
+            <div className="flexy-sub">
               <div>
                 <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: "var(--lt)", marginBottom: 10 }}>Men's Sizes</div>
                 <div style={{ display: "flex", gap: 8 }}>

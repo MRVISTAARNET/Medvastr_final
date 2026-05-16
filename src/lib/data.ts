@@ -11,22 +11,10 @@ export const B = {
 };
 
 export const COLS = [
-  { n: "Navy Blue", h: "#1a2744" },
-  { n: "Black", h: "#1a1a1a" },
-  { n: "Wine", h: "#7b1c3c" },
-  { n: "Forest Green", h: "#1d6e55" },
-  { n: "Heather Grey", h: "#9e9e9e" },
-  { n: "Maroon", h: "#7a3535" },
-  { n: "Ceil Blue", h: "#7b9db3" },
-  { n: "Pastel Lilac", h: "#c4a4b8" },
-  { n: "Hot Pink", h: "#e8437a" },
-  { n: "Olive", h: "#6b7f6b" },
-  { n: "Steel Grey", h: "#607d8b" },
-  { n: "Mauve", h: "#b58ca8" },
-  { n: "Eucalyptus", h: "#7aab8a" },
-  { n: "Charcoal", h: "#3a3a3a" },
-  { n: "Galaxy Blue", h: "#2c3e7a" },
-  { n: "White", h: "#f0f0f0" },
+  { n: "Dark Blue", h: "#1a2b4a" },
+  { n: "Light Blue", h: "#add8e6" },
+  { n: "Maroon", h: "#800000" },
+  { n: "Wine", h: "#722f37" },
 ];
 
 export const SIZES = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];

@@ -507,6 +507,34 @@ textarea {
   position: static;
 }
 
+/* Flexy Fit Dropdown */
+.flexy-sub {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--wh);
+  border-top: 3px solid var(--t);
+  border-bottom: 1px solid var(--bdr);
+  box-shadow: 0 28px 72px rgba(0, 0, 0, 0.16);
+  z-index: 1000;
+  padding: 24px 34px;
+  display: flex;
+  gap: 40px;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-10px);
+  transition: opacity 0.24s var(--ease), transform 0.24s var(--ease), visibility 0.24s;
+}
+
+.flexy-group:hover .flexy-sub,
+.flexy-sub:hover {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
 /* Mega Menu */
 .mega {
   position: absolute;
@@ -3925,6 +3953,8 @@ body, html {
   .nav-group { border-bottom: 1px solid rgba(0,0,0,0.03); width: 100%; }
   .nav-sub { background: var(--warm) !important; padding: 10px 0; display: none; }
   .nav-group.mob-open .nav-sub { display: block; }
+  .flexy-sub { position: static; min-width: 0; width: 100%; box-shadow: none; border-top: none; background: var(--warm) !important; display: none; padding: 20px 24px; opacity: 1; visibility: visible; transform: none; pointer-events: auto; flex-direction: column; gap: 24px; }
+  .nav-group.mob-open .flexy-sub { display: flex; }
   .nav-in::after { content: "Customer Support\A+91 99203 14164\A\Amedvastr@gmail.com"; white-space: pre-wrap; display: block; padding: 40px 24px; font-size: 13px; color: var(--ink); font-weight: 600; line-height: 1.8; border-top: 1px solid var(--bdr); margin-top: 20px; }
 
   /* Shop by Colour — start from left on mobile */

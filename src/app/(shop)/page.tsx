@@ -93,7 +93,7 @@ export default function Home() {
       <div className="clr-sec">
         <div className="clr-in">
           <div className="clr-t">Shop By Colours</div>
-          <div className="clr-s">16 shades across all categories</div>
+          <div className="clr-s">4 shades across all categories</div>
           <div className="clr-row">
             {COLS.map((c, i) => (
               <Link href="/products" className="clr-sw" key={i}>
