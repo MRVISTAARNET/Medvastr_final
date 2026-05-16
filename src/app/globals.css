@@ -513,7 +513,6 @@ textarea {
 .flexy-sub {
   position: absolute;
   top: 100%;
-  left: 0;
   background: var(--wh);
   border-top: 3px solid var(--t);
   border-bottom: 1px solid var(--bdr);
@@ -523,6 +522,9 @@ textarea {
   display: flex;
   gap: 40px;
   width: max-content;
+  min-width: 700px;
+  white-space: normal;
+  left: -20px;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
