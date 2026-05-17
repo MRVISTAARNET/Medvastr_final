@@ -209,7 +209,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
           {[
             { l: "Surgical Wear", href: "/products?cat=surgical" },
             // { l: "Stethoscope", href: "/products?cat=stethoscope" },
-            { l: "Bulk Offers", href: "/bulk" },
+            { l: "Bulk Orders", href: "/bulk" },
             { l: "About Us", href: "/about" },
             { l: "Blogs", href: "/blog" },
           ].map((n) => (
