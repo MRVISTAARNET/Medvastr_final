@@ -176,8 +176,37 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
               </div>
             </div>
           </div>
+          <div className={`nav-group flexy-group${mo === "linen" ? " mob-open" : ""}`} style={{ position: "relative", whiteSpace: "nowrap" }}>
+            <div className="nl" onClick={() => setMo(mo === "linen" ? null : "linen")}>
+              Linen & Bedding <span className="nav-arrow">▾</span>
+            </div>
+            <div className="flexy-sub" style={{ minWidth: "240px", padding: "20px 24px", display: "block", left: 0 }}>
+              <div className="mcol" style={{ padding: 0, border: "none" }}>
+                <Link href="/products?cat=linen" onClick={() => setMn(false)} style={{ textDecoration: "none" }}>
+                  <div className="mcol-sub" style={{ marginTop: 0 }}>
+                    Linen & Bedding <span style={{ fontSize: 10, color: "var(--t)", fontWeight: 700 }}>→</span>
+                  </div>
+                </Link>
+                <ul>
+                  {[
+                    { l: "Linen Towel (50x50)" },
+                    { l: "Green Sheet (100x100)" },
+                    { l: "Green Sheet (150x150)" },
+                    { l: "Green Sheet with Hole" },
+                    { l: "Cardiac Trolley Sheet" },
+                    { l: "Single Bed Blanket" },
+                  ].map((x) => (
+                    <li key={x.l}>
+                      <Link href="/products?cat=linen" onClick={() => setMn(false)}>
+                        <span>{x.l}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
           {[
-            { l: "Linen & Bedding", href: "/products?cat=linen" },
             { l: "Surgical Wear", href: "/products?cat=surgical" },
             // { l: "Stethoscope", href: "/products?cat=stethoscope" },
             { l: "Bulk Offers", href: "/bulk" },

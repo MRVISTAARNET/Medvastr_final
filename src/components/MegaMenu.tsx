@@ -14,14 +14,12 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
     ? [
         { l: "Flexy Fit Scrub", cat: "men" },
         { l: "Green OT Gown", cat: "surgical" },
-        { l: "Green Linen Sheet", cat: "linen" },
         { l: "New Arrivals", cat: "all" },
         { l: "Best Sellers", cat: "all" },
       ]
     : [
         { l: "Flexy Fit Scrub", cat: "women" },
         { l: "Green OT Gown", cat: "surgical" },
-        { l: "Green Linen Sheet", cat: "linen" },
         { l: "New Arrivals", cat: "all" },
         { l: "Best Sellers", cat: "all" },
       ];
@@ -32,14 +30,7 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
     { l: "Customized Uniforms" },
   ];
 
-  const labCoats = [
-    { l: "Linen Towel (50x50)" },
-    { l: "Green Sheet (100x100)" },
-    { l: "Green Sheet (150x150)" },
-    { l: "Green Sheet with Hole" },
-    { l: "Cardiac Trolley Sheet" },
-    { l: "Single Bed Blanket" },
-  ];
+
 
   const accessories = G
     ? [{ l: "Green Surgery Cap" }]
@@ -105,16 +96,6 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
 
         <div className="mcol">
           <div className="mcol-sub">
-            Linen & Bedding <span style={{ fontSize: 10, color: "var(--t)", fontWeight: 700 }}>→</span>
-          </div>
-          <ul>
-            {labCoats.map((x) => (
-              <li key={x.l}>
-                <span>{x.l}</span>
-              </li>
-            ))}
-          </ul>
-          <div className="mcol-sub" style={{ marginTop: 18 }}>
             Surgical & Patient Wear
           </div>
           <ul>
