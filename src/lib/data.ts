@@ -45,6 +45,13 @@ export interface Product {
   fit: string;
   imgs: string[];
   catId?: number;
+  sku?: string;
+  brand?: string;
+  sizes?: string[];
+  barcode?: string;
+  stock?: number;
+  sold?: number;
+  returned?: number;
 }
 
 export const PRODUCTS: Product[] = [];

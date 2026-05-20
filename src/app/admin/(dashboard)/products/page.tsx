@@ -33,6 +33,11 @@ export default function AdminProducts() {
     const catId = parseInt((document.getElementById('p-cat') as HTMLSelectElement)?.value) || undefined;
     const imgUrl = (document.getElementById('p-img') as HTMLInputElement)?.value || '';
     const emoji = (document.getElementById('p-emo') as HTMLInputElement)?.value || '📦';
+    const sku = (document.getElementById('p-sku') as HTMLInputElement)?.value || '';
+    const brand = (document.getElementById('p-brand') as HTMLInputElement)?.value || 'Medvastr';
+    const sizesStr = (document.getElementById('p-sizes') as HTMLInputElement)?.value || '';
+    const colorsStr = (document.getElementById('p-colors') as HTMLInputElement)?.value || '';
+    const barcode = (document.getElementById('p-barcode') as HTMLInputElement)?.value || '';
     
     if (name && price) {
       const pData: any = {
@@ -49,6 +54,11 @@ export default function AdminProducts() {
         imgs: imgUrl ? [imgUrl] : [],
         emo: emoji,
         bg: '#f0f0f0',
+        sku,
+        brand,
+        sizes: sizesStr.split(',').map(s => s.trim()).filter(Boolean),
+        clrs: colorsStr.split(',').map(c => c.trim()).filter(Boolean),
+        barcode,
         rating: editingProduct?.rating || 0,
         rev: editingProduct?.rev || 0,
         active: true
@@ -118,7 +128,7 @@ export default function AdminProducts() {
                           <div className="td-avatar">{p.emo || '🥼'}</div>
                           <div>
                             <div className="td-name">{p.name}</div>
-                            <div className="td-meta">ID: {p.id}</div>
+                            <div className="td-meta">SKU: {p.sku || p.id} | Brand: {p.brand || 'Medvastr'}</div>
                           </div>
                         </div>
                       </td>
@@ -217,12 +227,43 @@ export default function AdminProducts() {
               </div>
               <div className="fg-row">
                 <div className="fg">
-                  <label>Fabric</label>
+                  <label>Fabric / Material</label>
                   <input type="text" id="p-fabric" defaultValue={editingProduct?.fab || ''} placeholder="Classic / ecoflex™" />
                 </div>
                 <div className="fg">
                   <label>Fit</label>
                   <input type="text" id="p-fit" defaultValue={editingProduct?.fit || ''} placeholder="Regular Fit / Slim Fit" />
+                </div>
+              </div>
+              <div className="fg-row">
+                <div className="fg">
+                  <label>SKU Code</label>
+                  <input type="text" id="p-sku" defaultValue={editingProduct?.sku || ''} placeholder="e.g. MV-SCRUB-101" />
+                </div>
+                <div className="fg">
+                  <label>Brand</label>
+                  <input type="text" id="p-brand" defaultValue={editingProduct?.brand || 'Medvastr'} placeholder="Brand Name" />
+                </div>
+              </div>
+              <div className="fg-row">
+                <div className="fg">
+                  <label>Sizes (comma separated)</label>
+                  <input type="text" id="p-sizes" defaultValue={editingProduct?.sizes?.join(', ') || 'XS, S, M, L, XL'} placeholder="S, M, L, XL" />
+                </div>
+                <div className="fg">
+                  <label>Colors (comma separated)</label>
+                  <input type="text" id="p-colors" defaultValue={editingProduct?.clrs?.join(', ') || ''} placeholder="#1a2b4a, #800000" />
+                </div>
+              </div>
+              <div className="fg">
+                <label>Barcode</label>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <input type="text" id="p-barcode" defaultValue={editingProduct?.barcode || ''} placeholder="Generated or scanned barcode" style={{ flex: 1 }} />
+                  <button type="button" className="btn-secondary" onClick={() => {
+                    const skuVal = (document.getElementById('p-sku') as HTMLInputElement)?.value;
+                    const barcodeInp = document.getElementById('p-barcode') as HTMLInputElement;
+                    if(barcodeInp) barcodeInp.value = skuVal ? `BC-${skuVal}-${Math.floor(Math.random()*1000)}` : `BC-${Math.floor(Math.random()*1000000)}`;
+                  }}>Generate</button>
                 </div>
               </div>
             </div>

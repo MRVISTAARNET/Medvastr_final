@@ -114,6 +114,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             fit: p.fit || '',
             imgs: p.imageUrls || [],
             catId: p.categoryId,
+            sku: p.sku || `MV-${p.id}`,
+            brand: p.brand || 'Medvastr',
+            sizes: p.sizes || ['XS', 'S', 'M', 'L', 'XL'],
+            barcode: p.barcode || `BC-${p.id}-${Math.floor(Math.random() * 1000)}`
           }));
           setProducts(mapped);
         }
@@ -201,7 +205,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           weight: p.wt,
           fit: p.fit,
           categoryId: p.catId,
-          imageUrls: p.imgs
+          imageUrls: p.imgs,
+          sku: p.sku,
+          brand: p.brand,
+          sizes: p.sizes,
+          barcode: p.barcode
         })
       });
       const data = await res.json();
@@ -235,7 +243,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           weight: p.wt,
           fit: p.fit,
           categoryId: p.catId,
-          imageUrls: p.imgs
+          imageUrls: p.imgs,
+          sku: p.sku,
+          brand: p.brand,
+          sizes: p.sizes,
+          barcode: p.barcode
         })
       });
       if (res.ok) {
