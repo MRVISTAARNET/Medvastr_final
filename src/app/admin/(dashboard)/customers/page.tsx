@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { fmt, fmtNum, fmtDate } from '@/lib/adminData';
+import { fmt, fmtNum, fmtDate } from '@/lib/data';
 
 export default function AdminCustomers() {
   const [customers, setCustomers] = useState<any[]>([]);

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { INITIAL_ADMIN_DATA, fmt } from '@/lib/adminData';
+import { INITIAL_ADMIN_DATA, fmt } from '@/lib/data';
 
 export default function AdminAnalytics() {
   const max = INITIAL_ADMIN_DATA.monthlyRevenue.length > 0 

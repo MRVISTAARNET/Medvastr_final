@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { INITIAL_ADMIN_DATA, fmt, fmtNum, fmtDate } from '@/lib/adminData';
+import { INITIAL_ADMIN_DATA, fmt, fmtNum, fmtDate } from '@/lib/data';
 
 export default function AdminPromos() {
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { fmt, fmtNum, fmtDate } from '@/lib/adminData';
+import { fmt, fmtNum, fmtDate } from '@/lib/data';
 
 export default function AdminOrders() {
   const [search, setSearch] = useState('');
@@ -17,7 +17,7 @@ export default function AdminOrders() {
     const fetchOrders = async () => {
       try {
         const token = localStorage.getItem('adm_token');
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders?size=100`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/admin/all?size=100`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -27,7 +27,7 @@ export default function AdminOrders() {
             num: o.orderNumber,
             customer: o.shippingName || 'Unknown',
             email: o.shippingPhone || '',
-            items: o.items || Math.floor(Math.random() * 5) + 1,
+            items: o.items?.length || 0,
             total: o.totalAmount,
             status: o.status,
             date: o.createdAt,
@@ -55,26 +55,26 @@ export default function AdminOrders() {
 
   const statusBadge = (s: string) => {
     const map: any = {
-      DELIVERED:  'b-grn',   SHIPPED:    'b-blue',
-      PROCESSING: 'b-warn',  PENDING:    'b-purple',
-      CANCELLED:  'b-red',   REFUNDED:   'b-gray',
+      DELIVERED: 'b-grn', SHIPPED: 'b-blue',
+      PROCESSING: 'b-warn', PENDING: 'b-purple',
+      CANCELLED: 'b-red', REFUNDED: 'b-gray',
     };
     return <span className={`badge ${map[s] || 'b-gray'}`}>{s}</span>;
   };
 
   return (
     <>
-      <AdminTopbar 
-        title="Orders" 
-        sub="Manage and track all customer orders" 
+      <AdminTopbar
+        title="Orders"
+        sub="Manage and track all customer orders"
       />
       <div className="admin-content">
         <div className="panel">
           <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', marginBottom: '22px' }}>
             {['ALL', 'PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED'].map(s => (
-              <div 
+              <div
                 key={s}
-                className="stat-card" 
+                className="stat-card"
                 style={{ cursor: 'pointer', padding: '14px 16px', borderColor: filter === s ? 'var(--teal)' : '', background: filter === s ? 'var(--teal4)' : '' }}
                 onClick={() => setFilter(s)}
               >
@@ -93,14 +93,14 @@ export default function AdminOrders() {
                 <div className="table-sub">{fmtNum(filteredOrders.length)} total orders</div>
               </div>
               <div className="table-hd-right">
-                <input 
-                  className="tbl-search" 
-                  placeholder="Search order ID or customer..." 
+                <input
+                  className="tbl-search"
+                  placeholder="Search order ID or customer..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
-                <select 
-                  className="tbl-select" 
+                <select
+                  className="tbl-select"
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
                 >
@@ -213,7 +213,7 @@ export default function AdminOrders() {
                     <label>Action</label>
                     <button type="button" className="btn-secondary" style={{ width: '100%' }} onClick={() => {
                       const awbInp = document.getElementById('o-awb') as HTMLInputElement;
-                      if(awbInp) awbInp.value = `SR${Math.floor(Math.random()*100000000)}`;
+                      if (awbInp) awbInp.value = `SR${Math.floor(Math.random() * 100000000)}`;
                       alert("Order pushed to Shiprocket! AWB generated.");
                     }}>Push to Shiprocket</button>
                   </div>

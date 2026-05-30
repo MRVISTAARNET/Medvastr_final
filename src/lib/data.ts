@@ -3,7 +3,7 @@ export const B = {
   phone1: "8976488911",
   phone2: "9920314164",
   landline: "022 46089785",
-  email: "medvastr@gmail.com",
+  email: "info@medvastr.com",
   addr: "F 81-B, Express Zone, Malad East, Mumbai – 400063",
   ig: "https://www.instagram.com/medvastr/",
   fb: "https://www.facebook.com/medvastr/",
@@ -46,6 +46,7 @@ export interface Product {
   imgs: string[];
   catId?: number;
   sku?: string;
+  styleId?: string;
   brand?: string;
   sizes?: string[];
   barcode?: string;
@@ -96,4 +97,41 @@ export const PROMOS: Record<string, number> = {
   BULK50: 0.5,
 };
 
-export const fmt = (n: number) => "₹ " + n.toLocaleString("en-IN");
+export const fmt = (n: number) => "₹ " + Number(n || 0).toLocaleString("en-IN");
+export const fmtNum = (n: number) => Number(n || 0).toLocaleString("en-IN");
+export const fmtDate = (d: string | Date) => {
+  if (!d) return "—";
+  return new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+};
+
+// Common Admin Interfaces
+export interface AdminStats {
+  revenue: number; orders: number; customers: number; products: number;
+  pendingOrders: number; avgOrder: number; growth: number; ratingAvg: number;
+}
+export interface AdminOrder { id: number; num: string; customer: string; email: string; items: number; total: number; status: string; date: string; city: string; payment: string; }
+export interface AdminPromo { id: number; code: string; discount: number; type: string; minOrder: number; uses: number; maxUses: number; active: boolean; expiry: string; }
+export interface AdminRevenue { m: string; v: number; }
+export interface AdminTopProduct { name: string; sales: number; revenue: number; emoji: string; }
+export interface AdminCustomer { id: number; name: string; email: string; phone: string; orders: number; spent: number; city: string; joined: string; role: string; }
+export interface AdminReview { id: number; product: string; customer: string; rating: number; text: string; date: string; status: string; }
+
+export const INITIAL_ADMIN_DATA: {
+  stats: AdminStats;
+  monthlyRevenue: AdminRevenue[];
+  topProducts: AdminTopProduct[];
+  orders: AdminOrder[];
+  products: any[];
+  customers: AdminCustomer[];
+  promos: AdminPromo[];
+  reviews: AdminReview[];
+} = {
+  stats: { revenue: 0, orders: 0, customers: 0, products: 0, pendingOrders: 0, avgOrder: 0, growth: 0, ratingAvg: 0 },
+  monthlyRevenue: [],
+  topProducts: [],
+  orders: [],
+  products: [],
+  customers: [],
+  promos: [],
+  reviews: []
+};

@@ -101,7 +101,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
           <button className="ha" onClick={onAcct} title="Account">
             {user ? (
               <span style={{ fontSize: 14, fontWeight: 700, color: "var(--t)", fontFamily: "var(--serif)" }}>
-                {user.name.charAt(0)}
+                {(user.firstName || "U").charAt(0)}
               </span>
             ) : (
               "👤"
@@ -121,7 +121,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
       <div className={`mob-drawer-ov${mn ? " on" : ""}`} onClick={() => setMn(false)} />
       <div id="nav" className={mn ? " mob-on" : ""}>
         <div className="mob-nav-hd mob-only">
-           <button className="mn-close" onClick={() => setMn(false)}>✕</button>
+          <button className="mn-close" onClick={() => setMn(false)}>✕</button>
         </div>
         <div className="nav-in">
           <div className={`nav-group${mo === "men" ? " mob-open" : ""}`}>
@@ -129,7 +129,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
               Men <span className="nav-arrow">▾</span>
             </div>
             <div className="nav-sub">
-               <MegaMenu gender="men" />
+              <MegaMenu gender="men" />
             </div>
           </div>
           <div className={`nav-group${mo === "women" ? " mob-open" : ""}`}>
@@ -137,7 +137,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
               Women <span className="nav-arrow">▾</span>
             </div>
             <div className="nav-sub">
-               <MegaMenu gender="women" />
+              <MegaMenu gender="women" />
             </div>
           </div>
           <div className={`nav-group flexy-group${mo === "flexy" ? " mob-open" : ""}`} style={{ position: "relative", whiteSpace: "nowrap" }}>
@@ -148,7 +148,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
               <div>
                 <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: "var(--lt)", marginBottom: 10 }}>Men's Sizes</div>
                 <div style={{ display: "flex", gap: 8 }}>
-                  {["M","L","XL","XXL"].map(s => (
+                  {["M", "L", "XL", "XXL"].map(s => (
                     <Link key={s} href="/products?cat=scrubs" onClick={() => setMn(false)} style={{ padding: "6px 12px", border: "1.5px solid var(--bdr)", borderRadius: 6, fontSize: 12, fontWeight: 600 }}>{s}</Link>
                   ))}
                 </div>
@@ -156,7 +156,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
               <div>
                 <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: "var(--lt)", marginBottom: 10 }}>Women's Sizes</div>
                 <div style={{ display: "flex", gap: 8 }}>
-                  {["S","M","L","XL"].map(s => (
+                  {["S", "M", "L", "XL"].map(s => (
                     <Link key={s} href="/products?cat=scrubs" onClick={() => setMn(false)} style={{ padding: "6px 12px", border: "1.5px solid var(--bdr)", borderRadius: 6, fontSize: 12, fontWeight: 600 }}>{s}</Link>
                   ))}
                 </div>
@@ -164,7 +164,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
               <div>
                 <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: "var(--lt)", marginBottom: 10 }}>Colours</div>
                 <div style={{ display: "flex", gap: 8 }}>
-                  {[["Dark Blue","#1a2b4a"],["Light Blue","#add8e6"],["Maroon","#800000"],["Wine","#722f37"]].map(([n,h]) => (
+                  {[["Dark Blue", "#1a2b4a"], ["Light Blue", "#add8e6"], ["Maroon", "#800000"], ["Wine", "#722f37"]].map(([n, h]) => (
                     <div key={n} title={n} style={{ width: 20, height: 20, borderRadius: "50%", background: h, border: "2px solid rgba(0,0,0,0.1)", cursor: "pointer" }} />
                   ))}
                 </div>

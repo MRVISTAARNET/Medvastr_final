@@ -3,6 +3,7 @@
 import React from "react";
 import { useApp } from "@/context/AppContext";
 import { fmt } from "@/lib/data";
+import { useRouter } from "next/navigation";
 
 interface CartDrawerProps {
   open: boolean;
@@ -11,9 +12,15 @@ interface CartDrawerProps {
 
 export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const { cart, updateCartQty, removeFromCart } = useApp();
+  const router = useRouter();
 
   const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const ship = sub > 999 ? 0 : 99;
+
+  const handleCheckout = () => {
+    onClose();
+    router.push("/checkout");
+  };
 
   return (
     <>
@@ -22,7 +29,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         <div className="drw-hd">
           <div>
             <h3>Shopping Bag</h3>
-            <div className="drw-hd-s">{cart.length} items in your bag</div>
+            <div className="drw-hd-s">{cart.reduce((a, b) => a + b.qty, 0)} items in your bag</div>
           </div>
           <button className="drw-x" onClick={onClose}>
             ✕
@@ -85,7 +92,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
               <span>Total</span>
               <span>{fmt(sub + ship)}</span>
             </div>
-            <button className="co-cta" onClick={() => (window.location.href = "/checkout")}>
+            <button className="co-cta" onClick={handleCheckout}>
               Checkout Now →
             </button>
             <div style={{ textAlign: "center", fontSize: 11, color: "var(--lt)", marginTop: 15 }}>

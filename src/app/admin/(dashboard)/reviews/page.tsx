@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { fmtDate } from '@/lib/adminData';
+import { fmtDate } from '@/lib/data';
 
 const getStars = (r: number) => {
   const full = Math.floor(r);

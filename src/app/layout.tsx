@@ -22,8 +22,9 @@ const sans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Medvastr | Premium Medical Apparel",
-  description: "India's leading medical apparel brand for doctors, nurses and healthcare professionals.",
+  title: "Medvastr | Premium Medical Apparel & Professional Scrubs",
+  description: "Medvastr offers world-class medical scrubs, lab coats, and hospital linen for today's healthcare heroes. Superior comfort, performance fabrics, and modern fits designed in India.",
+  keywords: ["medical scrubs", "scrubs India", "doctors apparel", "nurse uniform", "premium scrubs", "Medvastr"],
 };
 
 export default function RootLayout({

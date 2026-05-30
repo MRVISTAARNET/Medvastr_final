@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { INITIAL_ADMIN_DATA, fmt, fmtNum, fmtDate } from '@/lib/adminData';
+import { INITIAL_ADMIN_DATA, fmt, fmtNum, fmtDate } from '@/lib/data';
 import Link from 'next/link';
 
 export default function AdminDashboard() {
@@ -35,13 +35,13 @@ export default function AdminDashboard() {
               id: o.id,
               num: o.orderNumber,
               customer: 'Customer', // Backend might need to provide name
-              email: '—',
-              items: 0,
+              email: o.shippingPhone || '—',
+              items: o.items?.length || 0,
               total: o.totalAmount,
               status: o.status,
               date: o.createdAt,
-              city: '—',
-              payment: '—'
+              city: o.shippingCity || '—',
+              payment: o.paymentMethod || '—'
             }))
           });
         }
@@ -56,24 +56,24 @@ export default function AdminDashboard() {
 
   const s = data.stats;
   const recentOrders = data.orders.slice(0, 5);
-  const maxRevenue = data.monthlyRevenue.length > 0 
-    ? Math.max(...data.monthlyRevenue.map(m => m.v)) 
+  const maxRevenue = data.monthlyRevenue.length > 0
+    ? Math.max(...data.monthlyRevenue.map(m => m.v))
     : 100;
 
   const statusBadge = (s: string) => {
     const map: any = {
-      DELIVERED:  'b-grn',   SHIPPED:    'b-blue',
-      PROCESSING: 'b-warn',  PENDING:    'b-purple',
-      CANCELLED:  'b-red',   REFUNDED:   'b-gray',
+      DELIVERED: 'b-grn', SHIPPED: 'b-blue',
+      PROCESSING: 'b-warn', PENDING: 'b-purple',
+      CANCELLED: 'b-red', REFUNDED: 'b-gray',
     };
     return <span className={`badge ${map[s] || 'b-gray'}`}>{s}</span>;
   };
 
   return (
     <>
-      <AdminTopbar 
-        title="Dashboard" 
-        sub="Welcome back — here's what's happening today" 
+      <AdminTopbar
+        title="Dashboard"
+        sub="Welcome back — here's what's happening today"
       />
       <div className="admin-content">
         <div className="panel">

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function AdminLogin() {
@@ -12,14 +13,9 @@ export default function AdminLogin() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError('Please enter email and password.');
-      return;
-    }
-
+    if (!email || !password) { setError('Please enter email and password.'); return; }
     setLoading(true);
     setError('');
-
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: 'POST',
@@ -38,8 +34,9 @@ export default function AdminLogin() {
         setError(data.message || 'Invalid email or password.');
         setLoading(false);
       }
-    } catch (e) {
-      setError('Connection failed. Please check your backend.');
+    } catch (err: any) {
+      console.error('Login error:', err);
+      setError(`Connection failed. Make sure your backend is running at ${process.env.NEXT_PUBLIC_API_URL} and check CORS settings.`);
       setLoading(false);
     }
   };
@@ -57,29 +54,28 @@ export default function AdminLogin() {
             {error && <div className="login-err">⚠️ <span>{error}</span></div>}
             <div className="lf">
               <label>Email Address</label>
-              <input 
-                type="email" 
-                placeholder="admin@medvastr.com" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-              />
+              <input type="email" placeholder="admin@medvastr.com" value={email}
+                onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
             </div>
             <div className="lf">
               <label>Password</label>
-              <input 
-                type="password" 
-                placeholder="••••••••" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="current-password"
-              />
+              <input type="password" placeholder="••••••••" value={password}
+                onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
             </div>
             <button className="login-btn" type="submit" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign In to Dashboard'}
             </button>
+
+            {/* ── Forgot Password link ── */}
+            <div style={{ textAlign: 'center', marginTop: '14px' }}>
+              <Link href="/forgot-password"
+                style={{ color: '#a0b4d6', fontSize: '13px', textDecoration: 'underline', opacity: 0.9 }}>
+                Forgot your password?
+              </Link>
+            </div>
+
             <div className="login-note">
-              🔒 This area is restricted to Medvastr admins only.<br/>All access attempts are logged.
+              🔒 This area is restricted to Medvastr admins only.<br />All access attempts are logged.
             </div>
           </form>
         </div>

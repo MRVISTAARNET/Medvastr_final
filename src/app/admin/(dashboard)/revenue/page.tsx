@@ -2,7 +2,7 @@
 
 import React from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { INITIAL_ADMIN_DATA, fmt, fmtNum } from '@/lib/adminData';
+import { INITIAL_ADMIN_DATA, fmt, fmtNum } from '@/lib/data';
 
 export default function AdminRevenue() {
   const s = INITIAL_ADMIN_DATA.stats;

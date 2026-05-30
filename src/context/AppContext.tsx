@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useReducer, useState, useCallback, useEffect } from "react";
-import { Product, PRODUCTS } from "@/lib/data";
+import { Product } from "@/lib/data";
 
 interface CartItem extends Product {
   k: string;
@@ -11,19 +11,35 @@ interface CartItem extends Product {
   qty: number;
 }
 
+interface User {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  role: string;
+}
+
 interface AppContextType {
   cart: CartItem[];
   wishlist: number[];
   products: Product[];
   categories: any[];
+  user: User | null;
+  isAuthOpen: boolean;
+  setIsAuthOpen: (open: boolean) => void;
+  isHydrated: boolean;
   addToCart: (p: Product, ci?: number, sz?: string) => void;
   updateCartQty: (index: number, delta: number) => void;
   removeFromCart: (index: number) => void;
   clearCart: () => void;
   toggleWishlist: (id: number) => void;
-  addProduct: (p: Product) => void;
-  updateProduct: (p: Product) => void;
-  deleteProduct: (id: number) => void;
+  addProduct: (p: Product) => Promise<Product | null>;
+  updateProduct: (p: Product) => Promise<void>;
+  deleteProduct: (id: number) => Promise<void>;
+  login: (email: string, pass: string) => Promise<boolean>;
+  register: (f: string, l: string, e: string, p: string, ph: string) => Promise<boolean>;
+  logout: () => void;
   toast: (msg: string, kind?: "ok" | "bad" | "") => void;
   toastMsg: string;
   toastKind: "ok" | "bad" | "";
@@ -72,24 +88,63 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [wishlist, setWishlist] = useState<number[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
   const [toastKind, setToastKind] = useState<"ok" | "bad" | "">("");
 
-  // Load from Storage & API
+  const toast = useCallback((msg: string, kind: "ok" | "bad" | "" = "") => {
+    setToastMsg(msg);
+    setToastKind(kind);
+    setTimeout(() => setToastMsg(""), 3200);
+  }, []);
+
+  const fetchMe = useCallback(async (token: string) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setUser(data.data);
+      } else {
+        localStorage.removeItem("token");
+      }
+    } catch (e) { }
+  }, []);
+
+  // 1. Initial Load (RESTORE STATE)
   useEffect(() => {
     const savedCart = localStorage.getItem("mv_cart");
     const savedWish = localStorage.getItem("mv_wish");
-    
-    if (savedCart) dispatch({ type: "SET", data: JSON.parse(savedCart) });
-    if (savedWish) setWishlist(JSON.parse(savedWish));
+    const token = localStorage.getItem("token");
 
-    // Fetch products from backend
+    if (savedCart) {
+      try {
+        const parsed = JSON.parse(savedCart);
+        if (Array.isArray(parsed)) dispatch({ type: "SET", data: parsed });
+      } catch (e) { }
+    }
+    if (savedWish) {
+      try {
+        const parsed = JSON.parse(savedWish);
+        if (Array.isArray(parsed)) setWishlist(parsed);
+      } catch (e) { }
+    }
+    if (token) fetchMe(token);
+
+    // Set hydrated AFTER restoring to avoid overwrite by [] initial state
+    setIsHydrated(true);
+  }, [fetchMe]);
+
+  // 2. Fetch External Data
+  useEffect(() => {
     const fetchProducts = async () => {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products?size=100`);
         const data = await res.json();
         if (data.success) {
-          // Map backend DTO to frontend Product interface
           const mapped: Product[] = data.data.content.map((p: any) => ({
             id: p.id,
             name: p.name,
@@ -115,51 +170,87 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             imgs: p.imageUrls || [],
             catId: p.categoryId,
             sku: p.sku || `MV-${p.id}`,
+            styleId: p.styleId || '',
             brand: p.brand || 'Medvastr',
             sizes: p.sizes || ['XS', 'S', 'M', 'L', 'XL'],
-            barcode: p.barcode || `BC-${p.id}-${Math.floor(Math.random() * 1000)}`
+            barcode: p.barcode || `BC-${p.id}`
           }));
           setProducts(mapped);
         }
-      } catch (e) {
-        console.error("Failed to fetch products:", e);
-      }
+      } catch (e) { }
     };
 
     const fetchCategories = async () => {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`);
         const data = await res.json();
-        if (data.success) {
-          setCategories(data.data);
-        }
-      } catch (e) {
-        console.error("Failed to fetch categories:", e);
-      }
+        if (data.success) setCategories(data.data);
+      } catch (e) { }
     };
 
     fetchProducts();
     fetchCategories();
   }, []);
 
-  // Save to Storage
+  // 3. Sync persistence ONLY after hydration
   useEffect(() => {
-    localStorage.setItem("mv_cart", JSON.stringify(cart));
-  }, [cart]);
+    if (isHydrated) {
+      localStorage.setItem("mv_cart", JSON.stringify(cart));
+    }
+  }, [cart, isHydrated]);
 
   useEffect(() => {
-    localStorage.setItem("mv_wish", JSON.stringify(wishlist));
-  }, [wishlist]);
+    if (isHydrated) {
+      localStorage.setItem("mv_wish", JSON.stringify(wishlist));
+    }
+  }, [wishlist, isHydrated]);
 
-  const toast = useCallback((msg: string, kind: "ok" | "bad" | "" = "") => {
-    setToastMsg(msg);
-    setToastKind(kind);
-    setTimeout(() => setToastMsg(""), 3200);
-  }, []);
+  const login = async (email: string, pass: string) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password: pass })
+      });
+      const data = await res.json();
+      if (data.success) {
+        localStorage.setItem("token", data.data.token);
+        setUser(data.data.user);
+        toast("Welcome back!", "ok");
+        return true;
+      } else toast(data.message, "bad");
+    } catch (e) { toast("Connection failed", "bad"); }
+    return false;
+  };
+
+  const register = async (f: string, l: string, e: string, p: string, ph: string) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ firstName: f, lastName: l, email: e, password: p, phone: ph })
+      });
+      const data = await res.json();
+      if (data.success) {
+        localStorage.setItem("token", data.data.token);
+        setUser(data.data.user);
+        toast("Registration successful!", "ok");
+        return true;
+      } else toast(data.message, "bad");
+    } catch (e) { toast("Connection failed", "bad"); }
+    return false;
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+    toast("Logged out successfully");
+  };
 
   const addToCart = useCallback((p: Product, ci = 0, sz = "M") => {
     dispatch({ type: "ADD", p, ci, sz });
-  }, []);
+    toast("Added to bag!", "ok");
+  }, [toast]);
 
   const updateCartQty = useCallback((index: number, delta: number) => {
     dispatch({ type: "QTY", index, delta });
@@ -173,124 +264,62 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: "CLR" });
   }, []);
 
-  const toggleWishlist = useCallback(
-    (id: number) => {
-      setWishlist((prev) => {
-        const isWished = prev.includes(id);
-        toast(isWished ? "Removed from wishlist" : "Saved to wishlist ❤️", isWished ? "" : "ok");
-        return isWished ? prev.filter((x) => x !== id) : [...prev, id];
-      });
-    },
-    [toast]
-  );
+  const toggleWishlist = useCallback((id: number) => {
+    setWishlist(prev => {
+      const isWished = prev.includes(id);
+      toast(isWished ? "Removed from wishlist" : "Saved to wishlist ❤️", isWished ? "" : "ok");
+      return isWished ? prev.filter(x => x !== id) : [...prev, id];
+    });
+  }, [toast]);
 
-  const addProduct = useCallback(async (p: Product) => {
+  const addProduct = async (p: Product) => {
     try {
+      const token = localStorage.getItem("adm_token");
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: p.name,
-          description: p.desc,
-          price: p.price,
-          type: p.type,
-          gender: p.gen,
-          badge: p.badge,
-          emoji: p.emo,
-          bgColor: p.bg,
-          fabricDetail: p.fabD,
-          stretchType: p.stretch,
-          pocketCount: p.pockets,
-          careInstructions: p.care,
-          weight: p.wt,
-          fit: p.fit,
-          categoryId: p.catId,
-          imageUrls: p.imgs,
-          sku: p.sku,
-          brand: p.brand,
-          sizes: p.sizes,
-          barcode: p.barcode
-        })
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify(p)
       });
       const data = await res.json();
       if (data.success) {
-        setProducts((prev) => [p, ...prev]); // Optimistic update or refetch
-        toast("Product added to backend!", "ok");
+        const saved = { ...p, id: data.data.id };
+        setProducts(prev => [saved, ...prev]);
+        return saved;
       }
-    } catch (e) {
-      toast("Failed to add product", "bad");
-    }
-  }, [toast]);
+    } catch (e) { }
+    return null;
+  };
 
-  const updateProduct = useCallback(async (p: Product) => {
+  const updateProduct = async (p: Product) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${p.id}`, {
+      const token = localStorage.getItem("adm_token");
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${p.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: p.name,
-          description: p.desc,
-          price: p.price,
-          type: p.type,
-          gender: p.gen,
-          badge: p.badge,
-          emoji: p.emo,
-          bgColor: p.bg,
-          fabricDetail: p.fabD,
-          stretchType: p.stretch,
-          pocketCount: p.pockets,
-          careInstructions: p.care,
-          weight: p.wt,
-          fit: p.fit,
-          categoryId: p.catId,
-          imageUrls: p.imgs,
-          sku: p.sku,
-          brand: p.brand,
-          sizes: p.sizes,
-          barcode: p.barcode
-        })
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify(p)
       });
-      if (res.ok) {
-        setProducts((prev) => prev.map((item) => (item.id === p.id ? p : item)));
-        toast("Product updated!", "ok");
-      }
-    } catch (e) {
-      toast("Update failed", "bad");
-    }
-  }, [toast]);
+      setProducts(prev => prev.map(x => x.id === p.id ? p : x));
+    } catch (e) { }
+  };
 
-  const deleteProduct = useCallback(async (id: number) => {
+  const deleteProduct = async (id: number) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, {
-        method: "DELETE"
+      const token = localStorage.getItem("adm_token");
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
       });
-      if (res.ok) {
-        setProducts((prev) => prev.filter((item) => item.id !== id));
-        toast("Product deleted!", "ok");
-      }
-    } catch (e) {
-      toast("Delete failed", "bad");
-    }
-  }, [toast]);
+      setProducts(prev => prev.filter(x => x.id !== id));
+    } catch (e) { }
+  };
 
   return (
     <AppContext.Provider
       value={{
-        cart,
-        wishlist,
-        products,
-        categories,
-        addToCart,
-        updateCartQty,
-        removeFromCart,
-        clearCart,
-        toggleWishlist,
-        addProduct,
-        updateProduct,
-        deleteProduct,
-        toast,
-        toastMsg,
-        toastKind,
+        cart, wishlist, products, categories, user, isAuthOpen, setIsAuthOpen, isHydrated,
+        addToCart, updateCartQty, removeFromCart, clearCart, toggleWishlist,
+        addProduct, updateProduct, deleteProduct, login, register, logout,
+        toast, toastMsg, toastKind,
       }}
     >
       {children}

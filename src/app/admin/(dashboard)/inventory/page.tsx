@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { fmt } from '@/lib/adminData';
+import { fmt } from '@/lib/data';
 
 export default function AdminInventory() {
   const [products, setProducts] = useState<any[]>([]);

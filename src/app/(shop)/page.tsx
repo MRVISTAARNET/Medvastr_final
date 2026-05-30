@@ -12,23 +12,20 @@ import { COLS, REVIEWS, B } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState("scrubs");
   const { products } = useApp();
-
   const TABS = [
-    { id: "uniforms", label: "Uniforms & Scrubs", type: "uniforms" },
+    { id: "scrubs", label: "Uniforms & Scrubs", type: "scrubs" },
     { id: "linen", label: "Linen & Bedding", type: "linen" },
     { id: "surgical", label: "Surgical Wear", type: "surgical" },
     { id: "diagnostic", label: "Diagnostic & Caps", type: "diagnostic" },
-    // { id: "jacket", label: "DRIFT Jacket", type: "jacket" },
-    // { id: "underscrub", label: "Underscrubs", type: "underscrub" },
   ];
+
+  const [activeTab, setActiveTab] = useState("scrubs");
 
   const tabProducts = (() => {
     const tab = TABS.find((t) => t.id === activeTab);
     if (!tab) return [];
-    let p = products.filter((x) => x.type === tab.type);
-    return p.slice(0, 8);
+    return products.filter((x) => x.type === tab.type).slice(0, 8);
   })();
 
   const newArr = products.filter((p) => p.badge && ["New", "New Launch"].includes(p.badge)).slice(0, 4);
@@ -240,10 +237,35 @@ export default function Home() {
         <div style={{ maxWidth: 1560, margin: "0 auto" }}>
           <div className="nl-t">Get 10% Off Your First Order</div>
           <div className="nl-s">Subscribe for exclusive deals, new arrivals and healthcare style tips.</div>
-          <div className="nl-form">
-            <input className="nl-inp" type="email" placeholder="Enter your email address" />
-            <button className="nl-go">Subscribe</button>
-          </div>
+          <form
+            className="nl-form"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              const input = (e.currentTarget.querySelector('.nl-inp') as HTMLInputElement);
+              const email = input.value;
+              if (!email) return;
+
+              try {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/newsletter/subscribe`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ email })
+                });
+                const data = await res.json();
+                if (data.success) {
+                  alert("Thank you for subscribing! Check your email for your discount code.");
+                  input.value = "";
+                } else {
+                  alert(data.message || "Failed to subscribe");
+                }
+              } catch (e) {
+                alert("Something went wrong. Please try again later.");
+              }
+            }}
+          >
+            <input className="nl-inp" type="email" placeholder="Enter your email address" required />
+            <button className="nl-go" type="submit">Subscribe</button>
+          </form>
           <div style={{ fontSize: 12, color: "rgba(255,255,255,.26)", marginTop: 13 }}>
             Use code <strong style={{ color: "var(--g2)" }}>MEDVASTR10</strong> at checkout.
           </div>
