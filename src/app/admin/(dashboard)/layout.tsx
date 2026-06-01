@@ -14,15 +14,23 @@ export default function AdminLayout({
   const router = useRouter();
 
   useEffect(() => {
-    if (isHydrated && (!user || user.role !== 'ADMIN')) {
-      router.push('/admin/login');
+    // Only redirect if we ARE hydrated AND we've confirmed there is no admin user
+    if (isHydrated) {
+      if (!user || user.role !== 'ADMIN') {
+        router.push('/admin/login');
+      }
     }
   }, [user, isHydrated, router]);
 
+  // If we aren't hydrated yet, or we're waiting for the redirect, show nothing or a spinner
   if (!isHydrated || !user || user.role !== 'ADMIN') {
-    return <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div className="spinner">Authenticating...</div>
-    </div>;
+    return (
+      <div style={{ height: '100vh', width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a0a0b' }}>
+        <div style={{ color: '#6366f1', fontSize: '1.2rem', fontWeight: '500' }}>
+          Verifying Security...
+        </div>
+      </div>
+    );
   }
 
   return (
