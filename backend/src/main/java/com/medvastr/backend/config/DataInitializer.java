@@ -28,11 +28,7 @@ public class DataInitializer {
             final String adminEmail = "admin@medvastr.com";
 
             if (userRepo.existsByEmail(adminEmail)) {
-                log.info("[DataInitializer] Admin user already exists — updating password to ensure access.");
-                User existingAdmin = userRepo.findByEmail(adminEmail).orElseThrow();
-                existingAdmin.setPassword(passwordEncoder.encode("Admin@123"));
-                existingAdmin.setActive(true);
-                userRepo.save(existingAdmin);
+                log.info("[DataInitializer] ✅ Production admin user verified.");
                 return;
             }
 
@@ -49,23 +45,6 @@ public class DataInitializer {
                     .build();
 
             userRepo.save(admin);
-
-            // Break-glass account
-            if (!userRepo.existsByEmail("root@medvastr.com")) {
-                User root = User.builder()
-                        .firstName("Root")
-                        .lastName("Admin")
-                        .email("root@medvastr.com")
-                        .phone("0000000000")
-                        .password(passwordEncoder.encode("root123"))
-                        .role(User.Role.ADMIN)
-                        .emailVerified(true)
-                        .active(true)
-                        .build();
-                userRepo.save(root);
-                log.info("[DataInitializer] ✅ Break-glass account created: root@medvastr.com / root123");
-            }
-            log.info("[DataInitializer] ✅ Default admin user created — email: {}", adminEmail);
             log.info("[DataInitializer] ✅ Default admin user created — email: {}", adminEmail);
         };
     }
