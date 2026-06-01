@@ -8,12 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/health")
+@RequestMapping({ "/api/health", "/health" })
 @CrossOrigin(origins = "*")
-class HealthController {
+public class HealthController {
     @GetMapping
     public ResponseEntity<ApiResponse<String>> health() {
         return ResponseEntity.ok(ApiResponse.ok("OK", "Medvastr API is running..."));
     }
 }
-

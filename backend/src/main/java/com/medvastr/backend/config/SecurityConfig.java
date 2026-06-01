@@ -34,19 +34,23 @@ public class SecurityConfig {
                 .cors(c -> c.configurationSource(corsSource()))
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(a -> a
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/products/**", "/api/categories/**", "/api/search/**")
+                        .requestMatchers("/api/auth/**", "/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/health", "/health").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products/**", "/products/**",
+                                "/api/categories/**", "/categories/**",
+                                "/api/search/**", "/search/**")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/orders/track/**").permitAll()
-                        .requestMatchers("/api/payments/webhook").permitAll()
-                        .requestMatchers("/api/newsletter/**").permitAll()
-                        .requestMatchers("/api/debug/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/orders/track/**", "/orders/track/**").permitAll()
+                        .requestMatchers("/api/payments/webhook", "/payments/webhook").permitAll()
+                        .requestMatchers("/api/newsletter/**", "/newsletter/**").permitAll()
+                        .requestMatchers("/api/debug/**", "/debug/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/products/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**", "/admin/**", "/api/users/**", "/users/**", "/api/orders/**",
+                                "/orders/**")
+                        .hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/products/**", "/products/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/products/**", "/products/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/products/**", "/products/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .exceptionHandling(e -> e.authenticationEntryPoint((req, res, ex) -> {
                     res.setStatus(401);
