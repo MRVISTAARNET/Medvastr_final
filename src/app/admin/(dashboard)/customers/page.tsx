@@ -38,12 +38,12 @@ export default function AdminCustomers() {
     fetchUsers();
   }, []);
 
-  const maxSpent = customers.length > 0 ? Math.max(...customers.map((c) => c.spent || 0)) : 0;
+  const maxSpent = customers.length > 0 ? Math.max(...customers.map((c: any) => c.spent || 0)) : 0;
   const avgOrders = customers.length > 0 ? (
-    customers.reduce((s, c) => s + (c.orders || 0), 0) / customers.length
+    customers.reduce((s: number, c: any) => s + (c.orders || 0), 0) / customers.length
   ).toFixed(1) : '0';
   const avgSpent = customers.length > 0 ?
-    customers.reduce((s, c) => s + (c.spent || 0), 0) / customers.length : 0;
+    customers.reduce((s: number, c: any) => s + (c.spent || 0), 0) / customers.length : 0;
 
   return (
     <>
@@ -84,7 +84,7 @@ export default function AdminCustomers() {
                 </tr>
               </thead>
               <tbody>
-                {customers.map((c) => (
+                {customers.map((c: any) => (
                   <tr key={c.id}>
                     <td>
                       <div className="td-flex">

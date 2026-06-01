@@ -20,7 +20,7 @@ export default function AdminProducts() {
 
   const { products, addProduct, updateProduct, deleteProduct } = useApp();
 
-  const filteredProducts = products.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
+  const filteredProducts = products.filter((p: any) => p.name.toLowerCase().includes(search.toLowerCase()));
 
   const [form, setForm] = useState<any>({
     name: '', type: 'scrubs', price: '', originalPrice: '', badge: '', desc: '',
@@ -62,7 +62,7 @@ export default function AdminProducts() {
         const firstCol = form.clrs.split(',')[0].trim();
         const parts = firstCol.split(' ');
         if (parts.length > 1) {
-          colorPart = parts.map(p => p[0]).join('').toUpperCase();
+          colorPart = parts.map((p: string) => p[0]).join('').toUpperCase();
         } else {
           colorPart = firstCol.slice(0, 2).toUpperCase();
         }
@@ -106,8 +106,8 @@ export default function AdminProducts() {
         price: parseFloat(form.price) || 0,
         originalPrice: parseFloat(form.originalPrice) || undefined,
         imgs: form.imgs ? [form.imgs] : [],
-        sizes: form.sizes.split(',').map((s: any) => s.trim()).filter(Boolean),
-        clrs: form.clrs.split(',').map((c: any) => getColHex(c.trim())).filter(Boolean),
+        sizes: form.sizes.split(',').map((s: string) => s.trim()).filter(Boolean),
+        clrs: form.clrs.split(',').map((c: string) => getColHex(c.trim())).filter(Boolean),
         weight: form.weight,
         care: form.care,
         stretch: form.stretch,
