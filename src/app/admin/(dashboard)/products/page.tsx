@@ -35,7 +35,7 @@ export default function AdminProducts() {
     if (editingProduct) {
       setForm({
         ...editingProduct,
-        imgs: editingProduct.imgs?.[0] || '',
+        imgs: editingProduct.imgs || [],
         sizes: editingProduct.sizes?.join(', ') || '',
         clrs: editingProduct.clrs?.join(', ') || '',
         catId: editingProduct.catId || ''
@@ -43,7 +43,7 @@ export default function AdminProducts() {
     } else {
       setForm({
         name: '', type: 'scrubs', price: '', originalPrice: '', badge: '', desc: '',
-        gen: 'unisex', fab: '', fit: '', catId: '', imgs: '', emo: '📦',
+        gen: 'unisex', fab: '', fit: '', catId: '', imgs: [], emo: '📦',
         sku: '', styleId: '', brand: 'Medvastr', sizes: 'XS, S, M, L, XL', clrs: '', barcode: '',
         weight: '', care: '', stretch: '', fabD: '', pockets: '', videoUrl: ''
       });
@@ -99,36 +99,69 @@ export default function AdminProducts() {
     setForm((prev: any) => ({ ...prev, [key]: value }));
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string, isMultiple: boolean = false) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-    // Check file size (max 10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      alert("File is too large! Please upload a file smaller than 10MB.");
-      return;
-    }
+    const token = localStorage.getItem("token") || "";
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.medvastr.com/api";
 
-    const formData = new FormData();
-    formData.append("file", file);
+    // Multiple upload logic
+    if (isMultiple) {
+      const uploadedUrls: string[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file.size > 10 * 1024 * 1024) {
+          alert(`File ${file.name} is too large! Please upload a file smaller than 10MB.`);
+          continue;
+        }
 
-    try {
-      const token = localStorage.getItem("token") || "";
-      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.medvastr.com/api";
-      const res = await fetch(`${API_BASE}/upload`, {
-        method: "POST",
-        headers: { "Authorization": `Bearer ${token}` },
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        setForm((prev: any) => ({ ...prev, [field]: data.data }));
-      } else {
-        alert(data.message || "Upload failed");
+        const formData = new FormData();
+        formData.append("file", file);
+        try {
+          const res = await fetch(`${API_BASE}/upload`, {
+            method: "POST",
+            headers: { "Authorization": `Bearer ${token}` },
+            body: formData,
+          });
+          const data = await res.json();
+          if (data.success) {
+            uploadedUrls.push(data.data);
+          }
+        } catch (err) {
+          console.error("Upload error for", file.name);
+        }
       }
-    } catch (err) {
-      alert("Error uploading file");
+
+      setForm((prev: any) => ({
+        ...prev,
+        [field]: [...(Array.isArray(prev[field]) ? prev[field] : []), ...uploadedUrls]
+      }));
+    } else {
+      // Single upload logic (e.g. video)
+      const file = files[0];
+      if (file.size > 10 * 1024 * 1024) {
+        alert("File is too large! Please upload a file smaller than 10MB.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        const res = await fetch(`${API_BASE}/upload`, {
+          method: "POST",
+          headers: { "Authorization": `Bearer ${token}` },
+          body: formData,
+        });
+        const data = await res.json();
+        if (data.success) {
+          setForm((prev: any) => ({ ...prev, [field]: data.data }));
+        } else {
+          alert(data.message || "Upload failed");
+        }
+      } catch (err) {
+        alert("Error uploading file");
+      }
     }
   };
 
@@ -138,7 +171,7 @@ export default function AdminProducts() {
         ...form,
         price: parseFloat(form.price) || 0,
         originalPrice: parseFloat(form.originalPrice) || undefined,
-        imgs: form.imgs ? [form.imgs] : [],
+        imgs: Array.isArray(form.imgs) ? form.imgs : (form.imgs ? [form.imgs] : []),
         sizes: form.sizes.split(',').map((s: string) => s.trim()).filter(Boolean),
         clrs: form.clrs.split(',').map((c: string) => getColHex(c.trim())).filter(Boolean),
         weight: form.weight,
@@ -337,13 +370,17 @@ export default function AdminProducts() {
               </div>
               <div className="fg-row">
                 <div className="fg">
-                  <label>Main Image Upload</label>
-                  <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'imgs')} />
-                  {form.imgs && <div style={{ fontSize: 12, color: 'green', marginTop: 4 }}>Uploaded File: {form.imgs.split('/').pop()}</div>}
+                  <label>Product Images (Select Multiple)</label>
+                  <input type="file" accept="image/*" multiple onChange={(e) => handleFileUpload(e, 'imgs', true)} />
+                  {Array.isArray(form.imgs) && form.imgs.length > 0 && (
+                    <div style={{ fontSize: 12, color: 'green', marginTop: 4 }}>
+                      Uploaded: {form.imgs.map((url: string) => url.split('/').pop()).join(', ')}
+                    </div>
+                  )}
                 </div>
                 <div className="fg">
                   <label>Product Video Upload (Optional)</label>
-                  <input type="file" accept="video/*" onChange={(e) => handleFileUpload(e, 'videoUrl')} />
+                  <input type="file" accept="video/*" onChange={(e) => handleFileUpload(e, 'videoUrl', false)} />
                   {form.videoUrl && <div style={{ fontSize: 12, color: 'blue', marginTop: 4 }}>Uploaded File: {form.videoUrl.split('/').pop()}</div>}
                 </div>
               </div>
