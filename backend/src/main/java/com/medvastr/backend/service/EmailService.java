@@ -46,6 +46,30 @@ public class EmailService {
     }
 
     @Async
+    public void sendOtpEmail(String toEmail, String otpCode) {
+        String html = """
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 12px; overflow: hidden;">
+                    <div style="background: #1a2b4a; padding: 30px; text-align: center; color: white;">
+                        <h1 style="margin: 0; font-size: 24px;">🔐 Your Login OTP</h1>
+                    </div>
+                    <div style="padding: 40px; color: #333; line-height: 1.6;">
+                        <p>Hello,</p>
+                        <p>Use the following One-Time Password (OTP) to complete your login or registration at Medvastr:</p>
+                        <div style="text-align: center; margin: 30px 0; padding: 20px; background: #f9f9f9; border-radius: 12px; border: 2px solid #eee;">
+                            <span style="font-size: 32px; font-weight: bold; color: #008080; letter-spacing: 5px;">%s</span>
+                        </div>
+                        <p style="font-size: 13px; color: #666;">This code is valid for 10 minutes. Please do not share this OTP with anyone.</p>
+                        <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+                        <p style="font-size: 14px;">Team Medvastr</p>
+                    </div>
+                </div>
+                """
+                .formatted(otpCode);
+        sendHtmlEmail(toEmail, "Your Medvastr Verification Code: " + otpCode, html, "auth@medvastr.com",
+                "Medvastr Auth");
+    }
+
+    @Async
     public void sendNewsletterWelcomeEmail(String toEmail) {
         String html = """
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 12px; overflow: hidden;">

@@ -28,7 +28,10 @@ public class DataInitializer {
             final String adminEmail = "admin@medvastr.com";
 
             if (userRepo.existsByEmail(adminEmail)) {
-                log.info("[DataInitializer] ✅ Production admin user verified.");
+                User existing = userRepo.findByEmail(adminEmail).get();
+                existing.setPassword(passwordEncoder.encode("Admin@123"));
+                userRepo.save(existing);
+                log.info("[DataInitializer] 🔄 Admin password reset to 'Admin@123' for verification.");
                 return;
             }
 
