@@ -1,21 +1,13 @@
 package com.medvastr.backend.controller;
 
-import com.medvastr.backend.dto.ApiResponse;
-import com.medvastr.backend.dto.AuthResponse;
-import com.medvastr.backend.dto.LoginRequest;
-import com.medvastr.backend.dto.RegisterRequest;
-import com.medvastr.backend.dto.ResetPasswordRequest;
-import com.medvastr.backend.service.AuthService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import com.medvastr.backend.dto.OtpRequest;
+import com.medvastr.backend.dto.*;
 import com.medvastr.backend.repository.UserRepository;
+import com.medvastr.backend.service.AuthService;
 import com.medvastr.backend.service.EmailService;
 import com.medvastr.backend.service.OtpService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping({ "/api/auth", "/auth" })
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
+@Slf4j
 public class AuthController {
 
     private final AuthService s;
@@ -44,46 +37,53 @@ public class AuthController {
     }
 
     // ── Forgot Password: send email with reset link ────────────────────────
-    // POST /api/auth/forgot-password?email=user@example.com
     @PostMapping("/forgot-password")
     public ResponseEntity<ApiResponse<Void>> forgotPassword(@RequestParam String email) {
         s.forgotPassword(email);
-        // Always return success so attackers can't tell if an email exists
         return ResponseEntity.ok(ApiResponse.ok(
                 "If this email is registered you will receive a reset link shortly.", null));
     }
 
-    // ── Validate token (front-end checks before showing the reset form) ────
-    // GET /api/auth/reset-password/validate?token=xxx
+    // ── Validate reset token (front-end checks before showing reset form) ─
     @GetMapping("/reset-password/validate")
     public ResponseEntity<ApiResponse<Boolean>> validateToken(@RequestParam String token) {
         boolean valid = s.validateResetToken(token);
         return ResponseEntity.ok(ApiResponse.ok(valid ? "Token is valid" : "Token invalid or expired", valid));
     }
 
-    // ── OTP LOGIN ──
-
+    // ── OTP: Request code ─────────────────────────────────────────────────
     @PostMapping("/otp-request")
     public ResponseEntity<ApiResponse<Void>> requestOtp(@RequestBody @Valid OtpRequest r) {
+        log.info("[OTP] Request for email: {}", r.getEmail());
         if (!userRepository.existsByEmail(r.getEmail())) {
-            throw new BadCredentialsException("Email not registered");
+            // Return a friendly error (don't throw exception to avoid 500)
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.err("No account found with this email. Please register first."));
         }
         String otp = otpService.generateOtp(r.getEmail());
         emailService.sendOtpEmail(r.getEmail(), otp);
+        log.info("[OTP] Code sent to {}", r.getEmail());
         return ResponseEntity.ok(ApiResponse.ok("Verification code sent to " + r.getEmail(), null));
     }
 
+    // ── OTP: Verify code and log in ────────────────────────────────────────
     @PostMapping("/otp-login")
     public ResponseEntity<ApiResponse<AuthResponse>> otpLogin(@RequestBody @Valid OtpRequest r) {
+        log.info("[OTP] Login attempt for email: {} with code: {}", r.getEmail(), r.getOtp());
+        if (r.getOtp() == null || r.getOtp().isBlank()) {
+            return ResponseEntity.badRequest().body(ApiResponse.err("OTP code is required."));
+        }
         if (otpService.validateOtp(r.getEmail(), r.getOtp())) {
-            return ResponseEntity.ok(ApiResponse.ok("Login successful", s.loginViaOtp(r.getEmail())));
+            AuthResponse auth = s.loginViaOtp(r.getEmail());
+            log.info("[OTP] Login successful for {}", r.getEmail());
+            return ResponseEntity.ok(ApiResponse.ok("Login successful", auth));
         } else {
-            throw new BadCredentialsException("Invalid or expired OTP");
+            log.warn("[OTP] Invalid or expired OTP for {}", r.getEmail());
+            return ResponseEntity.badRequest().body(ApiResponse.err("Invalid or expired OTP. Please try again."));
         }
     }
 
-    // ── Reset Password ────────────────────────────────────────────────────────
-    // POST /api/auth/reset-password
+    // ── Reset Password ────────────────────────────────────────────────────
     @PostMapping("/reset-password")
     public ResponseEntity<ApiResponse<Void>> resetPassword(@Valid @RequestBody ResetPasswordRequest req) {
         s.resetPassword(req);

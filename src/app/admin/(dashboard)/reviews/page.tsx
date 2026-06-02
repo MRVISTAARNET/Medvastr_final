@@ -20,7 +20,7 @@ export default function AdminReviews() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products?size=100`);
       const data = await res.json();
       if (data.success) setProducts(data.data.content);
-    } catch (e) {}
+    } catch (e) { }
   };
 
   const fetchAllReviews = async () => {
@@ -44,10 +44,10 @@ export default function AdminReviews() {
     if (!pid || !rating || !body) return alert('Please fill required fields');
 
     try {
-      const token = localStorage.getItem('adm_token');
+      const token = localStorage.getItem('token');
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${pid}/reviews`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -169,7 +169,7 @@ export default function AdminReviews() {
               <div className="fg">
                 <label>Rating</label>
                 <select id="rev-rat" className="tbl-select" style={{ width: '100%', height: '42px' }}>
-                  {[5,4,3,2,1].map(n => <option key={n} value={n}>{n} Stars</option>)}
+                  {[5, 4, 3, 2, 1].map(n => <option key={n} value={n}>{n} Stars</option>)}
                 </select>
               </div>
               <div className="fg">

@@ -1,5 +1,6 @@
 package com.medvastr.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -9,5 +10,7 @@ public class OtpRequest {
     @Email
     @NotBlank
     private String email;
+
+    @JsonAlias("otpCode") // frontend sends "otpCode", backend stores as "otp"
     private String otp;
 }
