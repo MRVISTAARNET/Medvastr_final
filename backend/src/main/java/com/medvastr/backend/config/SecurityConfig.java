@@ -43,6 +43,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/orders/track/**", "/orders/track/**").permitAll()
                         .requestMatchers("/api/payments/webhook", "/payments/webhook").permitAll()
                         .requestMatchers("/api/newsletter/**", "/newsletter/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/media/**").permitAll()
+                        .requestMatchers("/api/upload").hasRole("ADMIN")
                         .requestMatchers("/api/debug/**", "/debug/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/admin/**", "/admin/**", "/api/users/**", "/users/**", "/api/orders/**",

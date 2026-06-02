@@ -6,21 +6,6 @@ import AdminTopbar from '@/components/admin/AdminTopbar';
 export default function AdminSettings() {
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.medvastr.com/api";
 
-  const cleanData = async (type: string) => {
-    if (!confirm(`Are you sure you want to clean all ${type} data? This is irreversible.`)) return;
-
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${API_BASE}/admin/system/clean-${type}`, {
-        method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      const data = await res.json();
-      alert(data.message || data.error);
-    } catch (e) {
-      alert("Failed to clean data");
-    }
-  };
   return (
     <>
       <AdminTopbar
@@ -98,19 +83,6 @@ export default function AdminSettings() {
                     <input type="password" placeholder="••••••••" className="tbl-search" style={{ width: '100%', height: '44px' }} />
                   </div>
                   <button className="btn-primary">Change Password</button>
-                </div>
-              </div>
-              <div className="table-card" style={{ marginTop: '22px' }}>
-                <div className="table-hd" style={{ background: '#fff0f0', borderBottom: '1px solid #fed7d7' }}>
-                  <div className="table-title" style={{ color: '#c53030' }}>Danger Zone (Database)</div>
-                </div>
-                <div style={{ padding: '22px' }}>
-                  <p style={{ fontSize: '13px', color: '#666', marginBottom: '16px' }}>Clean dummy data before going live. This cannot be undone.</p>
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <button className="btn-o" style={{ borderColor: '#e53e3e', color: '#e53e3e' }} onClick={() => cleanData('products')}>Clear Products</button>
-                    <button className="btn-o" style={{ borderColor: '#e53e3e', color: '#e53e3e' }} onClick={() => cleanData('orders')}>Clear Orders</button>
-                    <button className="btn-o" style={{ borderColor: '#e53e3e', color: '#e53e3e' }} onClick={() => cleanData('users')}>Clear Users</button>
-                  </div>
                 </div>
               </div>
             </div>

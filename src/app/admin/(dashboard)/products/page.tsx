@@ -99,6 +99,39 @@ export default function AdminProducts() {
     setForm((prev: any) => ({ ...prev, [key]: value }));
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Check file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert("File is too large! Please upload a file smaller than 10MB.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const token = localStorage.getItem("token") || "";
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.medvastr.com/api";
+      const res = await fetch(`${API_BASE}/upload`, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` },
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setForm((prev: any) => ({ ...prev, [field]: data.data }));
+      } else {
+        alert(data.message || "Upload failed");
+      }
+    } catch (err) {
+      alert("Error uploading file");
+    }
+  };
+
   const handleSave = async () => {
     if (form.name && form.price) {
       const pData: any = {
@@ -304,12 +337,14 @@ export default function AdminProducts() {
               </div>
               <div className="fg-row">
                 <div className="fg">
-                  <label>Main Image URL</label>
-                  <input type="text" id="p-imgs" value={form.imgs} onChange={handleInputChange} placeholder="https://example.com/image.jpg" />
+                  <label>Main Image Upload</label>
+                  <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'imgs')} />
+                  {form.imgs && <div style={{ fontSize: 12, color: 'green', marginTop: 4 }}>Uploaded File: {form.imgs.split('/').pop()}</div>}
                 </div>
                 <div className="fg">
-                  <label>Product Video URL</label>
-                  <input type="text" id="p-videoUrl" value={form.videoUrl} onChange={handleInputChange} placeholder="https://youtube.com/..." />
+                  <label>Product Video Upload (Optional)</label>
+                  <input type="file" accept="video/*" onChange={(e) => handleFileUpload(e, 'videoUrl')} />
+                  {form.videoUrl && <div style={{ fontSize: 12, color: 'blue', marginTop: 4 }}>Uploaded File: {form.videoUrl.split('/').pop()}</div>}
                 </div>
               </div>
               <div className="fg">
