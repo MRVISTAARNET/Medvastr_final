@@ -106,6 +106,7 @@ public class ProductService {
                 .careInstructions(r.getCareInstructions())
                 .weight(r.getWeight())
                 .fit(r.getFit())
+                .videoUrl(r.getVideoUrl())
                 .slug(slug(r.getName()))
                 .build();
 
@@ -145,6 +146,7 @@ public class ProductService {
         p.setCareInstructions(r.getCareInstructions());
         p.setWeight(r.getWeight());
         p.setFit(r.getFit());
+        p.setVideoUrl(r.getVideoUrl());
 
         if (r.getCategoryId() != null)
             catRepo.findById(r.getCategoryId()).ifPresent(p::setCategory);
