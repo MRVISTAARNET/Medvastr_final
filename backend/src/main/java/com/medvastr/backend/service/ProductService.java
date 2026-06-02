@@ -8,6 +8,7 @@ import com.medvastr.backend.dto.ReviewRequest;
 import com.medvastr.backend.dto.VariantDTO;
 import com.medvastr.backend.model.Product;
 import com.medvastr.backend.model.ProductImage;
+import com.medvastr.backend.model.ProductVariant;
 import com.medvastr.backend.repository.CategoryRepository;
 import com.medvastr.backend.repository.ProductRepository;
 import com.medvastr.backend.repository.ReviewRepository;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -120,6 +122,8 @@ public class ProductService {
                     .collect(Collectors.toList()));
         }
 
+        p.setVariants(buildVariants(r, p));
+
         return toDTO(productRepo.save(p));
     }
 
@@ -158,6 +162,9 @@ public class ProductService {
                     .map(url -> ProductImage.builder().imageUrl(url).product(p).build())
                     .collect(Collectors.toList()));
         }
+
+        p.getVariants().clear();
+        p.getVariants().addAll(buildVariants(r, p));
 
         return toDTO(productRepo.save(p));
     }
@@ -215,6 +222,19 @@ public class ProductService {
                         .build());
     }
 
+    public Page<ReviewDTO> getAllReviews(Pageable p) {
+        return reviewRepo.findAllByOrderByCreatedAtDesc(p)
+                .map(r -> ReviewDTO.builder()
+                        .id(r.getId())
+                        .userName(r.getUser().getFirstName() + " " + r.getUser().getLastName().charAt(0) + ".")
+                        .rating(r.getRating())
+                        .title(r.getTitle())
+                        .body(r.getBody())
+                        .verified(r.isVerified())
+                        .createdAt(r.getCreatedAt())
+                        .build());
+    }
+
     public ProductDTO toDTO(Product p) {
         return ProductDTO.builder()
                 .id(p.getId())
@@ -244,6 +264,7 @@ public class ProductService {
                 .active(p.isActive())
                 .featured(p.isFeatured())
                 .categoryName(p.getCategory() != null ? p.getCategory().getName() : null)
+                .categoryId(p.getCategory() != null ? p.getCategory().getId() : null)
                 .variants(
                         p.getVariants().stream()
                                 .map(v -> VariantDTO.builder()
@@ -258,6 +279,23 @@ public class ProductService {
                 .imageUrls(p.getImages().stream().map(ProductImage::getImageUrl).collect(Collectors.toList()))
                 .createdAt(p.getCreatedAt())
                 .build();
+    }
+
+    private List<ProductVariant> buildVariants(ProductRequest r, Product p) {
+        if (r.getVariants() != null && !r.getVariants().isEmpty()) {
+            return r.getVariants().stream()
+                    .map(v -> ProductVariant.builder()
+                            .product(p)
+                            .size(v.getSize())
+                            .colorName(v.getColorName())
+                            .colorHex(v.getColorHex())
+                            .stockQuantity(v.getStockQuantity() != null ? v.getStockQuantity() : 0)
+                            .sku(v.getSku())
+                            .build())
+                    .collect(Collectors.toList());
+        }
+
+        return new ArrayList<>();
     }
 
     private String slug(String n) {

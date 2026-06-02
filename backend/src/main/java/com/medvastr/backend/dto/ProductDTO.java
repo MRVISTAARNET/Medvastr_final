@@ -41,6 +41,7 @@ public class ProductDTO {
     private boolean active;
     private boolean featured;
     private String categoryName;
+    private Long categoryId;
     private List<VariantDTO> variants;
     private List<String> imageUrls;
     private LocalDateTime createdAt;

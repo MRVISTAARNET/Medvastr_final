@@ -93,6 +93,13 @@ export default function AdminProducts() {
     return '#cccccc'; // fallback
   };
 
+  const getColName = (input: string) => {
+    const raw = input.trim();
+    if (!raw) return "Default";
+    if (raw.startsWith('#')) return raw.toUpperCase();
+    return raw.replace(/\s+/g, ' ').trim();
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
     const key = id.replace('p-', '');
@@ -167,13 +174,27 @@ export default function AdminProducts() {
 
   const handleSave = async () => {
     if (form.name && form.price) {
+      const colorInputs = (form.clrs || '').split(',').map((c: string) => c.trim()).filter(Boolean);
+      const sizeInputs = (form.sizes || '').split(',').map((s: string) => s.trim()).filter(Boolean);
+      const variantStock = 100;
+      const variants = sizeInputs.flatMap((size: string) =>
+        colorInputs.map((colorInput: string) => ({
+          size,
+          colorName: getColName(colorInput),
+          colorHex: getColHex(colorInput),
+          stockQuantity: variantStock,
+          sku: `${form.sku || 'MV'}-${size}-${getColName(colorInput).replace(/\s+/g, '').toUpperCase()}`
+        }))
+      );
+
       const pData: any = {
         ...form,
         price: parseFloat(form.price) || 0,
         originalPrice: parseFloat(form.originalPrice) || undefined,
         imgs: Array.isArray(form.imgs) ? form.imgs : (form.imgs ? [form.imgs] : []),
-        sizes: (form.sizes || '').split(',').map((s: string) => s.trim()).filter(Boolean),
-        clrs: (form.clrs || '').split(',').map((c: string) => getColHex(c.trim())).filter(Boolean),
+        sizes: sizeInputs,
+        clrs: colorInputs.map((c: string) => getColHex(c)).filter(Boolean),
+        variants,
         weight: form.weight,
         care: form.care,
         stretch: form.stretch,

@@ -38,8 +38,8 @@ public class ShiprocketService {
     private void login() {
         try {
             Map<String, String> body = new HashMap<>();
-            body.put("email", "api@medvastr.com");
-            body.put("password", "2Uc9uwBr%wQyqnu5JE0GnGH%Z8ekQn%h");
+            body.put("email", email);
+            body.put("password", password);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);

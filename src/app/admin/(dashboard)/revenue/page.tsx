@@ -13,7 +13,7 @@ export default function AdminRevenue() {
     const fetchOrders = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`${API_BASE}/orders/all?size=500`, {
+        const res = await fetch(`${API_BASE}/orders/admin/all?size=500`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const data = await res.json();

@@ -24,9 +24,24 @@ export default function AdminReviews() {
   };
 
   const fetchAllReviews = async () => {
-    // Since there's no "get all reviews" endpoint yet, I'll just show an empty list or fetch from dashboard if available.
-    // For now, let's assume we fetch them or they are empty.
-    setReviews([]);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/reviews/all?size=100`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setReviews((data.data.content || []).map((r: any) => ({
+          id: r.id,
+          product: r.productName || 'Product',
+          customer: r.userName || 'Customer',
+          rating: r.rating,
+          text: r.body,
+          date: r.createdAt,
+          status: 'APPROVED'
+        })));
+      }
+    } catch (e) { }
     setLoading(false);
   };
 

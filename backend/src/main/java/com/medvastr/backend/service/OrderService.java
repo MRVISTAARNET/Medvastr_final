@@ -242,6 +242,19 @@ public class OrderService {
         return toDTO(orderRepo.save(o));
     }
 
+    @Transactional
+    public OrderDTO pushToShiprocket(Long id) {
+        Order o = orderRepo.findById(id).orElseThrow();
+        o.getItems().forEach(i -> {
+            if (i.getProduct() != null) {
+                i.getProduct().getName();
+            }
+        });
+        o.getUser().getEmail();
+        shiprocketService.createOrder(o);
+        return toDTO(o);
+    }
+
     public TrackingDTO track(String num) {
         Order o = orderRepo.findByOrderNumber(num).orElseThrow(() -> new RuntimeException("Not found: " + num));
         List<String> steps = Arrays.asList("PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "OUT_FOR_DELIVERY",

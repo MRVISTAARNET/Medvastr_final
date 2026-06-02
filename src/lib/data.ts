@@ -23,6 +23,7 @@ export const cn = (h: string) => COLS.find((c) => c.h === h)?.n || "Default";
 
 export interface Product {
   id: number;
+  slug?: string;
   name: string;
   short: string;
   fab: string | null;

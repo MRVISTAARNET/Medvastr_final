@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Hero from "@/components/Hero";
 import ProductCard from "@/components/ProductCard";
@@ -8,7 +8,7 @@ import VideoSection from "@/components/VideoSection";
 import AboutHomeSection from "@/components/AboutHomeSection";
 import BulkOrderBanner from "@/components/BulkOrderBanner";
 import PressSection from "@/components/PressSection";
-import { COLS, REVIEWS, B } from "@/lib/data";
+import { COLS, B, REVIEWS } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
 
 export default function Home() {

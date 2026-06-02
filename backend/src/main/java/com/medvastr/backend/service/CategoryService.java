@@ -55,4 +55,11 @@ public class CategoryService {
         catRepo.save(c);
         return getBySlug(c.getSlug());
     }
+
+    @Transactional
+    public void delete(Long id) {
+        Category c = catRepo.findById(id).orElseThrow(() -> new RuntimeException("Category not found: " + id));
+        c.setActive(false);
+        catRepo.save(c);
+    }
 }

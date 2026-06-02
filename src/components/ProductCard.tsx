@@ -13,10 +13,11 @@ export default function ProductCard({ p }: PCardProps) {
   const { addToCart, wishlist, toggleWishlist } = useApp();
   const [ci, setCi] = useState(0);
   const wished = wishlist.includes(p.id);
+  const productPath = `/product/${p.slug || p.id}`;
 
   return (
     <div className="pc">
-      <Link href={`/product/${p.id}`} className="pc-img" style={{ background: (p.imgs && p.imgs.length > 0) ? '#fff' : p.bg }}>
+      <Link href={productPath} className="pc-img" style={{ background: (p.imgs && p.imgs.length > 0) ? '#fff' : p.bg }}>
         {(p.imgs && p.imgs.length > 0) ? (
           <img src={p.imgs[0]} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
@@ -47,7 +48,7 @@ export default function ProductCard({ p }: PCardProps) {
 
       <div className="pc-b">
         <div className="pc-fab">{p.fab || "Premium"}</div>
-        <Link href={`/product/${p.id}`} className="pc-nm">
+        <Link href={productPath} className="pc-nm">
           {p.name}
         </Link>
         <div className="pc-rat">

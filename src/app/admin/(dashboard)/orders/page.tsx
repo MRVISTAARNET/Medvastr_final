@@ -16,7 +16,7 @@ export default function AdminOrders() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const token = localStorage.getItem('adm_token');
+        const token = localStorage.getItem('token');
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/admin/all?size=100`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -209,12 +209,26 @@ export default function AdminOrders() {
                     <label>Courier AWB</label>
                     <input type="text" id="o-awb" defaultValue={editingOrder.awb} placeholder="Enter Tracking AWB" />
                   </div>
-                  <div className="fg">
+                <div className="fg">
                     <label>Action</label>
                     <button type="button" className="btn-secondary" style={{ width: '100%' }} onClick={() => {
-                      const awbInp = document.getElementById('o-awb') as HTMLInputElement;
-                      if (awbInp) awbInp.value = `SR${Math.floor(Math.random() * 100000000)}`;
-                      alert("Order pushed to Shiprocket! AWB generated.");
+                      (async () => {
+                        try {
+                          const token = localStorage.getItem('token');
+                          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/admin/${editingOrder.id}/shiprocket`, {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                          });
+                          const data = await res.json();
+                          if (data.success) {
+                            alert("Order pushed to Shiprocket successfully.");
+                          } else {
+                            alert(data.message || "Failed to push order to Shiprocket");
+                          }
+                        } catch (e) {
+                          alert("Shiprocket push failed");
+                        }
+                      })();
                     }}>Push to Shiprocket</button>
                   </div>
                 </div>
@@ -224,11 +238,26 @@ export default function AdminOrders() {
             <div className="modal-foot">
               <button className="btn-secondary" onClick={() => setIsModalOpen(false)}>Cancel</button>
               <button className="btn-primary" onClick={() => {
-                const nStatus = (document.getElementById('o-status') as HTMLSelectElement).value;
-                const nAwb = (document.getElementById('o-awb') as HTMLInputElement).value;
-                setOrders(orders.map(o => o.id === editingOrder.id ? { ...o, status: nStatus, awb: nAwb } : o));
-                setIsModalOpen(false);
-                alert('Order updated! (Stock adjustments are handled automatically on backend when status changes to Shipped/Delivered)');
+                (async () => {
+                  const nStatus = (document.getElementById('o-status') as HTMLSelectElement).value;
+                  try {
+                    const token = localStorage.getItem('token');
+                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/admin/${editingOrder.id}/status?status=${encodeURIComponent(nStatus)}`, {
+                      method: 'PUT',
+                      headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                      setOrders(orders.map(o => o.id === editingOrder.id ? { ...o, status: nStatus } : o));
+                      setIsModalOpen(false);
+                      alert('Order status updated successfully.');
+                    } else {
+                      alert(data.message || 'Failed to update order status');
+                    }
+                  } catch (e) {
+                    alert('Order status update failed');
+                  }
+                })();
               }}>Save Changes</button>
             </div>
           </div>

@@ -71,7 +71,7 @@ const AdminSidebar = () => {
         <Link href="/" target="_blank" className="sb-link" style={{ marginBottom: '4px' }}>
           <span className="sb-link-ico">🌐</span>View Live Site
         </Link>
-        <button className="sb-logout" onClick={() => { localStorage.removeItem('adm_token'); window.location.href = '/admin/login'; }}>
+        <button className="sb-logout" onClick={() => { localStorage.removeItem('token'); localStorage.removeItem('adm_token'); window.location.href = '/admin/login'; }}>
           <span style={{ fontSize: '17px' }}>🚪</span>Sign Out
         </button>
       </div>

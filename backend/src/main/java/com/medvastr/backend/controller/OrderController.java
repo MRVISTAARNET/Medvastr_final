@@ -66,4 +66,10 @@ public class OrderController {
     public ResponseEntity<ApiResponse<OrderDTO>> status(@PathVariable Long id, @RequestParam String status) {
         return ResponseEntity.ok(ApiResponse.ok("Updated", s.updateStatus(id, status)));
     }
+
+    @PostMapping("/admin/{id}/shiprocket")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<OrderDTO>> pushToShiprocket(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok("Pushed to Shiprocket", s.pushToShiprocket(id)));
+    }
 }

@@ -31,9 +31,10 @@ export default function AdminCategories() {
     
     if (name) {
       try {
+      const token = localStorage.getItem('token');
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ 
             name, 
             slug: slug || name.toLowerCase().replace(/ /g, '-'),
@@ -97,7 +98,26 @@ export default function AdminCategories() {
                     <td>
                       <div className="act-btns">
                         <div className="act-btn edit">✏️</div>
-                        <div className="act-btn del" onClick={() => { if(confirm('Delete this category?')) setCats(cats.filter(cat => cat.id !== c.id)) }}>🗑️</div>
+                        <div className="act-btn del" onClick={() => {
+                          if (!confirm('Delete this category?')) return;
+                          (async () => {
+                            try {
+                              const token = localStorage.getItem('token');
+                              const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${c.id}`, {
+                                method: 'DELETE',
+                                headers: { 'Authorization': `Bearer ${token}` }
+                              });
+                              const data = await res.json();
+                              if (data.success) {
+                                setCats(cats.filter(cat => cat.id !== c.id));
+                              } else {
+                                alert(data.message || 'Failed to delete category');
+                              }
+                            } catch (e) {
+                              alert('Failed to delete category');
+                            }
+                          })();
+                        }}>🗑️</div>
                       </div>
                     </td>
                   </tr>

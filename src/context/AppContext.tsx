@@ -151,6 +151,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         if (data.success) {
           const mapped: Product[] = data.data.content.map((p: any) => ({
             id: p.id,
+            slug: p.slug,
             name: p.name,
             short: p.name.split(' ').slice(-2).join(' '),
             fab: p.fabric,
@@ -329,7 +330,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       });
       const data = await res.json();
       if (data.success) {
-        const saved = { ...p, id: data.data.id };
+        const server = data.data;
+        const saved = {
+          ...p,
+          id: server.id,
+          slug: server.slug || p.slug,
+          imgs: server.imageUrls || p.imgs,
+          catId: server.categoryId || p.catId
+        };
         setProducts(prev => [saved, ...prev]);
         return saved;
       }

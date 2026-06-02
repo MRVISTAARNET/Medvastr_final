@@ -33,4 +33,11 @@ public class CategoryController {
     public ResponseEntity<ApiResponse<CategoryDTO>> create(@RequestBody CategoryRequest r) {
         return ResponseEntity.status(201).body(ApiResponse.ok("Created", s.create(r)));
     }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
+        s.delete(id);
+        return ResponseEntity.ok(ApiResponse.ok("Deleted", null));
+    }
 }
