@@ -172,8 +172,8 @@ export default function AdminProducts() {
         price: parseFloat(form.price) || 0,
         originalPrice: parseFloat(form.originalPrice) || undefined,
         imgs: Array.isArray(form.imgs) ? form.imgs : (form.imgs ? [form.imgs] : []),
-        sizes: form.sizes.split(',').map((s: string) => s.trim()).filter(Boolean),
-        clrs: form.clrs.split(',').map((c: string) => getColHex(c.trim())).filter(Boolean),
+        sizes: (form.sizes || '').split(',').map((s: string) => s.trim()).filter(Boolean),
+        clrs: (form.clrs || '').split(',').map((c: string) => getColHex(c.trim())).filter(Boolean),
         weight: form.weight,
         care: form.care,
         stretch: form.stretch,
@@ -477,8 +477,8 @@ export default function AdminProducts() {
                       <div style={{ textAlign: 'center', fontSize: '24px', fontWeight: '800', marginBottom: '10px', borderBottom: '2px solid #000', paddingBottom: '5px' }}>{B.name.toUpperCase()}</div>
                       <div style={{ fontSize: '13px', marginBottom: '4px' }}><strong>P Name:</strong> {form.name || '---'}</div>
                       <div style={{ fontSize: '13px', marginBottom: '4px' }}><strong>Style ID:</strong> {form.styleId || '---'}</div>
-                      <div style={{ fontSize: '13px', marginBottom: '4px' }}><strong>Colour:</strong> {form.clrs.split(',')[0] || '---'}</div>
-                      <div style={{ fontSize: '13px', marginBottom: '4px' }}><strong>Size:</strong> {form.sizes.split(',')[0] || '---'}</div>
+                      <div style={{ fontSize: '13px', marginBottom: '4px' }}><strong>Colour:</strong> {(form.clrs || '').split(',')[0] || '---'}</div>
+                      <div style={{ fontSize: '13px', marginBottom: '4px' }}><strong>Size:</strong> {(form.sizes || '').split(',')[0] || '---'}</div>
                       <div style={{ fontSize: '18px', fontWeight: '700', marginTop: '10px' }}>MRP: ₹ {form.price || '0'}</div>
 
                       <div style={{ display: 'flex', justifyContent: 'center', marginTop: '15px' }}>

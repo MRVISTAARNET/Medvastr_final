@@ -28,13 +28,11 @@ export default function CheckoutPage() {
     promoCode: ""
   });
 
-  // Sync user info into form if logged in
+  // Removed auto-filling names on user request
   useEffect(() => {
     if (user) {
       setForm(prev => ({
         ...prev,
-        firstName: user.firstName,
-        lastName: user.lastName,
         phone: user.phone || prev.phone
       }));
     }

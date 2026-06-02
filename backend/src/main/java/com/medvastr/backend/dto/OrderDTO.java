@@ -34,5 +34,5 @@ public class OrderDTO {
     private String promoCode;
     private LocalDateTime createdAt;
     private LocalDateTime deliveredAt;
+    private String razorpayOrderId;
 }
-

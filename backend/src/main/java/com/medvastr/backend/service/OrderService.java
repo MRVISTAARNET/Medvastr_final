@@ -299,6 +299,7 @@ public class OrderService {
                 .courierName(o.getCourierName())
                 .createdAt(o.getCreatedAt())
                 .deliveredAt(o.getDeliveredAt())
+                .razorpayOrderId(o.getRazorpayOrderId())
                 .items(o.getItems() != null ? o.getItems().stream().map(i -> OrderItemDTO.builder()
                         .id(i.getId())
                         .productName(i.getProductName())

@@ -5,6 +5,7 @@ import com.medvastr.backend.repository.UserRepository;
 import com.medvastr.backend.service.AuthService;
 import com.medvastr.backend.service.EmailService;
 import com.medvastr.backend.service.OtpService;
+import java.util.UUID;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,9 +57,14 @@ public class AuthController {
     public ResponseEntity<ApiResponse<Void>> requestOtp(@RequestBody @Valid OtpRequest r) {
         log.info("[OTP] Request for email: {}", r.getEmail());
         if (!userRepository.existsByEmail(r.getEmail())) {
-            // Return a friendly error (don't throw exception to avoid 500)
-            return ResponseEntity.badRequest()
-                    .body(ApiResponse.err("No account found with this email. Please register first."));
+            log.info("[OTP] Auto-registering new user: {}", r.getEmail());
+            RegisterRequest req = new RegisterRequest();
+            req.setEmail(r.getEmail());
+            req.setFirstName(r.getEmail().split("@")[0]);
+            req.setLastName("");
+            req.setPassword(UUID.randomUUID().toString()); // random secure pass since it's OTP based
+            req.setPhone("");
+            s.register(req);
         }
         String otp = otpService.generateOtp(r.getEmail());
         emailService.sendOtpEmail(r.getEmail(), otp);

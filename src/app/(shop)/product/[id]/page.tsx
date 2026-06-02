@@ -35,28 +35,44 @@ export default function ProductDetailPage() {
         <div className="pdp-grid">
           {/* Gallery */}
           <div className="pdp-gal">
-            <div className="pdp-main-img" style={{ background: p.bg }}>
-              <span className="pdp-emo-main">{p.emo}</span>
+            <div className="pdp-main-img" style={{ background: (p.imgs && p.imgs.length > 0) ? '#fff' : p.bg }}>
+              {(p.imgs && p.imgs.length > 0) ? (
+                <img src={p.imgs[0]} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+              ) : (
+                <span className="pdp-emo-main">{p.emo}</span>
+              )}
               {p.badge && (
                 <div className={`pc-badge pb-${p.badge.toLowerCase().replace(" ", "")} pdp-badge`}>
                   {p.badge}
                 </div>
               )}
             </div>
-            <div className="pdp-thumbs">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className={`pdp-thumb${i === 1 ? " on" : ""}`} style={{ background: p.bg }}>
-                  {p.emo}
-                </div>
-              ))}
-            </div>
+
+            {p.imgs && p.imgs.length > 1 && (
+              <div className="pdp-thumbs">
+                {p.imgs.map((url, i) => (
+                  <div key={i} className={`pdp-thumb${i === 0 ? " on" : ""}`} style={{ background: '#fff' }}>
+                    <img src={url} alt="thumb" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                ))}
+              </div>
+            )}
+            {(!p.imgs || p.imgs.length === 0) && (
+              <div className="pdp-thumbs">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className={`pdp-thumb${i === 1 ? " on" : ""}`} style={{ background: p.bg }}>
+                    {p.emo}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Info */}
           <div className="pdp-info">
             <div className="pdp-tag">{p.fab || "Premium"} Collection</div>
             <h1 className="pdp-h">{p.name}</h1>
-            
+
             <div className="pdp-meta">
               <div className="pdp-stars">
                 <span className="stars">{"★".repeat(Math.floor(p.rating))}</span>
@@ -76,7 +92,7 @@ export default function ProductDetailPage() {
               {/* COLOUR */}
               <div className="pdp-opt">
                 <label className="pdp-opt-l">
-                  Colour: <span>{cn(p.clrs[ci])}</span>
+                  Colour: <span>{p.clrNms && p.clrNms[ci] ? p.clrNms[ci] : cn(p.clrs[ci])}</span>
                 </label>
                 <div className="pdp-clrs">
                   {p.clrs.map((c, i) => (
@@ -164,7 +180,7 @@ export default function ProductDetailPage() {
                 <h3>Customer Reviews</h3>
                 <div style={{ color: 'var(--teal)', fontWeight: 600 }}>{p.rev} Verified Reviews</div>
               </div>
-              
+
               <div style={{ background: '#f9f9f9', padding: '24px', borderRadius: '12px', marginTop: '20px' }}>
                 <h4 style={{ marginBottom: '16px' }}>Share your feedback</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -182,21 +198,21 @@ export default function ProductDetailPage() {
                     <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 600 }}>Review Body</label>
                     <textarea id="rev-body" placeholder="What did you like or dislike?" style={{ width: '100%', height: '100px', padding: '12px', borderRadius: '8px', border: '1px solid #ddd', resize: 'none' }}></textarea>
                   </div>
-                  <button 
-                    className="btn-p" 
+                  <button
+                    className="btn-p"
                     style={{ width: '100%', padding: '14px', borderRadius: '8px' }}
                     onClick={async () => {
                       const rating = (document.getElementById('rev-rating') as HTMLSelectElement).value;
                       const body = (document.getElementById('rev-body') as HTMLTextAreaElement).value;
                       if (!body) return alert('Please enter your review body');
-                      
+
                       try {
                         const token = localStorage.getItem('token');
                         if (!token) return alert('Please login to submit a review');
-                        
+
                         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${p.id}/reviews`, {
                           method: 'POST',
-                          headers: { 
+                          headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${token}`
                           },

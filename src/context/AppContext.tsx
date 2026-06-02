@@ -162,6 +162,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             rev: p.reviewCount,
             badge: p.badge,
             clrs: p.variants?.map((v: any) => v.colorHex).filter((v: any, i: number, a: any[]) => a.indexOf(v) === i) || [],
+            clrNms: p.variants?.map((v: any) => v.colorName).filter((v: any, i: number, a: any[]) => a.indexOf(v) === i) || [],
             emo: p.emoji || '🥼',
             bg: p.bgColor || '#f0f0f0',
             desc: p.description,

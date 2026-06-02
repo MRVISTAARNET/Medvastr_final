@@ -34,6 +34,7 @@ export interface Product {
   rev: number;
   badge: string;
   clrs: string[];
+  clrNms?: string[];
   emo: string;
   bg: string;
   desc: string;

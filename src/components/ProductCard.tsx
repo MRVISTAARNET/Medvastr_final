@@ -16,8 +16,12 @@ export default function ProductCard({ p }: PCardProps) {
 
   return (
     <div className="pc">
-      <Link href={`/product/${p.id}`} className="pc-img" style={{ background: p.bg }}>
-        <div className="pc-emo">{p.emo}</div>
+      <Link href={`/product/${p.id}`} className="pc-img" style={{ background: (p.imgs && p.imgs.length > 0) ? '#fff' : p.bg }}>
+        {(p.imgs && p.imgs.length > 0) ? (
+          <img src={p.imgs[0]} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : (
+          <div className="pc-emo">{p.emo}</div>
+        )}
         {p.badge && (
           <div
             className={`pc-badge pb-${p.badge.toLowerCase().replace(" ", "")}`}
