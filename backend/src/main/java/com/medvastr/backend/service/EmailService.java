@@ -82,7 +82,7 @@ public class EmailService {
                         <p>As a thank you, here is your welcome discount code:</p>
                         <div style="text-align: center; margin: 30px 0; padding: 20px; background: #f9f9f9; border-radius: 12px; border: 2px dashed #008080;">
                             <span style="font-size: 24px; font-weight: bold; color: #008080; letter-spacing: 2px;">MEDVASTR10</span>
-                            <div style="font-size: 12px; color: #666; margin-top: 5px;">Use this code at checkout for 10% OFF your first order.</div>
+                            <div style="font-size: 12px; color: #666; margin-top: 5px;">Use this code at checkout for 10%% OFF your first order.</div>
                         </div>
                         <p>Stay tuned for amazing content!</p>
                         <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
