@@ -58,6 +58,11 @@ public class AuthService {
         return buildResponse(userRepo.findByEmail(r.getEmail()).orElseThrow());
     }
 
+    public AuthResponse loginViaOtp(String email) {
+        User u = userRepo.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        return buildResponse(u);
+    }
+
     // ── Forgot password: generates token → sends email ───────────────────────
     public void forgotPassword(String email) {
         // Always return success even if email not found (prevents user-enumeration)

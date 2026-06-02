@@ -26,7 +26,7 @@ export default function AdminProducts() {
     name: '', type: 'scrubs', price: '', originalPrice: '', badge: '', desc: '',
     gen: 'unisex', fab: '', fit: '', catId: '', imgs: '', emo: '📦',
     sku: '', styleId: '', brand: 'Medvastr', sizes: 'XS, S, M, L, XL', clrs: '', barcode: '',
-    weight: '', care: '', stretch: '', fabD: '', pockets: ''
+    weight: '', care: '', stretch: '', fabD: '', pockets: '', videoUrl: ''
   });
 
   const labelRef = useRef<HTMLDivElement>(null);
@@ -45,7 +45,7 @@ export default function AdminProducts() {
         name: '', type: 'scrubs', price: '', originalPrice: '', badge: '', desc: '',
         gen: 'unisex', fab: '', fit: '', catId: '', imgs: '', emo: '📦',
         sku: '', styleId: '', brand: 'Medvastr', sizes: 'XS, S, M, L, XL', clrs: '', barcode: '',
-        weight: '', care: '', stretch: '', fabD: '', pockets: ''
+        weight: '', care: '', stretch: '', fabD: '', pockets: '', videoUrl: ''
       });
     }
   }, [editingProduct, isModalOpen]);
@@ -113,6 +113,7 @@ export default function AdminProducts() {
         stretch: form.stretch,
         fabD: form.fabD,
         pockets: parseInt(form.pockets) || 0,
+        videoUrl: form.videoUrl,
         rating: editingProduct?.rating || 4.5,
         rev: editingProduct?.rev || 0,
         active: true
@@ -301,9 +302,15 @@ export default function AdminProducts() {
                   </select>
                 </div>
               </div>
-              <div className="fg">
-                <label>Main Image URL</label>
-                <input type="text" id="p-imgs" value={form.imgs} onChange={handleInputChange} placeholder="https://example.com/image.jpg" />
+              <div className="fg-row">
+                <div className="fg">
+                  <label>Main Image URL</label>
+                  <input type="text" id="p-imgs" value={form.imgs} onChange={handleInputChange} placeholder="https://example.com/image.jpg" />
+                </div>
+                <div className="fg">
+                  <label>Product Video URL</label>
+                  <input type="text" id="p-videoUrl" value={form.videoUrl} onChange={handleInputChange} placeholder="https://youtube.com/..." />
+                </div>
               </div>
               <div className="fg">
                 <label>Description</label>

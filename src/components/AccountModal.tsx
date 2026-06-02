@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useApp } from "@/context/AppContext";
 
 export default function AccountModal({ onClose }: { onClose: () => void }) {
-  const { user, login, register, logout } = useApp();
-  const [mode, setMode] = useState<"login" | "register">("login");
+  const { user, login, register, logout, requestOtp, loginWithOtp } = useApp();
+  const [mode, setMode] = useState<"login" | "register" | "login-otp" | "verify-otp">("login");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -15,7 +15,8 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
     lastName: "",
     email: "",
     password: "",
-    phone: ""
+    phone: "",
+    otp: ""
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,14 +33,24 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
       let ok = false;
       if (mode === "login") {
         ok = await login(form.email, form.password);
-      } else {
+      } else if (mode === "register") {
         ok = await register(form.firstName, form.lastName, form.email, form.password, form.phone);
+      } else if (mode === "login-otp") {
+        ok = await requestOtp(form.email);
+        if (ok) {
+          setMode("verify-otp");
+          return; // Stay open, just switch mode
+        }
+      } else if (mode === "verify-otp") {
+        ok = await loginWithOtp(form.email, form.otp);
       }
 
       if (ok) {
         onClose();
       } else {
-        setError("Invalid credentials. Please try again.");
+        if (mode !== "login-otp") {
+          setError("Invalid credentials or code. Please try again.");
+        }
       }
     } catch (err) {
       setError("Something went wrong. Please check your connection.");
@@ -96,10 +107,10 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
         ) : (
           <div>
             <h2 style={{ fontFamily: "var(--serif)", fontSize: 28, marginBottom: 8, color: '#111' }}>
-              {mode === 'login' ? 'Welcome Back' : 'Get Started'}
+              {mode === 'login' ? 'Welcome Back' : mode === 'register' ? 'Get Started' : mode === 'login-otp' ? 'Login with Email' : 'Check Your Email'}
             </h2>
             <p style={{ fontSize: 14, color: "#666", marginBottom: 24 }}>
-              {mode === 'login' ? 'Enter your details to sign in.' : 'Create an account to track your orders.'}
+              {mode === 'login' ? 'Enter your details to sign in.' : mode === 'register' ? 'Create an account to track your orders.' : mode === 'login-otp' ? 'We will send a one-time code to your email.' : `Enter the 6-digit code sent to ${form.email}`}
             </p>
 
             {error && (
@@ -122,10 +133,12 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
                 </div>
               )}
 
-              <div className="fg">
-                <label style={{ display: "block", fontSize: 11, fontWeight: 700, textTransform: "uppercase", marginBottom: 6, color: '#666' }}>Email Address</label>
-                <input name="email" type="email" autoComplete="email" placeholder="name@example.com" required value={form.email} onChange={handleInputChange} style={{ height: 44, borderRadius: 8, padding: '0 12px', border: '1.5px solid #eee', width: '100%', fontSize: 14 }} />
-              </div>
+              {mode !== 'verify-otp' && (
+                <div className="fg">
+                  <label style={{ display: "block", fontSize: 11, fontWeight: 700, textTransform: "uppercase", marginBottom: 6, color: '#666' }}>Email Address</label>
+                  <input name="email" type="email" autoComplete="email" placeholder="name@example.com" required value={form.email} onChange={handleInputChange} style={{ height: 44, borderRadius: 8, padding: '0 12px', border: '1.5px solid #eee', width: '100%', fontSize: 14 }} />
+                </div>
+              )}
 
               {mode === 'register' && (
                 <div className="fg">
@@ -134,21 +147,40 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
                 </div>
               )}
 
-              <div className="fg">
-                <label style={{ display: "block", fontSize: 11, fontWeight: 700, textTransform: "uppercase", marginBottom: 6, color: '#666' }}>Password</label>
-                <input name="password" type="password" autoComplete={mode === 'login' ? "current-password" : "new-password"} placeholder="••••••••" required value={form.password} onChange={handleInputChange} style={{ height: 44, borderRadius: 8, padding: '0 12px', border: '1.5px solid #eee', width: '100%', fontSize: 14 }} />
-              </div>
+              {(mode === 'login' || mode === 'register') && (
+                <div className="fg">
+                  <label style={{ display: "block", fontSize: 11, fontWeight: 700, textTransform: "uppercase", marginBottom: 6, color: '#666' }}>Password</label>
+                  <input name="password" type="password" autoComplete={mode === 'login' ? "current-password" : "new-password"} placeholder="••••••••" required value={form.password} onChange={handleInputChange} style={{ height: 44, borderRadius: 8, padding: '0 12px', border: '1.5px solid #eee', width: '100%', fontSize: 14 }} />
+                </div>
+              )}
+
+              {mode === 'verify-otp' && (
+                <div className="fg">
+                  <label style={{ display: "block", fontSize: 11, fontWeight: 700, textTransform: "uppercase", marginBottom: 6, color: '#666' }}>6-Digit OTP</label>
+                  <input name="otp" type="text" placeholder="123456" maxLength={6} required value={form.otp} onChange={handleInputChange} style={{ height: 44, borderRadius: 8, padding: '0 12px', border: '1.5px solid #eee', width: '100%', fontSize: 14, letterSpacing: '4px', textAlign: 'center' }} />
+                </div>
+              )}
 
               <button className="co-cta" type="submit" disabled={loading} style={{ height: 50, borderRadius: 10, background: '#008080', color: '#fff', fontSize: 15, fontWeight: 700, border: 'none', cursor: 'pointer', marginTop: 8 }}>
-                {loading ? 'Processing...' : (mode === 'login' ? 'Sign In' : 'Join Medvastr')}
+                {loading ? 'Processing...' : (mode === 'login' ? 'Sign In' : mode === 'register' ? 'Join Medvastr' : mode === 'login-otp' ? 'Send OTP' : 'Verify & Login')}
               </button>
             </form>
 
-            <div style={{ textAlign: "center", marginTop: 24, fontSize: 13, color: "#888" }}>
-              {mode === 'login' ? (
-                <>New to Medvastr? <span onClick={() => { setMode('register'); setError(""); }} style={{ color: "#008080", fontWeight: 700, cursor: "pointer" }}>Join Now</span></>
-              ) : (
-                <>Already have an account? <span onClick={() => { setMode('login'); setError(""); }} style={{ color: "#008080", fontWeight: 700, cursor: "pointer" }}>Sign In</span></>
+            <div style={{ textAlign: "center", marginTop: 24, fontSize: 13, color: "#888", display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {mode === 'login' && (
+                <>
+                  <div>New to Medvastr? <span onClick={() => { setMode('register'); setError(""); }} style={{ color: "#008080", fontWeight: 700, cursor: "pointer" }}>Join Now</span></div>
+                  <div>Trouble logging in? <span onClick={() => { setMode('login-otp'); setError(""); }} style={{ color: "#008080", fontWeight: 700, cursor: "pointer" }}>Login via OTP</span></div>
+                </>
+              )}
+              {mode === 'login-otp' && (
+                <div>Prefer password? <span onClick={() => { setMode('login'); setError(""); }} style={{ color: "#008080", fontWeight: 700, cursor: "pointer" }}>Login with Password</span></div>
+              )}
+              {mode === 'verify-otp' && (
+                <div>Didn't receive code? <span onClick={() => { setMode('login-otp'); setError(""); }} style={{ color: "#008080", fontWeight: 700, cursor: "pointer" }}>Try again</span></div>
+              )}
+              {mode === 'register' && (
+                <div>Already have an account? <span onClick={() => { setMode('login'); setError(""); }} style={{ color: "#008080", fontWeight: 700, cursor: "pointer" }}>Sign In</span></div>
               )}
             </div>
           </div>

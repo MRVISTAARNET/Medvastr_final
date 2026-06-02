@@ -43,6 +43,8 @@ interface AppContextType {
   toast: (msg: string, kind?: "ok" | "bad" | "") => void;
   toastMsg: string;
   toastKind: "ok" | "bad" | "";
+  requestOtp: (email: string) => Promise<boolean>;
+  loginWithOtp: (email: string, otp: string) => Promise<boolean>;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -225,6 +227,48 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return false;
   };
 
+  const requestOtp = async (email: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/otp-request`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast("OTP sent to your email", "ok");
+        return true;
+      } else {
+        toast(data.message || "Failed to send OTP", "bad");
+      }
+    } catch (e) {
+      toast("Connection failed", "bad");
+    }
+    return false;
+  };
+
+  const loginWithOtp = async (email: string, otpCode: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/auth/otp-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otpCode })
+      });
+      const data = await res.json();
+      if (data.success) {
+        localStorage.setItem("token", data.data.token);
+        setUser(data.data.user);
+        toast("Login successful!", "ok");
+        return true;
+      } else {
+        toast(data.message || "Invalid or expired OTP", "bad");
+      }
+    } catch (e) {
+      toast("Connection failed", "bad");
+    }
+    return false;
+  };
+
   const register = async (f: string, l: string, e: string, p: string, ph: string) => {
     try {
       const res = await fetch(`${API_BASE}/auth/register`, {
@@ -321,6 +365,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         cart, wishlist, products, categories, user, isAuthOpen, setIsAuthOpen, isHydrated,
         addToCart, updateCartQty, removeFromCart, clearCart, toggleWishlist,
         addProduct, updateProduct, deleteProduct, login, register, logout,
+        requestOtp, loginWithOtp,
         toast, toastMsg, toastKind,
       }}
     >

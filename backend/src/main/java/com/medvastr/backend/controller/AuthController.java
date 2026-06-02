@@ -11,6 +11,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.medvastr.backend.dto.OtpRequest;
+import com.medvastr.backend.repository.UserRepository;
+import com.medvastr.backend.service.EmailService;
+import com.medvastr.backend.service.OtpService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.annotation.*;
+
 @RestController
 @RequestMapping({ "/api/auth", "/auth" })
 @RequiredArgsConstructor
@@ -18,6 +27,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService s;
+    private final OtpService otpService;
+    private final EmailService emailService;
+    private final UserRepository userRepository;
 
     // ── Register ─────────────────────────────────────────────────────────────
     @PostMapping("/register")
@@ -47,6 +59,27 @@ public class AuthController {
     public ResponseEntity<ApiResponse<Boolean>> validateToken(@RequestParam String token) {
         boolean valid = s.validateResetToken(token);
         return ResponseEntity.ok(ApiResponse.ok(valid ? "Token is valid" : "Token invalid or expired", valid));
+    }
+
+    // ── OTP LOGIN ──
+
+    @PostMapping("/otp-request")
+    public ResponseEntity<ApiResponse<Void>> requestOtp(@RequestBody @Valid OtpRequest r) {
+        if (!userRepository.existsByEmail(r.getEmail())) {
+            throw new BadCredentialsException("Email not registered");
+        }
+        String otp = otpService.generateOtp(r.getEmail());
+        emailService.sendOtpEmail(r.getEmail(), otp);
+        return ResponseEntity.ok(ApiResponse.ok("Verification code sent to " + r.getEmail(), null));
+    }
+
+    @PostMapping("/otp-login")
+    public ResponseEntity<ApiResponse<AuthResponse>> otpLogin(@RequestBody @Valid OtpRequest r) {
+        if (otpService.validateOtp(r.getEmail(), r.getOtp())) {
+            return ResponseEntity.ok(ApiResponse.ok("Login successful", s.loginViaOtp(r.getEmail())));
+        } else {
+            throw new BadCredentialsException("Invalid or expired OTP");
+        }
     }
 
     // ── Reset Password ────────────────────────────────────────────────────────

@@ -72,6 +72,7 @@ public class Product {
     private String careInstructions;
     private String weight;
     private String fit;
+    private String videoUrl;
 
     @Column(precision = 3, scale = 2)
     @Builder.Default
