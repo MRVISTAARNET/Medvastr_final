@@ -100,9 +100,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setTimeout(() => setToastMsg(""), 3200);
   }, []);
 
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.medvastr.com/api";
+
   const fetchMe = useCallback(async (token: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
+      const res = await fetch(`${API_BASE}/users/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -142,7 +144,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products?size=100`);
+        const res = await fetch(`${API_BASE}/products?size=100`);
         const data = await res.json();
         if (data.success) {
           const mapped: Product[] = data.data.content.map((p: any) => ({
@@ -182,7 +184,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
     const fetchCategories = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`);
+        const res = await fetch(`${API_BASE}/categories`);
         const data = await res.json();
         if (data.success) setCategories(data.data);
       } catch (e) { }
@@ -207,7 +209,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, pass: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+      const res = await fetch(`${API_BASE}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password: pass })
@@ -225,7 +227,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const register = async (f: string, l: string, e: string, p: string, ph: string) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+      const res = await fetch(`${API_BASE}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ firstName: f, lastName: l, email: e, password: p, phone: ph })
@@ -274,8 +276,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const addProduct = async (p: Product) => {
     try {
-      const token = localStorage.getItem("adm_token");
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products`, {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_BASE}/products`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify(p)
@@ -292,8 +294,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const updateProduct = async (p: Product) => {
     try {
-      const token = localStorage.getItem("adm_token");
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${p.id}`, {
+      const token = localStorage.getItem("token");
+      await fetch(`${API_BASE}/products/${p.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify(p)
@@ -304,8 +306,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const deleteProduct = async (id: number) => {
     try {
-      const token = localStorage.getItem("adm_token");
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`, {
+      const token = localStorage.getItem("token");
+      await fetch(`${API_BASE}/products/${id}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });
