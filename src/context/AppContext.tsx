@@ -27,6 +27,7 @@ interface AppContextType {
   wishlist: number[];
   products: Product[];
   categories: any[];
+  refreshCategories: () => Promise<void>;
   user: User | null;
   isAuthOpen: boolean;
   setIsAuthOpen: (open: boolean) => void;
@@ -140,6 +141,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setIsHydrated(true);
   }, [fetchMe]);
 
+  const fetchCategories = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_BASE}/categories`);
+      const data = await res.json();
+      if (data.success) setCategories(data.data);
+    } catch (e) { }
+  }, []);
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -151,17 +160,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       } catch (e) { }
     };
 
-    const fetchCategories = async () => {
-      try {
-        const res = await fetch(`${API_BASE}/categories`);
-        const data = await res.json();
-        if (data.success) setCategories(data.data);
-      } catch (e) { }
-    };
-
     fetchProducts();
     fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
   useEffect(() => {
     if (isHydrated) {
@@ -337,6 +338,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         addProduct, updateProduct, deleteProduct, login, register, logout,
         requestOtp, loginWithOtp,
         toast, toastMsg, toastKind,
+        refreshCategories: fetchCategories,
       }}
     >
       {children}

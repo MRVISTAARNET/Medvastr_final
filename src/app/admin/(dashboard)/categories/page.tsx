@@ -3,8 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
 import { API_BASE, authHeaders } from '@/lib/api';
+import { useApp } from '@/context/AppContext';
 
 export default function AdminCategories() {
+  const { refreshCategories } = useApp();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cats, setCats] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -29,22 +31,23 @@ export default function AdminCategories() {
     const name = (document.getElementById('cat-name') as HTMLInputElement)?.value;
     const slug = (document.getElementById('cat-slug') as HTMLInputElement)?.value;
     const desc = (document.getElementById('cat-desc') as HTMLTextAreaElement)?.value;
-    
+
     if (name) {
       try {
-      const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token');
         const res = await fetch(`${API_BASE}/categories`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-          body: JSON.stringify({ 
-            name, 
+          body: JSON.stringify({
+            name,
             slug: slug || name.toLowerCase().replace(/ /g, '-'),
-            description: desc 
+            description: desc
           })
         });
         const data = await res.json();
         if (data.success) {
           fetchCats();
+          refreshCategories();
           alert('Category Added Successfully!');
         }
       } catch (e) {
@@ -111,6 +114,7 @@ export default function AdminCategories() {
                               const data = await res.json();
                               if (data.success) {
                                 setCats(cats.filter(cat => cat.id !== c.id));
+                                refreshCategories();
                               } else {
                                 alert(data.message || 'Failed to delete category');
                               }

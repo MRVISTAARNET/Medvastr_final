@@ -337,7 +337,7 @@ export default function AdminProducts() {
               <div className="modal-title">{editingProduct ? 'Edit Product' : 'Add New Product'}</div>
               <button type="button" className="modal-x" onClick={() => setIsModalOpen(false)}>✕</button>
             </div>
-            <div className="modal-body" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+            <form onSubmit={(e) => { e.preventDefault(); handleSave(); }} className="modal-body" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
               <div className="fg-row">
                 <div className="fg" style={{ flex: 2 }}>
                   <label>Product Name</label>
@@ -544,11 +544,12 @@ export default function AdminProducts() {
                   <div style={{ fontSize: '12px', color: '#999' }}>You can download the professional barcode label after saving this product.</div>
                 </div>
               )}
-            </div>
-            <div className="modal-foot">
-              <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>Cancel</button>
-              <button type="button" className="btn-primary" onClick={handleSave}>{editingProduct ? 'Update Product' : 'Add Product'}</button>
-            </div>
+
+              <div className="modal-foot">
+                <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                <button type="submit" className="btn-primary">{editingProduct ? 'Update Product' : 'Add Product'}</button>
+              </div>
+            </form>
           </div>
         </div>
       )}
