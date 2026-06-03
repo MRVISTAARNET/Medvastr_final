@@ -98,6 +98,8 @@ export function mapApiProduct(p: any): Product {
       ["XS", "S", "M", "L", "XL"],
     barcode: p.barcode || `BC-${p.id}`,
     variants,
+    active: p.active !== undefined ? p.active : true,
+    videoUrl: p.videoUrl || "",
   };
 }
 

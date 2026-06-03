@@ -59,6 +59,8 @@ export interface Product {
   stock?: number;
   sold?: number;
   returned?: number;
+  active?: boolean;
+  videoUrl?: string;
 }
 
 export const PRODUCTS: Product[] = [];

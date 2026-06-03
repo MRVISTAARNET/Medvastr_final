@@ -1,91 +1,128 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { API_BASE } from '@/lib/api';
+import { API_BASE, authHeaders } from '@/lib/api';
 
 export default function AdminSettings() {
+  const [currentPwd, setCurrentPwd] = useState('');
+  const [newPwd, setNewPwd] = useState('');
+  const [pwdMsg, setPwdMsg] = useState('');
+  const [pwdLoading, setPwdLoading] = useState(false);
+
+  const [razorpayKey, setRazorpayKey] = useState('');
+  const [apiMsg, setApiMsg] = useState('');
+  const [apiLoading, setApiLoading] = useState(false);
+
+  const handleChangePassword = async () => {
+    if (!currentPwd || !newPwd) { setPwdMsg('Please fill both fields.'); return; }
+    if (newPwd.length < 6) { setPwdMsg('New password must be at least 6 chars.'); return; }
+    setPwdLoading(true);
+    setPwdMsg('');
+    try {
+      const res = await fetch(`${API_BASE}/users/me/password`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        body: JSON.stringify({ currentPassword: currentPwd, newPassword: newPwd })
+      });
+      const data = await res.json();
+      setPwdMsg(data.success ? '✅ Password changed successfully!' : ('❌ ' + (data.message || 'Failed')));
+      if (data.success) { setCurrentPwd(''); setNewPwd(''); }
+    } catch { setPwdMsg('❌ Network error'); }
+    setPwdLoading(false);
+  };
+
+  const handleSaveRazorpay = async () => {
+    if (!razorpayKey) { setApiMsg('Please enter Razorpay Key ID.'); return; }
+    setApiLoading(true);
+    setApiMsg('');
+    try {
+      const res = await fetch(`${API_BASE}/settings/razorpay_key`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeaders() },
+        body: JSON.stringify({ value: razorpayKey })
+      });
+      const data = await res.json();
+      setApiMsg(data.success ? '✅ Razorpay Key saved! Restart server to apply.' : ('❌ ' + (data.message || 'Failed')));
+    } catch { setApiMsg('❌ Network error'); }
+    setApiLoading(false);
+  };
+
+  const inp = {
+    width: '100%', height: '44px',
+    border: '1.5px solid var(--bdr2)', borderRadius: '9px',
+    padding: '0 14px', fontFamily: 'var(--body)', fontSize: '14px',
+    outline: 'none', color: 'var(--txt)', background: 'var(--bg)',
+    boxSizing: 'border-box' as const
+  };
 
   return (
     <>
-      <AdminTopbar
-        title="Settings"
-        sub="Store configuration and preferences"
-      />
+      <AdminTopbar title="Settings" sub="Store configuration and preferences" />
       <div className="admin-content">
         <div className="panel">
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '22px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '22px', flexWrap: 'wrap' } as React.CSSProperties}>
+
+            {/* Store Info */}
             <div className="table-card" style={{ marginBottom: 0 }}>
-              <div className="table-hd">
-                <div className="table-title">Store Information</div>
-              </div>
+              <div className="table-hd"><div className="table-title">Store Information</div></div>
               <div style={{ padding: '22px' }}>
-                <div className="fg">
-                  <label>Store Name</label>
-                  <input type="text" defaultValue="Medvastr" className="tbl-search" style={{ width: '100%', height: '44px' }} />
-                </div>
-                <div className="fg">
-                  <label>Email</label>
-                  <input type="email" defaultValue="medvastr@gmail.com" className="tbl-search" style={{ width: '100%', height: '44px' }} />
-                </div>
-                <div className="fg">
-                  <label>Phone</label>
-                  <input type="tel" defaultValue="8976488911" className="tbl-search" style={{ width: '100%', height: '44px' }} />
-                </div>
+                <div className="fg"><label>Store Name</label><input type="text" defaultValue="Medvastr" style={inp} /></div>
+                <div className="fg"><label>Email</label><input type="email" defaultValue="info@medvastr.com" style={inp} /></div>
+                <div className="fg"><label>Phone</label><input type="tel" defaultValue="8976488911" style={inp} /></div>
                 <div className="fg">
                   <label>Address</label>
-                  <textarea
-                    style={{
-                      width: '100%',
-                      border: '1.5px solid var(--bdr2)',
-                      borderRadius: '9px',
-                      padding: '10px 14px',
-                      fontFamily: 'var(--body)',
-                      fontSize: '14px',
-                      outline: 'none',
-                      resize: 'vertical',
-                      color: 'var(--txt)',
-                    }}
-                    defaultValue="F 81-B, Express Zone, Malad East, Mumbai – 400063"
-                  />
+                  <textarea style={{ ...inp, height: '80px', padding: '10px 14px', resize: 'vertical' }}
+                    defaultValue="F 81-B, Express Zone, Malad East, Mumbai – 400063" />
                 </div>
-                <button className="btn-primary">Save Changes</button>
+                <button className="btn-primary" style={{ opacity: 0.7, cursor: 'not-allowed' }}>Save Changes (local only)</button>
               </div>
             </div>
+
             <div>
+              {/* Razorpay Key */}
               <div className="table-card" style={{ marginBottom: '22px' }}>
-                <div className="table-hd">
-                  <div className="table-title">API Configuration</div>
-                </div>
+                <div className="table-hd"><div className="table-title">Razorpay Configuration</div></div>
                 <div style={{ padding: '22px' }}>
                   <div className="fg">
-                    <label>Backend API URL</label>
-                    <input type="text" defaultValue="https://yourdomain.com/api" className="tbl-search" style={{ width: '100%', height: '44px' }} />
+                    <label>Current Key ID</label>
+                    <input type="text" placeholder="Leave blank to keep existing key..." style={inp} readOnly
+                      defaultValue="rzp_test_SvSsw..." />
                   </div>
                   <div className="fg">
-                    <label>Razorpay Key ID</label>
-                    <input type="text" placeholder="rzp_live_..." className="tbl-search" style={{ width: '100%', height: '44px' }} />
+                    <label>New Razorpay Key ID <span style={{ color: '#888', fontWeight: 400 }}>(rzp_live_... or rzp_test_...)</span></label>
+                    <input type="text" placeholder="rzp_live_XXXXXXXXXXXXXXXXXX" style={inp}
+                      value={razorpayKey} onChange={e => setRazorpayKey(e.target.value)} />
                   </div>
-                  <button className="btn-primary">Update API URL</button>
+                  {apiMsg && <div style={{ fontSize: 13, margin: '8px 0', color: apiMsg.startsWith('✅') ? 'green' : 'red' }}>{apiMsg}</div>}
+                  <button className="btn-primary" onClick={handleSaveRazorpay} disabled={apiLoading}>
+                    {apiLoading ? 'Saving...' : 'Update Razorpay Key'}
+                  </button>
                 </div>
               </div>
+
+              {/* Admin Password */}
               <div className="table-card" style={{ marginBottom: 0 }}>
-                <div className="table-hd">
-                  <div className="table-title">Admin Account</div>
-                </div>
+                <div className="table-hd"><div className="table-title">Admin Account Password</div></div>
                 <div style={{ padding: '22px' }}>
                   <div className="fg">
                     <label>Current Password</label>
-                    <input type="password" placeholder="••••••••" className="tbl-search" style={{ width: '100%', height: '44px' }} />
+                    <input type="password" placeholder="••••••••" style={inp}
+                      value={currentPwd} onChange={e => setCurrentPwd(e.target.value)} />
                   </div>
                   <div className="fg">
                     <label>New Password</label>
-                    <input type="password" placeholder="••••••••" className="tbl-search" style={{ width: '100%', height: '44px' }} />
+                    <input type="password" placeholder="Minimum 6 characters" style={inp}
+                      value={newPwd} onChange={e => setNewPwd(e.target.value)} />
                   </div>
-                  <button className="btn-primary">Change Password</button>
+                  {pwdMsg && <div style={{ fontSize: 13, margin: '8px 0', color: pwdMsg.startsWith('✅') ? 'green' : 'red' }}>{pwdMsg}</div>}
+                  <button className="btn-primary" onClick={handleChangePassword} disabled={pwdLoading}>
+                    {pwdLoading ? 'Changing...' : 'Change Password'}
+                  </button>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </div>

@@ -322,188 +322,182 @@ export default function ProductDetailPage() {
           </div>
 
 
-        </div>
-
-        {/* --- FULL WIDTH DOWNSIDE SECTIONS --- */}
-        <div style={{ marginTop: 60 }}>
-          {/* Detailed Description / Specifications */}
-          <div style={{ marginBottom: 60, paddingBottom: 40, borderBottom: "1px solid #eee" }}>
-            <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 20 }}>Product Details</h2>
-            <div style={{ fontSize: 15, lineHeight: 1.8, color: "#444", maxWidth: 800 }}>
+          <div style={{ marginTop: 30, paddingTop: 30, borderTop: "1px solid #eee" }}>
+            <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 15 }}>Product Details</h3>
+            <div style={{ fontSize: 14, lineHeight: 1.6, color: "#444", marginBottom: 20 }}>
               {p.desc}
             </div>
-            {/* Standard Ecommerce Bullet Points */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 20, marginTop: 30 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {(
                 [
-                  ["Fabric & Care", p.fabD || p.fab || "Premium, breathable stretch fabric. Machine washable."],
-                  ["Stretch", p.stretch || "Athletic 4-way stretch"],
-                  ["Fit & Feel", p.fit || "Tailored fit with enhanced flexibility for long shifts."],
+                  ["Fabric & Care", p.fabD || p.fab || "Premium, breathable stretch fabric."],
+                  ["Fit & Feel", p.fit || "Tailored fit with enhanced flexibility."],
                   p.pockets ? ["Pockets", `${p.pockets} Functional`] : null,
                   ["Weight", p.wt || "Lightweight & Cool"],
-                  ["Care", p.care || "Easy care, wrinkle-resistant"],
                 ] as Array<[string, string] | null>
               )
                 .filter((item): item is [string, string] => item !== null)
                 .map(([l, v], i) => (
-                  <div key={i} style={{ background: '#f9f9f9', padding: '20px', borderRadius: 12 }}>
-                    <strong style={{ display: 'block', marginBottom: 5 }}>{l}</strong>
-                    <span style={{ fontSize: 13, color: '#666' }}>{v}</span>
+                  <div key={i} style={{ display: 'flex', fontSize: 13, padding: '8px 12px', background: '#f8f8f8', borderRadius: 8 }}>
+                    <strong style={{ width: '130px', color: '#111' }}>{l}</strong>
+                    <span style={{ color: '#555', flex: 1 }}>{v}</span>
                   </div>
                 ))}
             </div>
           </div>
 
-          {/* Customer Reviews Section */}
-          <div
-            className="pdp-rev-sec"
-          >
-            <div className="pdp-desc-hd">
-              <h3>Customer Reviews</h3>
-              <div style={{ color: "var(--teal)", fontWeight: 600 }}>
-                {reviews.length} Verified Reviews
-              </div>
-            </div>
+        </div>
+      </div>
 
-            {revLoading ? (
-              <div style={{ padding: "20px 0", color: "#888" }}>Loading reviews...</div>
-            ) : reviews.length > 0 ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 32 }}>
-                {reviews.map((r, i) => (
-                  <div
-                    key={r.id || i}
-                    style={{
-                      background: "#fafafa",
-                      border: "1px solid #eee",
-                      borderRadius: 12,
-                      padding: "18px 20px",
-                    }}
-                  >
-                    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                      <div
-                        style={{
-                          width: 38,
-                          height: 38,
-                          borderRadius: "50%",
-                          background: "var(--teal)",
-                          color: "#fff",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontWeight: 700,
-                          fontSize: 15,
-                        }}
-                      >
-                        {(r.userName || "U")[0].toUpperCase()}
-                      </div>
-                      <div>
-                        <div style={{ fontWeight: 700, fontSize: 14 }}>
-                          {r.userName || "Verified Customer"}
-                        </div>
-                        <div style={{ fontSize: 12, color: "#999" }}>
-                          {r.createdAt
-                            ? new Date(r.createdAt).toLocaleDateString("en-IN", {
-                              day: "2-digit",
-                              month: "short",
-                              year: "numeric",
-                            })
-                            : ""}
-                        </div>
-                      </div>
-                      <div style={{ marginLeft: "auto", color: "#f59e0b", fontSize: 16 }}>
-                        {"★".repeat(r.rating || 5)}
-                      </div>
-                    </div>
-                    {r.title && <div style={{ fontWeight: 600, marginBottom: 4 }}>{r.title}</div>}
-                    <p style={{ fontSize: 14, color: "#555", lineHeight: 1.6 }}>{r.body}</p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div style={{ padding: "16px 0", color: "#aaa", fontSize: 14 }}>
-                No reviews yet. Be the first to share your experience!
-              </div>
-            )}
-
-            <div style={{ background: "#f9f9f9", padding: 24, borderRadius: 12 }}>
-              <h4 style={{ marginBottom: 16 }}>Share Your Feedback</h4>
-              <div style={{ marginBottom: 14 }}>
-                <label style={{ display: "block", marginBottom: 6, fontSize: 13, fontWeight: 600 }}>
-                  Rating
-                </label>
-                <div style={{ display: "flex", gap: 8 }}>
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <button
-                      key={n}
-                      onClick={() => setRating(n)}
-                      style={{
-                        width: 36,
-                        height: 36,
-                        borderRadius: 8,
-                        border: "1.5px solid",
-                        borderColor: rating >= n ? "#f59e0b" : "#ddd",
-                        background: rating >= n ? "#fef3c7" : "#fff",
-                        color: "#f59e0b",
-                        fontSize: 18,
-                        cursor: "pointer",
-                      }}
-                    >
-                      ★
-                    </button>
-                  ))}
-                  <span style={{ alignSelf: "center", fontSize: 13, color: "#666" }}>
-                    {["", "Poor", "Fair", "Good", "Very Good", "Excellent"][rating]}
-                  </span>
-                </div>
-              </div>
-              <textarea
-                value={revBody}
-                onChange={(e) => setRevBody(e.target.value)}
-                placeholder="What did you like or dislike? Share your honest experience..."
-                style={{
-                  width: "100%",
-                  height: 100,
-                  padding: 12,
-                  borderRadius: 8,
-                  border: "1px solid #ddd",
-                  resize: "none",
-                  fontSize: 14,
-                  fontFamily: "inherit",
-                }}
-              />
-              <button
-                className="btn-p"
-                style={{
-                  marginTop: 12,
-                  padding: "12px 28px",
-                  borderRadius: 8,
-                  opacity: submitting ? 0.7 : 1,
-                }}
-                onClick={handleSubmitReview}
-                disabled={submitting}
-              >
-                {submitting ? "Submitting..." : "Submit Review"}
-              </button>
-            </div>
+      {/* --- FULL WIDTH DOWNSIDE SECTIONS --- */}
+      <div style={{ marginTop: 60 }}>
+        {/* Related Products / You May Also Like */}
+        <div style={{ marginBottom: 60, paddingBottom: 40, borderBottom: "1px solid #eee" }}>
+          <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 20 }}>You May Also Like</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '30px' }}>
+            {products
+              .filter(x => x.id !== p.id && x.active !== false)
+              .slice(0, 4)
+              .map(rel => (
+                <ProductCard key={rel.id} p={rel} />
+              ))}
           </div>
         </div>
 
-        {related.length > 0 && (
-          <div className="pdp-rel">
-            <div className="sec-hd">
-              <div>
-                <div className="sec-t">More Products You May Like</div>
-                <div className="sec-s">Explore similar and trending items</div>
-              </div>
-            </div>
-            <div className="pg-4">
-              {related.map((rp) => (
-                <ProductCard key={rp.id} p={rp} />
-              ))}
+        {/* Customer Reviews Section */}
+        <div
+          className="pdp-rev-sec"
+        >
+          <div className="pdp-desc-hd">
+            <h3>Customer Reviews</h3>
+            <div style={{ color: "var(--teal)", fontWeight: 600 }}>
+              {reviews.length} Verified Reviews
             </div>
           </div>
-        )}
+
+          {revLoading ? (
+            <div style={{ padding: "20px 0", color: "#888" }}>Loading reviews...</div>
+          ) : reviews.length > 0 ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 32 }}>
+              {reviews.map((r, i) => (
+                <div
+                  key={r.id || i}
+                  style={{
+                    background: "#fafafa",
+                    border: "1px solid #eee",
+                    borderRadius: 12,
+                    padding: "18px 20px",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
+                    <div
+                      style={{
+                        width: 38,
+                        height: 38,
+                        borderRadius: "50%",
+                        background: "var(--teal)",
+                        color: "#fff",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontWeight: 700,
+                        fontSize: 15,
+                      }}
+                    >
+                      {(r.userName || "U")[0].toUpperCase()}
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: 14 }}>
+                        {r.userName || "Verified Customer"}
+                      </div>
+                      <div style={{ fontSize: 12, color: "#999" }}>
+                        {r.createdAt
+                          ? new Date(r.createdAt).toLocaleDateString("en-IN", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                          })
+                          : ""}
+                      </div>
+                    </div>
+                    <div style={{ marginLeft: "auto", color: "#f59e0b", fontSize: 16 }}>
+                      {"★".repeat(r.rating || 5)}
+                    </div>
+                  </div>
+                  {r.title && <div style={{ fontWeight: 600, marginBottom: 4 }}>{r.title}</div>}
+                  <p style={{ fontSize: 14, color: "#555", lineHeight: 1.6 }}>{r.body}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ padding: "16px 0", color: "#aaa", fontSize: 14 }}>
+              No reviews yet. Be the first to share your experience!
+            </div>
+          )}
+
+          <div style={{ background: "#f9f9f9", padding: 24, borderRadius: 12 }}>
+            <h4 style={{ marginBottom: 16 }}>Share Your Feedback</h4>
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ display: "block", marginBottom: 6, fontSize: 13, fontWeight: 600 }}>
+                Rating
+              </label>
+              <div style={{ display: "flex", gap: 8 }}>
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <button
+                    key={n}
+                    onClick={() => setRating(n)}
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: 8,
+                      border: "1.5px solid",
+                      borderColor: rating >= n ? "#f59e0b" : "#ddd",
+                      background: rating >= n ? "#fef3c7" : "#fff",
+                      color: "#f59e0b",
+                      fontSize: 18,
+                      cursor: "pointer",
+                    }}
+                  >
+                    ★
+                  </button>
+                ))}
+                <span style={{ alignSelf: "center", fontSize: 13, color: "#666" }}>
+                  {["", "Poor", "Fair", "Good", "Very Good", "Excellent"][rating]}
+                </span>
+              </div>
+            </div>
+            <textarea
+              value={revBody}
+              onChange={(e) => setRevBody(e.target.value)}
+              placeholder="What did you like or dislike? Share your honest experience..."
+              style={{
+                width: "100%",
+                height: 100,
+                padding: 12,
+                borderRadius: 8,
+                border: "1px solid #ddd",
+                resize: "none",
+                fontSize: 14,
+                fontFamily: "inherit",
+              }}
+            />
+            <button
+              className="btn-p"
+              style={{
+                marginTop: 12,
+                padding: "12px 28px",
+                borderRadius: 8,
+                opacity: submitting ? 0.7 : 1,
+              }}
+              onClick={handleSubmitReview}
+              disabled={submitting}
+            >
+              {submitting ? "Submitting..." : "Submit Review"}
+            </button>
+          </div>
+        </div>
       </div>
+
     </div>
   );
 }

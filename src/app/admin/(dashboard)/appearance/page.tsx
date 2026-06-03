@@ -89,14 +89,14 @@ export default function AdminAppearance() {
             const formData = new FormData();
             formData.append("file", file);
 
-            const res = await fetch(`${API_BASE}/media/upload`, {
+            const res = await fetch(`${API_BASE}/upload`, {
                 method: "POST",
                 headers: await authHeaders(),
                 body: formData
             });
             const data = await res.json();
             if (data.success) {
-                setter(data.data.url);
+                setter(data.data); // data.data is the URL string from FileUploadController
             } else {
                 alert("Upload failed");
             }

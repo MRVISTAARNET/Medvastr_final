@@ -142,6 +142,7 @@ public class ProductService {
         p.setBadge(r.getBadge());
         p.setBrand(r.getBrand());
         p.setStyleId(r.getStyleId());
+        p.setSlug(slug(r.getName()));
         p.setBarcode(r.getBarcode());
         p.setSku(r.getSku());
         p.setEmoji(r.getEmoji());

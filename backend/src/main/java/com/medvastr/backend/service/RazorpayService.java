@@ -4,6 +4,8 @@ import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import com.razorpay.Utils;
+import com.medvastr.backend.model.StoreSetting;
+import com.medvastr.backend.repository.StoreSettingRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,13 +24,22 @@ public class RazorpayService {
     @Value("${razorpay.key.secret}")
     private String keySecret;
 
-    private RazorpayClient client;
+    private final StoreSettingRepository storeSettingRepo;
 
-    @PostConstruct
-    public void init() throws RazorpayException {
-        this.client = new RazorpayClient(keyId, keySecret);
-        log.info("[Razorpay] Client ready (key id: {}...)", keyId != null && keyId.length() > 12
-                ? keyId.substring(0, 12) : "unset");
+    public RazorpayService(StoreSettingRepository storeSettingRepo) {
+        this.storeSettingRepo = storeSettingRepo;
+    }
+
+    private String getDbKeyId() {
+        return storeSettingRepo.findById("razorpay_key").map(StoreSetting::getSettingValue).orElse(keyId);
+    }
+
+    private String getDbKeySecret() {
+        return storeSettingRepo.findById("razorpay_secret").map(StoreSetting::getSettingValue).orElse(keySecret);
+    }
+
+    private RazorpayClient getClient() throws RazorpayException {
+        return new RazorpayClient(getDbKeyId(), getDbKeySecret());
     }
 
     /**
@@ -46,7 +57,7 @@ public class RazorpayService {
         orderRequest.put("receipt", receipt);
         orderRequest.put("payment_capture", 1); // Auto-capture
 
-        Order order = client.orders.create(orderRequest);
+        Order order = getClient().orders.create(orderRequest);
         return order.get("id");
     }
 
@@ -60,7 +71,7 @@ public class RazorpayService {
             attributes.put("razorpay_payment_id", paymentId);
             attributes.put("razorpay_signature", signature);
 
-            return Utils.verifyPaymentSignature(attributes, keySecret);
+            return Utils.verifyPaymentSignature(attributes, getDbKeySecret());
         } catch (RazorpayException e) {
             log.error("Signature verification failed", e);
             return false;

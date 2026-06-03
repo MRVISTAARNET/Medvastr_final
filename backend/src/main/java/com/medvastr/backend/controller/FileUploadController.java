@@ -51,10 +51,7 @@ public class FileUploadController {
             Files.write(path, file.getBytes());
 
             // Generate URL to return
-            String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-                    .path("/api/media/")
-                    .path(newFilename)
-                    .toUriString();
+            String fileDownloadUri = "/api/media/" + newFilename;
 
             log.info("File uploaded successfully: {}", fileDownloadUri);
             return ResponseEntity.ok(ApiResponse.ok("Uploaded successfully", fileDownloadUri));

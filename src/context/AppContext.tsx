@@ -136,9 +136,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         if (Array.isArray(parsed)) setWishlist(parsed);
       } catch (e) { }
     }
-    if (token) fetchMe(token);
-
-    setIsHydrated(true);
+    if (token) {
+      fetchMe(token).finally(() => setIsHydrated(true));
+    } else {
+      setIsHydrated(true);
+    }
   }, [fetchMe]);
 
   const fetchCategories = useCallback(async () => {
