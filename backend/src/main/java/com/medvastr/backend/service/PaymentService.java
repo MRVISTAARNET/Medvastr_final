@@ -16,21 +16,43 @@ public class PaymentService {
     private String keySecret;
 
     public Map<String, Object> createOrder(Map<String, Object> r) {
-        log.info("Razorpay order: {}", r.get("amount"));
-        return Map.of(
-            "id", "order_" + System.currentTimeMillis(),
-            "currency", "INR",
-            "amount", r.get("amount"),
-            "key", keyId
-        );
+        try {
+            com.razorpay.RazorpayClient client = new com.razorpay.RazorpayClient(keyId, keySecret);
+            org.json.JSONObject options = new org.json.JSONObject();
+            options.put("amount", (int) (Double.parseDouble(r.get("amount").toString())));
+            options.put("currency", "INR");
+            options.put("receipt", "txn_" + System.currentTimeMillis());
+
+            com.razorpay.Order order = client.orders.create(options);
+
+            return Map.of(
+                    "id", order.get("id"),
+                    "currency", order.get("currency"),
+                    "amount", order.get("amount"),
+                    "key", keyId);
+        } catch (com.razorpay.RazorpayException e) {
+            log.error("Razorpay Error: ", e);
+            throw new RuntimeException("Could not create Razorpay order");
+        }
     }
 
     public Map<String, String> verify(Map<String, String> p) {
-        return Map.of("status", "verified", "message", "Payment verified");
+        try {
+            org.json.JSONObject attributes = new org.json.JSONObject();
+            attributes.put("razorpay_order_id", p.get("razorpay_order_id"));
+            attributes.put("razorpay_payment_id", p.get("razorpay_payment_id"));
+            attributes.put("razorpay_signature", p.get("razorpay_signature"));
+
+            boolean valid = com.razorpay.Utils.verifyPaymentSignature(attributes, keySecret);
+            if (valid) {
+                return Map.of("status", "verified", "message", "Payment successful");
+            }
+        } catch (Exception e) {
+        }
+        throw new RuntimeException("Invalid signature");
     }
 
     public void handleWebhook(String payload, String sig) {
         log.info("Razorpay webhook");
     }
 }
-

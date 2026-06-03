@@ -1,9 +1,11 @@
 "use client";
 
+import React, { useState } from "react";
 import GenericPage from "@/components/GenericPage";
 import { B } from "@/lib/data";
 
 export default function ContactPage() {
+  const [sent, setSent] = useState(false);
   const socials = [
     ["📸", "Instagram", B.ig],
     ["f", "Facebook", B.fb],
@@ -86,24 +88,52 @@ export default function ContactPage() {
 
         <div>
           <h3 style={{ fontSize: 18, marginBottom: 24 }}>Send us a message</h3>
-          <form style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-            <input className="price-inp" placeholder="Your Name" style={{ height: 48 }} />
-            <input className="price-inp" placeholder="Email Address" type="email" style={{ height: 48 }} />
-            <select className="price-inp" style={{ height: 48, appearance: "auto" }}>
-              <option>Bulk Order Inquiry</option>
-              <option>Shipping & Returns</option>
-              <option>Product Feedback</option>
-              <option>Other</option>
-            </select>
-            <textarea
-              className="price-inp"
-              placeholder="How can we help?"
-              style={{ height: 140, padding: "15px 20px", resize: "none" }}
-            ></textarea>
-            <button className="btn-p" style={{ height: 52, justifyContent: "center" }}>
-              Send Message
-            </button>
-          </form>
+          {sent ? (
+            <div style={{ textAlign: "center", padding: "40px" }}>
+              <div style={{ fontSize: 50, marginBottom: 15 }}>✅</div>
+              <h3 style={{ fontSize: 20 }}>Message Sent!</h3>
+              <p style={{ color: "var(--lt)", marginTop: 10 }}>We'll get back to you shortly.</p>
+              <button className="btn-s" onClick={() => setSent(false)} style={{ marginTop: 20 }}>Send Another</button>
+            </div>
+          ) : (
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              const form = new FormData(e.currentTarget);
+              try {
+                await fetch(`${require("@/lib/api").API_BASE}/inquiries`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    name: form.get("name"),
+                    email: form.get("email"),
+                    phone: "N/A",
+                    type: "CONTACT",
+                    message: `Subj: ${form.get("subject")} - Msg: ${form.get("message")}`
+                  })
+                });
+              } catch (err) { }
+              setSent(true);
+            }} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+              <input name="name" required className="price-inp" placeholder="Your Name" style={{ height: 48 }} />
+              <input name="email" required className="price-inp" placeholder="Email Address" type="email" style={{ height: 48 }} />
+              <select name="subject" required className="price-inp" style={{ height: 48, appearance: "auto" }}>
+                <option>Bulk Order Inquiry</option>
+                <option>Shipping & Returns</option>
+                <option>Product Feedback</option>
+                <option>Other</option>
+              </select>
+              <textarea
+                name="message"
+                required
+                className="price-inp"
+                placeholder="How can we help?"
+                style={{ height: 140, padding: "15px 20px", resize: "none" }}
+              ></textarea>
+              <button type="submit" className="btn-p" style={{ height: 52, justifyContent: "center" }}>
+                Send Message
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </GenericPage>

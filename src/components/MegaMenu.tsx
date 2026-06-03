@@ -6,13 +6,13 @@ interface MegaMenuProps {
 }
 
 export default function MegaMenu({ gender }: MegaMenuProps) {
-  const { products } = useApp();
+  const { products, categories = [] } = useApp();
   const G = gender === "men";
   const genStr = G ? "MEN" : "WOMEN";
   const genKey = G ? "men" : "women";
 
   // Filter proper products for this gender (or unisex)
-  const genProducts = products.filter(p => p.gen === genKey || p.gen === "unisex");
+  const genProducts = products.filter(p => !p.gen || p.gen.toLowerCase() === genKey || p.gen.toLowerCase() === "unisex");
 
   const quickLinks = [
     { l: "New Arrivals", href: `/products?gender=${genStr}&sort=nw` },
@@ -20,23 +20,20 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
     { l: "View All", href: `/products?gender=${genStr}` },
   ];
 
-  // Dynamically grab first 4 scrubs
-  const scrubs = genProducts.filter(p => p.type === "scrubs").slice(0, 4).map(p => ({
-    l: p.name,
-    href: `/product/${p.slug || p.id}`
-  }));
-
-  // Dynamically grab first 3 accessories (caps)
-  const accessories = genProducts.filter(p => p.type === "diagnostic" || p.name.toLowerCase().includes("cap")).slice(0, 3).map(p => ({
-    l: p.name,
-    href: `/product/${p.slug || p.id}`
-  }));
-
-  // Dynamically grab first 4 surgical/apparel
-  const apparel = genProducts.filter(p => p.type === "surgical" || p.type === "linen").slice(0, 4).map(p => ({
-    l: p.name,
-    href: `/product/${p.slug || p.id}`
-  }));
+  // Map database categories to columns
+  // Provide defaults if no categories are loaded yet
+  const dynamicCols = categories.length > 0
+    ? categories.slice(0, 3).map(cat => {
+      // Find products belonging to this category
+      const catProducts = genProducts.filter(p => String(p.catId) === String(cat.id) || ((p as any).category && String((p as any).category.id) === String(cat.id))).slice(0, 5);
+      return {
+        id: cat.id,
+        name: cat.name,
+        slug: cat.slug || cat.name.toLowerCase().replace(/\s+/g, '-'),
+        products: catProducts.map(p => ({ l: p.name, href: `/product/${p.slug || p.id}` }))
+      };
+    })
+    : [];
 
   const colours = [
     { l: "Dark Blue", h: "#1a2b4a", c: "Dark Blue" },
@@ -66,45 +63,31 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
       </div>
 
       <div className="mega-in">
-        <div className="mcol">
-          <div className="mcol-sub">
-            <Link href={`/products?cat=scrubs&gender=${genStr}`}>
-              Scrubs & Uniforms <span style={{ fontSize: 10, color: "var(--t)", fontWeight: 700 }}>→</span>
-            </Link>
-          </div>
-          <ul>
-            {scrubs.map((x) => (
-              <li key={x.l}>
-                <Link href={x.href}>{x.l}</Link>
-              </li>
-            ))}
-          </ul>
-          <div className="mcol-sub" style={{ marginTop: 18 }}>
-            <Link href={`/products?cat=diagnostic&gender=${genStr}`}>Caps & Docs</Link>
-          </div>
-          <ul>
-            {accessories.map((x) => (
-              <li key={x.l}>
-                <Link href={x.href}>{x.l}</Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="mcol">
-          <div className="mcol-sub">
-            Surgical & Patient Wear
-          </div>
-          <ul>
-            {apparel.map((x) => (
-              <li key={x.l}>
-                <Link href={x.href}>
-                  {x.l}
+        {dynamicCols.length > 0 ? (
+          dynamicCols.map(col => (
+            <div className="mcol" key={col.id}>
+              <div className="mcol-sub">
+                <Link href={`/products?cat=${col.id}&gender=${genStr}`}>
+                  {col.name} <span style={{ fontSize: 10, color: "var(--t)", fontWeight: 700 }}>→</span>
                 </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+              </div>
+              <ul>
+                {col.products.map((x) => (
+                  <li key={x.l}>
+                    <Link href={x.href}>{x.l}</Link>
+                  </li>
+                ))}
+              </ul>
+              {col.products.length === 0 && (
+                <div style={{ fontSize: 12, color: 'var(--lt)', padding: '10px 0' }}>No products yet</div>
+              )}
+            </div>
+          ))
+        ) : (
+          <div className="mcol" style={{ gridColumn: 'span 2', padding: 20, color: 'var(--lt)' }}>
+            No categories available. Please add categories in the Admin Dashboard.
+          </div>
+        )}
 
         <div className="mcol">
           <div className="mcol-hd">

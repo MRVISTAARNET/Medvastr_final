@@ -26,6 +26,7 @@ const AdminSidebar = () => {
       section: 'Customers', items: [
         { name: 'Customers', icon: '👥', href: '/admin/customers' },
         { name: 'Reviews', icon: '⭐', href: '/admin/reviews' },
+        { name: 'Inquiries', icon: '📩', href: '/admin/inquiries' },
       ]
     },
     {

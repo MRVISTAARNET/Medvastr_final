@@ -31,10 +31,8 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (user) {
-      setForm(prev => ({
-        ...prev,
-        phone: user.phone || prev.phone
-      }));
+      // Only names, skip prepopulating phone to avoid dummy values sticking
+      setForm(prev => ({ ...prev }));
     }
   }, [user]);
 

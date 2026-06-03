@@ -51,13 +51,30 @@ export default function BulkPage() {
               <h3 style={{ marginBottom: '10px', fontSize: '20px', fontWeight: 800 }}>Inquire Now</h3>
               <p style={{ fontSize: '13px', color: '#777', marginBottom: '25px' }}>Fill out the form below and we'll send you a custom quote.</p>
 
-              <form onSubmit={(e) => { e.preventDefault(); setSent(true); }} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                <input required className="price-inp" placeholder="Full Name" style={{ padding: '14px', borderRadius: '12px', border: '1.2px solid #ddd' }} />
-                <input required className="price-inp" placeholder="Hospital / Organization Name" style={{ padding: '14px', borderRadius: '12px', border: '1.2px solid #ddd' }} />
-                <input required type="email" className="price-inp" placeholder="Work Email" style={{ padding: '14px', borderRadius: '12px', border: '1.2px solid #ddd' }} />
-                <input required type="tel" className="price-inp" placeholder="Phone Number" style={{ padding: '14px', borderRadius: '12px', border: '1.2px solid #ddd' }} />
-                <input required type="number" className="price-inp" placeholder="Estimated Quantity (min. 20)" min="20" style={{ padding: '14px', borderRadius: '12px', border: '1.2px solid #ddd' }} />
-                <textarea className="price-inp" placeholder="Additional details (colors, sizing, logos...)" style={{ padding: '14px', borderRadius: '12px', border: '1.2px solid #ddd', minHeight: '100px', fontFamily: 'inherit' }} />
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                const form = new FormData(e.currentTarget);
+                try {
+                  await fetch(`${require("@/lib/api").API_BASE}/inquiries`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      name: form.get("name"),
+                      email: form.get("email"),
+                      phone: form.get("phone"),
+                      type: "BULK_ORDER",
+                      message: `Org: ${form.get("org")} - Qty: ${form.get("qty")} - Desc: ${form.get("message")}`
+                    })
+                  });
+                } catch (err) { }
+                setSent(true);
+              }} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <input name="name" required className="price-inp" placeholder="Full Name" style={{ padding: '14px', borderRadius: '12px', border: '1.2px solid #ddd' }} />
+                <input name="org" required className="price-inp" placeholder="Hospital / Organization Name" style={{ padding: '14px', borderRadius: '12px', border: '1.2px solid #ddd' }} />
+                <input name="email" required type="email" className="price-inp" placeholder="Work Email" style={{ padding: '14px', borderRadius: '12px', border: '1.2px solid #ddd' }} />
+                <input name="phone" required type="tel" className="price-inp" placeholder="Phone Number" style={{ padding: '14px', borderRadius: '12px', border: '1.2px solid #ddd' }} />
+                <input name="qty" required type="number" className="price-inp" placeholder="Estimated Quantity (min. 20)" min="20" style={{ padding: '14px', borderRadius: '12px', border: '1.2px solid #ddd' }} />
+                <textarea name="message" className="price-inp" placeholder="Additional details (colors, sizing, logos...)" style={{ padding: '14px', borderRadius: '12px', border: '1.2px solid #ddd', minHeight: '100px', fontFamily: 'inherit' }} />
                 <button type="submit" className="btn-p" style={{ width: '100%', height: '54px', borderRadius: '12px', marginTop: '10px' }}>Request Bulk Quote →</button>
               </form>
             </>

@@ -76,17 +76,51 @@ export default function AdminAppearance() {
         setSlides(s);
     };
 
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const originalText = e.target.parentElement?.querySelector('label')?.innerText || "Uploading...";
+        if (e.target.parentElement?.querySelector('label')) {
+            e.target.parentElement.querySelector('label')!.innerText = "Uploading... ⏳";
+        }
+
+        try {
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const res = await fetch(`${API_BASE}/media/upload`, {
+                method: "POST",
+                headers: await authHeaders(),
+                body: formData
+            });
+            const data = await res.json();
+            if (data.success) {
+                setter(data.data.url);
+            } else {
+                alert("Upload failed");
+            }
+        } catch (error) {
+            alert("Error uploading file");
+        } finally {
+            if (e.target.parentElement?.querySelector('label')) {
+                e.target.parentElement.querySelector('label')!.innerText = originalText;
+            }
+            e.target.value = "";
+        }
+    };
+
     if (loading) return <div className="p-xl" style={{ color: "var(--lt)" }}>Loading Settings...</div>;
 
-    const inp = { width: "100%", padding: "12px 14px", borderRadius: 8, border: "1.5px solid var(--bdr)", fontSize: 14, fontFamily: "inherit" } as React.CSSProperties;
-    const card = { background: "white", padding: 30, borderRadius: 16, border: "1px solid var(--bdr)", marginBottom: 28 } as React.CSSProperties;
+    const inp = { width: "100%", padding: "12px 14px", borderRadius: 8, border: "1.5px solid var(--bdr)", fontSize: 13, fontFamily: "inherit", boxSizing: "border-box" } as React.CSSProperties;
+    const card = { background: "white", padding: "20px 30px", borderRadius: 16, border: "1px solid var(--bdr)", marginBottom: 20 } as React.CSSProperties;
     const label = { fontSize: 12, fontWeight: 700, color: "var(--lt)", display: "block", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" } as React.CSSProperties;
 
     return (
         <>
             <AdminTopbar title="Store Appearance" sub="Manage banners and video for the homepage" />
             <div className="p-xl">
-                <div style={{ maxWidth: 720 }}>
+                <div style={{ maxWidth: "100%", boxSizing: "border-box" }}>
 
                     {/* HOME BANNERS */}
                     <div style={card}>
@@ -97,13 +131,19 @@ export default function AdminAppearance() {
                         {slides.map((s, i) => (
                             <div key={i} style={{ marginBottom: 22 }}>
                                 <label style={label}>Banner Slide {i + 1}</label>
-                                <input
-                                    type="text"
-                                    value={s.img}
-                                    onChange={(e) => handleSlideChange(i, e.target.value)}
-                                    placeholder={i === 0 ? "/Last_Day_Website_Home_page_Desktop_Banner.webp" : "Leave blank to skip this slide"}
-                                    style={inp}
-                                />
+                                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                    <input
+                                        type="text"
+                                        value={s.img}
+                                        onChange={(e) => handleSlideChange(i, e.target.value)}
+                                        placeholder={i === 0 ? "/Last_Day_Website_Home_page_Desktop_Banner.webp" : "Leave blank to skip this slide"}
+                                        style={{ ...inp, flex: 1 }}
+                                    />
+                                    <div style={{ position: 'relative', overflow: 'hidden', display: 'inline-block' }}>
+                                        <button className="btn-s" style={{ padding: '12px 15px', borderRadius: 8, whiteSpace: 'nowrap' }}>📤 Upload</button>
+                                        <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, (url) => handleSlideChange(i, url))} style={{ position: 'absolute', left: 0, top: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }} />
+                                    </div>
+                                </div>
                                 {s.img && (
                                     <div style={{ marginTop: 10, height: 90, borderRadius: 8, border: "1px solid var(--bdr)", background: `url('${s.img}') center/cover no-repeat`, backgroundColor: "#f5f5f5" }} />
                                 )}
@@ -117,14 +157,20 @@ export default function AdminAppearance() {
                         <p style={{ fontSize: 13, color: "var(--lt)", marginBottom: 24 }}>
                             Paste a YouTube link (e.g. <code>https://www.youtube.com/watch?v=XXXX</code>) or YouTube short link. Leave blank to show the placeholder.
                         </p>
-                        <label style={label}>YouTube Video URL</label>
-                        <input
-                            type="text"
-                            value={homeVideo}
-                            onChange={(e) => setHomeVideo(e.target.value)}
-                            placeholder="https://www.youtube.com/watch?v=..."
-                            style={inp}
-                        />
+                        <label style={label}>YouTube Video URL or Direct Upload</label>
+                        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                            <input
+                                type="text"
+                                value={homeVideo}
+                                onChange={(e) => setHomeVideo(e.target.value)}
+                                placeholder="https://www.youtube.com/watch?v=..."
+                                style={{ ...inp, flex: 1 }}
+                            />
+                            <div style={{ position: 'relative', overflow: 'hidden', display: 'inline-block' }}>
+                                <button className="btn-s" style={{ padding: '12px 15px', borderRadius: 8, whiteSpace: 'nowrap' }}>📤 Upload Video</button>
+                                <input type="file" accept="video/mp4,video/webm" onChange={(e) => handleFileUpload(e, setHomeVideo)} style={{ position: 'absolute', left: 0, top: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }} />
+                            </div>
+                        </div>
                         {homeVideo && (
                             <div style={{ marginTop: 14, padding: "10px 14px", background: "var(--off)", borderRadius: 8, fontSize: 13, color: "var(--t)", fontWeight: 600 }}>
                                 ✅ Video will show as an embedded player on the homepage.
@@ -139,13 +185,19 @@ export default function AdminAppearance() {
                             Image shown in the Bulk Order section on the homepage. Recommended: wide landscape image.
                         </p>
                         <label style={label}>Bulk Banner Image URL</label>
-                        <input
-                            type="text"
-                            value={bulkBanner}
-                            onChange={(e) => setBulkBanner(e.target.value)}
-                            placeholder="/bulk-banner.png or https://..."
-                            style={inp}
-                        />
+                        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                            <input
+                                type="text"
+                                value={bulkBanner}
+                                onChange={(e) => setBulkBanner(e.target.value)}
+                                placeholder="/bulk-banner.png or https://..."
+                                style={{ ...inp, flex: 1 }}
+                            />
+                            <div style={{ position: 'relative', overflow: 'hidden', display: 'inline-block' }}>
+                                <button className="btn-s" style={{ padding: '12px 15px', borderRadius: 8, whiteSpace: 'nowrap' }}>📤 Upload</button>
+                                <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, setBulkBanner)} style={{ position: 'absolute', left: 0, top: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }} />
+                            </div>
+                        </div>
                         {bulkBanner && (
                             <div style={{ marginTop: 10, height: 90, borderRadius: 8, border: "1px solid var(--bdr)", background: `url('${bulkBanner}') center/contain no-repeat`, backgroundColor: "#fbfaf8" }} />
                         )}

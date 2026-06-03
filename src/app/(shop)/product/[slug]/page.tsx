@@ -321,38 +321,42 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          <div className="pdp-desc-sec" style={{ gridColumn: "1 / -1" }}>
-            <div className="pdp-desc-hd">
-              <h3>Product Description</h3>
-              <span>–</span>
+
+        </div>
+
+        {/* --- FULL WIDTH DOWNSIDE SECTIONS --- */}
+        <div style={{ marginTop: 60 }}>
+          {/* Detailed Description / Specifications */}
+          <div style={{ marginBottom: 60, paddingBottom: 40, borderBottom: "1px solid #eee" }}>
+            <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 20 }}>Product Details</h2>
+            <div style={{ fontSize: 15, lineHeight: 1.8, color: "#444", maxWidth: 800 }}>
+              {p.desc}
             </div>
-            <p className="pdp-desc-p">{p.desc}</p>
-            <div className="pdp-specs">
+            {/* Standard Ecommerce Bullet Points */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 20, marginTop: 30 }}>
               {(
                 [
-                  ["Fabric", p.fabD],
-                  ["Stretch", p.stretch],
+                  ["Fabric & Care", p.fabD || p.fab || "Premium, breathable stretch fabric. Machine washable."],
+                  ["Stretch", p.stretch || "Athletic 4-way stretch"],
+                  ["Fit & Feel", p.fit || "Tailored fit with enhanced flexibility for long shifts."],
                   p.pockets ? ["Pockets", `${p.pockets} Functional`] : null,
-                  ["Fit", p.fit],
-                  ["Weight", p.wt],
-                  ["Care", p.care],
-                ] as Array<[string, string | undefined | null] | null>
+                  ["Weight", p.wt || "Lightweight & Cool"],
+                  ["Care", p.care || "Easy care, wrinkle-resistant"],
+                ] as Array<[string, string] | null>
               )
-                .filter((item): item is [string, string | undefined | null] => item !== null)
-                .map(([l, v]) =>
-                  v ? (
-                    <div key={l} className="pdp-spec">
-                      <div className="pdp-spec-l">{l}</div>
-                      <div className="pdp-spec-v">{v}</div>
-                    </div>
-                  ) : null
-                )}
+                .filter((item): item is [string, string] => item !== null)
+                .map(([l, v], i) => (
+                  <div key={i} style={{ background: '#f9f9f9', padding: '20px', borderRadius: 12 }}>
+                    <strong style={{ display: 'block', marginBottom: 5 }}>{l}</strong>
+                    <span style={{ fontSize: 13, color: '#666' }}>{v}</span>
+                  </div>
+                ))}
             </div>
           </div>
 
+          {/* Customer Reviews Section */}
           <div
             className="pdp-rev-sec"
-            style={{ gridColumn: "1 / -1", marginTop: 40, borderTop: "1px solid #eee", paddingTop: 30 }}
           >
             <div className="pdp-desc-hd">
               <h3>Customer Reviews</h3>

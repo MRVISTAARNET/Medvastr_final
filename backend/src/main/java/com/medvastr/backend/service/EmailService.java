@@ -2,6 +2,7 @@ package com.medvastr.backend.service;
 
 import com.medvastr.backend.model.Order;
 import com.medvastr.backend.model.OrderItem;
+import com.medvastr.backend.model.Inquiry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +44,21 @@ public class EmailService {
         String html = getOrderConfirmationHtml(order);
         sendHtmlEmail(order.getUser().getEmail(), "Order Confirmed - " + order.getOrderNumber(), html,
                 "orders@medvastr.com", "Medvastr Orders");
+    }
+
+    @Async
+    public void sendInquiryNotification(Inquiry i) {
+        String html = "<h2>New " + i.getType() + "</h2>" +
+                "<p><b>Name:</b> " + i.getName() + "</p>" +
+                "<p><b>Email:</b> " + i.getEmail() + "</p>" +
+                "<p><b>Phone:</b> " + i.getPhone() + "</p>" +
+                "<p><b>Message:</b> " + i.getMessage() + "</p>";
+        sendHtmlEmail("info@medvastr.com", "New Inquiry: " + i.getType(), html, "no-reply@medvastr.com",
+                "Medvastr Bot");
+        // Also send auto-reply to user
+        String replyHtml = "<p>Hi " + i.getName()
+                + ",</p><p>We received your inquiry and our team will get back to you within 24 hours.</p><p>Regards,<br>Medvastr Team</p>";
+        sendHtmlEmail(i.getEmail(), "Inquiry Received", replyHtml, "info@medvastr.com", "Medvastr Support");
     }
 
     @Async
