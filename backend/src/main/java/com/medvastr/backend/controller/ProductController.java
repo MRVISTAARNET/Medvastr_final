@@ -108,6 +108,13 @@ public class ProductController {
         return ResponseEntity.ok(ApiResponse.ok("All reviews", s.getAllReviews(PageRequest.of(page, size))));
     }
 
+    @GetMapping("/reviews/public")
+    public ResponseEntity<ApiResponse<Page<ReviewDTO>>> publicReviews(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(ApiResponse.ok("Latest reviews", s.getPublicReviews(PageRequest.of(page, size))));
+    }
+
     @PostMapping("/{id}/reviews")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<ReviewDTO>> addReview(

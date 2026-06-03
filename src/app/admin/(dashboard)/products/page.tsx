@@ -345,9 +345,9 @@ export default function AdminProducts() {
                 </div>
                 <div className="fg">
                   <label>Category</label>
-                  <select id="p-cat" value={form.catId} onChange={handleInputChange}>
+                  <select id="p-catId" value={form.catId} onChange={handleInputChange}>
                     <option value="">Select Category</option>
-                    {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
               </div>

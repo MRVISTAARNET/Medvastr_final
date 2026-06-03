@@ -18,6 +18,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     Page<Review> findAllByOrderByCreatedAtDesc(Pageable p);
 
+    Page<Review> findByApprovedTrueOrderByCreatedAtDesc(Pageable p);
+
     long countByProductIdAndApprovedTrue(Long productId);
 
     @Query("SELECT AVG(r.rating) FROM Review r WHERE r.product.id=:id AND r.approved=true")

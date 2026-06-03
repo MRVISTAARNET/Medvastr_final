@@ -10,10 +10,11 @@ function ProductsContent() {
   const searchParams = useSearchParams();
   const initCat = searchParams.get("cat") || "all";
   const initColor = searchParams.get("color") || "";
+  const initGen = searchParams.get("gender")?.toLowerCase() || searchParams.get("gen")?.toLowerCase() || "all";
   const { products } = useApp();
 
   const [cat, setCat] = useState(initCat);
-  const [gen, setGen] = useState("all");
+  const [gen, setGen] = useState(initGen);
   const [sort, setSort] = useState("default");
   const [minP, setMinP] = useState("");
   const [maxP, setMaxP] = useState("");
@@ -24,8 +25,9 @@ function ProductsContent() {
   useEffect(() => {
     setCat(initCat);
     setColorFilter(initColor);
+    setGen(initGen);
     setPg(1);
-  }, [initCat, initColor]);
+  }, [initCat, initColor, initGen]);
 
   const PER = 9;
 

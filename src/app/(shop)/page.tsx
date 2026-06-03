@@ -25,13 +25,13 @@ export default function Home() {
   const [liveReviews, setLiveReviews] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch(`${API_BASE}/products/reviews/all?size=20`)
+    fetch(`${API_BASE}/products/reviews/public?size=20`)
       .then(r => r.json())
       .then(d => {
         if (d.success) {
-          // Only show approved 4-5 star reviews on homepage
-          const approved = (d.data?.content || []).filter((r: any) => r.approved && r.rating >= 4);
-          setLiveReviews(approved.slice(0, 6));
+          // Only show 4-5 star reviews on homepage
+          const highRating = (d.data?.content || []).filter((r: any) => r.rating >= 4);
+          setLiveReviews(highRating.slice(0, 6));
         }
       })
       .catch(() => { });

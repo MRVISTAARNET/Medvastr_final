@@ -125,17 +125,17 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
         </div>
         <div className="nav-in">
           <div className={`nav-group${mo === "men" ? " mob-open" : ""}`}>
-            <div className="nl" onClick={() => setMo(mo === "men" ? null : "men")}>
+            <Link href="/products?gen=men" className="nl" onClick={(e) => { if (typeof window !== "undefined" && window.innerWidth <= 1024) { e.preventDefault(); setMo(mo === "men" ? null : "men"); } }}>
               Men <span className="nav-arrow">▾</span>
-            </div>
+            </Link>
             <div className="nav-sub">
               <MegaMenu gender="men" />
             </div>
           </div>
           <div className={`nav-group${mo === "women" ? " mob-open" : ""}`}>
-            <div className="nl" onClick={() => setMo(mo === "women" ? null : "women")}>
+            <Link href="/products?gen=women" className="nl" onClick={(e) => { if (typeof window !== "undefined" && window.innerWidth <= 1024) { e.preventDefault(); setMo(mo === "women" ? null : "women"); } }}>
               Women <span className="nav-arrow">▾</span>
-            </div>
+            </Link>
             <div className="nav-sub">
               <MegaMenu gender="women" />
             </div>

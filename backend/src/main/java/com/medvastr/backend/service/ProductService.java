@@ -249,6 +249,11 @@ public class ProductService {
                 .map(this::toReviewDTO);
     }
 
+    public Page<ReviewDTO> getPublicReviews(Pageable p) {
+        return reviewRepo.findByApprovedTrueOrderByCreatedAtDesc(p)
+                .map(this::toReviewDTO);
+    }
+
     private ReviewDTO toReviewDTO(com.medvastr.backend.model.Review r) {
         return ReviewDTO.builder()
                 .id(r.getId())
