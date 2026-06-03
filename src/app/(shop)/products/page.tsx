@@ -9,6 +9,7 @@ import { useApp } from "@/context/AppContext";
 function ProductsContent() {
   const searchParams = useSearchParams();
   const initCat = searchParams.get("cat") || "all";
+  const initColor = searchParams.get("color") || "";
   const { products } = useApp();
 
   const [cat, setCat] = useState(initCat);
@@ -16,13 +17,15 @@ function ProductsContent() {
   const [sort, setSort] = useState("default");
   const [minP, setMinP] = useState("");
   const [maxP, setMaxP] = useState("");
+  const [colorFilter, setColorFilter] = useState(initColor);
   const [pg, setPg] = useState(1);
-  const [mobF, setMobF] = useState(false); // Mobile Filter Open
+  const [mobF, setMobF] = useState(false);
 
   useEffect(() => {
     setCat(initCat);
+    setColorFilter(initColor);
     setPg(1);
-  }, [initCat]);
+  }, [initCat, initColor]);
 
   const PER = 9;
 
@@ -31,6 +34,14 @@ function ProductsContent() {
     if (gen !== "all" && p.gen !== "unisex" && p.gen !== gen) return false;
     if (minP && p.price < parseInt(minP)) return false;
     if (maxP && p.price > parseInt(maxP)) return false;
+    if (colorFilter) {
+      const colorMatch = (p as any).clrNms?.some((nm: string) =>
+        nm.toLowerCase().includes(colorFilter.toLowerCase())
+      ) || (p as any).clrs?.some((hex: string) =>
+        hex.toLowerCase() === colorFilter.toLowerCase()
+      );
+      if (!colorMatch) return false;
+    }
     return true;
   });
 
@@ -48,11 +59,12 @@ function ProductsContent() {
     setSort("default");
     setMinP("");
     setMaxP("");
+    setColorFilter("");
     setPg(1);
   };
 
-  const uniqueTypes = Array.from(new Set(products.map(p => p.type)));
-  
+  const hasFilters = cat !== "all" || gen !== "all" || minP || maxP || colorFilter;
+
   const typeConfigs: Record<string, { ico: string; l: string }> = {
     scrubs: { ico: "🥼", l: "Scrubs" },
     stethoscope: { ico: "🩺", l: "Stethoscope" },
@@ -62,9 +74,11 @@ function ProductsContent() {
     accessories: { ico: "🧢", l: "Accessories" }
   };
 
-  const dynamicCats = uniqueTypes.map(t => ({
+  const uniqueTypes = Array.from(new Set(products.map(p => p.type)));
+
+  const dynamicCats = uniqueTypes.map((t: string) => ({
     id: t,
-    ico: typeConfigs[t]?.ico || "🏷️",
+    ico: typeConfigs[t]?.ico || '🏷️',
     l: typeConfigs[t]?.l || t.charAt(0).toUpperCase() + t.slice(1),
     n: products.filter(p => p.type === t).length
   }));
@@ -74,8 +88,7 @@ function ProductsContent() {
     ...dynamicCats
   ];
 
-  const activeCatLabel = cats.find((c) => c.id === cat)?.l || "All Products";
-  const hasFilters = cat !== "all" || gen !== "all" || minP || maxP;
+  const activeCatLabel = cats.find((c: any) => c.id === cat)?.l || "All Products";
 
   return (
     <div className="page">
@@ -213,7 +226,15 @@ function ProductsContent() {
               </div>
               <div className="clr-chips">
                 {COLS.map((c) => (
-                  <div key={c.n} className="clr-chip">
+                  <div
+                    key={c.n}
+                    className={`clr-chip${colorFilter === c.n ? ' on' : ''}`}
+                    onClick={() => {
+                      setColorFilter(prev => prev === c.n ? '' : c.n);
+                      setPg(1);
+                    }}
+                    style={{ cursor: 'pointer', border: colorFilter === c.n ? '2px solid var(--teal)' : '2px solid transparent', borderRadius: 8, padding: '4px 8px', background: colorFilter === c.n ? '#f0fafa' : 'transparent' }}
+                  >
                     <div className="clr-dot-sm" style={{ background: c.h }} />
                     <span className="clr-name">{c.n}</span>
                   </div>
@@ -233,7 +254,7 @@ function ProductsContent() {
                 <option value="nw">🆕 Newest First</option>
               </select>
             </div>
-            
+
             <button className="btn-p" style={{ width: '100%', marginTop: 20 }} onClick={() => setMobF(false)}>Apply Filters</button>
           </div>
 
@@ -268,6 +289,17 @@ function ProductsContent() {
                           setGen("all");
                           setPg(1);
                         }}
+                      >
+                        ✕
+                      </span>
+                    </span>
+                  )}
+                  {colorFilter && (
+                    <span className="af-tag">
+                      🎨 {colorFilter}
+                      <span
+                        className="af-x"
+                        onClick={() => { setColorFilter(''); setPg(1); }}
                       >
                         ✕
                       </span>
@@ -360,7 +392,7 @@ function ProductsContent() {
           </div>
         </div>
       </div>
-      
+
       <style jsx>{`
         .mob-filter-btn {
           display: none;

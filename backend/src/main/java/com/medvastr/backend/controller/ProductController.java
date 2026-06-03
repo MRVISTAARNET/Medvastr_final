@@ -115,6 +115,20 @@ public class ProductController {
             @RequestBody ReviewRequest r,
             Principal principal) {
         com.medvastr.backend.model.User user = userService.getByEmail(principal.getName());
-        return ResponseEntity.status(201).body(ApiResponse.ok("Review added", s.addReview(id, r, user)));
+        return ResponseEntity.status(201)
+                .body(ApiResponse.ok("Review submitted for approval", s.addReview(id, r, user)));
+    }
+
+    @PostMapping("/reviews/{reviewId}/approve")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<ReviewDTO>> approveReview(@PathVariable Long reviewId) {
+        return ResponseEntity.ok(ApiResponse.ok("Review approved", s.approveReview(reviewId)));
+    }
+
+    @DeleteMapping("/reviews/{reviewId}/reject")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> rejectReview(@PathVariable Long reviewId) {
+        s.rejectReview(reviewId);
+        return ResponseEntity.ok(ApiResponse.ok("Review rejected", null));
     }
 }

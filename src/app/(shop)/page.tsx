@@ -8,7 +8,7 @@ import VideoSection from "@/components/VideoSection";
 import AboutHomeSection from "@/components/AboutHomeSection";
 import BulkOrderBanner from "@/components/BulkOrderBanner";
 import PressSection from "@/components/PressSection";
-import { COLS, B, REVIEWS } from "@/lib/data";
+import { COLS, B } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
 import { API_BASE } from "@/lib/api";
 
@@ -22,6 +22,20 @@ export default function Home() {
   ];
 
   const [activeTab, setActiveTab] = useState("scrubs");
+  const [liveReviews, setLiveReviews] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch(`${API_BASE}/products/reviews/all?size=20`)
+      .then(r => r.json())
+      .then(d => {
+        if (d.success) {
+          // Only show approved 4-5 star reviews on homepage
+          const approved = (d.data?.content || []).filter((r: any) => r.approved && r.rating >= 4);
+          setLiveReviews(approved.slice(0, 6));
+        }
+      })
+      .catch(() => { });
+  }, []);
 
   const tabProducts = (() => {
     const tab = TABS.find((t) => t.id === activeTab);
@@ -69,13 +83,13 @@ export default function Home() {
         </div>
         <div className="cat-g">
           {[
-            ["#dde3f0", "👨‍⚕️", "Uniforms & Scrubs"],
-            ["#f0dde4", "🥼", "Linen & Bedding"],
-            ["#ddf0e8", "🧥", "Surgical Wear"],
-            ["#f0f0f0", "🩺", "Diagnostic & Caps"],
-            ["#f8f8f8", "🛏️", "Bedding Supplies"],
-          ].map(([bg, em, nm]) => (
-            <Link href="/products" className="cat-c" key={nm as string}>
+            ["#dde3f0", "👨‍⚕️", "Uniforms & Scrubs", "scrubs"],
+            ["#f0dde4", "🥼", "Linen & Bedding", "linen"],
+            ["#ddf0e8", "🧥", "Surgical Wear", "surgical"],
+            ["#f0f0f0", "🩺", "Diagnostic & Caps", "diagnostic"],
+            ["#f8f8f8", "🛏️", "Bedding Supplies", "linen"],
+          ].map(([bg, em, nm, type]) => (
+            <Link href={`/products?cat=${type}`} className="cat-c" key={nm as string}>
               <div className="cat-img" style={{ background: bg as string }}>
                 {em}
               </div>
@@ -94,7 +108,7 @@ export default function Home() {
           <div className="clr-s">4 shades across all categories</div>
           <div className="clr-row">
             {COLS.map((c, i) => (
-              <Link href="/products" className="clr-sw" key={i}>
+              <Link href={`/products?color=${encodeURIComponent(c.n)}`} className="clr-sw" key={i}>
                 <div className="sw-c" style={{ background: c.h }} />
                 <div className="sw-l">{c.n}</div>
               </Link>
@@ -205,7 +219,7 @@ export default function Home() {
       <BulkOrderBanner />
       <AboutHomeSection />
 
-      {/* Reviews */}
+      {/* Reviews — Live from API */}
       <div className="rev-sec">
         <div className="rev-in">
           <div className="sec-hd">
@@ -213,23 +227,47 @@ export default function Home() {
               <div className="sec-t">What Doctors Are Saying</div>
               <div className="sec-s">Trusted by 50,000+ healthcare professionals</div>
             </div>
-            <div className="rev-stats-top" style={{ display: "none" }}>
-            </div>
           </div>
           <div className="rev-g">
-            {REVIEWS.map((r, i) => (
-              <div className="rv" key={i}>
-                <div className="rv-stars">{"★".repeat(r.r)}</div>
-                <div className="rv-txt">"{r.txt}"</div>
-                <div className="rv-auth">
-                  <div className="rv-av">{r.av}</div>
-                  <div>
-                    <div className="rv-nm">{r.name}</div>
-                    <div className="rv-rl">{r.role}</div>
+            {liveReviews.length > 0 ? (
+              liveReviews.map((r: any, i) => (
+                <div className="rv" key={r.id || i}>
+                  <div className="rv-stars">{"★".repeat(Math.min(r.rating || 5, 5))}</div>
+                  <div className="rv-txt">"{r.body}"</div>
+                  {r.productName && (
+                    <div style={{ fontSize: 12, color: 'var(--teal)', fontWeight: 600, marginBottom: 8 }}>
+                      📦 {r.productName}
+                    </div>
+                  )}
+                  <div className="rv-auth">
+                    <div className="rv-av">{(r.userName || 'U')[0].toUpperCase()}</div>
+                    <div>
+                      <div className="rv-nm">{r.userName || 'Verified Customer'}</div>
+                      <div className="rv-rl">Verified Purchase</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              // Fallback placeholder cards if no live reviews yet
+              [
+                { r: 5, txt: "Best scrubs I've worn in 8 years of practice. The fabric quality is truly exceptional.", nm: 'Dr. Priya S.', role: 'Cardiologist, Mumbai', av: 'P' },
+                { r: 5, txt: "Finally, scrubs that look professional and feel comfortable for 12-hour shifts!", nm: 'Dr. Rohan M.', role: 'Resident Surgeon, Delhi', av: 'R' },
+                { r: 5, txt: "Ordered for our entire department. The colour consistency and stitching is perfect.", nm: 'Sr. Fatima K.', role: 'Head Nurse, Hyderabad', av: 'F' },
+              ].map((r: any, i) => (
+                <div className="rv" key={i}>
+                  <div className="rv-stars">{"★".repeat(r.r)}</div>
+                  <div className="rv-txt">"{r.txt}"</div>
+                  <div className="rv-auth">
+                    <div className="rv-av">{r.av}</div>
+                    <div>
+                      <div className="rv-nm">{r.nm}</div>
+                      <div className="rv-rl">{r.role}</div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

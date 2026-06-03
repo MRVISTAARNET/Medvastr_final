@@ -60,10 +60,20 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="drw-bg open" style={{ zIndex: 10000 }}>
-      {/* Semi-transparent Dimmer - Clickable for Close */}
+    <div
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 10000,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '20px',
+      }}
+    >
+      {/* Blurred backdrop */}
       <div
-        style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)' }}
+        style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(6px)' }}
         onClick={onClose}
       />
 
@@ -73,12 +83,12 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
           position: "relative",
           zIndex: 10001,
           background: "var(--wh)",
-          width: "92%",
-          maxWidth: 420,
+          width: "100%",
+          maxWidth: 440,
           borderRadius: 28,
-          padding: '40px 32px',
-          boxShadow: "0 30px 100px rgba(0,0,0,0.3)",
-          animation: 'modalSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+          padding: '44px 36px',
+          boxShadow: "0 40px 120px rgba(0,0,0,0.35)",
+          animation: 'modalSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         <button

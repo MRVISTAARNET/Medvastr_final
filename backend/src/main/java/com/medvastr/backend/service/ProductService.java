@@ -188,27 +188,47 @@ public class ProductService {
                 .rating(r.getRating())
                 .title(r.getTitle())
                 .body(r.getBody())
-                .approved(true)
-                .verified(true)
+                .approved(false) // Starts as PENDING — admin must approve
+                .verified(false)
                 .build();
 
         reviewRepo.save(rev);
 
-        // Update product stats
-        double avg = reviewRepo.avgRating(pid).orElse(r.getRating().doubleValue());
-        p.setRating(BigDecimal.valueOf(avg));
-        p.setReviewCount(p.getReviewCount() + 1);
-        productRepo.save(p);
-
         return ReviewDTO.builder()
                 .id(rev.getId())
+                .productId(p.getId())
+                .productName(p.getName())
                 .userName(user.getFirstName() + " " + user.getLastName().charAt(0) + ".")
                 .rating(rev.getRating())
                 .title(rev.getTitle())
                 .body(rev.getBody())
-                .verified(true)
+                .approved(false)
+                .verified(false)
                 .createdAt(rev.getCreatedAt())
                 .build();
+    }
+
+    @Transactional
+    public ReviewDTO approveReview(Long reviewId) {
+        com.medvastr.backend.model.Review rev = reviewRepo.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+        rev.setApproved(true);
+        rev.setVerified(true);
+        reviewRepo.save(rev);
+        // Update product rating stats
+        double avg = reviewRepo.avgRating(rev.getProduct().getId()).orElse(rev.getRating().doubleValue());
+        Product p = rev.getProduct();
+        p.setRating(BigDecimal.valueOf(avg));
+        p.setReviewCount((int) reviewRepo.countByProductIdAndApprovedTrue(p.getId()));
+        productRepo.save(p);
+        return toReviewDTO(rev);
+    }
+
+    @Transactional
+    public void rejectReview(Long reviewId) {
+        com.medvastr.backend.model.Review rev = reviewRepo.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("Review not found"));
+        reviewRepo.delete(rev);
     }
 
     public Page<ReviewDTO> getReviews(Long pid, Pageable p) {
@@ -226,15 +246,22 @@ public class ProductService {
 
     public Page<ReviewDTO> getAllReviews(Pageable p) {
         return reviewRepo.findAllByOrderByCreatedAtDesc(p)
-                .map(r -> ReviewDTO.builder()
-                        .id(r.getId())
-                        .userName(r.getUser().getFirstName() + " " + r.getUser().getLastName().charAt(0) + ".")
-                        .rating(r.getRating())
-                        .title(r.getTitle())
-                        .body(r.getBody())
-                        .verified(r.isVerified())
-                        .createdAt(r.getCreatedAt())
-                        .build());
+                .map(this::toReviewDTO);
+    }
+
+    private ReviewDTO toReviewDTO(com.medvastr.backend.model.Review r) {
+        return ReviewDTO.builder()
+                .id(r.getId())
+                .productId(r.getProduct() != null ? r.getProduct().getId() : null)
+                .productName(r.getProduct() != null ? r.getProduct().getName() : "Unknown")
+                .userName(r.getUser().getFirstName() + " " + r.getUser().getLastName().charAt(0) + ".")
+                .rating(r.getRating())
+                .title(r.getTitle())
+                .body(r.getBody())
+                .verified(r.isVerified())
+                .approved(r.isApproved())
+                .createdAt(r.getCreatedAt())
+                .build();
     }
 
     public ProductDTO toDTO(Product p) {
@@ -321,7 +348,8 @@ public class ProductService {
     private int sizeOrder(String size) {
         String[] order = { "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL" };
         for (int i = 0; i < order.length; i++) {
-            if (order[i].equalsIgnoreCase(size)) return i;
+            if (order[i].equalsIgnoreCase(size))
+                return i;
         }
         return 99;
     }
