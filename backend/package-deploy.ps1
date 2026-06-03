@@ -1,27 +1,50 @@
-Write-Host "Building Backend JAR..."
+Write-Host "Building Backend JAR..." -ForegroundColor Cyan
 ./mvnw clean package -DskipTests
 
-Write-Host "Creating deployment ZIP with Nginx config..."
-$source_jar = "target/backend-0.0.1-SNAPSHOT.jar"
-$platform_dir = ".platform"
-$deploy_zip = "medvastr-deploy.zip"
+Write-Host "Creating deployment ZIP..." -ForegroundColor Cyan
 
-if (Test-Path $deploy_zip) {
-    Remove-Item $deploy_zip
+$source_jar  = Resolve-Path "target/backend-0.0.1-SNAPSHOT.jar"
+$deploy_zip  = Join-Path (Get-Location).Path "medvastr-deploy-fixed.zip"
+$eb_env_cfg  = Resolve-Path ".ebextensions/01_environment.config"
+$nginx_cfg   = Resolve-Path ".platform/nginx/conf.d/proxy.conf"
+
+# Remove old zip if exists
+if (Test-Path $deploy_zip) { Remove-Item $deploy_zip -Force }
+
+# Load .NET ZIP library
+Add-Type -AssemblyName System.IO.Compression
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+$zipStream = [System.IO.File]::Open($deploy_zip, [System.IO.FileMode]::Create)
+$archive   = New-Object System.IO.Compression.ZipArchive($zipStream, [System.IO.Compression.ZipArchiveMode]::Create, $true)
+
+function Add-ToZip {
+    param($archive, $diskPath, $zipEntry, $compress)
+    $level = if ($compress) {
+        [System.IO.Compression.CompressionLevel]::Optimal
+    } else {
+        [System.IO.Compression.CompressionLevel]::NoCompression
+    }
+    $entry = $archive.CreateEntry($zipEntry, $level)
+    $entryStream = $entry.Open()
+    $fileStream  = [System.IO.File]::OpenRead($diskPath)
+    $fileStream.CopyTo($entryStream)
+    $fileStream.Close()
+    $entryStream.Close()
+    Write-Host "  Added: $zipEntry (compress=$compress)"
 }
 
-# Create a staging directory to zip properly
-$staging = "deploy-staging"
-if (Test-Path $staging) {
-    Remove-Item $staging -Recurse -Force
-}
-New-Item -ItemType Directory -Path $staging | Out-Null
+# application.jar MUST be stored uncompressed (STORE = NoCompression).
+# Java's JVM cannot execute a double-DEFLATE-compressed JAR.
+Add-ToZip $archive $source_jar "application.jar" $false
 
-Copy-Item $source_jar -Destination $staging/application.jar
-Copy-Item $platform_dir -Destination $staging/ -Recurse
+# Config files can be compressed normally
+Add-ToZip $archive $eb_env_cfg  ".ebextensions/01_environment.config" $true
+Add-ToZip $archive $nginx_cfg   ".platform/nginx/conf.d/proxy.conf"   $true
 
-Compress-Archive -Path "$staging/*" -DestinationPath $deploy_zip
+$archive.Dispose()
+$zipStream.Close()
 
-Remove-Item $staging -Recurse -Force
-
-Write-Host "Done! Please upload medvastr-deploy.zip to AWS Elastic Beanstalk." -ForegroundColor Green
+Write-Host ""
+Write-Host "Done! Upload medvastr-deploy-fixed.zip to AWS Elastic Beanstalk." -ForegroundColor Green
+Write-Host "File: $deploy_zip" -ForegroundColor Yellow
