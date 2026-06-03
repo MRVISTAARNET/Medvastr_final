@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import GenericPage from "@/components/GenericPage";
 import { B } from "@/lib/data";
+import { API_BASE } from "@/lib/api";
 
 export default function BulkPage() {
   const [sent, setSent] = useState(false);
@@ -55,7 +56,7 @@ export default function BulkPage() {
                 e.preventDefault();
                 const form = new FormData(e.currentTarget);
                 try {
-                  await fetch(`${require("@/lib/api").API_BASE}/inquiries`, {
+                  await fetch(`${API_BASE}/inquiries`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({

@@ -23,9 +23,9 @@ export default function AdminInventory() {
             emoji: p.emoji || '📦',
             type: p.type,
             price: p.price,
-            stock: p.variants ? p.variants.reduce((s: number, v: any) => s + v.stockQuantity, 0) : Math.floor(Math.random() * 100),
-            sold: Math.floor(Math.random() * 100),
-            returned: Math.floor(Math.random() * 10)
+            stock: p.variants ? p.variants.reduce((s: number, v: any) => s + (v.stockQuantity || 0), 0) : 0,
+            sold: 0,
+            returned: 0
           })));
         }
       } catch (e) {

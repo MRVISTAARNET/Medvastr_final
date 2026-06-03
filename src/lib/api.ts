@@ -12,14 +12,21 @@ export const RAZORPAY_KEY =
 export function normalizeMediaUrl(url?: string): string {
   if (!url) return "";
   if (url.startsWith("/api/media/")) return `${API_ORIGIN}${url}`;
-  if (
-    url.startsWith("http://localhost") ||
-    url.startsWith("https://localhost") ||
-    url.startsWith("http://127.0.0.1")
-  ) {
+
+  // Forcefully rewrite old http:// or localhost URLs to the current API_ORIGIN
+  const isOldHttp = url.startsWith("http://api.medvastr.com");
+  const isLocal = url.startsWith("http://localhost") || url.startsWith("https://localhost") || url.startsWith("http://127.0.0.1");
+
+  if (isOldHttp || isLocal) {
     const i = url.indexOf("/api/media/");
     if (i !== -1) return `${API_ORIGIN}${url.substring(i)}`;
   }
+
+  // Upgrade any HTTP to HTTPS for api.medvastr.com to prevent mixed content
+  if (url.startsWith("http://api.medvastr.com")) {
+    return url.replace("http://", "https://");
+  }
+
   return url;
 }
 

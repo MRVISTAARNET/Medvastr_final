@@ -60,6 +60,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/products/**", "/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/products/**", "/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**", "/products/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/settings/**", "/settings/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/inquiries", "/inquiries").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/inquiries/**", "/inquiries/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .exceptionHandling(e -> e.authenticationEntryPoint((req, res, ex) -> {
                     res.setStatus(401);
