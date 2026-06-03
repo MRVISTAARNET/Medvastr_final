@@ -52,7 +52,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
                 setSd(true);
               }}
               onFocus={() => setSd(true)}
-              onBlur={() => setTimeout(() => setSd(false), 200)}
+              onBlur={() => setTimeout(() => setSd(false), 300)}
             />
             {q && (
               <span className="srch-clr" onClick={() => setQ("")}>
@@ -61,7 +61,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             )}
           </div>
           {sd && q && (
-            <div className="srch-drop">
+            <div className="srch-drop" onMouseDown={(e) => e.preventDefault()}>
               {res.length === 0 ? (
                 <div className="s-empty">No results for "{q}"</div>
               ) : (
