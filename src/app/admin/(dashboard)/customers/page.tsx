@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
 import { fmt, fmtNum, fmtDate } from '@/lib/data';
 import { API_BASE, authHeaders } from '@/lib/api';
-import { API_BASE, authHeaders } from '@/lib/api';
 
 export default function AdminCustomers() {
   const [customers, setCustomers] = useState<any[]>([]);
