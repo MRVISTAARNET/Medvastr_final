@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { SLIDES } from "@/lib/data";
+import { API_BASE } from "@/lib/api";
 
 interface HeroProps {
   onShop: () => void;
@@ -10,18 +11,33 @@ interface HeroProps {
 export default function Hero({ onShop }: HeroProps) {
   const [cur, setCur] = useState(0);
   const [au, setAu] = useState(true);
+  const [dynamicSlides, setDynamicSlides] = useState<any[]>(SLIDES);
   const t = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    fetch(`${API_BASE}/settings/hero_slides`)
+      .then(r => r.json())
+      .then(d => {
+        if (d.success && d.data) {
+          try {
+            const parsed = JSON.parse(d.data);
+            setDynamicSlides(parsed);
+          } catch (e) { }
+        }
+      })
+      .catch(() => { });
+  }, []);
+
+  useEffect(() => {
     if (!au) return;
-    t.current = setInterval(() => setCur((c) => (c + 1) % SLIDES.length), 6000);
+    t.current = setInterval(() => setCur((c) => (c + 1) % dynamicSlides.length), 6000);
     return () => {
       if (t.current) clearInterval(t.current);
     };
-  }, [au, cur]);
+  }, [au, cur, dynamicSlides.length]);
 
   const go = (d: number) => {
-    setCur((cur + d + SLIDES.length) % SLIDES.length);
+    setCur((cur + d + dynamicSlides.length) % dynamicSlides.length);
     setAu(false);
     setTimeout(() => setAu(true), 10000);
   };
@@ -29,7 +45,7 @@ export default function Hero({ onShop }: HeroProps) {
   return (
     <div className="hero">
       <div className="hero-track" style={{ transform: `translateX(-${cur * 100}%)` }}>
-        {SLIDES.map((s, i) => (
+        {dynamicSlides.map((s, i) => (
           <div className="hero-slide" key={i}>
             <div className="slide-bg" style={{ backgroundImage: `url(${s.img})`, backgroundSize: 'cover', backgroundPosition: 'center', height: '100%' }} />
           </div>

@@ -8,27 +8,38 @@ const AdminSidebar = () => {
   const pathname = usePathname();
 
   const links = [
-    { section: 'Overview', items: [
-      { name: 'Dashboard', icon: '📊', href: '/admin' },
-      { name: 'Analytics', icon: '📈', href: '/admin/analytics' },
-    ]},
-    { section: 'Store', items: [
-      { name: 'Orders', icon: '📦', href: '/admin/orders' },
-      { name: 'Products', icon: '🥼', href: '/admin/products' },
-      { name: 'Categories', icon: '🏷️', href: '/admin/categories' },
-      { name: 'Inventory', icon: '📋', href: '/admin/inventory' },
-    ]},
-    { section: 'Customers', items: [
-      { name: 'Customers', icon: '👥', href: '/admin/customers' },
-      { name: 'Reviews', icon: '⭐', href: '/admin/reviews' },
-    ]},
-    { section: 'Finance', items: [
-      { name: 'Revenue', icon: '💰', href: '/admin/revenue' },
-      { name: 'Promo Codes', icon: '🎟️', href: '/admin/promos' },
-    ]},
-    { section: 'Settings', items: [
-      { name: 'Settings', icon: '⚙️', href: '/admin/settings' },
-    ]},
+    {
+      section: 'Overview', items: [
+        { name: 'Dashboard', icon: '📊', href: '/admin' },
+        { name: 'Analytics', icon: '📈', href: '/admin/analytics' },
+      ]
+    },
+    {
+      section: 'Store', items: [
+        { name: 'Orders', icon: '📦', href: '/admin/orders' },
+        { name: 'Products', icon: '🥼', href: '/admin/products' },
+        { name: 'Categories', icon: '🏷️', href: '/admin/categories' },
+        { name: 'Inventory', icon: '📋', href: '/admin/inventory' },
+      ]
+    },
+    {
+      section: 'Customers', items: [
+        { name: 'Customers', icon: '👥', href: '/admin/customers' },
+        { name: 'Reviews', icon: '⭐', href: '/admin/reviews' },
+      ]
+    },
+    {
+      section: 'Finance', items: [
+        { name: 'Revenue', icon: '💰', href: '/admin/revenue' },
+        { name: 'Promo Codes', icon: '🎟️', href: '/admin/promos' },
+      ]
+    },
+    {
+      section: 'Settings', items: [
+        { name: 'Settings', icon: '⚙️', href: '/admin/settings' },
+        { name: 'Appearance', icon: '🎨', href: '/admin/appearance' },
+      ]
+    },
   ];
 
   return (
@@ -55,9 +66,9 @@ const AdminSidebar = () => {
           <React.Fragment key={idx}>
             <div className="sb-section">{sec.section}</div>
             {sec.items.map((item, i) => (
-              <Link 
-                key={i} 
-                href={item.href} 
+              <Link
+                key={i}
+                href={item.href}
                 className={`sb-link ${pathname === item.href ? 'active' : ''}`}
               >
                 <span className="sb-link-ico">{item.icon}</span>
