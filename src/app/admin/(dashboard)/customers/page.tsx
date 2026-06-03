@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
 import { fmt, fmtNum, fmtDate } from '@/lib/data';
+import { API_BASE, authHeaders } from '@/lib/api';
+import { API_BASE, authHeaders } from '@/lib/api';
 
 export default function AdminCustomers() {
   const [customers, setCustomers] = useState<any[]>([]);
@@ -12,7 +14,7 @@ export default function AdminCustomers() {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users?size=100`, {
+        const res = await fetch(`${API_BASE}/users?size=100`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();

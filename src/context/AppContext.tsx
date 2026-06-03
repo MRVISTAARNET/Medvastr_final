@@ -1,7 +1,9 @@
 "use client";
 
 import React, { createContext, useContext, useReducer, useState, useCallback, useEffect } from "react";
-import { Product } from "@/lib/data";
+import { Product, cn } from "@/lib/data";
+import { API_BASE, authHeaders } from "@/lib/api";
+import { mapApiProduct, toApiProductRequest } from "@/lib/productUtils";
 
 interface CartItem extends Product {
   k: string;
@@ -66,7 +68,7 @@ function cartReducer(state: CartItem[], action: any): CartItem[] {
           ...p,
           k,
           col: p.clrs?.[ci] || p.clrs?.[0] || "#000",
-          colNm: "Color",
+          colNm: p.clrNms?.[ci] || cn(p.clrs?.[ci] || "#000"),
           size: sz,
           qty: 1,
         },
@@ -102,8 +104,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setTimeout(() => setToastMsg(""), 3200);
   }, []);
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.medvastr.com/api";
-
   const fetchMe = useCallback(async (token: string) => {
     try {
       const res = await fetch(`${API_BASE}/users/me`, {
@@ -118,7 +118,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     } catch (e) { }
   }, []);
 
-  // 1. Initial Load (RESTORE STATE)
   useEffect(() => {
     const savedCart = localStorage.getItem("mv_cart");
     const savedWish = localStorage.getItem("mv_wish");
@@ -138,50 +137,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
     if (token) fetchMe(token);
 
-    // Set hydrated AFTER restoring to avoid overwrite by [] initial state
     setIsHydrated(true);
   }, [fetchMe]);
 
-  // 2. Fetch External Data
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch(`${API_BASE}/products?size=100`);
+        const res = await fetch(`${API_BASE}/products?size=200`);
         const data = await res.json();
         if (data.success) {
-          const mapped: Product[] = data.data.content.map((p: any) => ({
-            id: p.id,
-            slug: p.slug,
-            name: p.name,
-            short: p.name.split(' ').slice(-2).join(' '),
-            fab: p.fabric,
-            type: p.type,
-            gen: p.gender,
-            price: p.price,
-            origPrice: p.originalPrice,
-            rating: p.rating,
-            rev: p.reviewCount,
-            badge: p.badge,
-            clrs: p.variants?.map((v: any) => v.colorHex).filter((v: any, i: number, a: any[]) => a.indexOf(v) === i) || [],
-            clrNms: p.variants?.map((v: any) => v.colorName).filter((v: any, i: number, a: any[]) => a.indexOf(v) === i) || [],
-            emo: p.emoji || '🥼',
-            bg: p.bgColor || '#f0f0f0',
-            desc: p.description,
-            fabD: p.fabricDetail || '',
-            stretch: p.stretchType || '',
-            pockets: p.pocketCount || 0,
-            care: p.careInstructions || '',
-            wt: p.weight || '',
-            fit: p.fit || '',
-            imgs: p.imageUrls || [],
-            catId: p.categoryId,
-            sku: p.sku || `MV-${p.id}`,
-            styleId: p.styleId || '',
-            brand: p.brand || 'Medvastr',
-            sizes: p.sizes || ['XS', 'S', 'M', 'L', 'XL'],
-            barcode: p.barcode || `BC-${p.id}`
-          }));
-          setProducts(mapped);
+          setProducts(data.data.content.map((p: any) => mapApiProduct(p)));
         }
       } catch (e) { }
     };
@@ -198,7 +163,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     fetchCategories();
   }, []);
 
-  // 3. Sync persistence ONLY after hydration
   useEffect(() => {
     if (isHydrated) {
       localStorage.setItem("mv_cart", JSON.stringify(cart));
@@ -325,19 +289,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const token = localStorage.getItem("token");
       const res = await fetch(`${API_BASE}/products`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify(p)
+        headers: { "Content-Type": "application/json", ...authHeaders(token) },
+        body: JSON.stringify(toApiProductRequest(p))
       });
       const data = await res.json();
       if (data.success) {
-        const server = data.data;
-        const saved = {
-          ...p,
-          id: server.id,
-          slug: server.slug || p.slug,
-          imgs: server.imageUrls || p.imgs,
-          catId: server.categoryId || p.catId
-        };
+        const saved = mapApiProduct(data.data);
         setProducts(prev => [saved, ...prev]);
         return saved;
       }
@@ -348,12 +305,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const updateProduct = async (p: Product) => {
     try {
       const token = localStorage.getItem("token");
-      await fetch(`${API_BASE}/products/${p.id}`, {
+      const res = await fetch(`${API_BASE}/products/${p.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-        body: JSON.stringify(p)
+        headers: { "Content-Type": "application/json", ...authHeaders(token) },
+        body: JSON.stringify(toApiProductRequest(p))
       });
-      setProducts(prev => prev.map(x => x.id === p.id ? p : x));
+      const data = await res.json();
+      const updated = data.success
+        ? mapApiProduct(data.data)
+        : mapApiProduct({ ...p, description: p.desc, imageUrls: p.imgs });
+      setProducts(prev => prev.map(x => (x.id === p.id ? updated : x)));
     } catch (e) { }
   };
 
@@ -362,7 +323,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const token = localStorage.getItem("token");
       await fetch(`${API_BASE}/products/${id}`, {
         method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` }
+        headers: authHeaders(token)
       });
       setProducts(prev => prev.filter(x => x.id !== id));
     } catch (e) { }

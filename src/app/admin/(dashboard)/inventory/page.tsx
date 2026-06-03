@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
+import { API_BASE } from '@/lib/api';
 import { fmt } from '@/lib/data';
 
 export default function AdminInventory() {
@@ -13,7 +14,7 @@ export default function AdminInventory() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products?size=100`);
+        const res = await fetch(`${API_BASE}/products?size=100`);
         const data = await res.json();
         if (data.success) {
           setProducts(data.data.content.map((p: any) => ({

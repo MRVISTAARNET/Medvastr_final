@@ -2,9 +2,9 @@
 
 import React from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
+import { API_BASE } from '@/lib/api';
 
 export default function AdminSettings() {
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.medvastr.com/api";
 
   return (
     <>

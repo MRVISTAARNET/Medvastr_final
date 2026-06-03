@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
+import { API_BASE, authHeaders } from '@/lib/api';
 
 export default function AdminCategories() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -10,7 +11,7 @@ export default function AdminCategories() {
 
   const fetchCats = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`);
+      const res = await fetch(`${API_BASE}/categories`);
       const data = await res.json();
       if (data.success) setCats(data.data);
     } catch (e) {
@@ -32,7 +33,7 @@ export default function AdminCategories() {
     if (name) {
       try {
       const token = localStorage.getItem('token');
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`, {
+        const res = await fetch(`${API_BASE}/categories`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ 
@@ -103,7 +104,7 @@ export default function AdminCategories() {
                           (async () => {
                             try {
                               const token = localStorage.getItem('token');
-                              const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${c.id}`, {
+                              const res = await fetch(`${API_BASE}/categories/${c.id}`, {
                                 method: 'DELETE',
                                 headers: { 'Authorization': `Bearer ${token}` }
                               });

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
 import { fmt, B } from '@/lib/data';
 import { useApp } from '@/context/AppContext';
+import { API_BASE, authHeaders } from '@/lib/api';
 import Barcode from 'react-barcode';
 import { toPng } from 'html-to-image';
 
@@ -37,7 +38,7 @@ export default function AdminProducts() {
         ...editingProduct,
         imgs: editingProduct.imgs || [],
         sizes: editingProduct.sizes?.join(', ') || '',
-        clrs: editingProduct.clrs?.join(', ') || '',
+        clrs: editingProduct.clrNms?.join(', ') || editingProduct.clrs?.join(', ') || '',
         catId: editingProduct.catId || ''
       });
     } else {
@@ -111,7 +112,6 @@ export default function AdminProducts() {
     if (!files || files.length === 0) return;
 
     const token = localStorage.getItem("token") || "";
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.medvastr.com/api";
 
     // Multiple upload logic
     if (isMultiple) {
@@ -177,6 +177,7 @@ export default function AdminProducts() {
       const colorInputs = (form.clrs || '').split(',').map((c: string) => c.trim()).filter(Boolean);
       const sizeInputs = (form.sizes || '').split(',').map((s: string) => s.trim()).filter(Boolean);
       const variantStock = 100;
+      const imgList = Array.isArray(form.imgs) ? form.imgs : form.imgs ? [form.imgs] : [];
       const variants = sizeInputs.flatMap((size: string) =>
         colorInputs.map((colorInput: string) => ({
           size,
@@ -186,6 +187,14 @@ export default function AdminProducts() {
           sku: `${form.sku || 'MV'}-${size}-${getColName(colorInput).replace(/\s+/g, '').toUpperCase()}`
         }))
       );
+      // Assign one hero image per colour (1st image → 1st colour, etc.)
+      colorInputs.forEach((colorInput: string, colorIdx: number) => {
+        const hex = getColHex(colorInput);
+        const imageUrl = imgList[colorIdx] || imgList[0];
+        if (!imageUrl) return;
+        const first = variants.find((v: { colorHex: string }) => v.colorHex === hex);
+        if (first) (first as { imageUrl?: string }).imageUrl = imageUrl;
+      });
 
       const pData: any = {
         ...form,
@@ -391,13 +400,16 @@ export default function AdminProducts() {
               </div>
               <div className="fg-row">
                 <div className="fg">
-                  <label>Product Images (Select Multiple)</label>
+                  <label>Product Images (one per colour, in colour order)</label>
                   <input type="file" accept="image/*" multiple onChange={(e) => handleFileUpload(e, 'imgs', true)} />
                   {Array.isArray(form.imgs) && form.imgs.length > 0 && (
                     <div style={{ fontSize: 12, color: 'green', marginTop: 4 }}>
                       Uploaded: {form.imgs.map((url: string) => url.split('/').pop()).join(', ')}
                     </div>
                   )}
+                  <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>
+                    Tip: upload images in the same order as colours (e.g. Dark Blue, then Maroon).
+                  </div>
                 </div>
                 <div className="fg">
                   <label>Product Video Upload (Optional)</label>

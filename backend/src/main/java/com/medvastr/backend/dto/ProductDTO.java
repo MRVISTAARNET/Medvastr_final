@@ -44,5 +44,6 @@ public class ProductDTO {
     private Long categoryId;
     private List<VariantDTO> variants;
     private List<String> imageUrls;
+    private List<String> sizes;
     private LocalDateTime createdAt;
 }

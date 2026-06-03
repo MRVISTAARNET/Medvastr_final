@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { API_BASE } from '@/lib/api';
 
 interface Props {
   title: string;
@@ -18,7 +19,7 @@ const AdminTopbar = ({ title, sub, action }: Props) => {
   useEffect(() => {
     const checkHealth = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/health`);
+        const res = await fetch(`${API_BASE}/health`);
         const data = await res.json();
         if (data.success) setHealth('UP');
       } catch (e) {

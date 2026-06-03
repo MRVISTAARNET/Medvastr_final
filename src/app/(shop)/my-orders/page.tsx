@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useApp } from "@/context/AppContext";
 import { fmt, fmtDate } from "@/lib/data";
 import Link from "next/link";
+import { API_BASE, authHeaders } from "@/lib/api";
 
 export default function MyOrdersPage() {
     const { user, isHydrated } = useApp();
@@ -14,10 +15,8 @@ export default function MyOrdersPage() {
         if (user) {
             const fetchOrders = async () => {
                 try {
-                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
-                        headers: {
-                            "Authorization": `Bearer ${localStorage.getItem("token")}`
-                        }
+                    const res = await fetch(`${API_BASE}/orders`, {
+                        headers: authHeaders()
                     });
                     const data = await res.json();
                     if (data.success) {

@@ -1,0 +1,1 @@
+web: java -Dserver.port=5000 -jar medvastr-backend.jar --spring.profiles.active=prod

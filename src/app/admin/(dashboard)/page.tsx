@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
 import { INITIAL_ADMIN_DATA, fmt, fmtNum, fmtDate } from '@/lib/data';
 import Link from 'next/link';
+import { API_BASE, authHeaders } from '@/lib/api';
 
 export default function AdminDashboard() {
   const [data, setData] = useState(INITIAL_ADMIN_DATA);
@@ -13,8 +14,8 @@ export default function AdminDashboard() {
     const fetchStats = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/dashboard`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+        const res = await fetch(`${API_BASE}/admin/dashboard`, {
+          headers: authHeaders(token)
         });
         const json = await res.json();
         if (json.success) {

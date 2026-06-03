@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Link from "next/link";
 import { Product, fmt } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
+import { getImagesForColor, getSizesForColor } from "@/lib/productUtils";
 
 interface PCardProps {
   p: Product;
@@ -15,11 +16,25 @@ export default function ProductCard({ p }: PCardProps) {
   const wished = wishlist.includes(p.id);
   const productPath = `/product/${p.slug || p.id}`;
 
+  const displayImg = useMemo(() => {
+    const imgs = getImagesForColor(p, ci);
+    return imgs[0] || "";
+  }, [p, ci]);
+
+  const defaultSize = useMemo(() => {
+    const sizes = getSizesForColor(p, ci);
+    return sizes[0] || p.sizes?.[0] || "M";
+  }, [p, ci]);
+
   return (
     <div className="pc">
-      <Link href={productPath} className="pc-img" style={{ background: (p.imgs && p.imgs.length > 0) ? '#fff' : p.bg }}>
-        {(p.imgs && p.imgs.length > 0) ? (
-          <img src={p.imgs[0]} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+      <Link href={productPath} className="pc-img" style={{ background: displayImg ? "#fff" : p.bg }}>
+        {displayImg ? (
+          <img
+            src={displayImg}
+            alt={p.name}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
         ) : (
           <div className="pc-emo">{p.emo}</div>
         )}
@@ -64,6 +79,11 @@ export default function ProductCard({ p }: PCardProps) {
               className={`cdot${ci === i ? " on" : ""}`}
               style={{ background: c }}
               onMouseEnter={() => setCi(i)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setCi(i);
+              }}
             />
           ))}
         </div>
@@ -76,10 +96,7 @@ export default function ProductCard({ p }: PCardProps) {
             </span>
           )}
         </div>
-        <button
-          className="pc-add"
-          onClick={() => addToCart(p, ci, "M")}
-        >
+        <button className="pc-add" onClick={() => addToCart(p, ci, defaultSize)}>
           Add to Cart
         </button>
       </div>

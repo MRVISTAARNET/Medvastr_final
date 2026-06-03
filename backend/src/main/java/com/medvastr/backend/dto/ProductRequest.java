@@ -15,6 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 public class ProductRequest {
     private String name;
+
+    @JsonAlias("desc")
     private String description;
 
     @JsonAlias("fab")

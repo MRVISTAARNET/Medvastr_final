@@ -10,6 +10,7 @@ import BulkOrderBanner from "@/components/BulkOrderBanner";
 import PressSection from "@/components/PressSection";
 import { COLS, B, REVIEWS } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
+import { API_BASE } from "@/lib/api";
 
 export default function Home() {
   const { products } = useApp();
@@ -246,7 +247,7 @@ export default function Home() {
               if (!email) return;
 
               try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/newsletter/subscribe`, {
+                const res = await fetch(`${API_BASE}/newsletter/subscribe`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ email })

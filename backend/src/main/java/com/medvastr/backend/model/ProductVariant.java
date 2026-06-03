@@ -44,6 +44,9 @@ public class ProductVariant {
     @Column(unique = true, length = 100)
     private String sku;
 
+    @Column(length = 500)
+    private String imageUrl;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 }

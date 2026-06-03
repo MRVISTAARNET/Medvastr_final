@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -274,7 +276,16 @@ public class ProductService {
                                         .colorHex(v.getColorHex())
                                         .stockQuantity(v.getStockQuantity())
                                         .sku(v.getSku())
+                                        .imageUrl(v.getImageUrl())
                                         .build())
+                                .collect(Collectors.toList()))
+                .sizes(
+                        p.getVariants().stream()
+                                .map(ProductVariant::getSize)
+                                .filter(s -> s != null && !s.isBlank())
+                                .collect(Collectors.toCollection(LinkedHashSet::new))
+                                .stream()
+                                .sorted(Comparator.comparingInt(this::sizeOrder))
                                 .collect(Collectors.toList()))
                 .imageUrls(p.getImages().stream().map(ProductImage::getImageUrl).collect(Collectors.toList()))
                 .createdAt(p.getCreatedAt())
@@ -291,6 +302,7 @@ public class ProductService {
                             .colorHex(v.getColorHex())
                             .stockQuantity(v.getStockQuantity() != null ? v.getStockQuantity() : 0)
                             .sku(v.getSku())
+                            .imageUrl(v.getImageUrl())
                             .build())
                     .collect(Collectors.toList());
         }
@@ -304,5 +316,13 @@ public class ProductService {
                 .replaceAll("\\s+", "-")
                 .replaceAll("-+", "-")
                 .replaceAll("^-|-$", "");
+    }
+
+    private int sizeOrder(String size) {
+        String[] order = { "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL" };
+        for (int i = 0; i < order.length; i++) {
+            if (order[i].equalsIgnoreCase(size)) return i;
+        }
+        return 99;
     }
 }

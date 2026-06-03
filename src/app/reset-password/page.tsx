@@ -3,6 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
+import { API_BASE } from '@/lib/api';
 
 function ResetPasswordForm() {
     const searchParams = useSearchParams();
@@ -19,7 +20,7 @@ function ResetPasswordForm() {
     useEffect(() => {
         if (!token) { setStatus('invalid'); setMessage('No reset token found. Please request a new link.'); return; }
 
-        fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/reset-password/validate?token=${encodeURIComponent(token)}`)
+        fetch(`${API_BASE}/auth/reset-password/validate?token=${encodeURIComponent(token)}`)
             .then(r => r.json())
             .then(data => {
                 if (data.data === true) setStatus('valid');
@@ -37,7 +38,7 @@ function ResetPasswordForm() {
         setMessage('');
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/reset-password`, {
+            const res = await fetch(`${API_BASE}/auth/reset-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token, newPassword }),

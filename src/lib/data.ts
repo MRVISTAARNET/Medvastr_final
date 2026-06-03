@@ -36,6 +36,10 @@ export interface Product {
   badge: string;
   clrs: string[];
   clrNms?: string[];
+  /** Per-color image galleries keyed by color hex */
+  clrImgs?: Record<string, string[]>;
+  /** Raw API variants (size × color) */
+  variants?: any[];
   emo: string;
   bg: string;
   desc: string;

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
 import { fmtDate } from '@/lib/data';
+import { API_BASE, authHeaders } from '@/lib/api';
 
 const getStars = (r: number) => {
   const full = Math.floor(r);
@@ -17,7 +18,7 @@ export default function AdminReviews() {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products?size=100`);
+      const res = await fetch(`${API_BASE}/products?size=100`);
       const data = await res.json();
       if (data.success) setProducts(data.data.content);
     } catch (e) { }
@@ -26,7 +27,7 @@ export default function AdminReviews() {
   const fetchAllReviews = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/reviews/all?size=100`, {
+      const res = await fetch(`${API_BASE}/products/reviews/all?size=100`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await res.json();
@@ -60,7 +61,7 @@ export default function AdminReviews() {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/${pid}/reviews`, {
+      const res = await fetch(`${API_BASE}/products/${pid}/reviews`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

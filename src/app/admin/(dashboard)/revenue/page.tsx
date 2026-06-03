@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
 import { fmt } from '@/lib/data';
+import { API_BASE } from '@/lib/api';
 
 export default function AdminRevenue() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://api.medvastr.com/api';
 
   useEffect(() => {
     const fetchOrders = async () => {

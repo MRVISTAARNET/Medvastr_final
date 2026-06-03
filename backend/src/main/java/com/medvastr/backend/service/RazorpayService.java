@@ -27,6 +27,8 @@ public class RazorpayService {
     @PostConstruct
     public void init() throws RazorpayException {
         this.client = new RazorpayClient(keyId, keySecret);
+        log.info("[Razorpay] Client ready (key id: {}...)", keyId != null && keyId.length() > 12
+                ? keyId.substring(0, 12) : "unset");
     }
 
     /**

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
 import { fmt, fmtNum, fmtDate } from '@/lib/data';
+import { API_BASE, authHeaders } from '@/lib/api';
 
 export default function AdminOrders() {
   const [search, setSearch] = useState('');
@@ -17,7 +18,7 @@ export default function AdminOrders() {
     const fetchOrders = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/admin/all?size=100`, {
+        const res = await fetch(`${API_BASE}/orders/admin/all?size=100`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const data = await res.json();
@@ -215,7 +216,7 @@ export default function AdminOrders() {
                       (async () => {
                         try {
                           const token = localStorage.getItem('token');
-                          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/admin/${editingOrder.id}/shiprocket`, {
+                          const res = await fetch(`${API_BASE}/orders/admin/${editingOrder.id}/shiprocket`, {
                             method: 'POST',
                             headers: { 'Authorization': `Bearer ${token}` }
                           });
@@ -242,7 +243,7 @@ export default function AdminOrders() {
                   const nStatus = (document.getElementById('o-status') as HTMLSelectElement).value;
                   try {
                     const token = localStorage.getItem('token');
-                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/admin/${editingOrder.id}/status?status=${encodeURIComponent(nStatus)}`, {
+                    const res = await fetch(`${API_BASE}/orders/admin/${editingOrder.id}/status?status=${encodeURIComponent(nStatus)}`, {
                       method: 'PUT',
                       headers: { 'Authorization': `Bearer ${token}` }
                     });

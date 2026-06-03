@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { API_BASE } from '@/lib/api';
 
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState('');
@@ -16,7 +17,7 @@ export default function ForgotPasswordPage() {
 
         try {
             const res = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/auth/forgot-password?email=${encodeURIComponent(email)}`,
+                `${API_BASE}/auth/forgot-password?email=${encodeURIComponent(email)}`,
                 { method: 'POST' }
             );
             const data = await res.json();

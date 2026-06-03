@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useApp } from "@/context/AppContext";
 import { fmt } from "@/lib/data";
+import { API_BASE, authHeaders, RAZORPAY_KEY } from "@/lib/api";
 
 declare global {
   interface Window {
@@ -28,7 +29,6 @@ export default function CheckoutPage() {
     promoCode: ""
   });
 
-  // Removed auto-filling names on user request
   useEffect(() => {
     if (user) {
       setForm(prev => ({
@@ -56,8 +56,16 @@ export default function CheckoutPage() {
   };
 
   const handleOnlinePayment = async (orderData: any) => {
+    if (!orderData?.razorpayOrderId) {
+      toast("Payment could not be started. Try again or use COD.", "bad");
+      return;
+    }
+    if (!RAZORPAY_KEY) {
+      toast("Razorpay is not configured on the storefront.", "bad");
+      return;
+    }
     const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY,
+      key: RAZORPAY_KEY,
       amount: Math.round(orderData.totalAmount * 100),
       currency: "INR",
       name: "Medvastr",
@@ -65,11 +73,11 @@ export default function CheckoutPage() {
       order_id: orderData.razorpayOrderId,
       handler: async function (response: any) {
         try {
-          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders/verify-payment`, {
+          const res = await fetch(`${API_BASE}/orders/verify-payment`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${localStorage.getItem("token")}`
+              ...authHeaders(),
             },
             body: JSON.stringify({
               orderNumber: orderData.orderNumber,
@@ -83,6 +91,8 @@ export default function CheckoutPage() {
             setOrderNum(orderData.orderNumber);
             clearCart();
             toast("Payment Successful!", "ok");
+          } else {
+            toast(data.message || "Payment verification failed", "bad");
           }
         } catch (e) { toast("Verification failed", "bad"); }
       },
@@ -119,11 +129,11 @@ export default function CheckoutPage() {
     };
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/orders`, {
+      const res = await fetch(`${API_BASE}/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("token")}`
+          ...authHeaders(),
         },
         body: JSON.stringify(orderRequest)
       });
@@ -136,7 +146,6 @@ export default function CheckoutPage() {
     finally { setLoading(false); }
   };
 
-  // Wait for hydration to prevent flickering
   if (!isHydrated) return <div className="page sec">Loading...</div>;
 
   if (orderNum) {
