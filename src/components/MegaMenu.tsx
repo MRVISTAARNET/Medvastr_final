@@ -1,36 +1,42 @@
 import Link from "next/link";
+import { useApp } from "@/context/AppContext";
 
 interface MegaMenuProps {
   gender: "men" | "women";
 }
 
 export default function MegaMenu({ gender }: MegaMenuProps) {
+  const { products } = useApp();
   const G = gender === "men";
   const genStr = G ? "MEN" : "WOMEN";
+  const genKey = G ? "men" : "women";
 
-  const quickLinks = G
-    ? [
-      { l: "Flexy Fit Scrub", cat: "SCRUBS" },
-      { l: "Green OT Gown", cat: "OT_GOWN" },
-      { l: "New Arrivals", cat: "ALL" },
-      { l: "Best Sellers", cat: "ALL" },
-    ]
-    : [
-      { l: "Flexy Fit Scrub", cat: "SCRUBS" },
-      { l: "Green OT Gown", cat: "OT_GOWN" },
-      { l: "New Arrivals", cat: "ALL" },
-      { l: "Best Sellers", cat: "ALL" },
-    ];
+  // Filter proper products for this gender (or unisex)
+  const genProducts = products.filter(p => p.gen === genKey || p.gen === "unisex");
 
-  const scrubs = [
-    { l: "Flexy Fit 'V' Scrub", cat: "SCRUBS" },
-    { l: "Scrub Suit with Logo", cat: "SCRUBS" },
-    { l: "Customized Uniforms", cat: "SCRUBS" },
+  const quickLinks = [
+    { l: "New Arrivals", href: `/products?gender=${genStr}&sort=nw` },
+    { l: "Best Sellers", href: `/products?gender=${genStr}&sort=rt` },
+    { l: "View All", href: `/products?gender=${genStr}` },
   ];
 
-  const accessories = G
-    ? [{ l: "Green Surgery Cap", cat: "CAPS" }]
-    : [{ l: "Green Surgery Cap", cat: "CAPS" }];
+  // Dynamically grab first 4 scrubs
+  const scrubs = genProducts.filter(p => p.type === "scrubs").slice(0, 4).map(p => ({
+    l: p.name,
+    href: `/product/${p.slug || p.id}`
+  }));
+
+  // Dynamically grab first 3 accessories (caps)
+  const accessories = genProducts.filter(p => p.type === "diagnostic" || p.name.toLowerCase().includes("cap")).slice(0, 3).map(p => ({
+    l: p.name,
+    href: `/product/${p.slug || p.id}`
+  }));
+
+  // Dynamically grab first 4 surgical/apparel
+  const apparel = genProducts.filter(p => p.type === "surgical" || p.type === "linen").slice(0, 4).map(p => ({
+    l: p.name,
+    href: `/product/${p.slug || p.id}`
+  }));
 
   const colours = [
     { l: "Dark Blue", h: "#1a2b4a", c: "Dark Blue" },
@@ -45,20 +51,14 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
     { l: "Camel Brown Wool" },
   ];
 
-  const apparel = [
-    { l: "Green OT Gown", cat: "OT_GOWN" },
-    { l: "Maternity Gown", cat: "PATIENT_GOWN" }
-  ];
-
   return (
     <div className="mega">
       <div className="mega-top-bar">
         {quickLinks.map((q, i) => (
           <Link
             key={i}
-            href={`/products?cat=${q.cat}&gender=${genStr}`}
-            className={`mega-top-link${(q as any).red ? " is-red" : ""}`}
-            style={(q as any).red ? { borderColor: "var(--red)", color: "var(--red)", background: "#fdecea" } : {}}
+            href={q.href}
+            className="mega-top-link"
           >
             {q.l}
           </Link>
@@ -68,24 +68,24 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
       <div className="mega-in">
         <div className="mcol">
           <div className="mcol-sub">
-            <Link href={`/products?cat=SCRUBS&gender=${genStr}`}>
-              Flexy Fit 'V' Scrub <span style={{ fontSize: 10, color: "var(--t)", fontWeight: 700 }}>→</span>
+            <Link href={`/products?cat=scrubs&gender=${genStr}`}>
+              Scrubs & Uniforms <span style={{ fontSize: 10, color: "var(--t)", fontWeight: 700 }}>→</span>
             </Link>
           </div>
           <ul>
             {scrubs.map((x) => (
               <li key={x.l}>
-                <Link href={`/products?cat=${x.cat}&gender=${genStr}`}>{x.l}</Link>
+                <Link href={x.href}>{x.l}</Link>
               </li>
             ))}
           </ul>
           <div className="mcol-sub" style={{ marginTop: 18 }}>
-            <Link href={`/products?cat=CAPS&gender=${genStr}`}>Caps</Link>
+            <Link href={`/products?cat=diagnostic&gender=${genStr}`}>Caps & Docs</Link>
           </div>
           <ul>
             {accessories.map((x) => (
               <li key={x.l}>
-                <Link href={`/products?cat=${x.cat}&gender=${genStr}`}>{x.l}</Link>
+                <Link href={x.href}>{x.l}</Link>
               </li>
             ))}
           </ul>
@@ -98,7 +98,7 @@ export default function MegaMenu({ gender }: MegaMenuProps) {
           <ul>
             {apparel.map((x) => (
               <li key={x.l}>
-                <Link href={`/products?cat=${x.cat}&gender=${genStr}`}>
+                <Link href={x.href}>
                   {x.l}
                 </Link>
               </li>

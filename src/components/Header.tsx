@@ -14,7 +14,7 @@ interface HeaderProps {
 }
 
 export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
-  const { cart, wishlist } = useApp();
+  const { cart, wishlist, products } = useApp();
   const [q, setQ] = useState("");
   const [sd, setSd] = useState(false);
   const [mn, setMn] = useState(false); // Mobile Nav
@@ -22,7 +22,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
   const [mo, setMo] = useState<string | null>(null); // Mobile Open Group
 
   const res = q
-    ? PRODUCTS.filter((p) => p.name.toLowerCase().includes(q.toLowerCase())).slice(0, 6)
+    ? products.filter((p) => p.name.toLowerCase().includes(q.toLowerCase())).slice(0, 6)
     : [];
 
   const cc = cart.reduce((s, i) => s + i.qty, 0);
@@ -69,7 +69,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
                   <div className="s-hd">Products</div>
                   {res.map((p) => (
                     <Link
-                      href={`/product/${p.id}`}
+                      href={`/product/${p.slug || p.id}`}
                       className="s-row"
                       key={p.id}
                       onClick={() => {

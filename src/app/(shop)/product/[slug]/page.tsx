@@ -9,14 +9,14 @@ import { API_BASE, authHeaders } from "@/lib/api";
 import { mapApiProduct, getImagesForColor, getSizesForColor } from "@/lib/productUtils";
 
 export default function ProductDetailPage() {
-  const { id } = useParams();
+  const { slug } = useParams();
   const router = useRouter();
   const { products, addToCart, wishlist, toggleWishlist, toast, user } = useApp();
 
-  const idOrSlug = String(id || "");
+  const idOrSlug = String(slug || "");
   const numericId = Number(idOrSlug);
   const fromList = products.find((x) =>
-    Number.isFinite(numericId) ? x.id === numericId : x.slug === idOrSlug
+    Number.isFinite(numericId) && numericId ? x.id === numericId : x.slug === idOrSlug
   );
 
   const [fetched, setFetched] = useState<Product | null>(null);
@@ -399,10 +399,10 @@ export default function ProductDetailPage() {
                         <div style={{ fontSize: 12, color: "#999" }}>
                           {r.createdAt
                             ? new Date(r.createdAt).toLocaleDateString("en-IN", {
-                                day: "2-digit",
-                                month: "short",
-                                year: "numeric",
-                              })
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            })
                             : ""}
                         </div>
                       </div>
