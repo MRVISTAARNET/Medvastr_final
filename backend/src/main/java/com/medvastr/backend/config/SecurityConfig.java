@@ -38,11 +38,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/health", "/health", "/").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/products/**", "/products/**",
                                 "/api/categories/**", "/categories/**",
-                                "/api/search/**", "/search/**")
+                                "/api/search/**", "/search/**",
+                                "/api/settings/**")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/orders/track/**", "/orders/track/**").permitAll()
                         .requestMatchers("/api/payments/webhook", "/payments/webhook").permitAll()
                         .requestMatchers("/api/newsletter/**", "/newsletter/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/inquiries").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/media/**").permitAll()
                         .requestMatchers("/api/upload").hasRole("ADMIN")
                         .requestMatchers("/api/debug/**", "/debug/**").permitAll()
@@ -81,15 +83,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsSource() {
         var c = new CorsConfiguration();
-        // Explicitly allow common frontend ports and wildcards
-        c.setAllowedOriginPatterns(Arrays.asList(
-                "http://localhost:3000",
-                "http://localhost:3001",
-                "http://localhost:3002",
-                "http://127.0.0.1:3000",
-                "*"));
+        // Use allowedOriginPatterns("*") - works with allowCredentials(false)
+        c.setAllowedOriginPatterns(Arrays.asList("*"));
         c.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        c.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "Accept", "Origin"));
+        c.setAllowedHeaders(Arrays.asList("*"));
         c.setExposedHeaders(Arrays.asList("Authorization"));
         c.setAllowCredentials(false);
         c.setMaxAge(3600L);
