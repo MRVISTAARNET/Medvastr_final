@@ -335,7 +335,7 @@ export default function AdminProducts() {
           <div className="modal" style={{ maxWidth: '700px' }}>
             <div className="modal-hd">
               <div className="modal-title">{editingProduct ? 'Edit Product' : 'Add New Product'}</div>
-              <button className="modal-x" onClick={() => setIsModalOpen(false)}>✕</button>
+              <button type="button" className="modal-x" onClick={() => setIsModalOpen(false)}>✕</button>
             </div>
             <div className="modal-body" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
               <div className="fg-row">
@@ -546,8 +546,8 @@ export default function AdminProducts() {
               )}
             </div>
             <div className="modal-foot">
-              <button className="btn-secondary" onClick={() => setIsModalOpen(false)}>Cancel</button>
-              <button className="btn-primary" onClick={handleSave}>{editingProduct ? 'Update Product' : 'Add Product'}</button>
+              <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>Cancel</button>
+              <button type="button" className="btn-primary" onClick={handleSave}>{editingProduct ? 'Update Product' : 'Add Product'}</button>
             </div>
           </div>
         </div>
