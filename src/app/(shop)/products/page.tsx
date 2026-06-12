@@ -487,16 +487,19 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
         marginBottom: 30,
         borderRadius: 16,
         overflow: 'hidden',
-        minHeight: 250,
+        minHeight: '400px',
+        aspectRatio: '21 / 9',
         backgroundImage: `url(${src})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        backgroundPosition: 'center top',
         display: 'flex',
         alignItems: 'center',
-        padding: 40
+        padding: 40,
+        position: 'relative'
       }}
     >
-      <h2 style={{ color: 'white', fontSize: 32, fontWeight: 800, textShadow: '0 2px 10px rgba(0,0,0,0.5)', margin: 0 }}>
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.6) 0%, transparent 60%)', zIndex: 1 }} />
+      <h2 style={{ color: 'white', fontSize: 42, fontWeight: 800, textShadow: '0 2px 10px rgba(0,0,0,0.5)', margin: 0, position: 'relative', zIndex: 2 }}>
         {title}
       </h2>
       {/* Hidden img to detect load failures and try next extension */}

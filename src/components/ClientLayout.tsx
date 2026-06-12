@@ -8,6 +8,7 @@ import CartDrawer from "@/components/CartDrawer";
 import WishlistDrawer from "@/components/WishlistDrawer";
 import AccountModal from "@/components/AccountModal";
 import Toast from "@/components/Toast";
+import FloatingPopups from "@/components/FloatingPopups";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { AppProvider, useApp } from "@/context/AppContext";
 
@@ -33,6 +34,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
       <WishlistDrawer open={wishO} onClose={() => setWishO(false)} />
       {isAuthOpen && <AccountModal onClose={() => setIsAuthOpen(false)} />}
       <Toast />
+      <FloatingPopups />
       <button
         type="button"
         className="btt show"
