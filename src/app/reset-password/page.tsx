@@ -47,7 +47,7 @@ function ResetPasswordForm() {
             if (data.success) {
                 setStatus('success');
                 setMessage(data.message || 'Password updated! Redirecting to login…');
-                setTimeout(() => router.push('/admin/login'), 2500);
+                setTimeout(() => router.push('/'), 2500);
             } else {
                 setStatus('error');
                 setMessage(data.message || 'Something went wrong. Please try again.');
@@ -110,8 +110,11 @@ function ResetPasswordForm() {
                     {status === 'invalid' && (
                         <>
                             <div className="rp-msg error">❌ {message}</div>
+                            <div className="rp-msg warning" style={{ marginTop: 12 }}>
+                                📬 Please also check your <strong>Spam / Junk</strong> folder — the reset email may have landed there.
+                            </div>
                             <div className="rp-back">
-                                <Link href="/forgot-password">Request a new reset link</Link>
+                                <Link href="/">← Back to Homepage</Link>
                             </div>
                         </>
                     )}
@@ -186,7 +189,7 @@ function ResetPasswordForm() {
                     )}
 
                     <div className="rp-back">
-                        <Link href="/admin/login">← Back to Login</Link>
+                        <Link href="/">← Back to Homepage</Link>
                     </div>
                 </div>
             </div>
