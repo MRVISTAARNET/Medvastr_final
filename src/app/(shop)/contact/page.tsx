@@ -21,7 +21,7 @@ export default function ContactPage() {
       <div style={{
         height: "60vh",
         minHeight: "450px",
-        background: "linear-gradient(rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.4)), url('https://images.unsplash.com/photo-1559000356-9366050b4ec2?q=80&w=2072&auto=format&fit=crop') center/cover",
+        background: "linear-gradient(rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.4)), url('https://medvastr-assets.s3.ap-south-1.amazonaws.com/contact-banner.jpg') center/cover",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",

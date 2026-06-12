@@ -1,8 +1,15 @@
 "use client";
-
 import React from "react";
 import Link from "next/link";
 
+const IMAGES = {
+  hero: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-1.jpg",
+  section2: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-2.jpg",
+  section3: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-3.jpg",
+  section4: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-4.jpg",
+  section5: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-5.jpg",
+  section6: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-6.jpg"
+};
 
 const COLORS = {
   navy: "#1a1a3a",
@@ -55,12 +62,10 @@ export default function AboutPage() {
         </p>
       </section>
 
-      {/* 4. PRODUCT FEATURE: FLEXI FIT */}
       <section style={{ padding: "100px 24px", maxWidth: "1200px", margin: "0 auto" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: "60px", alignItems: "start" }}>
-          {/* Left Column */}
           <div style={{ display: "flex", flexDirection: "column", gap: "40px" }}>
-            <ImageBox label="SCRUBS_HERO_IMAGE" width="100%" height="800px" />
+            <ImageBox src={IMAGES.hero} label="SCRUBS_HERO_IMAGE" width="100%" height="800px" />
             <div style={{ marginTop: "40px", border: `2px dashed ${COLORS.border}`, padding: "30px", borderRadius: "12px" }}>
               <h3 style={{ fontSize: "24px", fontWeight: "800", marginBottom: "20px" }}>Size Chart: Mens & Womens</h3>
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px" }}>
@@ -85,7 +90,6 @@ export default function AboutPage() {
               </table>
             </div>
           </div>
-          {/* Right Column */}
           <div>
             <h2 style={{ fontSize: "56px", fontWeight: "900", color: COLORS.navy, marginBottom: "30px", fontStyle: "italic" }}>Flexi Fit V Scrubs</h2>
             <ul style={{ listStyle: "disc", paddingLeft: "24px", fontSize: "18px", color: COLORS.text, lineHeight: "1.8", marginBottom: "40px" }}>
@@ -101,18 +105,17 @@ export default function AboutPage() {
                 <ColorCircle color="#2d1b33" name="Wine" />
               </div>
             </div>
-            <ImageBox label="SCRUBS_MODELS_PHOTO" width="100%" height="500px" />
+            <ImageBox src={IMAGES.section2} label="SCRUBS_MODELS_PHOTO" width="100%" height="500px" />
           </div>
         </div>
       </section>
 
-      {/* 5. PREMIUM COTTON T-SHIRTS */}
       <section style={{ padding: "80px 24px", backgroundColor: "#f8fafc" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "60px", alignItems: "center", marginBottom: "60px" }}>
             <div>
               <h2 style={{ fontSize: "48px", fontWeight: "900", color: COLORS.navy, marginBottom: "30px" }}>Premium Cotton Crew T-Shirts :</h2>
-              <ImageBox label="TSHIRT_FLAT_LAY" width="100%" height="300px" />
+              <ImageBox src={IMAGES.section3} label="TSHIRT_FLAT_LAY" width="100%" height="300px" />
             </div>
             <div style={{ border: `1px solid ${COLORS.navy}`, borderRadius: "12px", overflow: "hidden" }}>
               <div style={{ backgroundColor: COLORS.navy, color: "white", padding: "12px", textAlign: "center", fontWeight: "800" }}>PRODUCT SPECIFICATIONS</div>
@@ -126,14 +129,13 @@ export default function AboutPage() {
               </div>
             </div>
           </div>
-          <ImageBox label="TSHIRT_GROUP_PHOTO" width="100%" height="600px" />
+          <ImageBox src={IMAGES.section4} label="TSHIRT_GROUP_PHOTO" width="100%" height="600px" />
         </div>
       </section>
 
-      {/* 6. COMPRESSION */}
       <section style={{ padding: "100px 24px", maxWidth: "1200px", margin: "0 auto" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: "60px", alignItems: "center" }}>
-          <ImageBox label="COMPRESSION_PRODUCT" width="100%" height="500px" />
+          <ImageBox src={IMAGES.section5} label="COMPRESSION_PRODUCT" width="100%" height="500px" />
           <div>
             <h2 style={{ fontSize: "42px", fontWeight: "900", color: COLORS.navy, textTransform: "uppercase" }}>Full Sleeves Compression Underscrub</h2>
             <p style={{ fontSize: "18px", lineHeight: "1.6", color: COLORS.text, margin: "24px 0" }}>
@@ -152,12 +154,11 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 7. SURGICAL / MATERNITY / PATIENT */}
       <section style={{ padding: "80px 24px", backgroundColor: "#f1f5f9" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "60px" }}>
             <div style={{ backgroundColor: "white", padding: "40px", borderRadius: "20px", boxShadow: "0 10px 30px rgba(0,0,0,0.05)" }}>
-              <ImageBox label="SURGICAL_SHOT" width="100%" height="300px" />
+              <ImageBox src={IMAGES.section6} label="SURGICAL_SHOT" width="100%" height="300px" />
               <h3 style={{ fontSize: "32px", fontWeight: "900", color: COLORS.teal, textTransform: "uppercase", margin: "30px 0 10px" }}>Surgical OT Gowns & Caps</h3>
               <p style={{ color: COLORS.text, marginBottom: "20px" }}>In the operating theatre, your apparel is your primary defense against cross-contamination.</p>
               <table style={{ width: "100%", fontSize: "14px" }}>
@@ -198,7 +199,6 @@ export default function AboutPage() {
           </button>
         </Link>
       </section>
-
     </div>
   );
 }
@@ -212,18 +212,24 @@ function PromiseBox({ title, desc }: { title: string; desc: string }) {
   );
 }
 
-function ImageBox({ label, width, height }: { label: string; width: string; height: string }) {
+function ImageBox({ src, label, width, height }: { src: string; label: string; width: string; height: string }) {
   return (
-    <div style={{
-      width, height, backgroundColor: "#f1f5f9",
-      border: `2px dashed ${COLORS.teal}33`,
-      borderRadius: "20px", display: "flex",
-      flexDirection: "column", alignItems: "center",
-      justifyContent: "center", padding: "20px", textAlign: "center"
-    }}>
-      <div style={{ fontSize: "40px", marginBottom: "10px" }}>📷</div>
-      <p style={{ fontWeight: "700", color: COLORS.navy, textTransform: "uppercase", fontSize: "12px", letterSpacing: "1px" }}>{label}</p>
-      <p style={{ color: "#94a3b8", fontSize: "10px", marginTop: "4px" }}>Recommended: {label.includes("HERO") ? "800x1000" : "1200x800"}</p>
+    <div style={{ width, height, backgroundColor: "#f1f5f9", borderRadius: "20px", overflow: "hidden", position: "relative" }}>
+      <img
+        src={src}
+        alt={label}
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        onError={(e) => {
+          (e.target as any).style.display = 'none';
+          (e.target as any).parentElement.innerHTML = `
+            <div style="height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; text-align:center; background:#e2e8f0; border:2px dashed #94a3b8">
+              <div style="font-size:40px; margin-bottom:10px">📷</div>
+              <p style="font-size:12px; font-weight:700; color:#1a1a3a">${label}</p>
+              <p style="font-size:10px; color:#64748b">S3 Path: ${src.split('/').pop()}</p>
+            </div>
+          `;
+        }}
+      />
     </div>
   );
 }
@@ -237,7 +243,7 @@ function ColorCircle({ color, name }: { color: string; name: string }) {
   );
 }
 
-const tableCell: React.CSSProperties = { padding: "12px", border: "1px solid rgba(255,255,255,0.1)", textAlign: "left" };
+const tableCell: React.CSSProperties = { padding: "12px", border: "1px solid rgba(0,0,0,0.1)", textAlign: "left" };
 const tableCellBody: React.CSSProperties = { padding: "12px", border: `1px solid ${COLORS.border}`, textAlign: "left" };
 const specHeader: React.CSSProperties = { padding: "16px", borderRight: `1px solid ${COLORS.navy}`, borderBottom: `1px solid ${COLORS.navy}`, fontWeight: "700", backgroundColor: "#0000000a", fontSize: "13px" };
 const specCell: React.CSSProperties = { padding: "16px", borderBottom: `1px solid ${COLORS.navy}`, fontSize: "13px" };

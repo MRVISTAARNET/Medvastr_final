@@ -270,25 +270,38 @@ export default function BulkOrderPage() {
           </div>
         </div>
 
-        {/* ── FEATURED PRODUCTS ── */}
-        {products && products.length > 0 && (
-          <div style={{ marginBottom: '64px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '40px' }}>
-              <div>
-                <h2 style={{ fontSize: 'clamp(1.5rem, 3.5vw, 2.25rem)', fontWeight: 800, color: '#0f172a' }}>Featured Products</h2>
-                <p style={{ color: '#64748b', marginTop: '6px', fontSize: '16px' }}>Top products available for bulk orders</p>
-              </div>
-              <Link href="/products" style={{ color: '#059669', fontWeight: 700, background: '#ecfdf5', padding: '10px 22px', borderRadius: '10px', textDecoration: 'none', border: '1.5px solid #a7f3d0', transition: 'all 0.15s' }}>
-                View All →
-              </Link>
+        {/* ── BULK PRODUCT CATALOG ── */}
+        <div style={{ marginBottom: '64px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '40px' }}>
+            <div>
+              <h2 style={{ fontSize: 'clamp(1.5rem, 3.5vw, 2.25rem)', fontWeight: 800, color: '#0f172a' }}>Bulk Product Categories</h2>
+              <p style={{ color: '#64748b', marginTop: '6px', fontSize: '16px' }}>Direct from manufacturer institutional pricing</p>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '24px' }}>
-              {products.slice(0, 8).map((product: any) => (
-                <ProductCard key={product.id} p={product} />
-              ))}
-            </div>
+            <Link href="/products" style={{ color: '#059669', fontWeight: 700, background: '#ecfdf5', padding: '10px 22px', borderRadius: '10px', textDecoration: 'none', border: '1.5px solid #a7f3d0', transition: 'all 0.15s' }}>
+              View Individual Items →
+            </Link>
           </div>
-        )}
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '28px' }}>
+            {[
+              { t: "Premium OT Scrubs", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-scrubs.jpg", d: "High-performance PV Lycra fabric." },
+              { t: "Doctor Lab Coats", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-labcoats.jpg", d: "Professional anti-wrinkle finishing." },
+              { t: "Hospital Linens", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-linens.jpg", d: "Green linen & sustainable cottons." },
+              { t: "Patient Gowns", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-gowns.jpg", d: "Easy-wear ergonomic designs." }
+            ].map(item => (
+              <div key={item.t} style={{ borderRadius: '20px', overflow: 'hidden', background: 'white', border: '1px solid #e2e8f0', boxShadow: '0 10px 30px rgba(0,0,0,0.04)' }}>
+                <div style={{ height: '240px', background: '#f1f5f9', position: 'relative' }}>
+                  <img src={item.img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={item.t} />
+                </div>
+                <div style={{ padding: '24px' }}>
+                  <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>{item.t}</h4>
+                  <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '16px' }}>{item.d}</p>
+                  <button style={{ width: '100%', padding: '12px', background: '#0f172a', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>Inquire for {item.t}</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* ── CTA ── */}
         <div style={{ background: 'linear-gradient(135deg, #0f172a, #1e293b)', borderRadius: '24px', padding: 'clamp(40px, 6vw, 64px) 40px', textAlign: 'center', marginBottom: '64px', border: '1.5px solid #334155' }}>
