@@ -84,6 +84,13 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
     "verify-otp": `Enter the 6-digit code sent to ${form.email}`,
   };
 
+  const SpamNote = () => (
+    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 8, padding: '10px 12px', fontSize: 12, color: '#92400e', marginTop: 4 }}>
+      <span style={{ fontSize: 14, flexShrink: 0 }}>📬</span>
+      <span>Didn't receive it? Please also check your <strong>Spam / Junk</strong> folder — emails sometimes land there.</span>
+    </div>
+  );
+
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
       {/* Backdrop */}
@@ -113,9 +120,12 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
             <p style={{ fontSize: 14, color: "#666", marginBottom: 24 }}>Enter your registered email address. We'll send you a secure password reset link.</p>
 
             {fpMsg && (
-              <div style={{ background: fpMsg.startsWith('✅') ? '#f0fff4' : '#fff5f5', color: fpMsg.startsWith('✅') ? '#276749' : '#e53e3e', padding: '12px 16px', borderRadius: 10, fontSize: 13, marginBottom: 20, border: `1px solid ${fpMsg.startsWith('✅') ? '#9ae6b4' : '#fed7d7'}` }}>
-                {fpMsg}
-              </div>
+              <>
+                <div style={{ background: fpMsg.startsWith('✅') ? '#f0fff4' : '#fff5f5', color: fpMsg.startsWith('✅') ? '#276749' : '#e53e3e', padding: '12px 16px', borderRadius: 10, fontSize: 13, marginBottom: 12, border: `1px solid ${fpMsg.startsWith('✅') ? '#9ae6b4' : '#fed7d7'}` }}>
+                  {fpMsg}
+                </div>
+                {fpMsg.startsWith('✅') && <SpamNote />}
+              </>
             )}
 
             {!fpMsg.startsWith('✅') && (
@@ -194,6 +204,7 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
                   <input name="otp" type="text" inputMode="numeric" placeholder="000000" maxLength={6} required value={form.otp} onChange={handleInputChange}
                     style={{ ...inp, height: 56, fontSize: 26, letterSpacing: '10px', textAlign: 'center' }} />
                   <div style={{ fontSize: 12, color: '#aaa', marginTop: 6, textAlign: 'center' }}>Code expires in 10 minutes</div>
+                  <SpamNote />
                 </div>
               )}
 

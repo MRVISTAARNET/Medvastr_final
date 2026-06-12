@@ -87,7 +87,11 @@ function ResetPasswordContent() {
                     <div style={{ textAlign: "center" }}>
                         <div style={{ fontSize: 48, marginBottom: 16 }}>⛔</div>
                         <h1 style={{ fontSize: 22, fontWeight: 700, color: "#111", marginBottom: 10 }}>Link Expired or Invalid</h1>
-                        <p style={{ fontSize: 14, color: "#666", marginBottom: 28, lineHeight: 1.6 }}>{message}</p>
+                        <p style={{ fontSize: 14, color: "#666", marginBottom: 16, lineHeight: 1.6 }}>{message}</p>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 8, padding: '10px 12px', fontSize: 12, color: '#92400e', marginBottom: 24, textAlign: 'left' }}>
+                            <span style={{ fontSize: 14, flexShrink: 0 }}>📬</span>
+                            <span>If you just requested a reset, please also check your <strong>Spam / Junk</strong> folder — the email may have landed there.</span>
+                        </div>
                         <Link href="/" style={{ display: "inline-block", background: "#008080", color: "white", padding: "12px 28px", borderRadius: 10, fontWeight: 700, textDecoration: "none", fontSize: 14 }}>
                             Go to Homepage
                         </Link>
