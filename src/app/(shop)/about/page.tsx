@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
+
 
 const COLORS = {
   navy: "#1a1a3a",
@@ -190,7 +192,11 @@ export default function AboutPage() {
       {/* FOOTER CTA */}
       <section style={{ padding: "100px 24px", textAlign: "center" }}>
         <h2 style={{ fontSize: "40px", fontWeight: "900", color: COLORS.navy, marginBottom: "20px" }}>Experience the Medvastr Difference.</h2>
-        <button style={{ backgroundColor: COLORS.teal, color: "white", padding: "20px 60px", borderRadius: "50px", border: "none", fontSize: "20px", fontWeight: "700", cursor: "pointer" }}>Explore Full Catalog</button>
+        <Link href="/products" style={{ textDecoration: "none" }}>
+          <button style={{ backgroundColor: COLORS.teal, color: "white", padding: "20px 60px", borderRadius: "50px", border: "none", fontSize: "20px", fontWeight: "700", cursor: "pointer" }}>
+            Explore Our Products
+          </button>
+        </Link>
       </section>
 
     </div>
