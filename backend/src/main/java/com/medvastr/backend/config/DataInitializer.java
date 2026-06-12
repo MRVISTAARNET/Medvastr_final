@@ -33,15 +33,16 @@ public class DataInitializer {
             }
 
             if (userRepo.existsByEmail(adminEmail)) {
-                log.info("[DataInitializer] Admin user already exists — skipping creation.");
+                log.info("[DataInitializer] Admin {} already exists.", adminEmail);
                 return;
             }
 
+            log.info("[DataInitializer] Creating/Updating admin user for: {}", adminEmail);
             User admin = User.builder()
                     .firstName("Admin")
                     .lastName("Medvastr")
                     .email(adminEmail)
-                    .phone("")
+                    .phone("9999999999")
                     .password(passwordEncoder.encode(adminPassword))
                     .role(User.Role.ADMIN)
                     .emailVerified(true)
@@ -50,7 +51,7 @@ public class DataInitializer {
                     .build();
 
             userRepo.save(admin);
-            log.info("[DataInitializer] Admin user created for {}", adminEmail);
+            log.info("[DataInitializer] Admin user BOOTSTRAPPED successfully for {}", adminEmail);
         };
     }
 }
