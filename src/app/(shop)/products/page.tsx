@@ -92,26 +92,25 @@ function ProductsContent() {
 
   const activeCatLabel = cats.find((c: any) => c.id === cat)?.l || (gen !== 'all' ? (gen.charAt(0).toUpperCase() + gen.slice(1) + " Collection") : "All Products");
 
-  let staticBannerImg = null;
+  let staticBannerBase: string | null = null;
   let staticBannerTitle = "";
 
+  const S3 = "https://medvastr-assets.s3.ap-south-1.amazonaws.com";
   if (gen === 'men') {
-    staticBannerImg = "https://medvastr-assets.s3.ap-south-1.amazonaws.com/men-banner.png";
+    staticBannerBase = `${S3}/men-banner`;
     staticBannerTitle = "Men's Collection";
   } else if (gen === 'women') {
-    staticBannerImg = "https://medvastr-assets.s3.ap-south-1.amazonaws.com/women-banner.png";
+    staticBannerBase = `${S3}/women-banner`;
     staticBannerTitle = "Women's Collection";
   } else if (cat === 'surgical' || cat === 'surgical-wear') {
-    staticBannerImg = "https://medvastr-assets.s3.ap-south-1.amazonaws.com/surgical-banner.png";
+    staticBannerBase = `${S3}/surgical-banner`;
     staticBannerTitle = "Surgical Wear";
   }
 
   return (
     <div className="page">
-      {staticBannerImg && (
-        <div style={{ width: '100%', marginBottom: 30, borderRadius: 16, overflow: 'hidden', minHeight: 250, backgroundImage: `url(${staticBannerImg})`, backgroundSize: 'cover', backgroundPosition: 'center', display: 'flex', alignItems: 'center', padding: 40 }}>
-          <h2 style={{ color: 'white', fontSize: 32, fontWeight: 800, textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>{staticBannerTitle}</h2>
-        </div>
+      {staticBannerBase && (
+        <SmartBanner base={staticBannerBase} title={staticBannerTitle} />
       )}
       <div className="sec">
         {/* Breadcrumb */}
@@ -470,5 +469,38 @@ export default function ProductsPage() {
     <Suspense fallback={<div>Loading products...</div>}>
       <ProductsContent />
     </Suspense>
+  );
+}
+
+// Auto-tries .png → .jpg → .jpeg so any format uploaded to S3 works
+function SmartBanner({ base, title }: { base: string; title: string }) {
+  const EXTS = ['.png', '.jpg', '.jpeg'];
+  const [idx, setIdx] = React.useState(0);
+  const src = idx < EXTS.length ? base + EXTS[idx] : null;
+
+  if (!src) return null; // all formats failed — show nothing
+
+  return (
+    <div
+      style={{
+        width: '100%',
+        marginBottom: 30,
+        borderRadius: 16,
+        overflow: 'hidden',
+        minHeight: 250,
+        backgroundImage: `url(${src})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        display: 'flex',
+        alignItems: 'center',
+        padding: 40
+      }}
+    >
+      <h2 style={{ color: 'white', fontSize: 32, fontWeight: 800, textShadow: '0 2px 10px rgba(0,0,0,0.5)', margin: 0 }}>
+        {title}
+      </h2>
+      {/* Hidden img to detect load failures and try next extension */}
+      <img src={src} alt="" style={{ display: 'none' }} onError={() => setIdx(i => i + 1)} />
+    </div>
   );
 }

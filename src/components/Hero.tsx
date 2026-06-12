@@ -14,9 +14,9 @@ export default function Hero({ onShop }: HeroProps) {
   const [au, setAu] = useState(true);
   const S3_BASE = "https://medvastr-assets.s3.ap-south-1.amazonaws.com";
   const [dynamicSlides] = useState([
-    { img: `${S3_BASE}/home-hero-1.png` },
-    { img: `${S3_BASE}/home-hero-2.png` },
-    { img: `${S3_BASE}/home-hero-3.png` }
+    { base: `${S3_BASE}/home-hero-1` },
+    { base: `${S3_BASE}/home-hero-2` },
+    { base: `${S3_BASE}/home-hero-3` }
   ]);
   const t = useRef<NodeJS.Timeout | null>(null);
 
@@ -39,7 +39,7 @@ export default function Hero({ onShop }: HeroProps) {
       <div className="hero-track" style={{ transform: `translateX(-${cur * 100}%)` }}>
         {dynamicSlides.map((s, i) => (
           <div className="hero-slide" key={i}>
-            <div className="slide-bg" style={{ backgroundImage: `url(${normalizeMediaUrl(s.img)})`, backgroundSize: 'cover', backgroundPosition: 'center', height: '100%' }} />
+            <SmartSlide base={s.base} />
           </div>
         ))}
       </div>
@@ -91,6 +91,35 @@ export default function Hero({ onShop }: HeroProps) {
            .slide-h1 { font-size: 32px; line-height: 1.1; }
         }
       `}</style>
+    </div>
+  );
+}
+
+// Tries .png first, then .jpg, then .jpeg automatically
+function SmartSlide({ base }: { base: string }) {
+  const EXTS = ['.png', '.jpg', '.jpeg'];
+  const [idx, setIdx] = React.useState(0);
+  const src = idx < EXTS.length ? base + EXTS[idx] : null;
+
+  if (!src) return <div className="slide-bg" style={{ background: '#0f172a', height: '100%' }} />;
+
+  return (
+    <div
+      className="slide-bg"
+      style={{
+        backgroundImage: `url(${src})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        height: '100%'
+      }}
+    >
+      {/* Hidden img tag used only to detect load errors */}
+      <img
+        src={src}
+        alt=""
+        style={{ display: 'none' }}
+        onError={() => setIdx(i => i + 1)}
+      />
     </div>
   );
 }
