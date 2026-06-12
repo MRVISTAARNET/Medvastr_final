@@ -44,13 +44,11 @@ public class AuthService {
                 .firstName(
                         r.getFirstName() == null || r.getFirstName().trim().isEmpty()
                                 ? "User"
-                                : r.getFirstName()
-                )
+                                : r.getFirstName())
                 .lastName(
                         r.getLastName() == null || r.getLastName().trim().isEmpty()
                                 ? "User"
-                                : r.getLastName()
-                )
+                                : r.getLastName())
                 .email(r.getEmail())
                 .phone(r.getPhone())
                 .password(encoder.encode(r.getPassword()))
@@ -68,6 +66,11 @@ public class AuthService {
 
     public AuthResponse loginViaOtp(String email) {
         User u = userRepo.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        if (!u.isEmailVerified()) {
+            u.setEmailVerified(true);
+            userRepo.save(u);
+            log.info("[AuthService] Email auto-verified via OTP for {}", email);
+        }
         return buildResponse(u);
     }
 
