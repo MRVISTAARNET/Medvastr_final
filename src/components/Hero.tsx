@@ -12,18 +12,13 @@ interface HeroProps {
 export default function Hero({ onShop }: HeroProps) {
   const [cur, setCur] = useState(0);
   const [au, setAu] = useState(true);
-  const [dynamicSlides, setDynamicSlides] = useState<any[]>(SLIDES);
-  const { banners } = useApp();
+  const S3_BASE = "https://medvastr-assets.s3.ap-south-1.amazonaws.com";
+  const [dynamicSlides] = useState([
+    { img: `${S3_BASE}/home-hero-1.png` },
+    { img: `${S3_BASE}/home-hero-2.png` },
+    { img: `${S3_BASE}/home-hero-3.png` }
+  ]);
   const t = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    const heroBanners = banners.filter((b: any) => b.isActive && b.position === "HOME_TOP");
-    if (heroBanners.length > 0) {
-      setDynamicSlides(heroBanners.map((b: any) => ({ img: b.imageUrl, link: b.linkUrl })));
-    } else {
-      setDynamicSlides(SLIDES);
-    }
-  }, [banners]);
 
   useEffect(() => {
     if (!au) return;

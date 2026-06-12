@@ -156,34 +156,6 @@ export default function Home() {
         )}
       </div>
 
-      {/* PROMO BANNERS (admin-driven) */}
-      <div className="promo-duo">
-        {promoBanners.length > 0 ? (
-          promoBanners.slice(0, 2).map((b: any) => (
-            <div key={b.id} className="promo-h" style={{ backgroundImage: b.imageUrl ? `url(${b.imageUrl})` : undefined, backgroundSize: "cover", backgroundPosition: "center", minHeight: 220 }}>
-              <div className="promo-tt">{b.title}</div>
-              {b.linkUrl && (
-                <Link href={b.linkUrl} className="btn-t">Shop Now →</Link>
-              )}
-            </div>
-          ))
-        ) : (
-          <>
-            <div className="promo-h" style={{ background: "#091220" }}>
-              <div className="promo-em">👕</div>
-              <div className="promo-ey">Bestseller</div>
-              <div className="promo-tt">Flexy Fit &apos;V&apos; Scrub</div>
-              <Link href="/products?cat=scrubs" className="btn-t">Shop Flexy Fit Scrub →</Link>
-            </div>
-            <div className="promo-h" style={{ background: "#2d6a4f" }}>
-              <div className="promo-em">🥼</div>
-              <div className="promo-ey">New Collection</div>
-              <div className="promo-tt">Green OT Gown</div>
-              <Link href="/products?cat=surgical" className="btn-d">Shop Green OT Gown →</Link>
-            </div>
-          </>
-        )}
-      </div>
 
       {/* NEW ARRIVALS */}
       <div className="sec">
