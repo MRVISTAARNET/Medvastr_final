@@ -3,12 +3,12 @@ import React from "react";
 import Link from "next/link";
 
 const IMAGES = {
-  hero: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-1.jpg",
-  section2: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-2.jpg",
-  section3: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-3.jpg",
-  section4: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-4.jpg",
-  section5: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-5.jpg",
-  section6: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-6.jpg"
+  hero: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-1.png",
+  section2: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-2.png",
+  section3: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-3.png",
+  section4: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-4.png",
+  section5: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-5.png",
+  section6: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-6.png"
 };
 
 const COLORS = {

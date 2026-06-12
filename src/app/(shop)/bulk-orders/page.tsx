@@ -284,10 +284,9 @@ export default function BulkOrderPage() {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '28px' }}>
             {[
-              { t: "Premium OT Scrubs", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-scrubs.jpg", d: "High-performance PV Lycra fabric." },
-              { t: "Doctor Lab Coats", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-labcoats.jpg", d: "Professional anti-wrinkle finishing." },
-              { t: "Hospital Linens", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-linens.jpg", d: "Green linen & sustainable cottons." },
-              { t: "Patient Gowns", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-gowns.jpg", d: "Easy-wear ergonomic designs." }
+              { t: "Linen & Bedding", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-linen.png", d: "High-performance institutional linens." },
+              { t: "Brown blanket", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-blanket.png", d: "Professional grade ward blankets." },
+              { t: "Maternity Gown", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-maternity.png", d: "Comfortable ergonomic maternity wear." }
             ].map(item => (
               <div key={item.t} style={{ borderRadius: '20px', overflow: 'hidden', background: 'white', border: '1px solid #e2e8f0', boxShadow: '0 10px 30px rgba(0,0,0,0.04)' }}>
                 <div style={{ height: '240px', background: '#f1f5f9', position: 'relative' }}>

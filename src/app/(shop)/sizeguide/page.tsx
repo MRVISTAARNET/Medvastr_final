@@ -125,19 +125,21 @@ export default function SizeGuidePage() {
   return (
     <div style={S.wrap}>
       {/* Banner Section */}
-      {banner ? (
-        <div style={{ width: '100%', height: '320px', borderRadius: '24px', marginBottom: '40px', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}>
-          <img
-            src={normalizeMediaUrl(banner.imageUrl)}
-            alt="Size Guide Header"
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-        </div>
-      ) : (
-        <div style={{ width: '100%', height: '320px', background: 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)', borderRadius: '24px', marginBottom: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', fontWeight: 700, fontSize: '18px', border: '2px dashed #94a3b8' }}>
-          Medvastr Premium Uniforms
-        </div>
-      )}
+      <div style={{ width: '100%', height: '320px', borderRadius: '24px', marginBottom: '40px', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.1)', background: '#f1f5f9' }}>
+        <img
+          src="https://medvastr-assets.s3.ap-south-1.amazonaws.com/sizeguide-banner.png"
+          alt="Size Guide Header"
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          onError={(e) => {
+            (e.target as any).style.display = 'none';
+            (e.target as any).parentElement.innerHTML = `
+              <div style="height:100%; display:flex; align-items:center; justify-content:center; color:#64748b; font-weight:700; font-size:18px; border:2px dashed #94a3b8; border-radius:24px">
+                📷 Image: sizeguide-banner.png (Upload to S3)
+              </div>
+            `;
+          }}
+        />
+      </div>
 
       <div style={S.hero}>
         <div style={{ position: 'absolute', top: 0, right: 0, opacity: 0.1, fontSize: '160px', transform: 'translate(20%, -30%)' }}>📏</div>
