@@ -8,14 +8,6 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  async rewrites() {
-    return [
-      {
-        source: "/reset-password",
-        destination: "/reset-password",
-      },
-    ];
-  },
   async redirects() {
     return [
       {
