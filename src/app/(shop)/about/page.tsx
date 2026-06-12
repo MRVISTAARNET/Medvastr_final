@@ -1,194 +1,269 @@
+"use client";
+
 import React from "react";
+
+const COLORS = {
+  navy: "#1a1a3a",
+  teal: "#008080",
+  wine: "#4b0082",
+  lightGray: "#f8fafc",
+  border: "#e2e8f0",
+  text: "#334155",
+};
 
 export default function AboutPage() {
   return (
-    <div style={{ backgroundColor: "#ffffff", minHeight: "100vh" }}>
-      {/* Hero Section - The Professional Identity */}
-      <div style={{
-        height: "65vh",
-        minHeight: "500px",
-        background: "linear-gradient(rgba(15, 23, 42, 0.4), rgba(15, 23, 42, 0.4)), url('https://images.unsplash.com/photo-1631815587646-b85a1bb027e1?q=80&w=2042&auto=format&fit=crop') center/cover",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: "100px"
-      }}>
-        {/* Banner with no text overlay as requested */}
-      </div>
-
-      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px 150px" }}>
-
-        {/* Section 1: The Genesis of Medvastr */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "80px", alignItems: "center", marginBottom: "140px" }}>
-          <div>
-            <h2 style={{ fontSize: "3rem", fontWeight: 900, color: "#0f172a", marginBottom: "32px", letterSpacing: "-0.02em", lineHeight: 1.2 }}>Where Science Meets <span style={{ color: "#10b981" }}>Style</span>.</h2>
-            <div style={{ color: "#475569", fontSize: "1.125rem", lineHeight: 1.8 }}>
-              <p style={{ marginBottom: "24px" }}>
-                The story of Medvastr began in the quiet corridors of a busy metropolitan hospital in 2021. Our founders observed a glaring disconnect: while medical technology was advancing at light speed, the apparel worn by the surgeons, nurses, and technicians remained stagnant—uncomfortable, impersonal, and poorly fitted.
-              </p>
-              <p style={{ marginBottom: "24px" }}>
-                A doctor's workday is an endurance test. Shifts often stretch beyond 18 hours, moving between high-pressure operating rooms and demanding patient consultations. We asked a simple question: <strong>Why should the world's most dedicated professionals settle for less-than-perfect gear?</strong>
-              </p>
-              <p style={{ marginBottom: "24px" }}>
-                From that inquiry, Medvastr was born. Not just as a clothing brand, but as a performance-apparel engineering lab dedicated exclusively to the unique physiological and psychological needs of healthcare practitioners. Over the years, we have evolved from a small startup to India's most trusted medical apparel brand, serving over 250 healthcare institutes.
+    <div className="min-h-screen bg-white">
+      {/* 1. HERO HEADER SECTION */}
+      <section className="py-20 px-4">
+        <div className="max-w-6xl mx-auto border-2 border-dashed border-navy/20 p-8 md:p-12 relative">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <h1 className="text-5xl md:text-7xl font-black text-navy leading-tight">
+              About Us : <br />
+              <span className="text-teal">Caring for Those Who Care for Others</span>
+            </h1>
+            <div className="space-y-6 text-lg text-text border-l-2 border-dotted border-navy/30 pl-8">
+              <p>
+                Since 2012, we have been a trusted partner for top hospitals, supplying high-quality linen and uniforms.
               </p>
               <p>
-                Our philosophy is simple: healthcare is demanding, your apparel shouldn't be. We invest heavily in R&D to bring textile innovations like antimicrobial coatings, 4-way stretch fabrics, and color-retention technology to the forefront of medical gear.
+                Over the years, we watched healthcare heroes working exhausting shifts in stiff, uncomfortable scrubs. We knew they deserved better.
+              </p>
+              <p>
+                That is why we created <strong>Medvastr</strong>—a brand dedicated to changing medical apparel for the better.
+              </p>
+              <p>
+                We meet the needs of modern hospitals by offering premium medical scrubs and eco-friendly green linen products.
               </p>
             </div>
           </div>
-          <div style={{ position: "relative" }}>
-            <div style={{
-              aspectRatio: "4/5",
-              borderRadius: "40px",
-              overflow: "hidden",
-              boxShadow: "0 40px 80px -15px rgba(15, 23, 42, 0.2)",
-              background: "#f1f5f9"
-            }}>
-              <img
-                src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=2080&auto=format&fit=crop"
-                alt="Medvastr Craftsmanship"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            </div>
-            <div style={{
-              position: "absolute",
-              top: "-30px",
-              right: "-30px",
-              background: "white",
-              padding: "32px",
-              borderRadius: "32px",
-              boxShadow: "0 25px 50px rgba(0,0,0,0.1)",
-              maxWidth: "200px"
-            }}>
-              <div style={{ fontSize: "2.5rem", fontWeight: 900, color: "#10b981" }}>4.9★</div>
-              <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Industry Rating</div>
-            </div>
+        </div>
+      </section>
+
+      {/* 2. PROMISES SECTION */}
+      <section className="py-16 bg-lightGray px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-4xl font-bold text-navy text-center mb-16">Our Three Simple Promises</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <PromiseCard
+              title="Comfort That Lasts"
+              desc="We use a special, soft fabric blend with a little bit of stretch. It breathes well, keeps you dry, and feels lightweight even during a long 12-hour shift."
+            />
+            <PromiseCard
+              title="Made to Endure"
+              desc="Hospital uniform washing is tough. Our uniforms use high-quality dyes and strong stitching so they stay bright, professional, and looking like new—even after multiple washes."
+            />
+            <PromiseCard
+              title="A Complete Solution"
+              desc="We don't just sell scrubs. We supply entire hospitals with everything they need, from classic nursing uniforms to patient clothes and bed linens."
+            />
           </div>
         </div>
+      </section>
 
-        {/* Section 2: Our Core Philosophy - Section-wise attraction */}
-        <div style={{ background: "#0f172a", borderRadius: "60px", padding: "100px 60px", color: "white", marginBottom: "140px", position: "relative", overflow: "hidden" }}>
-          <div style={{ position: "absolute", top: 0, right: 0, width: "400px", height: "400px", background: "radial-gradient(circle, rgba(16,185,129,0.15) 0%, rgba(15,23,42,0) 70%)", zIndex: 0 }} />
-
-          <div style={{ textAlign: "center", marginBottom: "80px", position: "relative", zIndex: 1 }}>
-            <h2 style={{ fontSize: "3rem", fontWeight: 900, marginBottom: "20px" }}>The Three Pillars of Medvastr</h2>
-            <p style={{ fontSize: "1.25rem", color: "rgba(255,255,255,0.6)", maxWidth: "800px", margin: "0 auto" }}>
-              Our design process is rooted in a deep understanding of clinical environments, ergonomics, and textile science.
-            </p>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "40px", position: "relative", zIndex: 1 }}>
-            {[
-              {
-                t: "Adaptive Comfort",
-                d: "We utilize 4-way stretch fabrics that move with the clinician, ensuring that whether you are performing a delicate procedure or rushing through an ER, your apparel is never a restriction.",
-                i: "💨",
-                l: "Fabric Science"
-              },
-              {
-                t: "Clinical Integrity",
-                d: "Our textiles are infused with advanced antimicrobial properties and liquid-repellent technology, creating a critical barrier between you and the environmental demands of healthcare.",
-                i: "🧪",
-                l: "Protection"
-              },
-              {
-                t: "Dignified Aesthetics",
-                d: "We believe that when you look professional, you feel empowered. Our sleek, modern silhouettes command respect and instill confidence in both the wearer and their patients.",
-                i: "✨",
-                l: "Design"
-              }
-            ].map(v => (
-              <div key={v.t} style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.1)", padding: "50px 40px", borderRadius: "32px", transition: "transform 0.3s ease" }}>
-                <div style={{ fontSize: "12px", fontWeight: 800, color: "#10b981", textTransform: "uppercase", letterSpacing: "2px", marginBottom: "24px" }}>{v.l}</div>
-                <div style={{ fontSize: "3.5rem", marginBottom: "24px" }}>{v.i}</div>
-                <h4 style={{ fontSize: "1.75rem", fontWeight: 800, marginBottom: "16px" }}>{v.t}</h4>
-                <p style={{ color: "rgba(255,255,255,0.6)", lineHeight: 1.7 }}>{v.d}</p>
+      {/* 3. PRODUCT FEATURE: FLEXI FIT V SCRUBS */}
+      <section className="py-24 px-4 max-w-7xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-16 items-start">
+          {/* Image Side */}
+          <div className="space-y-8">
+            <ImageBox label="SCRUBS_HERO_IMAGE (800x1000)" height="h-[600px]" />
+            <div className="border border-dashed border-teal/40 p-4 rounded-xl">
+              <h3 className="text-2xl font-bold text-navy mb-4">Size Chart : Mens & Womens</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm text-left border-collapse border border-slate-200">
+                  <thead className="bg-navy text-white">
+                    <tr>
+                      <th className="p-2 border">Size</th>
+                      <th className="p-2 border">Chest</th>
+                      <th className="p-2 border">Shoulder</th>
+                      <th className="p-2 border">Length</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {['XS', 'S', 'M', 'L', 'XL', '2XL'].map(s => (
+                      <tr key={s} className="hover:bg-teal/5">
+                        <td className="p-2 border font-bold">{s}</td>
+                        <td className="p-2 border">Standard</td>
+                        <td className="p-2 border">Standard</td>
+                        <td className="p-2 border">Standard</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            ))}
+              <p className="text-xs text-slate-400 mt-2 italic">* Refer to catalog for precise CM measurements.</p>
+            </div>
           </div>
-        </div>
 
-        {/* Section 3: Detailed Content - The Fabric Lab */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "80px", alignItems: "center", marginBottom: "140px" }}>
-          <div style={{ order: 2 }}>
-            <h2 style={{ fontSize: "2.75rem", fontWeight: 900, color: "#0f172a", marginBottom: "32px", lineHeight: 1.2 }}>Innovation Built in the <span style={{ color: "#10b981" }}>Field</span>.</h2>
-            <div style={{ color: "#475569", fontSize: "1.125rem", lineHeight: 1.8 }}>
-              <p style={{ marginBottom: "24px" }}>
-                Unlike generic apparel manufacturers, Medvastr products are not designed behind closed doors. We operate a unique \"Field Innovation Program\" where prototypes are worn by surgeons and residents at top-tier medical institutes for 30-day trial periods.
-              </p>
-              <p style={{ marginBottom: "24px" }}>
-                We analyze every detail—from the angle of chest pockets to the breathability of the fabric under operating theater lights. This iterative feedback loop ensures that by the time a Medvastr scrub reaches you, it has been refined over hundreds of hours of actual clinical usage.
-              </p>
-              <p style={{ marginBottom: "24px" }}>
-                Our commitment to quality is uncompromising. Each yard of fabric undergoes rigorous testing for pilling, color-fastness, and tensile strength. We understand that medical apparel isn't just a uniform—it's safety equipment.
-              </p>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "30px", marginTop: "40px" }}>
-                <div>
-                  <div style={{ fontSize: "2rem", fontWeight: 900, color: "#0f172a" }}>250+</div>
-                  <div style={{ fontSize: "0.9rem", color: "#64748b", fontWeight: 600 }}>Institutes Served</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: "2rem", fontWeight: 900, color: "#0f172a" }}>500,000+</div>
-                  <div style={{ fontSize: "0.9rem", color: "#64748b", fontWeight: 600 }}>Care Hours Supported</div>
-                </div>
+          {/* Details Side */}
+          <div className="space-y-8">
+            <div className="border-b-4 border-teal w-20 mb-6"></div>
+            <h2 className="text-5xl font-black text-navy uppercase italic">Flexi Fit V Scrubs</h2>
+            <ul className="space-y-6 text-lg text-text">
+              <li className="flex gap-4">
+                <span className="text-teal text-2xl">•</span>
+                <p>Engineered specifically to withstand the rigorous demands of a 12-hour shift, utilizing a proprietary, high-performance fabric matrix.</p>
+              </li>
+              <li className="flex gap-4">
+                <span className="text-teal text-2xl">•</span>
+                <p>Crafted from <strong>98% Poly-Viscose (PV) and 2% Lycra</strong>, with an optimal fabric weight of <strong>180 GSM</strong>.</p>
+              </li>
+            </ul>
+            <div className="bg-navy text-white p-8 rounded-3xl">
+              <h4 className="font-bold mb-4 uppercase tracking-widest text-teal">Color Options :</h4>
+              <div className="flex gap-6 items-center">
+                <ColorDot color="#1a1a3a" name="Navy" />
+                <ColorDot color="#93c5fd" name="Light Blue" />
+                <ColorDot color="#4b0082" name="Maroon" />
+                <ColorDot color="#2d1b33" name="Wine" />
               </div>
             </div>
+            <ImageBox label="SCRUBS_MODELS_LIFESTYLE (1200x800)" height="h-[400px]" />
           </div>
-          <div style={{ order: 1 }}>
-            <div style={{
-              aspectRatio: "1/1",
-              borderRadius: "40px",
-              overflow: "hidden",
-              boxShadow: "0 40px 80px -15px rgba(15, 23, 42, 0.15)",
-              background: "#f1f5f9"
-            }}>
-              <img
-                src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop"
-                alt="Clinical Testing"
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
+        </div>
+      </section>
+
+      {/* 4. PRODUCT FEATURE: T-SHIRTS */}
+      <section className="py-24 bg-navy text-white px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
+            <div>
+              <h2 className="text-5xl font-black mb-8 italic">Premium Cotton <br />Crew T-Shirts</h2>
+              <div className="overflow-hidden rounded-2xl">
+                <ImageBox label="TSHIRT_FLAT_LAY (800x600)" height="h-[300px]" dark />
+              </div>
+            </div>
+            <div className="border border-white/20 rounded-2xl overflow-hidden">
+              <div className="bg-white/10 p-4 font-bold text-center border-b border-white/20">PRODUCT SPECIFICATIONS</div>
+              <div className="grid grid-cols-2">
+                <div className="p-4 border-r border-b border-white/20 font-bold bg-white/5">FEATURE</div>
+                <div className="p-4 border-b border-white/20 font-bold bg-white/5">TECHNICAL DETAILS</div>
+                <div className="p-4 border-r border-white/20">Material</div>
+                <div className="p-4 uppercase text-teal font-bold">100% Long-Staple Cotton</div>
+                <div className="p-4 border-r border-t border-white/20">Fabric</div>
+                <div className="p-4 border-t border-white/20">Optimized mid-weight knit for seamless layering.</div>
+              </div>
+            </div>
+          </div>
+          <ImageBox label="TSHIRT_GROUP_LIFESTYLE (1400x800)" height="h-[500px]" dark />
+        </div>
+      </section>
+
+      {/* 5. PRODUCT FEATURE: COMPRESSION */}
+      <section className="py-24 px-4 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-16 items-center">
+          <ImageBox label="COMPRESSION_FLAT (600x600)" height="h-[500px]" />
+          <div className="space-y-8">
+            <h2 className="text-4xl font-black text-navy uppercase italic">Full Sleeves <br />Compression Underscrub</h2>
+            <p className="text-lg text-text">This premium compression underscrub combines the natural thermoregulation of long-staple cotton with the strategic elasticity of Lycra®. It acts as a second skin—minimizing muscle fatigue.</p>
+            <div className="border-2 border-navy rounded-2xl overflow-hidden">
+              <table className="w-full text-left">
+                <tbody>
+                  <tr className="border-b">
+                    <td className="p-4 bg-navy text-white font-bold w-1/3">Material Blend</td>
+                    <td className="p-4 text-navy font-bold italic">Long-Staple Combed Cotton + Premium Lycra</td>
+                  </tr>
+                  <tr className="border-b">
+                    <td className="p-4 bg-navy text-white font-bold">Compression</td>
+                    <td className="p-4 text-navy">Mild-to-Moderate (Optimized for 12-hour wear)</td>
+                  </tr>
+                  <tr>
+                    <td className="p-4 bg-navy text-white font-bold">Sleeve</td>
+                    <td className="p-4 text-navy font-bold uppercase tracking-tight text-xl">Full-Length Tapered</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Section 4: Our Social Commitment */}
-        <div style={{ textAlign: "center", padding: "100px 0", borderTop: "1px solid #f1f5f9" }}>
-          <h2 style={{ fontSize: "2.75rem", fontWeight: 900, color: "#0f172a", marginBottom: "32px" }}>The Healer's Promise</h2>
-          <p style={{ fontSize: "1.25rem", color: "#64748b", maxWidth: "850px", margin: "0 auto", lineHeight: 1.8, marginBottom: "60px" }}>
-            For every 100 sets of scrubs sold, Medvastr donates specialized medical apparel to rural health clinics across India, ensuring that even those serving in the most underserved regions have access to high-quality professional gear.
-          </p>
-          <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: "24px" }}>
-            <div style={{ padding: "30px 50px", background: "#f8fafc", borderRadius: "24px" }}>
-              <div style={{ fontSize: "14px", fontWeight: 800, color: "#10b981", marginBottom: "8px" }}>Impact</div>
-              <div style={{ fontSize: "1.75rem", fontWeight: 800 }}>5,000+ Donations</div>
+      {/* 6. SURGICAL & SPECIAL RANGE */}
+      <section className="py-24 bg-lightGray px-4">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12">
+          <div className="bg-white p-8 rounded-3xl shadow-xl border border-slate-100">
+            <div className="flex gap-6 mb-8">
+              <ImageBox label="SURGICAL_SHOT_1" height="h-[200px]" width="w-1/2" />
+              <ImageBox label="SURGICAL_SHOT_2" height="h-[200px]" width="w-1/2" />
             </div>
-            <div style={{ padding: "30px 50px", background: "#f8fafc", borderRadius: "24px" }}>
-              <div style={{ fontSize: "14px", fontWeight: 800, color: "#10b981", marginBottom: "8px" }}>Network</div>
-              <div style={{ fontSize: "1.75rem", fontWeight: 800 }}>120 Charity Partners</div>
+            <h3 className="text-3xl font-black text-teal uppercase mb-4 italic">Surgical OT Gowns & Caps</h3>
+            <p className="text-text mb-6">Meticulously engineered to provide an impermeable shield against fluids and pathogens while offering maximum breathability.</p>
+            <div className="bg-teal/5 p-4 rounded-xl space-y-2 border border-teal/10">
+              <div className="flex justify-between"><span>OT Gown:</span><span className="font-bold">100% Cotton, 135 GSM</span></div>
+              <div className="flex justify-between"><span>Surgical Cap:</span><span className="font-bold">100% Cotton, 135 GSM</span></div>
+            </div>
+          </div>
+
+          <div className="space-y-8">
+            <div className="bg-navy text-white p-8 rounded-3xl shadow-xl">
+              <h3 className="text-2xl font-bold mb-4 italic underline decoration-teal">Maternity Gown</h3>
+              <div className="grid grid-cols-2 gap-4 text-sm opacity-80">
+                <div>Material: Poly Cotton</div>
+                <div>Access: IV/Nursing/Epidural</div>
+                <div>Color: Dark Maroon</div>
+                <div>Size: Free Size</div>
+              </div>
+            </div>
+            <div className="bg-white p-8 rounded-3xl border border-navy/10 shadow-xl">
+              <h3 className="text-2xl font-bold text-navy mb-4 italic">Patient Dress</h3>
+              <div className="space-y-4">
+                <div className="border-l-4 border-teal pl-4">
+                  <h4 className="font-bold text-sm uppercase">General Ward</h4>
+                  <p className="text-xs text-text">Two-piece top-and-trouser sets. Easy-tie soft-snap closures.</p>
+                </div>
+                <div className="border-l-4 border-wine pl-4">
+                  <h4 className="font-bold text-sm uppercase">Pediatric Collection</h4>
+                  <p className="text-xs text-text">Ultra-soft, vibrant, and distraction printed garments. 100% Cotton.</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Closing Narrative - Call to connection */}
-        <div style={{
-          background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
-          borderRadius: "50px",
-          padding: "80px 40px",
-          textAlign: "center",
-          color: "white",
-          boxShadow: "0 30px 60px rgba(16, 185, 129, 0.25)"
-        }}>
-          <h2 style={{ fontSize: "3rem", fontWeight: 900, marginBottom: "24px" }}>Join the Movement.</h2>
-          <p style={{ fontSize: "1.35rem", marginBottom: "48px", maxWidth: "700px", margin: "0 auto 48px", opacity: 0.9 }}>
-            Whether you are a medical student starting your first internship or a department head overseeing a major hospital, you are part of the Medvastr family. We are here to support you so you can focus on what matters most—saving lives.
-          </p>
-          <div style={{ fontSize: "1.125rem", fontWeight: 700, fontStyle: "italic" }}>
-            Medvastr — Wear Your Dedication.
-          </div>
-        </div>
+      {/* CALL TO ACTION */}
+      <section className="py-24 text-center px-4">
+        <h2 className="text-5xl font-black text-navy mb-8 italic">Experience the Difference.</h2>
+        <p className="text-xl text-text max-w-2xl mx-auto mb-12">
+          Join thousands of healthcare professionals who have switched to Medvastr for better comfort, better performance, and better care.
+        </p>
+        <button className="bg-teal hover:bg-navy text-white px-12 py-5 rounded-full text-xl font-bold transition-all shadow-2xl hover:-translate-y-1">
+          Explore Catalog
+        </button>
+      </section>
+    </div>
+  );
+}
 
+function PromiseCard({ title, desc }: { title: string; desc: string }) {
+  return (
+    <div className="bg-white p-10 rounded-3xl shadow-lg border border-slate-100 hover:shadow-2xl transition-all">
+      <h3 className="text-2xl font-black text-navy uppercase mb-4 italic border-b-2 border-teal w-fit">{title}</h3>
+      <p className="text-text leading-relaxed italic">{desc}</p>
+    </div>
+  );
+}
+
+function ImageBox({ label, height, width = "w-full", dark = false }: { label: string; height: string; width?: string; dark?: boolean }) {
+  return (
+    <div className={`${width} ${height} rounded-2xl border-4 border-dashed border-teal/20 ${dark ? 'bg-white/5' : 'bg-slate-50'} flex flex-col items-center justify-center p-8 text-center transition-all hover:bg-teal/5`}>
+      <div className={`w-16 h-16 rounded-full ${dark ? 'bg-white/10' : 'bg-navy/5'} flex items-center justify-center mb-4`}>
+        <span className="text-2xl">📸</span>
       </div>
+      <p className={`font-bold ${dark ? 'text-white/40' : 'text-navy/40'} text-sm uppercase tracking-widest`}>{label}</p>
+      <p className={`text-[10px] mt-2 ${dark ? 'text-white/20' : 'text-slate-400'}`}>Upload via S3 then replace this src</p>
+    </div>
+  );
+}
+
+function ColorDot({ color, name }: { color: string; name: string }) {
+  return (
+    <div className="flex flex-col items-center gap-2 group cursor-default">
+      <div
+        className="w-10 h-10 rounded-full border-2 border-white/20 shadow-lg group-hover:scale-110 transition-all"
+        style={{ backgroundColor: color }}
+      />
+      <span className="text-[10px] font-bold uppercase tracking-tight text-white/60">{name}</span>
     </div>
   );
 }
