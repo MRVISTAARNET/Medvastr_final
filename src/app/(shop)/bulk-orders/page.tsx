@@ -295,7 +295,11 @@ export default function BulkOrderPage() {
                 <div style={{ padding: '24px' }}>
                   <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>{item.t}</h4>
                   <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '16px' }}>{item.d}</p>
-                  <button style={{ width: '100%', padding: '12px', background: '#0f172a', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>Inquire for {item.t}</button>
+                  <Link href="/contact" style={{ display: 'block', textDecoration: 'none' }}>
+                    <button style={{ width: '100%', padding: '12px', background: '#0f172a', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>
+                      Inquire for {item.t}
+                    </button>
+                  </Link>
                 </div>
               </div>
             ))}
