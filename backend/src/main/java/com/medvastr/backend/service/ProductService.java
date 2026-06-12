@@ -159,11 +159,16 @@ public class ProductService {
         p.setWeight(r.getWeight());
         p.setFit(r.getFit());
         p.setVideoUrl(r.getVideoUrl());
-        if (r.getShortDescription() != null) p.setShortDescription(r.getShortDescription());
-        if (r.getMaterial() != null) p.setMaterial(r.getMaterial());
-        if (r.getTags() != null) p.setTags(r.getTags());
-        if (r.getSeoTitle() != null) p.setSeoTitle(r.getSeoTitle());
-        if (r.getSeoDescription() != null) p.setSeoDescription(r.getSeoDescription());
+        if (r.getShortDescription() != null)
+            p.setShortDescription(r.getShortDescription());
+        if (r.getMaterial() != null)
+            p.setMaterial(r.getMaterial());
+        if (r.getTags() != null)
+            p.setTags(r.getTags());
+        if (r.getSeoTitle() != null)
+            p.setSeoTitle(r.getSeoTitle());
+        if (r.getSeoDescription() != null)
+            p.setSeoDescription(r.getSeoDescription());
 
         if (r.getCategoryId() != null)
             catRepo.findById(r.getCategoryId()).ifPresent(p::setCategory);
@@ -325,6 +330,7 @@ public class ProductService {
                                         .stockQuantity(v.getStockQuantity())
                                         .sku(v.getSku())
                                         .imageUrl(v.getImageUrl())
+                                        .active(v.getActive())
                                         .build())
                                 .collect(Collectors.toList()))
                 .sizes(

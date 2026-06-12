@@ -292,11 +292,12 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("Product not found: " + itemReq.getProductId()));
         ProductVariant variant = resolveVariant(product, itemReq);
         if (variant != null) {
-            if (!variant.isActive()) {
+            if (!variant.getActive()) {
                 throw new RuntimeException("Variant unavailable for " + product.getName());
             }
             if (variant.getStockQuantity() < itemReq.getQuantity()) {
-                throw new RuntimeException("Insufficient stock for " + product.getName() + " (" + variant.getSize() + ")");
+                throw new RuntimeException(
+                        "Insufficient stock for " + product.getName() + " (" + variant.getSize() + ")");
             }
         }
         BigDecimal unitPrice = variant != null && variant.getVariantPrice() != null
@@ -321,13 +322,16 @@ public class OrderService {
             return variantRepo.findByIdAndProductId(itemReq.getVariantId(), product.getId()).orElse(null);
         }
         if (itemReq.getSize() != null && itemReq.getColorHex() != null) {
-            return variantRepo.findByProductIdAndSizeAndColorHex(product.getId(), itemReq.getSize(), itemReq.getColorHex()).orElse(null);
+            return variantRepo
+                    .findByProductIdAndSizeAndColorHex(product.getId(), itemReq.getSize(), itemReq.getColorHex())
+                    .orElse(null);
         }
         return null;
     }
 
     private void decrementStock(Order order) {
-        if (order.getItems() == null) return;
+        if (order.getItems() == null)
+            return;
         for (OrderItem item : order.getItems()) {
             if (item.getVariant() != null) {
                 ProductVariant v = variantRepo.findById(item.getVariant().getId()).orElse(null);

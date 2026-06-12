@@ -1,4 +1,7 @@
+"use client";
 import React from 'react';
+import { useApp } from "@/context/AppContext";
+import { normalizeMediaUrl } from "@/lib/api";
 
 export default function SizeGuidePage() {
   const S = {
@@ -116,13 +119,25 @@ export default function SizeGuidePage() {
     </div>
   );
 
+  const { banners } = useApp();
+  const banner = banners.find((b: any) => b.isActive && b.position === "SIZE_GUIDE");
+
   return (
     <div style={S.wrap}>
-      {/* Banner Placeholder */}
-      <div style={{ width: '100%', height: '320px', background: 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)', borderRadius: '24px', marginBottom: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', fontWeight: 700, fontSize: '18px', border: '2px dashed #94a3b8', position: 'relative', overflow: 'hidden' }}>
-        <img style={{ display: 'none' }} src="YOUR_BANNER_IMAGE_PATH_HERE.jpg" alt="Size Guide Banner" />
-        <div>Replace this div with your <code style={{ background: 'white', padding: '4px 8px', borderRadius: '6px' }}>&lt;img&gt;</code> tag</div>
-      </div>
+      {/* Banner Section */}
+      {banner ? (
+        <div style={{ width: '100%', height: '320px', borderRadius: '24px', marginBottom: '40px', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}>
+          <img
+            src={normalizeMediaUrl(banner.imageUrl)}
+            alt="Size Guide Header"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        </div>
+      ) : (
+        <div style={{ width: '100%', height: '320px', background: 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)', borderRadius: '24px', marginBottom: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748b', fontWeight: 700, fontSize: '18px', border: '2px dashed #94a3b8' }}>
+          Medvastr Premium Uniforms
+        </div>
+      )}
 
       <div style={S.hero}>
         <div style={{ position: 'absolute', top: 0, right: 0, opacity: 0.1, fontSize: '160px', transform: 'translate(20%, -30%)' }}>📏</div>

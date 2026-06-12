@@ -18,5 +18,6 @@ public class VariantDTO {
     private Integer stockQuantity;
     /** Primary product photo for this color (set on one variant per color) */
     private String imageUrl;
+    @Builder.Default
+    private Boolean active = true;
 }
-

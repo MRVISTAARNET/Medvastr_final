@@ -63,7 +63,7 @@ public class ProductVariant {
 
     @Column(name = "is_active")
     @Builder.Default
-    private boolean active = true;
+    private Boolean active = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "color_id")
@@ -82,4 +82,3 @@ public class ProductVariant {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 }
-
