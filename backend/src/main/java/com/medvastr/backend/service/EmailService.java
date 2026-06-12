@@ -34,7 +34,7 @@ public class EmailService {
 
     @Async
     public void sendPasswordResetEmail(String toEmail, String token) {
-        String resetLink = frontendUrl + "/reset-password?token=" + token;
+        String resetLink = frontendUrl + "/auth-verify?token=" + token;
         String html = getPasswordResetHtml(toEmail, resetLink);
         sendHtmlEmail(toEmail, "Reset Your Medvastr Password", html, "support@medvastr.com", "Medvastr Support");
     }
