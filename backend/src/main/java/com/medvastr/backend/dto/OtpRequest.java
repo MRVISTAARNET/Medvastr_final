@@ -12,8 +12,6 @@ public class OtpRequest {
     @NotBlank
     private String email;
 
-    @NotBlank
-    @Size(min = 6, max = 6)
-    @JsonAlias("otpCode") // frontend sends "otpCode", backend stores as "otp"
+    @JsonAlias({ "otpCode", "code" }) // frontend sends "otpCode" or "code", backend stores as "otp"
     private String otp;
 }

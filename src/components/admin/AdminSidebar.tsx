@@ -53,7 +53,6 @@ const AdminSidebar = () => {
     {
       section: 'Settings', items: [
         { name: 'Settings', icon: '⚙️', href: '/admin/settings' },
-        { name: 'Appearance', icon: '🎨', href: '/admin/appearance' },
       ]
     },
   ];
