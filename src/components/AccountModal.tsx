@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useApp } from "@/context/AppContext";
+import { API_BASE } from "@/lib/api";
 
 export default function AccountModal({ onClose }: { onClose: () => void }) {
   const { user, login, register, logout, requestOtp, loginWithOtp } = useApp();
@@ -53,8 +54,7 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
     if (!fpEmail) { setFpMsg("Please enter your email."); return; }
     setFpLoading(true); setFpMsg("");
     try {
-      const apiBase = process.env.NEXT_PUBLIC_API_URL || "https://api.medvastr.com";
-      await fetch(`${apiBase}/api/auth/forgot-password?email=${encodeURIComponent(fpEmail)}`, { method: "POST" });
+      await fetch(`${API_BASE}/auth/forgot-password?email=${encodeURIComponent(fpEmail)}`, { method: "POST" });
       setFpMsg("✅ If this email is registered, a reset link has been sent. Please check your inbox.");
     } catch { setFpMsg("❌ Network error. Please try again."); }
     setFpLoading(false);
