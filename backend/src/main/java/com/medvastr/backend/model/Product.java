@@ -42,7 +42,7 @@ public class Product {
     @Column(nullable = false, unique = true)
     private String slug;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "LONGTEXT")
     private String description;
 
     @Column(nullable = false, precision = 10, scale = 2)
@@ -52,6 +52,23 @@ public class Product {
     private BigDecimal originalPrice;
 
     private String fabric;
+    private String material;
+
+    @Column(length = 500)
+    private String tags;
+
+    @Column(length = 300)
+    private String seoTitle;
+
+    @Column(length = 500)
+    private String seoDescription;
+
+    @Column(length = 20)
+    @Builder.Default
+    private String productStatus = "ACTIVE";
+
+    @Column(columnDefinition = "TEXT")
+    private String shortDescription;
 
     @Column(nullable = false, length = 60)
     private String type;
@@ -63,6 +80,7 @@ public class Product {
     private String brand;
     private String styleId;
     private String barcode;
+    @Column(unique = true, length = 100)
     private String sku;
     private String emoji;
     private String bgColor;
@@ -90,6 +108,10 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subcategory_id")
+    private Category subcategory;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default

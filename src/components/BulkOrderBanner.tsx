@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { API_BASE } from "@/lib/api";
 
 export default function BulkOrderBanner() {
-  const [bg, setBg] = useState("/ChatGPT Image May 13, 2026, 04_40_07 PM.png");
+  const [bg, setBg] = useState("");
 
   useEffect(() => {
     fetch(`${API_BASE}/settings/bulk_banner`)

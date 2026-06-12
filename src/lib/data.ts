@@ -61,6 +61,12 @@ export interface Product {
   returned?: number;
   active?: boolean;
   videoUrl?: string;
+  createdAt?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  shortDescription?: string;
+  material?: string;
+  tags?: string;
 }
 
 export const PRODUCTS: Product[] = [];
@@ -68,7 +74,7 @@ export const PRODUCTS: Product[] = [];
 
 export const SLIDES = [
   {
-    img: "/Last_Day_Website_Home_page_Desktop_Banner.webp",
+    img: "",
     ey: "Limited Time Offer",
     h: "Premium Scrubs for",
     em: " Professionals",
@@ -77,7 +83,7 @@ export const SLIDES = [
     c2: "Learn More",
   },
   {
-    img: "/Frame_427318647_b55627fb-fb8e-4269-ad82-14a24ef28647.webp",
+    img: "",
     ey: "Supply List 2026",
     h: "Premium Hospital",
     em: " Linen",
@@ -85,15 +91,6 @@ export const SLIDES = [
     c1: "Explore Linen",
     c2: "View All",
   },
-  /* {
-    img: "/Steth_Landing_Page_Banner_Desktop_1.webp",
-    ey: "Diagnostic Excellence",
-    h: "6sense Stethoscopes",
-    em: " Precision",
-    p: "Unmatched acoustic clarity. 30-day free trial. Trusted by 10,000+ doctors.",
-    c1: "Shop Stethoscope",
-    c2: "View Features",
-  }, */
 ];
 
 export const REVIEWS: any[] = [];

@@ -13,7 +13,8 @@ import { useApp } from "@/context/AppContext";
 import { API_BASE } from "@/lib/api";
 
 export default function Home() {
-  const { products } = useApp();
+  const { products, banners } = useApp();
+  const promoBanners = banners.filter((b: any) => b.isActive && (b.position === "PROMO" || b.position === "HOME_MIDDLE"));
   const TABS = [
     { id: "scrubs", label: "Uniforms & Scrubs", type: "scrubs" },
     { id: "linen", label: "Linen & Bedding", type: "linen" },
@@ -155,26 +156,33 @@ export default function Home() {
         )}
       </div>
 
-      {/* PROMO */}
+      {/* PROMO BANNERS (admin-driven) */}
       <div className="promo-duo">
-        <div className="promo-h" style={{ background: "#091220" }}>
-          <div className="promo-em">👕</div>
-          <div className="promo-ey">Bestseller</div>
-          <div className="promo-tt">Flexy Fit 'V' Scrub</div>
-          <div className="promo-bd">Available in Dark Blue, Light Blue, Maroon & Wine. Sizes M to XXL.</div>
-          <Link href="/products?cat=scrubs" className="btn-t">
-            Shop Flexy Fit Scrub →
-          </Link>
-        </div>
-        <div className="promo-h" style={{ background: "#2d6a4f" }}>
-          <div className="promo-em">🥼</div>
-          <div className="promo-ey">New Collection</div>
-          <div className="promo-tt">Green OT Gown</div>
-          <div className="promo-bd">Free size. 100% Cotton. Ideal for OT & surgical environments.</div>
-          <Link href="/products?cat=surgical" className="btn-d">
-            Shop Green OT Gown →
-          </Link>
-        </div>
+        {promoBanners.length > 0 ? (
+          promoBanners.slice(0, 2).map((b: any) => (
+            <div key={b.id} className="promo-h" style={{ backgroundImage: b.imageUrl ? `url(${b.imageUrl})` : undefined, backgroundSize: "cover", backgroundPosition: "center", minHeight: 220 }}>
+              <div className="promo-tt">{b.title}</div>
+              {b.linkUrl && (
+                <Link href={b.linkUrl} className="btn-t">Shop Now →</Link>
+              )}
+            </div>
+          ))
+        ) : (
+          <>
+            <div className="promo-h" style={{ background: "#091220" }}>
+              <div className="promo-em">👕</div>
+              <div className="promo-ey">Bestseller</div>
+              <div className="promo-tt">Flexy Fit &apos;V&apos; Scrub</div>
+              <Link href="/products?cat=scrubs" className="btn-t">Shop Flexy Fit Scrub →</Link>
+            </div>
+            <div className="promo-h" style={{ background: "#2d6a4f" }}>
+              <div className="promo-em">🥼</div>
+              <div className="promo-ey">New Collection</div>
+              <div className="promo-tt">Green OT Gown</div>
+              <Link href="/products?cat=surgical" className="btn-d">Shop Green OT Gown →</Link>
+            </div>
+          </>
+        )}
       </div>
 
       {/* NEW ARRIVALS */}

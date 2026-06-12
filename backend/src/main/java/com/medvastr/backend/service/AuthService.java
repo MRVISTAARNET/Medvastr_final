@@ -41,8 +41,16 @@ public class AuthService {
             throw new RuntimeException("Email already registered");
 
         User u = User.builder()
-                .firstName(r.getFirstName())
-                .lastName(r.getLastName())
+                .firstName(
+                        r.getFirstName() == null || r.getFirstName().trim().isEmpty()
+                                ? "User"
+                                : r.getFirstName()
+                )
+                .lastName(
+                        r.getLastName() == null || r.getLastName().trim().isEmpty()
+                                ? "User"
+                                : r.getLastName()
+                )
                 .email(r.getEmail())
                 .phone(r.getPhone())
                 .password(encoder.encode(r.getPassword()))

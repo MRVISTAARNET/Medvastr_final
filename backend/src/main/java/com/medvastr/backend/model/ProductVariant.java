@@ -15,7 +15,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -44,10 +46,40 @@ public class ProductVariant {
     @Column(unique = true, length = 100)
     private String sku;
 
+    @Column(length = 100)
+    private String barcode;
+
+    @Column(precision = 10, scale = 2)
+    private BigDecimal variantPrice;
+
+    @Column(precision = 10, scale = 2)
+    private BigDecimal variantOriginalPrice;
+
+    @Builder.Default
+    private boolean isDefault = false;
+
+    @Builder.Default
+    private Integer displayOrder = 0;
+
+    @Column(name = "is_active")
+    @Builder.Default
+    private boolean active = true;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "color_id")
+    private ProductColor color;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "size_id")
+    private ProductSize sizeMaster;
+
     @Column(length = 500)
     private String imageUrl;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }
 

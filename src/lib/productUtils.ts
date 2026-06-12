@@ -100,7 +100,22 @@ export function mapApiProduct(p: any): Product {
     variants,
     active: p.active !== undefined ? p.active : true,
     videoUrl: p.videoUrl || "",
+    createdAt: p.createdAt || undefined,
+    seoTitle: p.seoTitle,
+    seoDescription: p.seoDescription,
+    shortDescription: p.shortDescription,
+    material: p.material,
+    tags: p.tags,
   };
+}
+
+/** Resolve variant ID from product variants by size + color hex */
+export function resolveVariantId(product: Product, size: string, colorHex: string): number | undefined {
+  const variants = product.variants || [];
+  const match = variants.find(
+    (v: any) => v.size === size && (v.colorHex === colorHex || !v.colorHex)
+  );
+  return match?.id;
 }
 
 /** Images to show for a color swatch index on PDP / product cards */
@@ -156,5 +171,10 @@ export function toApiProductRequest(p: any) {
     imageUrls: imgs,
     videoUrl: p.videoUrl,
     variants: p.variants,
+    shortDescription: p.shortDescription,
+    material: p.material,
+    tags: p.tags,
+    seoTitle: p.seoTitle,
+    seoDescription: p.seoDescription,
   };
 }

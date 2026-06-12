@@ -66,8 +66,8 @@ public class AuthController {
             req.setPhone("");
             s.register(req);
         }
-        String otp = otpService.generateOtp(r.getEmail());
-        emailService.sendOtpEmail(r.getEmail(), otp);
+        // OTP service now handles both generation and sending
+        otpService.generateAndSendOtp(r.getEmail());
         log.info("[OTP] Code sent to {}", r.getEmail());
         return ResponseEntity.ok(ApiResponse.ok("Verification code sent to " + r.getEmail(), null));
     }
@@ -75,7 +75,7 @@ public class AuthController {
     // ── OTP: Verify code and log in ────────────────────────────────────────
     @PostMapping("/otp-login")
     public ResponseEntity<ApiResponse<AuthResponse>> otpLogin(@RequestBody @Valid OtpRequest r) {
-        log.info("[OTP] Login attempt for email: {} with code: {}", r.getEmail(), r.getOtp());
+        log.info("[OTP] Login attempt for email: {}", r.getEmail());
         if (r.getOtp() == null || r.getOtp().isBlank()) {
             return ResponseEntity.badRequest().body(ApiResponse.err("OTP code is required."));
         }

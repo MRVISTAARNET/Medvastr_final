@@ -111,6 +111,11 @@ public class ProductService {
                 .weight(r.getWeight())
                 .fit(r.getFit())
                 .videoUrl(r.getVideoUrl())
+                .shortDescription(r.getShortDescription())
+                .material(r.getMaterial())
+                .tags(r.getTags())
+                .seoTitle(r.getSeoTitle())
+                .seoDescription(r.getSeoDescription())
                 .slug(slug(r.getName()))
                 .build();
 
@@ -154,6 +159,11 @@ public class ProductService {
         p.setWeight(r.getWeight());
         p.setFit(r.getFit());
         p.setVideoUrl(r.getVideoUrl());
+        if (r.getShortDescription() != null) p.setShortDescription(r.getShortDescription());
+        if (r.getMaterial() != null) p.setMaterial(r.getMaterial());
+        if (r.getTags() != null) p.setTags(r.getTags());
+        if (r.getSeoTitle() != null) p.setSeoTitle(r.getSeoTitle());
+        if (r.getSeoDescription() != null) p.setSeoDescription(r.getSeoDescription());
 
         if (r.getCategoryId() != null)
             catRepo.findById(r.getCategoryId()).ifPresent(p::setCategory);
@@ -276,6 +286,11 @@ public class ProductService {
                 .name(p.getName())
                 .slug(p.getSlug())
                 .description(p.getDescription())
+                .shortDescription(p.getShortDescription())
+                .material(p.getMaterial())
+                .tags(p.getTags())
+                .seoTitle(p.getSeoTitle())
+                .seoDescription(p.getSeoDescription())
                 .price(p.getPrice())
                 .originalPrice(p.getOriginalPrice())
                 .fabric(p.getFabric())

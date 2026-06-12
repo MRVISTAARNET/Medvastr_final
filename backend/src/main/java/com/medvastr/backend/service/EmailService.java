@@ -1,8 +1,9 @@
 package com.medvastr.backend.service;
 
+import com.medvastr.backend.model.Inquiry;
 import com.medvastr.backend.model.Order;
 import com.medvastr.backend.model.OrderItem;
-import com.medvastr.backend.model.Inquiry;
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,8 +11,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.HtmlUtils;
 
-import jakarta.mail.internet.MimeMessage;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -35,7 +36,6 @@ public class EmailService {
     public void sendPasswordResetEmail(String toEmail, String token) {
         String resetLink = frontendUrl + "/reset-password?token=" + token;
         String html = getPasswordResetHtml(toEmail, resetLink);
-
         sendHtmlEmail(toEmail, "Reset Your Medvastr Password", html, "support@medvastr.com", "Medvastr Support");
     }
 
@@ -48,15 +48,21 @@ public class EmailService {
 
     @Async
     public void sendInquiryNotification(Inquiry i) {
-        String html = "<h2>New " + i.getType() + "</h2>" +
-                "<p><b>Name:</b> " + i.getName() + "</p>" +
-                "<p><b>Email:</b> " + i.getEmail() + "</p>" +
-                "<p><b>Phone:</b> " + i.getPhone() + "</p>" +
-                "<p><b>Message:</b> " + i.getMessage() + "</p>";
+        String safeName = HtmlUtils.htmlEscape(i.getName());
+        String safeEmail = HtmlUtils.htmlEscape(i.getEmail());
+        String safePhone = HtmlUtils.htmlEscape(i.getPhone() != null ? i.getPhone() : "");
+        String safeMessage = HtmlUtils.htmlEscape(i.getMessage());
+        String safeType = HtmlUtils.htmlEscape(i.getType());
+
+        String html = "<h2>New " + safeType + "</h2>" +
+                "<p><b>Name:</b> " + safeName + "</p>" +
+                "<p><b>Email:</b> " + safeEmail + "</p>" +
+                "<p><b>Phone:</b> " + safePhone + "</p>" +
+                "<p><b>Message:</b> " + safeMessage + "</p>";
         sendHtmlEmail("info@medvastr.com", "New Inquiry: " + i.getType(), html, "no-reply@medvastr.com",
                 "Medvastr Bot");
-        // Also send auto-reply to user
-        String replyHtml = "<p>Hi " + i.getName()
+
+        String replyHtml = "<p>Hi " + safeName
                 + ",</p><p>We received your inquiry and our team will get back to you within 24 hours.</p><p>Regards,<br>Medvastr Team</p>";
         sendHtmlEmail(i.getEmail(), "Inquiry Received", replyHtml, "info@medvastr.com", "Medvastr Support");
     }
@@ -66,7 +72,7 @@ public class EmailService {
         String html = """
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 12px; overflow: hidden;">
                     <div style="background: #1a2b4a; padding: 30px; text-align: center; color: white;">
-                        <h1 style="margin: 0; font-size: 24px;">🔐 Your Login OTP</h1>
+                        <h1 style="margin: 0; font-size: 24px;">Your Login OTP</h1>
                     </div>
                     <div style="padding: 40px; color: #333; line-height: 1.6;">
                         <p>Hello,</p>
@@ -81,8 +87,7 @@ public class EmailService {
                 </div>
                 """
                 .formatted(otpCode);
-        sendHtmlEmail(toEmail, "Your Medvastr Verification Code: " + otpCode, html, "auth@medvastr.com",
-                "Medvastr Auth");
+        sendHtmlEmail(toEmail, "Your Medvastr Verification Code", html, "info@medvastr.com", "Medvastr");
     }
 
     @Async
@@ -90,17 +95,16 @@ public class EmailService {
         String html = """
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 12px; overflow: hidden;">
                     <div style="background: %s; padding: 30px; text-align: center; color: white;">
-                        <h1 style="margin: 0; font-size: 24px;">Welcome to Medvastr! 🌿</h1>
+                        <h1 style="margin: 0; font-size: 24px;">Welcome to Medvastr!</h1>
                     </div>
                     <div style="padding: 40px; color: #333; line-height: 1.6;">
                         <p>Hello,</p>
-                        <p>Thank you for subscribing to the Medvastr newsletter! You're now on the list to receive exclusive updates, healthcare style tips, and first access to our new arrivals.</p>
+                        <p>Thank you for subscribing to the Medvastr newsletter!</p>
                         <p>As a thank you, here is your welcome discount code:</p>
                         <div style="text-align: center; margin: 30px 0; padding: 20px; background: #f9f9f9; border-radius: 12px; border: 2px dashed #008080;">
                             <span style="font-size: 24px; font-weight: bold; color: #008080; letter-spacing: 2px;">MEDVASTR10</span>
                             <div style="font-size: 12px; color: #666; margin-top: 5px;">Use this code at checkout for 10%% OFF your first order.</div>
                         </div>
-                        <p>Stay tuned for amazing content!</p>
                         <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
                         <p style="font-size: 14px;">Team Medvastr</p>
                     </div>
@@ -124,7 +128,7 @@ public class EmailService {
             mailSender.send(msg);
             log.info("[EmailService] Email sent to {} | Subject: {}", to, subject);
         } catch (Exception ex) {
-            log.error("[EmailService] Failed to send email to {}: {}", to, ex.getMessage());
+            log.error("[EmailService] Failed to send email to {}", to, ex);
         }
     }
 
@@ -132,7 +136,7 @@ public class EmailService {
         return """
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 12px; overflow: hidden;">
                     <div style="background: %s; padding: 30px; text-align: center; color: white;">
-                        <h1 style="margin: 0; font-size: 24px;">🔒 Password Reset</h1>
+                        <h1 style="margin: 0; font-size: 24px;">Password Reset</h1>
                     </div>
                     <div style="padding: 40px; color: #333; line-height: 1.6;">
                         <p>Hello,</p>
@@ -147,7 +151,7 @@ public class EmailService {
                     </div>
                 </div>
                 """
-                .formatted(SECONDARY_COLOR, email, link, BRAND_COLOR);
+                .formatted(SECONDARY_COLOR, HtmlUtils.htmlEscape(email), link, BRAND_COLOR);
     }
 
     private String getOrderConfirmationHtml(Order order) {
@@ -164,7 +168,11 @@ public class EmailService {
                             </td>
                             <td style="padding: 12px 0; border-bottom: 1px solid #eee; text-align: right;">%d × %s</td>
                         </tr>
-                        """.formatted(item.getProductName(), item.getSize(), item.getColorName(), item.getQuantity(),
+                        """.formatted(
+                        HtmlUtils.htmlEscape(item.getProductName()),
+                        HtmlUtils.htmlEscape(item.getSize()),
+                        HtmlUtils.htmlEscape(item.getColorName()),
+                        item.getQuantity(),
                         nf.format(item.getUnitPrice())));
             }
         }
@@ -172,13 +180,12 @@ public class EmailService {
         return """
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 12px; overflow: hidden;">
                     <div style="background: %s; padding: 30px; text-align: center; color: white;">
-                        <h1 style="margin: 0; font-size: 24px;">✨ Order Confirmed!</h1>
+                        <h1 style="margin: 0; font-size: 24px;">Order Confirmed!</h1>
                         <p style="margin: 8px 0 0; opacity: 0.8;">Thank you for shopping with Medvastr</p>
                     </div>
                     <div style="padding: 40px; color: #333; line-height: 1.6;">
                         <p>Hello <b>%s</b>,</p>
                         <p>Your order <b>#%s</b> has been successfully placed. We're getting it ready for shipment!</p>
-
                         <div style="background: #fdfdfd; border: 1px solid #eee; border-radius: 8px; padding: 20px; margin: 25px 0;">
                             <h3 style="margin-top: 0; font-size: 16px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Order Summary</h3>
                             <table style="width: 100%%; border-collapse: collapse;">
@@ -189,14 +196,12 @@ public class EmailService {
                                 </tr>
                             </table>
                         </div>
-
                         <div style="margin-top: 25px;">
                             <h3 style="font-size: 16px;">Shipping Address</h3>
                             <p style="font-size: 14px; color: #555; margin: 5px 0;">
                                 %s<br>%s, %s - %s
                             </p>
                         </div>
-
                         <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
                         <p style="font-size: 14px;">Questions about your order? Reach us at <a href="mailto:support@medvastr.com" style="color: %s;">support@medvastr.com</a></p>
                     </div>
@@ -205,8 +210,17 @@ public class EmailService {
                     </div>
                 </div>
                 """
-                .formatted(BRAND_COLOR, order.getShippingName(), order.getOrderNumber(), itemsHtml.toString(),
-                        BRAND_COLOR, nf.format(order.getTotalAmount()), order.getShippingAddress(),
-                        order.getShippingCity(), order.getShippingState(), order.getShippingPincode(), BRAND_COLOR);
+                .formatted(
+                        BRAND_COLOR,
+                        HtmlUtils.htmlEscape(order.getShippingName()),
+                        HtmlUtils.htmlEscape(order.getOrderNumber()),
+                        itemsHtml.toString(),
+                        BRAND_COLOR,
+                        nf.format(order.getTotalAmount()),
+                        HtmlUtils.htmlEscape(order.getShippingAddress()),
+                        HtmlUtils.htmlEscape(order.getShippingCity()),
+                        HtmlUtils.htmlEscape(order.getShippingState()),
+                        HtmlUtils.htmlEscape(order.getShippingPincode()),
+                        BRAND_COLOR);
     }
 }

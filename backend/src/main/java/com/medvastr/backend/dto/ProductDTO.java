@@ -18,6 +18,11 @@ public class ProductDTO {
     private String name;
     private String slug;
     private String description;
+    private String shortDescription;
+    private String material;
+    private String tags;
+    private String seoTitle;
+    private String seoDescription;
     private String fabric;
     private String type;
     private String gender;

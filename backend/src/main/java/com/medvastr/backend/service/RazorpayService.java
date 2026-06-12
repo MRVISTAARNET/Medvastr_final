@@ -1,17 +1,16 @@
 package com.medvastr.backend.service;
 
+import com.medvastr.backend.model.StoreSetting;
+import com.medvastr.backend.repository.StoreSettingRepository;
 import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import com.razorpay.Utils;
-import com.medvastr.backend.model.StoreSetting;
-import com.medvastr.backend.repository.StoreSettingRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import jakarta.annotation.PostConstruct;
 import java.math.BigDecimal;
 
 @Service
@@ -23,6 +22,9 @@ public class RazorpayService {
 
     @Value("${razorpay.key.secret}")
     private String keySecret;
+
+    @Value("${razorpay.webhook.secret:}")
+    private String webhookSecret;
 
     private final StoreSettingRepository storeSettingRepo;
 
@@ -42,28 +44,18 @@ public class RazorpayService {
         return new RazorpayClient(getDbKeyId(), getDbKeySecret());
     }
 
-    /**
-     * Create a Razorpay Order
-     * 
-     * @param amount  In INR (e.g. 1099.00)
-     * @param receipt Our internal order/receipt ID
-     * @return Razorpay Order ID
-     */
     public String createOrder(BigDecimal amount, String receipt) throws RazorpayException {
         JSONObject orderRequest = new JSONObject();
-        // Razorpay expects amount in paise (multiply by 100)
         orderRequest.put("amount", amount.multiply(new BigDecimal(100)).intValue());
         orderRequest.put("currency", "INR");
         orderRequest.put("receipt", receipt);
-        orderRequest.put("payment_capture", 1); // Auto-capture
+        orderRequest.put("payment_capture", 1);
 
         Order order = getClient().orders.create(orderRequest);
-        return order.get("id");
+        log.info("Razorpay order created for receipt {}", receipt);
+        return order.get("id").toString();
     }
 
-    /**
-     * Verify Payment Signature
-     */
     public boolean verifySignature(String orderId, String paymentId, String signature) {
         try {
             JSONObject attributes = new JSONObject();
@@ -73,7 +65,20 @@ public class RazorpayService {
 
             return Utils.verifyPaymentSignature(attributes, getDbKeySecret());
         } catch (RazorpayException e) {
-            log.error("Signature verification failed", e);
+            log.error("Signature verification failed for order {}", orderId);
+            return false;
+        }
+    }
+
+    public boolean verifyWebhookSignature(String payload, String signature) {
+        if (webhookSecret == null || webhookSecret.isBlank()) {
+            log.warn("Razorpay webhook secret not configured — rejecting webhook");
+            return false;
+        }
+        try {
+            return Utils.verifyWebhookSignature(payload, signature, webhookSecret);
+        } catch (RazorpayException e) {
+            log.error("Webhook signature verification failed");
             return false;
         }
     }

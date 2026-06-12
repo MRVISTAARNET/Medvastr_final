@@ -1,5 +1,6 @@
 package com.medvastr.backend.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChangePasswordRequest {
+    @NotBlank
     private String currentPassword;
+    @NotBlank
     private String newPassword;
+
+
 }
 

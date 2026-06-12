@@ -34,6 +34,10 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
       if (mode === "login") {
         ok = await login(form.email, form.password);
       } else if (mode === "register") {
+        if (form.password.length < 8) {
+          setError("Password must be at least 8 characters.");
+          return;
+        }
         ok = await register(form.firstName, form.lastName, form.email, form.password, form.phone);
       } else if (mode === "login-otp") {
         ok = await requestOtp(form.email);
@@ -160,7 +164,7 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
               {(mode === 'login' || mode === 'register') && (
                 <div className="fg">
                   <label style={{ display: "block", fontSize: 11, fontWeight: 700, textTransform: "uppercase", marginBottom: 6, color: '#666' }}>Password</label>
-                  <input name="password" type="password" autoComplete={mode === 'login' ? "current-password" : "new-password"} placeholder="••••••••" required value={form.password} onChange={handleInputChange} style={{ height: 44, borderRadius: 8, padding: '0 12px', border: '1.5px solid #eee', width: '100%', fontSize: 14 }} />
+                  <input name="password" type="password" autoComplete={mode === 'login' ? "current-password" : "new-password"} placeholder="••••••••" required minLength={mode === 'register' ? 8 : undefined} value={form.password} onChange={handleInputChange} style={{ height: 44, borderRadius: 8, padding: '0 12px', border: '1.5px solid #eee', width: '100%', fontSize: 14 }} />
                 </div>
               )}
 

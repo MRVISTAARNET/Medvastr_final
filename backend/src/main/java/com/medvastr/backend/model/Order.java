@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +28,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "orders")
+@Table(name = "orders", indexes = {
+        @Index(name = "idx_orders_user_id", columnList = "user_id"),
+        @Index(name = "idx_orders_status", columnList = "order_status"),
+        @Index(name = "idx_orders_payment_status", columnList = "payment_status"),
+        @Index(name = "idx_orders_razorpay_order_id", columnList = "razorpay_order_id")
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -70,7 +76,7 @@ public class Order {
     private String promoCode;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 30)
+    @Column(name = "order_status", length = 30)
     @Builder.Default
     private OrderStatus status = OrderStatus.PENDING;
 
@@ -95,7 +101,7 @@ public class Order {
 
     private String shippingPhone;
 
-    @Column(length = 300)
+    @Column(columnDefinition = "TEXT")
     private String shippingAddress;
 
     private String shippingCity;

@@ -19,28 +19,20 @@ public class CategoryService {
 
     public List<CategoryDTO> getAll() {
         return catRepo.findByActiveTrueOrderByDisplayOrderAsc().stream()
-            .map(c -> CategoryDTO.builder()
-                .id(c.getId())
-                .name(c.getName())
-                .slug(c.getSlug())
-                .description(c.getDescription())
-                .imageUrl(c.getImageUrl())
-                .displayOrder(c.getDisplayOrder())
-                .productCount(c.getProducts().size())
-                .build())
+            .map(this::toFlatDTO)
+            .collect(Collectors.toList());
+    }
+
+    public List<CategoryDTO> getTree() {
+        return catRepo.findByParentIsNullAndActiveTrueOrderByDisplayOrderAsc().stream()
+            .map(this::toTreeDTO)
             .collect(Collectors.toList());
     }
 
     public CategoryDTO getBySlug(String slug) {
-        Category c = catRepo.findBySlugAndActiveTrue(slug).orElseThrow(() -> new RuntimeException("Not found: " + slug));
-        return CategoryDTO.builder()
-            .id(c.getId())
-            .name(c.getName())
-            .slug(c.getSlug())
-            .description(c.getDescription())
-            .imageUrl(c.getImageUrl())
-            .displayOrder(c.getDisplayOrder())
-            .build();
+        Category c = catRepo.findBySlugAndActiveTrue(slug)
+            .orElseThrow(() -> new RuntimeException("Not found: " + slug));
+        return toTreeDTO(c);
     }
 
     @Transactional
@@ -51,9 +43,34 @@ public class CategoryService {
             .description(r.getDescription())
             .imageUrl(r.getImageUrl())
             .displayOrder(r.getDisplayOrder() != null ? r.getDisplayOrder() : 0)
+            .navLabel(r.getNavLabel())
+            .showInNav(r.getShowInNav() == null || r.getShowInNav())
             .build();
+        if (r.getParentId() != null) {
+            c.setParent(catRepo.findById(r.getParentId())
+                .orElseThrow(() -> new RuntimeException("Parent category not found")));
+        }
         catRepo.save(c);
         return getBySlug(c.getSlug());
+    }
+
+    @Transactional
+    public CategoryDTO update(Long id, CategoryRequest r) {
+        Category c = catRepo.findById(id)
+            .orElseThrow(() -> new RuntimeException("Category not found: " + id));
+        if (r.getName() != null) c.setName(r.getName());
+        if (r.getSlug() != null) c.setSlug(r.getSlug());
+        if (r.getDescription() != null) c.setDescription(r.getDescription());
+        if (r.getImageUrl() != null) c.setImageUrl(r.getImageUrl());
+        if (r.getDisplayOrder() != null) c.setDisplayOrder(r.getDisplayOrder());
+        if (r.getNavLabel() != null) c.setNavLabel(r.getNavLabel());
+        if (r.getShowInNav() != null) c.setShowInNav(r.getShowInNav());
+        if (r.getParentId() != null) {
+            c.setParent(catRepo.findById(r.getParentId())
+                .orElseThrow(() -> new RuntimeException("Parent category not found")));
+        }
+        catRepo.save(c);
+        return toTreeDTO(c);
     }
 
     @Transactional
@@ -61,5 +78,30 @@ public class CategoryService {
         Category c = catRepo.findById(id).orElseThrow(() -> new RuntimeException("Category not found: " + id));
         c.setActive(false);
         catRepo.save(c);
+    }
+
+    private CategoryDTO toFlatDTO(Category c) {
+        return CategoryDTO.builder()
+            .id(c.getId())
+            .name(c.getName())
+            .slug(c.getSlug())
+            .description(c.getDescription())
+            .imageUrl(c.getImageUrl())
+            .displayOrder(c.getDisplayOrder())
+            .productCount(c.getProducts() != null ? c.getProducts().size() : 0)
+            .parentId(c.getParent() != null ? c.getParent().getId() : null)
+            .parentName(c.getParent() != null ? c.getParent().getName() : null)
+            .navLabel(c.getNavLabel())
+            .showInNav(c.isShowInNav())
+            .build();
+    }
+
+    private CategoryDTO toTreeDTO(Category c) {
+        CategoryDTO dto = toFlatDTO(c);
+        List<Category> children = catRepo.findByParentIdAndActiveTrueOrderByDisplayOrderAsc(c.getId());
+        if (!children.isEmpty()) {
+            dto.setChildren(children.stream().map(this::toTreeDTO).collect(Collectors.toList()));
+        }
+        return dto;
     }
 }

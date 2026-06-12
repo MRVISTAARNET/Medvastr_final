@@ -31,6 +31,7 @@ public class UserService {
     private final PasswordEncoder encoder;
     private final WishlistItemRepository wishRepo;
     private final ProductRepository productRepo;
+    private final ProductService productService;
     private final AuthService authService;
 
     private User me() {
@@ -62,21 +63,7 @@ public class UserService {
     }
 
     public List<AddressDTO> getAddresses() {
-        return me().getAddresses().stream()
-                .map(a -> AddressDTO.builder()
-                        .id(a.getId())
-                        .fullName(a.getFullName())
-                        .phone(a.getPhone())
-                        .addressLine1(a.getAddressLine1())
-                        .addressLine2(a.getAddressLine2())
-                        .city(a.getCity())
-                        .state(a.getState())
-                        .pincode(a.getPincode())
-                        .country(a.getCountry())
-                        .type(a.getType().name())
-                        .isDefault(a.isDefault())
-                        .build())
-                .collect(Collectors.toList());
+        return me().getAddresses().stream().map(this::toAddressDTO).collect(Collectors.toList());
     }
 
     public AddressDTO addAddress(AddressRequest r) {
@@ -93,9 +80,59 @@ public class UserService {
                 .type(Address.AddressType.valueOf(r.getType() != null ? r.getType() : "HOME"))
                 .isDefault(r.isDefault())
                 .build();
+        if (r.isDefault()) {
+            u.getAddresses().forEach(addr -> addr.setDefault(false));
+        }
         u.getAddresses().add(a);
         userRepo.save(u);
-        return AddressDTO.builder().fullName(a.getFullName()).city(a.getCity()).build();
+        return toAddressDTO(a);
+    }
+
+    public AddressDTO updateAddress(Long id, AddressRequest r) {
+        User u = me();
+        Address a = u.getAddresses().stream()
+                .filter(addr -> addr.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Address not found"));
+        a.setFullName(r.getFullName());
+        a.setPhone(r.getPhone());
+        a.setAddressLine1(r.getAddressLine1());
+        a.setAddressLine2(r.getAddressLine2());
+        a.setCity(r.getCity());
+        a.setState(r.getState());
+        a.setPincode(r.getPincode());
+        if (r.getType() != null) a.setType(Address.AddressType.valueOf(r.getType()));
+        if (r.isDefault()) {
+            u.getAddresses().forEach(addr -> addr.setDefault(addr.getId().equals(id)));
+        }
+        userRepo.save(u);
+        return toAddressDTO(a);
+    }
+
+    public void deleteAddress(Long id) {
+        User u = me();
+        Address a = u.getAddresses().stream()
+                .filter(addr -> addr.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Address not found"));
+        u.getAddresses().remove(a);
+        userRepo.save(u);
+    }
+
+    private AddressDTO toAddressDTO(Address a) {
+        return AddressDTO.builder()
+                .id(a.getId())
+                .fullName(a.getFullName())
+                .phone(a.getPhone())
+                .addressLine1(a.getAddressLine1())
+                .addressLine2(a.getAddressLine2())
+                .city(a.getCity())
+                .state(a.getState())
+                .pincode(a.getPincode())
+                .country(a.getCountry())
+                .type(a.getType().name())
+                .isDefault(a.isDefault())
+                .build();
     }
 
     public void toggleWishlist(Long pid) {
@@ -107,8 +144,8 @@ public class UserService {
     }
 
     public List<ProductDTO> getWishlist() {
-        ProductService ps = new ProductService(productRepo, null, null);
-        return wishRepo.findByUserId(me().getId()).stream().map(w -> ps.toDTO(w.getProduct()))
+        return wishRepo.findByUserId(me().getId()).stream()
+                .map(w -> productService.toDTO(w.getProduct()))
                 .collect(Collectors.toList());
     }
 

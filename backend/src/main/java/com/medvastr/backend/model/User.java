@@ -45,7 +45,7 @@ public class User {
     @NotBlank
     private String lastName;
 
-    @Column(unique = true, nullable = false, length = 180)
+    @Column(unique = true, nullable = false, length = 255)
     @Email
     @NotBlank
     private String email;
@@ -53,7 +53,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(unique = true, length = 15)
+    @Column(length = 20)
     private String phone;
 
     @Enumerated(EnumType.STRING)
@@ -99,4 +99,3 @@ public class User {
         return firstName + " " + lastName;
     }
 }
-

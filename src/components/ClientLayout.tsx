@@ -8,6 +8,7 @@ import CartDrawer from "@/components/CartDrawer";
 import WishlistDrawer from "@/components/WishlistDrawer";
 import AccountModal from "@/components/AccountModal";
 import Toast from "@/components/Toast";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { AppProvider, useApp } from "@/context/AppContext";
 
 function LayoutContent({ children }: { children: React.ReactNode }) {
@@ -24,18 +25,20 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
         onAcct={() => setIsAuthOpen(true)}
         user={user}
       />
-      <main>{children}</main>
+      <main>
+        <ErrorBoundary>{children}</ErrorBoundary>
+      </main>
       <Footer />
       <CartDrawer open={cartO} onClose={() => setCartO(false)} />
       <WishlistDrawer open={wishO} onClose={() => setWishO(false)} />
-      {isAuthOpen && (
-        <AccountModal onClose={() => setIsAuthOpen(false)} />
-      )}
+      {isAuthOpen && <AccountModal onClose={() => setIsAuthOpen(false)} />}
       <Toast />
       <button
+        type="button"
         className="btt show"
         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         style={{ display: "flex" }}
+        aria-label="Back to top"
       >
         ↑
       </button>

@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { SLIDES } from "@/lib/data";
-import { API_BASE } from "@/lib/api";
+import { useApp } from "@/context/AppContext";
+import { normalizeMediaUrl } from "@/lib/api";
 
 interface HeroProps {
   onShop: () => void;
@@ -12,21 +13,17 @@ export default function Hero({ onShop }: HeroProps) {
   const [cur, setCur] = useState(0);
   const [au, setAu] = useState(true);
   const [dynamicSlides, setDynamicSlides] = useState<any[]>(SLIDES);
+  const { banners } = useApp();
   const t = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    fetch(`${API_BASE}/settings/hero_slides`)
-      .then(r => r.json())
-      .then(d => {
-        if (d.success && d.data) {
-          try {
-            const parsed = JSON.parse(d.data);
-            setDynamicSlides(parsed);
-          } catch (e) { }
-        }
-      })
-      .catch(() => { });
-  }, []);
+    const heroBanners = banners.filter((b: any) => b.isActive && b.position === "HOME_TOP");
+    if (heroBanners.length > 0) {
+      setDynamicSlides(heroBanners.map((b: any) => ({ img: b.imageUrl, link: b.linkUrl })));
+    } else {
+      setDynamicSlides(SLIDES);
+    }
+  }, [banners]);
 
   useEffect(() => {
     if (!au) return;
@@ -47,7 +44,7 @@ export default function Hero({ onShop }: HeroProps) {
       <div className="hero-track" style={{ transform: `translateX(-${cur * 100}%)` }}>
         {dynamicSlides.map((s, i) => (
           <div className="hero-slide" key={i}>
-            <div className="slide-bg" style={{ backgroundImage: `url(${s.img})`, backgroundSize: 'cover', backgroundPosition: 'center', height: '100%' }} />
+            <div className="slide-bg" style={{ backgroundImage: `url(${normalizeMediaUrl(s.img)})`, backgroundSize: 'cover', backgroundPosition: 'center', height: '100%' }} />
           </div>
         ))}
       </div>

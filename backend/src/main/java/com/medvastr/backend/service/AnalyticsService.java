@@ -2,6 +2,7 @@ package com.medvastr.backend.service;
 
 import com.medvastr.backend.dto.DashboardDTO;
 import com.medvastr.backend.dto.OrderDTO;
+import com.medvastr.backend.model.Order;
 import com.medvastr.backend.repository.OrderRepository;
 import com.medvastr.backend.repository.ProductRepository;
 import com.medvastr.backend.repository.UserRepository;
@@ -33,8 +34,8 @@ public class AnalyticsService {
             .collect(Collectors.toList());
 
         return DashboardDTO.builder()
-            .totalRevenue(Optional.ofNullable(orderRepo.totalRevenue()).orElse(BigDecimal.ZERO))
-            .revenueToday(Optional.ofNullable(orderRepo.todayRevenue()).orElse(BigDecimal.ZERO))
+            .totalRevenue(Optional.ofNullable(orderRepo.totalRevenue(Order.PaymentStatus.PAID)).orElse(BigDecimal.ZERO))
+            .revenueToday(Optional.ofNullable(orderRepo.todayRevenue(Order.PaymentStatus.PAID)).orElse(BigDecimal.ZERO))
             .totalOrders(orderRepo.count())
             .ordersToday(Optional.ofNullable(orderRepo.todayOrders()).orElse(0L))
             .totalCustomers(userRepo.countByActiveTrue())

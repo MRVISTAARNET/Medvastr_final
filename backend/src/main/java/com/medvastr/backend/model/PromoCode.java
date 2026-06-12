@@ -34,6 +34,7 @@ public class PromoCode {
     @Column(unique = true, nullable = false, length = 50)
     private String code;
 
+    @Column(length = 500)
     private String description;
 
     @Enumerated(EnumType.STRING)

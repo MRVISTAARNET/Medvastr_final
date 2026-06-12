@@ -15,6 +15,8 @@ public class ApiResponse<T> {
     private boolean success;
     private String message;
     private T data;
+    private String errorCode;
+
 
     @Builder.Default
     private LocalDateTime timestamp = LocalDateTime.now();
@@ -33,5 +35,6 @@ public class ApiResponse<T> {
             .message(message)
             .build();
     }
+
 }
 

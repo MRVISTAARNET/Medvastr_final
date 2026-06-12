@@ -15,11 +15,14 @@ export default function AdminLogin() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) { setError('Please enter email and password.'); return; }
+    if (!email || !password) {
+      setError('Please enter email and password.');
+      return;
+    }
     setLoading(true);
     setError('');
 
-    const success = await login(email, password);
+    const success = await login(email, password, { adminOnly: true });
     if (success) {
       router.push('/admin');
     } else {
@@ -40,23 +43,38 @@ export default function AdminLogin() {
           <form onSubmit={handleLogin}>
             {error && <div className="login-err">⚠️ <span>{error}</span></div>}
             <div className="lf">
-              <label>Email Address</label>
-              <input type="email" placeholder="admin@medvastr.com" value={email}
-                onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
+              <label htmlFor="admin-email">Email Address</label>
+              <input
+                id="admin-email"
+                type="email"
+                placeholder="admin@medvastr.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                autoComplete="email"
+                required
+              />
             </div>
             <div className="lf">
-              <label>Password</label>
-              <input type="password" placeholder="••••••••" value={password}
-                onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
+              <label htmlFor="admin-password">Password</label>
+              <input
+                id="admin-password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="current-password"
+                required
+              />
             </div>
             <button className="login-btn" type="submit" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign In to Dashboard'}
             </button>
 
-            {/* ── Forgot Password link ── */}
             <div style={{ textAlign: 'center', marginTop: '14px' }}>
-              <Link href="/forgot-password"
-                style={{ color: '#a0b4d6', fontSize: '13px', textDecoration: 'underline', opacity: 0.9 }}>
+              <Link
+                href="/forgot-password"
+                style={{ color: '#a0b4d6', fontSize: '13px', textDecoration: 'underline', opacity: 0.9 }}
+              >
                 Forgot your password?
               </Link>
             </div>

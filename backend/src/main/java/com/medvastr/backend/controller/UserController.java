@@ -49,6 +49,19 @@ public class UserController {
         return ResponseEntity.status(201).body(ApiResponse.ok("Added", s.addAddress(r)));
     }
 
+    @PutMapping("/me/addresses/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<AddressDTO>> updateAddr(@PathVariable Long id, @RequestBody AddressRequest r) {
+        return ResponseEntity.ok(ApiResponse.ok("Updated", s.updateAddress(id, r)));
+    }
+
+    @DeleteMapping("/me/addresses/{id}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<Void>> deleteAddr(@PathVariable Long id) {
+        s.deleteAddress(id);
+        return ResponseEntity.ok(ApiResponse.ok("Deleted", null));
+    }
+
     @GetMapping("/me/wishlist")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<List<ProductDTO>>> wish() {

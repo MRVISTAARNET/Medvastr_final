@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -17,5 +19,10 @@ public class CategoryDTO {
     private String imageUrl;
     private Integer displayOrder;
     private Integer productCount;
+    private Long parentId;
+    private String parentName;
+    private String navLabel;
+    private boolean showInNav;
+    private List<CategoryDTO> children;
 }
 

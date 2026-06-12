@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useApp } from "@/context/AppContext";
-import { PRODUCTS, fmt } from "@/lib/data";
+import { fmt } from "@/lib/data";
 
 interface WishlistDrawerProps {
   open: boolean;
@@ -10,9 +10,9 @@ interface WishlistDrawerProps {
 }
 
 export default function WishlistDrawer({ open, onClose }: WishlistDrawerProps) {
-  const { wishlist, toggleWishlist, addToCart, toast } = useApp();
+  const { wishlist, toggleWishlist, addToCart, toast, products } = useApp();
 
-  const items = PRODUCTS.filter((p) => wishlist.includes(p.id));
+  const items = products.filter((p) => wishlist.includes(p.id));
 
   return (
     <>

@@ -19,7 +19,11 @@ public class CategoryController {
     private final CategoryService s;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<CategoryDTO>>> getAll() {
+    public ResponseEntity<ApiResponse<List<CategoryDTO>>> getAll(
+            @RequestParam(required = false) String view) {
+        if ("tree".equalsIgnoreCase(view)) {
+            return ResponseEntity.ok(ApiResponse.ok("Categories", s.getTree()));
+        }
         return ResponseEntity.ok(ApiResponse.ok("Categories", s.getAll()));
     }
 
@@ -32,6 +36,12 @@ public class CategoryController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<CategoryDTO>> create(@RequestBody CategoryRequest r) {
         return ResponseEntity.status(201).body(ApiResponse.ok("Created", s.create(r)));
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<CategoryDTO>> update(@PathVariable Long id, @RequestBody CategoryRequest r) {
+        return ResponseEntity.ok(ApiResponse.ok("Updated", s.update(id, r)));
     }
 
     @DeleteMapping("/{id}")

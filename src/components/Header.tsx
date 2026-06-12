@@ -4,7 +4,17 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useApp } from "@/context/AppContext";
 import { PRODUCTS, fmt } from "@/lib/data";
-import MegaMenu from "./MegaMenu";
+import DynamicNav, { NavItem } from "./DynamicNav";
+
+const FALLBACK_NAV: NavItem[] = [
+  { id: 1, label: "Men", href: "/products?gen=men", itemType: "MEGA_MENU", gender: "men", categorySlug: "men" },
+  { id: 2, label: "Women", href: "/products?gen=women", itemType: "MEGA_MENU", gender: "women", categorySlug: "women" },
+  { id: 3, label: "Surgical Wear", href: "/products?cat=surgical-wear", itemType: "MEGA_MENU", categorySlug: "surgical-wear" },
+  { id: 4, label: "Bulk Order", href: "/bulk-orders", itemType: "MEGA_MENU", categorySlug: "bulk-order" },
+  { id: 5, label: "About Us", href: "/about", itemType: "LINK" },
+  { id: 6, label: "Blogs", href: "/blog", itemType: "LINK" },
+  { id: 7, label: "Contact Us", href: "/contact", itemType: "LINK" },
+];
 
 interface HeaderProps {
   onCart: () => void;
@@ -14,7 +24,7 @@ interface HeaderProps {
 }
 
 export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
-  const { cart, wishlist, products } = useApp();
+  const { cart, wishlist, products, navItems, categoryTree } = useApp();
   const [q, setQ] = useState("");
   const [sd, setSd] = useState(false);
   const [mn, setMn] = useState(false); // Mobile Nav
@@ -31,13 +41,13 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
   return (
     <div id="hdr">
       <div className="hdr-row">
-        <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 30 }}>
           <button className="ha mob-only" onClick={() => setMn(true)}>
             ☰
           </button>
           <Link href="/" className="logo">
-            <span className="lw">medvastr</span>
-            <span className="lt">Wear Wellness</span>
+            <span className="lw" style={{ fontSize: 44, fontWeight: 900, letterSpacing: -1.5 }}>medvastr</span>
+            <span className="lt" style={{ fontSize: 11, letterSpacing: 3, marginTop: -2 }}>Wear Wellness</span>
           </Link>
         </div>
 
@@ -123,101 +133,14 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
         <div className="mob-nav-hd mob-only">
           <button className="mn-close" onClick={() => setMn(false)}>✕</button>
         </div>
-        <div className="nav-in">
-          <div className={`nav-group${mo === "men" ? " mob-open" : ""}`}>
-            <Link href="/products?gen=men" className="nl" onClick={(e) => { if (typeof window !== "undefined" && window.innerWidth <= 1024) { e.preventDefault(); setMo(mo === "men" ? null : "men"); } }}>
-              Men <span className="nav-arrow">▾</span>
-            </Link>
-            <div className="nav-sub">
-              <MegaMenu gender="men" />
-            </div>
-          </div>
-          <div className={`nav-group${mo === "women" ? " mob-open" : ""}`}>
-            <Link href="/products?gen=women" className="nl" onClick={(e) => { if (typeof window !== "undefined" && window.innerWidth <= 1024) { e.preventDefault(); setMo(mo === "women" ? null : "women"); } }}>
-              Women <span className="nav-arrow">▾</span>
-            </Link>
-            <div className="nav-sub">
-              <MegaMenu gender="women" />
-            </div>
-          </div>
-          <div className={`nav-group flexy-group${mo === "flexy" ? " mob-open" : ""}`} style={{ position: "relative", whiteSpace: "nowrap" }}>
-            <div className="nl" onClick={() => setMo(mo === "flexy" ? null : "flexy")}>
-              Flexy Fit 'V' Scrub <span className="nav-arrow">▾</span>
-            </div>
-            <div className="flexy-sub">
-              <div>
-                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: "var(--lt)", marginBottom: 10 }}>Men's Sizes</div>
-                <div style={{ display: "flex", gap: 8 }}>
-                  {["M", "L", "XL", "XXL"].map(s => (
-                    <Link key={s} href="/products?cat=scrubs" onClick={() => setMn(false)} style={{ padding: "6px 12px", border: "1.5px solid var(--bdr)", borderRadius: 6, fontSize: 12, fontWeight: 600 }}>{s}</Link>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: "var(--lt)", marginBottom: 10 }}>Women's Sizes</div>
-                <div style={{ display: "flex", gap: 8 }}>
-                  {["S", "M", "L", "XL"].map(s => (
-                    <Link key={s} href="/products?cat=scrubs" onClick={() => setMn(false)} style={{ padding: "6px 12px", border: "1.5px solid var(--bdr)", borderRadius: 6, fontSize: 12, fontWeight: 600 }}>{s}</Link>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase", color: "var(--lt)", marginBottom: 10 }}>Colours</div>
-                <div style={{ display: "flex", gap: 8 }}>
-                  {[["Dark Blue", "#1a2b4a"], ["Light Blue", "#add8e6"], ["Maroon", "#800000"], ["Wine", "#722f37"]].map(([n, h]) => (
-                    <div key={n} title={n} style={{ width: 20, height: 20, borderRadius: "50%", background: h, border: "2px solid rgba(0,0,0,0.1)", cursor: "pointer" }} />
-                  ))}
-                </div>
-              </div>
-              <div style={{ alignSelf: "center" }}>
-                <Link href="/products?cat=scrubs" onClick={() => setMn(false)} className="btn-t" style={{ fontSize: 12, height: 36, padding: "0 16px" }}>
-                  Buy Now →
-                </Link>
-              </div>
-            </div>
-          </div>
-          <div className={`nav-group flexy-group${mo === "linen" ? " mob-open" : ""}`} style={{ position: "relative", whiteSpace: "nowrap" }}>
-            <div className="nl" onClick={() => setMo(mo === "linen" ? null : "linen")}>
-              Linen & Bedding <span className="nav-arrow">▾</span>
-            </div>
-            <div className="flexy-sub" style={{ minWidth: "240px", padding: "20px 24px", display: "block", left: 0 }}>
-              <div className="mcol" style={{ padding: 0, border: "none" }}>
-                <Link href="/products?cat=linen" onClick={() => setMn(false)} style={{ textDecoration: "none" }}>
-                  <div className="mcol-sub" style={{ marginTop: 0 }}>
-                    Linen & Bedding <span style={{ fontSize: 10, color: "var(--t)", fontWeight: 700 }}>→</span>
-                  </div>
-                </Link>
-                <ul>
-                  {[
-                    { l: "Linen Towel (50x50)" },
-                    { l: "Green Sheet (100x100)" },
-                    { l: "Green Sheet (150x150)" },
-                    { l: "Green Sheet with Hole" },
-                    { l: "Cardiac Trolley Sheet" },
-                    { l: "Single Bed Blanket" },
-                  ].map((x) => (
-                    <li key={x.l}>
-                      <Link href="/products?cat=linen" onClick={() => setMn(false)}>
-                        <span>{x.l}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-          {[
-            { l: "Surgical Wear", href: "/products?cat=surgical" },
-            // { l: "Stethoscope", href: "/products?cat=stethoscope" },
-            { l: "Bulk Orders", href: "/bulk" },
-            { l: "About Us", href: "/about" },
-            { l: "Blogs", href: "/blog" },
-          ].map((n) => (
-            <Link key={n.l} href={n.href} className="nl" onClick={() => setMn(false)}>
-              {n.l}
-            </Link>
-          ))}
-        </div>
+        <DynamicNav
+          items={navItems && navItems.length > 0 ? navItems : FALLBACK_NAV}
+          categoryTree={categoryTree}
+          mobileOpen={mn}
+          onNavigate={() => setMn(false)}
+          mobileGroup={mo}
+          setMobileGroup={setMo}
+        />
       </div>
 
       <style jsx>{`

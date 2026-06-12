@@ -29,7 +29,7 @@ public class DbFix {
 
             // Forced conversion to VARCHAR
             jdbcTemplate.execute("ALTER TABLE orders MODIFY COLUMN payment_method VARCHAR(30)");
-            jdbcTemplate.execute("ALTER TABLE orders MODIFY COLUMN status VARCHAR(30)");
+            jdbcTemplate.execute("ALTER TABLE orders MODIFY COLUMN order_status VARCHAR(30)");
             jdbcTemplate.execute("ALTER TABLE orders MODIFY COLUMN payment_status VARCHAR(30)");
 
             log.info("[DbFix] ✅ Database schema updated successfully.");

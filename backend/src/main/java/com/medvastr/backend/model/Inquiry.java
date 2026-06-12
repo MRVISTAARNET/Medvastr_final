@@ -2,6 +2,8 @@ package com.medvastr.backend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,8 +20,12 @@ public class Inquiry {
     private String email;
     private String phone;
     private String type;
-    @Column(length = 2000)
+    @Column(columnDefinition = "LONGTEXT")
     private String message;
-    private String status;
+    @Builder.Default
+    private String status = "NEW";
+    private String subject;
+    private LocalDateTime repliedAt;
+    @CreationTimestamp
     private LocalDateTime createdAt;
 }

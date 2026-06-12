@@ -12,5 +12,9 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
     List<ProductVariant> findByProductIdOrderBySizeAsc(Long productId);
 
     Optional<ProductVariant> findBySku(String sku);
+
+    Optional<ProductVariant> findByIdAndProductId(Long id, Long productId);
+
+    Optional<ProductVariant> findByProductIdAndSizeAndColorHex(Long productId, String size, String colorHex);
 }
 

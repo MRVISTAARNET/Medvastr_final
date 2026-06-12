@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import AdminTopbar from "@/components/admin/AdminTopbar";
 import { API_BASE, authHeaders } from "@/lib/api";
-import { SLIDES } from "@/lib/data";
 
 export default function AdminAppearance() {
     const [slides, setSlides] = useState([
@@ -33,13 +32,13 @@ export default function AdminAppearance() {
                 try { setSlides(JSON.parse(d1.data)); } catch (e) { }
             } else {
                 setSlides([
-                    { img: SLIDES[0]?.img || "" },
-                    { img: SLIDES[1]?.img || "" },
+                    { img: "" },
+                    { img: "" },
                     { img: "" }
                 ]);
             }
             if (d2.success && d2.data) setBulkBanner(d2.data);
-            else setBulkBanner("/ChatGPT Image May 13, 2026, 04_40_07 PM.png");
+            else setBulkBanner("");
             if (d3.success && d3.data) setHomeVideo(d3.data);
         } catch (e) { }
         setLoading(false);
@@ -76,7 +75,7 @@ export default function AdminAppearance() {
         setSlides(s);
     };
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void) => {
+    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void, currentUrl?: string) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
@@ -86,17 +85,28 @@ export default function AdminAppearance() {
         }
 
         try {
+            const token = localStorage.getItem("token");
+            if (currentUrl) {
+                try {
+                    await fetch(`${API_BASE}/upload`, {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json", ...authHeaders(token) },
+                        body: JSON.stringify({ url: currentUrl })
+                    });
+                } catch { }
+            }
+
             const formData = new FormData();
             formData.append("file", file);
 
             const res = await fetch(`${API_BASE}/upload`, {
                 method: "POST",
-                headers: await authHeaders(),
+                headers: authHeaders(token),
                 body: formData
             });
             const data = await res.json();
             if (data.success) {
-                setter(data.data); // data.data is the URL string from FileUploadController
+                setter(data.data);
             } else {
                 alert("Upload failed");
             }
@@ -136,12 +146,12 @@ export default function AdminAppearance() {
                                         type="text"
                                         value={s.img}
                                         onChange={(e) => handleSlideChange(i, e.target.value)}
-                                        placeholder={i === 0 ? "/Last_Day_Website_Home_page_Desktop_Banner.webp" : "Leave blank to skip this slide"}
+                                        placeholder={i === 0 ? "https://your-bucket.s3.ap-south-1.amazonaws.com/media/banner1.webp" : "Leave blank to skip this slide"}
                                         style={{ ...inp, flex: 1 }}
                                     />
                                     <div style={{ position: 'relative', overflow: 'hidden', display: 'inline-block' }}>
                                         <button className="btn-s" style={{ padding: '12px 15px', borderRadius: 8, whiteSpace: 'nowrap' }}>📤 Upload</button>
-                                        <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, (url) => handleSlideChange(i, url))} style={{ position: 'absolute', left: 0, top: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }} />
+                                        <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, (url) => handleSlideChange(i, url), s.img)} style={{ position: 'absolute', left: 0, top: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }} />
                                     </div>
                                 </div>
                                 {s.img && (
@@ -168,7 +178,7 @@ export default function AdminAppearance() {
                             />
                             <div style={{ position: 'relative', overflow: 'hidden', display: 'inline-block' }}>
                                 <button className="btn-s" style={{ padding: '12px 15px', borderRadius: 8, whiteSpace: 'nowrap' }}>📤 Upload Video</button>
-                                <input type="file" accept="video/mp4,video/webm" onChange={(e) => handleFileUpload(e, setHomeVideo)} style={{ position: 'absolute', left: 0, top: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }} />
+                                <input type="file" accept="video/mp4,video/webm" onChange={(e) => handleFileUpload(e, setHomeVideo, homeVideo)} style={{ position: 'absolute', left: 0, top: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }} />
                             </div>
                         </div>
                         {homeVideo && (
@@ -195,7 +205,7 @@ export default function AdminAppearance() {
                             />
                             <div style={{ position: 'relative', overflow: 'hidden', display: 'inline-block' }}>
                                 <button className="btn-s" style={{ padding: '12px 15px', borderRadius: 8, whiteSpace: 'nowrap' }}>📤 Upload</button>
-                                <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, setBulkBanner)} style={{ position: 'absolute', left: 0, top: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }} />
+                                <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, setBulkBanner, bulkBanner)} style={{ position: 'absolute', left: 0, top: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }} />
                             </div>
                         </div>
                         {bulkBanner && (

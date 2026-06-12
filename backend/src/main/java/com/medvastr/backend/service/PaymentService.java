@@ -1,25 +1,37 @@
 package com.medvastr.backend.service;
 
+import com.medvastr.backend.model.Order;
+import com.medvastr.backend.repository.OrderRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class PaymentService {
+
     @Value("${razorpay.key.id}")
     private String keyId;
 
     @Value("${razorpay.key.secret}")
     private String keySecret;
 
+    private final RazorpayService razorpayService;
+    private final OrderRepository orderRepository;
+    private final EmailService emailService;
+    private final ShiprocketService shiprocketService;
+
     public Map<String, Object> createOrder(Map<String, Object> r) {
         try {
             com.razorpay.RazorpayClient client = new com.razorpay.RazorpayClient(keyId, keySecret);
-            org.json.JSONObject options = new org.json.JSONObject();
-            options.put("amount", (int) (Double.parseDouble(r.get("amount").toString())));
+            JSONObject options = new JSONObject();
+            options.put("amount", (int) Double.parseDouble(r.get("amount").toString()));
             options.put("currency", "INR");
             options.put("receipt", "txn_" + System.currentTimeMillis());
 
@@ -31,28 +43,64 @@ public class PaymentService {
                     "amount", order.get("amount"),
                     "key", keyId);
         } catch (com.razorpay.RazorpayException e) {
-            log.error("Razorpay Error: ", e);
+            log.error("Razorpay order creation failed", e);
             throw new RuntimeException("Could not create Razorpay order");
         }
     }
 
     public Map<String, String> verify(Map<String, String> p) {
-        try {
-            org.json.JSONObject attributes = new org.json.JSONObject();
-            attributes.put("razorpay_order_id", p.get("razorpay_order_id"));
-            attributes.put("razorpay_payment_id", p.get("razorpay_payment_id"));
-            attributes.put("razorpay_signature", p.get("razorpay_signature"));
-
-            boolean valid = com.razorpay.Utils.verifyPaymentSignature(attributes, keySecret);
-            if (valid) {
-                return Map.of("status", "verified", "message", "Payment successful");
-            }
-        } catch (Exception e) {
+        boolean valid = razorpayService.verifySignature(
+                p.get("razorpay_order_id"),
+                p.get("razorpay_payment_id"),
+                p.get("razorpay_signature"));
+        if (valid) {
+            return Map.of("status", "verified", "message", "Payment successful");
         }
         throw new RuntimeException("Invalid signature");
     }
 
-    public void handleWebhook(String payload, String sig) {
-        log.info("Razorpay webhook");
+    @Transactional
+    public void handleWebhook(String payload, String signature) {
+        if (!razorpayService.verifyWebhookSignature(payload, signature)) {
+            log.warn("Rejected Razorpay webhook — invalid signature");
+            throw new RuntimeException("Invalid webhook signature");
+        }
+
+        JSONObject event = new JSONObject(payload);
+        String eventType = event.optString("event");
+        log.info("Razorpay webhook received: {}", eventType);
+
+        if ("payment.captured".equals(eventType)) {
+            JSONObject payment = event.getJSONObject("payload").getJSONObject("payment").getJSONObject("entity");
+            String razorpayOrderId = payment.optString("order_id");
+            String paymentId = payment.optString("id");
+
+            orderRepository.findByRazorpayOrderId(razorpayOrderId).ifPresent(order -> {
+                if (order.getPaymentStatus() == Order.PaymentStatus.PAID) {
+                    log.info("Webhook ignored — order {} already paid", order.getOrderNumber());
+                    return;
+                }
+                order.setPaymentStatus(Order.PaymentStatus.PAID);
+                order.setStatus(Order.OrderStatus.CONFIRMED);
+                order.setPaymentId(paymentId);
+                Order saved = orderRepository.save(order);
+                preloadOrderRelations(saved);
+                emailService.sendOrderConfirmationEmail(saved);
+                shiprocketService.createOrder(saved);
+            });
+        }
+    }
+
+    private void preloadOrderRelations(Order order) {
+        if (order.getItems() != null) {
+            order.getItems().forEach(i -> {
+                if (i.getProduct() != null) {
+                    i.getProduct().getName();
+                }
+            });
+        }
+        if (order.getUser() != null) {
+            order.getUser().getEmail();
+        }
     }
 }

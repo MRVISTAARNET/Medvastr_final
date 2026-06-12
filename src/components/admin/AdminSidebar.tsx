@@ -2,10 +2,13 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useApp } from '@/context/AppContext';
 
 const AdminSidebar = () => {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, logout } = useApp();
 
   const links = [
     {
@@ -19,7 +22,20 @@ const AdminSidebar = () => {
         { name: 'Orders', icon: '📦', href: '/admin/orders' },
         { name: 'Products', icon: '🥼', href: '/admin/products' },
         { name: 'Categories', icon: '🏷️', href: '/admin/categories' },
+        { name: 'Colors', icon: '🎨', href: '/admin/colors' },
+        { name: 'Sizes', icon: '📐', href: '/admin/sizes' },
+        { name: 'Attributes', icon: '🏷️', href: '/admin/attributes' },
+        { name: 'Navigation', icon: '🧭', href: '/admin/navigation' },
         { name: 'Inventory', icon: '📋', href: '/admin/inventory' },
+      ]
+    },
+    {
+      section: 'Marketing', items: [
+        { name: 'Banners', icon: '🖼️', href: '/admin/banners' },
+        { name: 'Collections', icon: '📂', href: '/admin/collections' },
+        { name: 'Bulk Orders', icon: '🛒', href: '/admin/bulk-orders' },
+        { name: 'Blog', icon: '📰', href: '/admin/blog' },
+        { name: 'Promo Codes', icon: '🎟️', href: '/admin/promos' },
       ]
     },
     {
@@ -32,7 +48,6 @@ const AdminSidebar = () => {
     {
       section: 'Finance', items: [
         { name: 'Revenue', icon: '💰', href: '/admin/revenue' },
-        { name: 'Promo Codes', icon: '🎟️', href: '/admin/promos' },
       ]
     },
     {
@@ -43,23 +58,35 @@ const AdminSidebar = () => {
     },
   ];
 
+  const handleLogout = () => {
+    logout();
+    router.push('/admin/login');
+  };
+
+  const displayName = user?.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'Admin';
+
   return (
     <div id="admin-sidebar">
       <div className="sb-logo">
         <div className="sb-logo-t">Med<span>vastr</span></div>
         <div className="sb-logo-s">ADMIN DASHBOARD</div>
-        <button className="mobile-sidebar-close" onClick={() => {
-          const sidebar = document.getElementById('admin-sidebar');
-          if (sidebar) sidebar.classList.remove('mobile-show');
-        }}>
+        <button
+          type="button"
+          className="mobile-sidebar-close"
+          aria-label="Close sidebar"
+          onClick={() => {
+            const sidebar = document.getElementById('admin-sidebar');
+            if (sidebar) sidebar.classList.remove('mobile-show');
+          }}
+        >
           ✕
         </button>
       </div>
       <div className="sb-user">
-        <div className="sb-user-av">A</div>
+        <div className="sb-user-av">{displayName.charAt(0).toUpperCase()}</div>
         <div>
-          <div className="sb-user-name">Admin</div>
-          <div className="sb-user-role">Super Administrator</div>
+          <div className="sb-user-name">{displayName}</div>
+          <div className="sb-user-role">Administrator</div>
         </div>
       </div>
       <div className="sb-nav">
@@ -80,10 +107,10 @@ const AdminSidebar = () => {
         ))}
       </div>
       <div className="sb-bottom">
-        <Link href="/" target="_blank" className="sb-link" style={{ marginBottom: '4px' }}>
+        <Link href="/" target="_blank" rel="noopener noreferrer" className="sb-link" style={{ marginBottom: '4px' }}>
           <span className="sb-link-ico">🌐</span>View Live Site
         </Link>
-        <button className="sb-logout" onClick={() => { localStorage.removeItem('token'); localStorage.removeItem('adm_token'); window.location.href = '/admin/login'; }}>
+        <button type="button" className="sb-logout" onClick={handleLogout}>
           <span style={{ fontSize: '17px' }}>🚪</span>Sign Out
         </button>
       </div>

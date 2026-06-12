@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import '../admin.css';
 import AdminSidebar from '@/components/admin/AdminSidebar';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import { useApp } from '@/context/AppContext';
 import { useRouter } from 'next/navigation';
 
@@ -38,7 +39,7 @@ export default function AdminLayout({
       <div id="admin-app">
         <AdminSidebar />
         <main id="admin-main">
-          {children}
+          <ErrorBoundary>{children}</ErrorBoundary>
         </main>
       </div>
       <div id="admin-toast"></div>

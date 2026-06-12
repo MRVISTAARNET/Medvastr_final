@@ -4,7 +4,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
 import { fmt, B } from '@/lib/data';
 import { useApp } from '@/context/AppContext';
-import { API_BASE, authHeaders } from '@/lib/api';
+import { API_BASE, authHeaders, getToken } from '@/lib/api';
+import { validateImageUpload } from '@/lib/uploadValidation';
+import { logError } from '@/lib/logger';
 import Barcode from 'react-barcode';
 import { toPng } from 'html-to-image';
 
@@ -27,7 +29,8 @@ export default function AdminProducts() {
     name: '', type: 'scrubs', price: '', originalPrice: '', badge: '', desc: '',
     gen: 'unisex', fab: '', fit: '', catId: '', imgs: '', emo: '📦',
     sku: '', styleId: '', brand: 'Medvastr', sizes: 'XS, S, M, L, XL', clrs: '', barcode: '',
-    weight: '', care: '', stretch: '', fabD: '', pockets: '', videoUrl: ''
+    weight: '', care: '', stretch: '', fabD: '', pockets: '', videoUrl: '',
+    seoTitle: '', seoDescription: '', shortDescription: '', material: '', tags: ''
   });
 
   const labelRef = useRef<HTMLDivElement>(null);
@@ -111,15 +114,16 @@ export default function AdminProducts() {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    const token = localStorage.getItem("token") || "";
+    const token = getToken() || "";
 
     // Multiple upload logic
     if (isMultiple) {
       const uploadedUrls: string[] = [];
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        if (file.size > 10 * 1024 * 1024) {
-          alert(`File ${file.name} is too large! Please upload a file smaller than 10MB.`);
+        const validationError = validateImageUpload(file);
+        if (validationError) {
+          alert(`${file.name}: ${validationError}`);
           continue;
         }
 
@@ -136,7 +140,7 @@ export default function AdminProducts() {
             uploadedUrls.push(data.data);
           }
         } catch (err) {
-          console.error("Upload error for", file.name);
+          logError(`upload:${file.name}`, err);
         }
       }
 
@@ -147,9 +151,23 @@ export default function AdminProducts() {
     } else {
       // Single upload logic (e.g. video)
       const file = files[0];
-      if (file.size > 10 * 1024 * 1024) {
-        alert("File is too large! Please upload a file smaller than 10MB.");
+      const validationError = validateImageUpload(file);
+      if (validationError) {
+        alert(validationError);
         return;
+      }
+
+      const token = getToken() || "";
+
+      // Cleanup existing asset before replacing
+      if (form[field]) {
+        try {
+          await fetch(`${API_BASE}/upload`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+            body: JSON.stringify({ url: form[field] })
+          });
+        } catch { }
       }
 
       const formData = new FormData();
@@ -318,7 +336,23 @@ export default function AdminProducts() {
                       <td>
                         <div className="act-btns">
                           <div className="act-btn edit" title="Edit" onClick={() => openEditModal(p)}>✏️</div>
-                          <div className="act-btn del" title="Delete" onClick={() => { if (confirm(`Delete ${p.name}?`)) deleteProduct(p.id) }}>🗑️</div>
+                          <div className="act-btn del" title="Delete" onClick={async () => {
+                            if (confirm(`Delete ${p.name}?`)) {
+                              await deleteProduct(p.id);
+                              // Cleanup S3 images
+                              const token = getToken();
+                              const imgUrls = (p as any).imgs || (p as any).imageUrls || [];
+                              for (const url of imgUrls) {
+                                try {
+                                  await fetch(`${API_BASE}/upload`, {
+                                    method: "DELETE",
+                                    headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                                    body: JSON.stringify({ url })
+                                  });
+                                } catch { }
+                              }
+                            }
+                          }}>🗑️</div>
                         </div>
                       </td>
                     </tr>
@@ -331,18 +365,21 @@ export default function AdminProducts() {
       </div>
 
       {isModalOpen && (
-        <div className="modal-bg" onClick={(e) => { if (e.target === e.currentTarget) setIsModalOpen(false) }}>
-          <div className="modal" style={{ maxWidth: '700px' }}>
+        <div className="modal-bg">
+          <div className="modal" style={{ maxWidth: '860px', width: '100%', maxHeight: '90vh' }}>
             <div className="modal-hd">
-              <div className="modal-title">{editingProduct ? 'Edit Product' : 'Add New Product'}</div>
+              <div className="modal-title">{editingProduct ? 'Edit Product Details' : 'Add New Product'}</div>
               <button type="button" className="modal-x" onClick={() => setIsModalOpen(false)}>✕</button>
             </div>
-            <form onSubmit={(e) => { e.preventDefault(); handleSave(); }} className="modal-body" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+            <form onSubmit={(e) => { e.preventDefault(); handleSave(); }} style={{ flex: 1, overflowY: 'auto', padding: '24px 26px' }}>
+              {/* Basic Details */}
               <div className="fg-row">
-                <div className="fg" style={{ flex: 2 }}>
-                  <label>Product Name</label>
-                  <input type="text" id="p-name" value={form.name} onChange={handleInputChange} placeholder="Men's Classic V-Neck Scrub" />
+                <div className="fg" style={{ gridColumn: '1 / -1' }}>
+                  <label>Product Name *</label>
+                  <input type="text" id="p-name" value={form.name} onChange={handleInputChange} placeholder="Men's Classic V-Neck Scrub" required />
                 </div>
+              </div>
+              <div className="fg-row">
                 <div className="fg">
                   <label>Category</label>
                   <select id="p-catId" value={form.catId} onChange={handleInputChange}>
@@ -350,10 +387,8 @@ export default function AdminProducts() {
                     {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
-              </div>
-              <div className="fg-row">
                 <div className="fg">
-                  <label>Type Key (for Homepage Tabs)</label>
+                  <label>Type Key (Tabs)</label>
                   <select id="p-type" value={form.type} onChange={handleInputChange}>
                     <option value="scrubs">scrubs (Uniforms & Scrubs)</option>
                     <option value="linen">linen (Linen & Bedding)</option>
@@ -362,22 +397,12 @@ export default function AdminProducts() {
                     <option value="other">other</option>
                   </select>
                 </div>
-                <div className="fg">
-                  <label>Emoji</label>
-                  <input type="text" id="p-emo" value={form.emo} onChange={handleInputChange} placeholder="🥼" />
-                </div>
               </div>
               <div className="fg-row">
                 <div className="fg">
-                  <label>Price (₹)</label>
-                  <input type="number" id="p-price" value={form.price} onChange={handleInputChange} placeholder="1099" />
+                  <label>Brand</label>
+                  <input type="text" id="p-brand" value={form.brand} onChange={handleInputChange} placeholder="Brand Name" />
                 </div>
-                <div className="fg">
-                  <label>Original Price (₹)</label>
-                  <input type="number" id="p-originalPrice" value={form.originalPrice} onChange={handleInputChange} placeholder="Leave blank if no discount" />
-                </div>
-              </div>
-              <div className="fg-row">
                 <div className="fg">
                   <label>Gender</label>
                   <select id="p-gen" value={form.gen} onChange={handleInputChange}>
@@ -386,6 +411,24 @@ export default function AdminProducts() {
                     <option value="unisex">Unisex</option>
                   </select>
                 </div>
+              </div>
+              <div className="fg">
+                <label>Description</label>
+                <textarea id="p-desc" value={form.desc} onChange={handleInputChange} placeholder="Product description..." rows={3} />
+              </div>
+
+              {/* Pricing & Merchandising */}
+              <div className="fg-row" style={{ marginTop: '8px' }}>
+                <div className="fg">
+                  <label>Price (₹) *</label>
+                  <input type="number" id="p-price" value={form.price} onChange={handleInputChange} placeholder="1099" required />
+                </div>
+                <div className="fg">
+                  <label>Original Price (₹)</label>
+                  <input type="number" id="p-originalPrice" value={form.originalPrice} onChange={handleInputChange} placeholder="Strikethrough price" />
+                </div>
+              </div>
+              <div className="fg-row">
                 <div className="fg">
                   <label>Badge</label>
                   <select id="p-badge" value={form.badge} onChange={handleInputChange}>
@@ -397,29 +440,39 @@ export default function AdminProducts() {
                     <option value="10% Off">10% Off</option>
                   </select>
                 </div>
+                <div className="fg">
+                  <label>Emoji Shortcut</label>
+                  <input type="text" id="p-emo" value={form.emo} onChange={handleInputChange} placeholder="🥼" />
+                </div>
               </div>
+              {/* Media Upload */}
               <div className="fg-row">
                 <div className="fg">
-                  <label>Product Images (one per colour, in colour order)</label>
+                  <label>Images (ordered by color)</label>
                   <input type="file" accept="image/*" multiple onChange={(e) => handleFileUpload(e, 'imgs', true)} />
                   {Array.isArray(form.imgs) && form.imgs.length > 0 && (
-                    <div style={{ fontSize: 12, color: 'green', marginTop: 4 }}>
-                      Uploaded: {form.imgs.map((url: string) => url.split('/').pop()).join(', ')}
-                    </div>
+                    <p style={{ fontSize: '12px', color: 'var(--teal)', marginTop: '4px' }}>✓ {form.imgs.length} file(s) selected</p>
                   )}
-                  <div style={{ fontSize: 11, color: '#888', marginTop: 4 }}>
-                    Tip: upload images in the same order as colours (e.g. Dark Blue, then Maroon).
-                  </div>
                 </div>
                 <div className="fg">
-                  <label>Product Video Upload (Optional)</label>
+                  <label>Product Video (Optional)</label>
                   <input type="file" accept="video/*" onChange={(e) => handleFileUpload(e, 'videoUrl', false)} />
-                  {form.videoUrl && <div style={{ fontSize: 12, color: 'blue', marginTop: 4 }}>Uploaded File: {form.videoUrl.split('/').pop()}</div>}
+                  {form.videoUrl && (
+                    <p style={{ fontSize: '12px', color: 'var(--txt4)', marginTop: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{form.videoUrl.split('/').pop()}</p>
+                  )}
                 </div>
               </div>
-              <div className="fg">
-                <label>Description</label>
-                <textarea id="p-desc" value={form.desc} onChange={handleInputChange} placeholder="Product description..." style={{ height: '80px' }}></textarea>
+
+              {/* Properties & Variants */}
+              <div className="fg-row">
+                <div className="fg">
+                  <label>Sizes (CSV)</label>
+                  <input type="text" id="p-sizes" value={form.sizes} onChange={handleInputChange} placeholder="S, M, L, XL" />
+                </div>
+                <div className="fg">
+                  <label>Colors (CSV Names)</label>
+                  <input type="text" id="p-clrs" value={form.clrs} onChange={handleInputChange} placeholder="Dark Blue, Maroon" />
+                </div>
               </div>
               <div className="fg-row">
                 <div className="fg">
@@ -433,27 +486,6 @@ export default function AdminProducts() {
               </div>
               <div className="fg-row">
                 <div className="fg">
-                  <label>Style ID (for SKU)</label>
-                  <input type="text" id="p-styleId" value={form.styleId} onChange={handleInputChange} placeholder="e.g. FF_DS_DB_SM" />
-                </div>
-                <div className="fg">
-                  <label>Brand</label>
-                  <input type="text" id="p-brand" value={form.brand} onChange={handleInputChange} placeholder="Brand Name" />
-                </div>
-              </div>
-              <div className="fg-row">
-                <div className="fg">
-                  <label>Sizes (comma separated)</label>
-                  <input type="text" id="p-sizes" value={form.sizes} onChange={handleInputChange} placeholder="S, M, L, XL" />
-                </div>
-                <div className="fg">
-                  <label>Colors (Names e.g. Dark Blue, Maroon)</label>
-                  <input type="text" id="p-clrs" value={form.clrs} onChange={handleInputChange} placeholder="Dark Blue, Maroon" />
-                </div>
-              </div>
-
-              <div className="fg-row">
-                <div className="fg">
                   <label>Weight</label>
                   <input type="text" id="p-weight" value={form.weight} onChange={handleInputChange} placeholder="Lightweight / 250g" />
                 </div>
@@ -462,7 +494,6 @@ export default function AdminProducts() {
                   <input type="number" id="p-pockets" value={form.pockets} onChange={handleInputChange} placeholder="7" />
                 </div>
               </div>
-
               <div className="fg-row">
                 <div className="fg">
                   <label>Stretch Type</label>
@@ -473,83 +504,78 @@ export default function AdminProducts() {
                   <input type="text" id="p-care" value={form.care} onChange={handleInputChange} placeholder="Machine wash cold" />
                 </div>
               </div>
-
               <div className="fg">
-                <label>Fabric Detailed Info</label>
+                <label>Fabric Detail</label>
                 <input type="text" id="p-fabD" value={form.fabD} onChange={handleInputChange} placeholder="72% Polyester, 21% Rayon, 7% Spandex" />
+              </div>
+              {/* Inventory & SEO */}
+              <div className="fg-row">
+                <div className="fg">
+                  <label>Style ID (Prefix)</label>
+                  <input type="text" id="p-styleId" value={form.styleId} onChange={handleInputChange} placeholder="e.g. FF_DS_DB_SM" />
+                </div>
+                <div className="fg">
+                  <label>SKU (Auto)</label>
+                  <input type="text" id="p-sku" value={form.sku} onChange={handleInputChange} readOnly style={{ background: 'var(--bg)', color: 'var(--txt3)' }} />
+                </div>
+              </div>
+              <div className="fg">
+                <label>Barcode Value</label>
+                <input type="text" id="p-barcode" value={form.barcode} onChange={handleInputChange} />
               </div>
               <div className="fg-row">
                 <div className="fg">
-                  <label>SKU (Auto-generated)</label>
-                  <input type="text" id="p-sku" value={form.sku} onChange={handleInputChange} />
+                  <label>SEO Title</label>
+                  <input id="p-seoTitle" value={form.seoTitle || ''} onChange={handleInputChange} placeholder="Page title for search engines" />
                 </div>
                 <div className="fg">
-                  <label>Barcode Value</label>
-                  <input type="text" id="p-barcode" value={form.barcode} onChange={handleInputChange} />
+                  <label>SEO Description</label>
+                  <input id="p-seoDescription" value={form.seoDescription || ''} onChange={handleInputChange} placeholder="Meta description" />
                 </div>
               </div>
 
-              {/* Barcode Label Design - ONLY show for existing products (SAVE FIRST) */}
+              {/* Barcode Label Design */}
               {editingProduct ? (
-                <div className="barcode-preview-section" style={{ marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
-                  <label>Barcode Label Preview (Final Label)</label>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
-                    <div
-                      ref={labelRef}
-                      className="barcode-label"
-                      style={{
-                        width: '350px',
-                        background: '#fff',
-                        padding: '20px',
-                        border: '1px solid #000',
-                        borderRadius: '4px',
-                        color: '#000',
-                        fontFamily: 'Inter, sans-serif'
-                      }}
-                    >
-                      <div style={{ textAlign: 'center', fontSize: '24px', fontWeight: '800', marginBottom: '10px', borderBottom: '2px solid #000', paddingBottom: '5px' }}>{B.name.toUpperCase()}</div>
-                      <div style={{ fontSize: '13px', marginBottom: '4px' }}><strong>P Name:</strong> {form.name || '---'}</div>
-                      <div style={{ fontSize: '13px', marginBottom: '4px' }}><strong>Style ID:</strong> {form.styleId || '---'}</div>
-                      <div style={{ fontSize: '13px', marginBottom: '4px' }}><strong>Colour:</strong> {(form.clrs || '').split(',')[0] || '---'}</div>
-                      <div style={{ fontSize: '13px', marginBottom: '4px' }}><strong>Size:</strong> {(form.sizes || '').split(',')[0] || '---'}</div>
-                      <div style={{ fontSize: '18px', fontWeight: '700', marginTop: '10px' }}>MRP: ₹ {form.price || '0'}</div>
+                <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 shadow-inner flex flex-col items-center">
+                  <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Barcode Label Preview</p>
+                  <div className="flex flex-col items-center gap-4">
+                    <div ref={labelRef} className="bg-white p-6 border border-black rounded shadow-sm text-black font-sans w-[350px]">
+                      <div className="text-center text-2xl font-black mb-3 border-b-2 border-black pb-2 tracking-tighter">{B.name.toUpperCase()}</div>
+                      <div className="text-sm mb-1"><strong>Product:</strong> {form.name || '---'}</div>
+                      <div className="text-sm mb-1"><strong>Style ID:</strong> {form.styleId || '---'}</div>
+                      <div className="text-sm mb-1"><strong>Colour:</strong> {(form.clrs || '').split(',')[0] || '---'}</div>
+                      <div className="text-sm mb-1"><strong>Size:</strong> {(form.sizes || '').split(',')[0] || '---'}</div>
+                      <div className="text-xl font-bold mt-4">MRP: ₹ {form.price || '0'}</div>
 
-                      <div style={{ display: 'flex', justifyContent: 'center', marginTop: '15px' }}>
-                        {form.barcode && (
-                          <Barcode
-                            value={form.barcode}
-                            width={1.5}
-                            height={50}
-                            fontSize={12}
-                            background="#ffffff"
-                          />
-                        )}
+                      <div className="flex justify-center mt-6">
+                        {form.barcode && <Barcode value={form.barcode} width={1.5} height={50} fontSize={12} background="#ffffff" />}
                       </div>
 
-                      <div style={{ marginTop: '10px', fontSize: '10px', textAlign: 'center', borderTop: '1px dashed #ccc', paddingTop: '8px' }}>
+                      <div className="mt-4 text-[10px] text-center border-t border-dashed border-gray-400 pt-3 opacity-80">
                         Email: {B.email} <br />
                         Phone: {B.phone1}
                       </div>
                     </div>
-                    <button type="button" className="btn-secondary" onClick={downloadBarcode}>
-                      📥 Download Professional Label
+                    <button type="button" className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold shadow-md transition-all flex items-center gap-2" onClick={downloadBarcode}>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                      Download PDF Label
                     </button>
-                    <p style={{ fontSize: '11px', color: 'var(--ink3)' }}>Label is generated using saved SKU/Barcode data.</p>
+                    <p className="text-xs text-slate-500 font-medium mt-1">Label generated from saved data.</p>
                   </div>
                 </div>
               ) : (
-                <div style={{ marginTop: '20px', padding: '16px', background: '#f8f8f8', borderRadius: '8px', textAlign: 'center', border: '1px dashed #ccc' }}>
-                  <div style={{ fontSize: '20px', marginBottom: '8px' }}>📦</div>
-                  <div style={{ fontSize: '14px', fontWeight: 600, color: '#666' }}>Save Product First</div>
-                  <div style={{ fontSize: '12px', color: '#999' }}>You can download the professional barcode label after saving this product.</div>
+                <div className="bg-emerald-50 border-2 border-dashed border-emerald-200 rounded-2xl p-8 text-center">
+                  <div className="text-2xl mb-2">📦</div>
+                  <h4 className="text-emerald-800 font-bold mb-1">Save Product First</h4>
+                  <p className="text-emerald-600 text-sm font-medium">You can auto-generate and download professional barcodes once this product is created.</p>
                 </div>
               )}
 
-              <div className="modal-foot">
-                <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>Cancel</button>
-                <button type="submit" className="btn-primary">{editingProduct ? 'Update Product' : 'Add Product'}</button>
-              </div>
             </form>
+            <div className="modal-foot">
+              <button type="button" className="btn-secondary" onClick={() => setIsModalOpen(false)}>Cancel</button>
+              <button type="button" className="btn-primary" onClick={handleSave}>{editingProduct ? 'Save Changes' : 'Create Product'}</button>
+            </div>
           </div>
         </div>
       )}

@@ -7,11 +7,9 @@ import com.medvastr.backend.dto.PromoResponse;
 import com.medvastr.backend.model.Cart;
 import com.medvastr.backend.model.CartItem;
 import com.medvastr.backend.model.Product;
-import com.medvastr.backend.model.PromoCode;
 import com.medvastr.backend.model.User;
 import com.medvastr.backend.repository.CartRepository;
 import com.medvastr.backend.repository.ProductRepository;
-import com.medvastr.backend.repository.PromoCodeRepository;
 import com.medvastr.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +31,7 @@ public class CartService {
 
     private final CartRepository cartRepo;
     private final ProductRepository productRepo;
-    private final PromoCodeRepository promoRepo;
+    private final PromoCodeService promoCodeService;
     private final UserRepository userRepo;
 
     private User me() {
@@ -103,30 +101,7 @@ public class CartService {
     }
 
     public PromoResponse validatePromo(String code, Double total) {
-        return promoRepo.findByCodeIgnoreCaseAndActiveTrue(code).map(pc -> {
-            BigDecimal t = BigDecimal.valueOf(total);
-            if (pc.getMinimumOrderAmount() != null && t.compareTo(pc.getMinimumOrderAmount()) < 0) {
-                return PromoResponse.builder()
-                        .valid(false)
-                        .message("Minimum order INR " + pc.getMinimumOrderAmount() + " required")
-                        .build();
-            }
-
-            BigDecimal d = pc.getDiscountType() == PromoCode.DiscountType.PERCENTAGE
-                    ? t.multiply(pc.getDiscountValue()).divide(BigDecimal.valueOf(100))
-                    : pc.getDiscountValue();
-
-            if (pc.getMaximumDiscountAmount() != null && d.compareTo(pc.getMaximumDiscountAmount()) > 0)
-                d = pc.getMaximumDiscountAmount();
-
-            return PromoResponse.builder()
-                    .valid(true)
-                    .message(pc.getCode() + " applied!")
-                    .discountAmount(d)
-                    .discountType(pc.getDiscountType().name())
-                    .discountValue(pc.getDiscountValue())
-                    .build();
-        }).orElse(PromoResponse.builder().valid(false).message("Invalid or expired promo code").build());
+        return promoCodeService.validate(code, BigDecimal.valueOf(total));
     }
 
     private CartDTO toDTO(Cart cart, BigDecimal disc) {

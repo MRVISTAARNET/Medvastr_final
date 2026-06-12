@@ -14,7 +14,7 @@ export default function GenericPage({ title, desc, children }: GenPageProps) {
     <div className="page">
       <div
         className="inner-pg"
-        style={{ maxWidth: 960, margin: "0 auto", padding: "80px 20px" }}
+        style={{ maxWidth: 1400, margin: "0 auto", padding: "80px 20px" }}
       >
         <h1 style={{ fontFamily: "var(--serif)", fontSize: 52, fontWeight: 700, marginBottom: 12, letterSpacing: "-.03em" }}>{title}</h1>
         <div className="inner-sub" style={{ fontSize: 18, color: "var(--lt)", marginBottom: 48, lineHeight: 1.6 }}>

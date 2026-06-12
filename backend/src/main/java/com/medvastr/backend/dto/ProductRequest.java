@@ -1,6 +1,10 @@
 package com.medvastr.backend.dto;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,18 +21,36 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProductRequest {
+
+    @NotBlank
     private String name;
+
+    @NotBlank
+    private String type;
+
+    @NotBlank
+    @JsonAlias("gen")
+    private String gender;
+
+    @NotNull
+    @DecimalMin("0.01")
+    private BigDecimal price;
+
 
     @JsonAlias("desc")
     private String description;
 
+    private String shortDescription;
+    private String material;
+    private String tags;
+    private String seoTitle;
+    private String seoDescription;
+
     @JsonAlias("fab")
     private String fabric;
 
-    private String type;
 
-    @JsonAlias("gen")
-    private String gender;
+
 
     private String badge;
     private String brand;
@@ -55,15 +77,16 @@ public class ProductRequest {
     private String weight;
 
     private String fit;
-    private BigDecimal price;
     private BigDecimal originalPrice;
 
     @JsonAlias("pockets")
     private Integer pocketCount;
 
     @JsonAlias("catId")
+    @NotNull
     private Long categoryId;
 
+    @NotEmpty
     private List<VariantDTO> variants;
 
     @JsonAlias("imgs")
