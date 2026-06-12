@@ -1,4 +1,5 @@
 package com.medvastr.backend.exception;
+
 import com.medvastr.backend.dto.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
@@ -26,7 +27,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse<Object>> access(AccessDeniedException e) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.err("Access Denied: You don't have permission to perform this action"));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.err("Access Denied: You don't have permission to perform this action"));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -47,6 +49,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<Object>> illegalArgument(IllegalArgumentException e) {
         return ResponseEntity.badRequest().body(ApiResponse.err(e.getMessage()));
+    }
+
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> noResource(
+            org.springframework.web.servlet.resource.NoResourceFoundException e) {
+        log.warn("Static resource not found: {}", e.getResourcePath());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.err("Resource not found"));
     }
 
     @ExceptionHandler(Exception.class)
