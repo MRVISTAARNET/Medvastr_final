@@ -57,7 +57,7 @@ export default function AboutPage() {
       <section style={{ padding: "100px 24px", maxWidth: "1200px", margin: "0 auto" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: "60px", alignItems: "start" }}>
           {/* Left Column */}
-          <div style={{ spaceY: "40px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "40px" }}>
             <ImageBox label="SCRUBS_HERO_IMAGE" width="100%" height="800px" />
             <div style={{ marginTop: "40px", border: `2px dashed ${COLORS.border}`, padding: "30px", borderRadius: "12px" }}>
               <h3 style={{ fontSize: "24px", fontWeight: "800", marginBottom: "20px" }}>Size Chart: Mens & Womens</h3>
