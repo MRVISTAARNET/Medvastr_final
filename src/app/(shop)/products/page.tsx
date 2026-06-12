@@ -11,7 +11,7 @@ function ProductsContent() {
   const initCat = searchParams.get("cat") || "all";
   const initColor = searchParams.get("color") || "";
   const initGen = searchParams.get("gender")?.toLowerCase() || searchParams.get("gen")?.toLowerCase() || "all";
-  const { products } = useApp();
+  const { products, banners } = useApp();
 
   const [cat, setCat] = useState(initCat);
   const [gen, setGen] = useState(initGen);
@@ -90,10 +90,29 @@ function ProductsContent() {
     ...dynamicCats
   ];
 
-  const activeCatLabel = cats.find((c: any) => c.id === cat)?.l || "All Products";
+  const activeCatLabel = cats.find((c: any) => c.id === cat)?.l || (gen !== 'all' ? (gen.charAt(0).toUpperCase() + gen.slice(1) + " Collection") : "All Products");
+
+  let staticBannerImg = null;
+  let staticBannerTitle = "";
+
+  if (gen === 'men') {
+    staticBannerImg = "https://medvastr-assets.s3.ap-south-1.amazonaws.com/men-banner.png";
+    staticBannerTitle = "Men's Collection";
+  } else if (gen === 'women') {
+    staticBannerImg = "https://medvastr-assets.s3.ap-south-1.amazonaws.com/women-banner.png";
+    staticBannerTitle = "Women's Collection";
+  } else if (cat === 'surgical' || cat === 'surgical-wear') {
+    staticBannerImg = "https://medvastr-assets.s3.ap-south-1.amazonaws.com/surgical-banner.png";
+    staticBannerTitle = "Surgical Wear";
+  }
 
   return (
     <div className="page">
+      {staticBannerImg && (
+        <div style={{ width: '100%', marginBottom: 30, borderRadius: 16, overflow: 'hidden', minHeight: 250, backgroundImage: `url(${staticBannerImg})`, backgroundSize: 'cover', backgroundPosition: 'center', display: 'flex', alignItems: 'center', padding: 40 }}>
+          <h2 style={{ color: 'white', fontSize: 32, fontWeight: 800, textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>{staticBannerTitle}</h2>
+        </div>
+      )}
       <div className="sec">
         {/* Breadcrumb */}
         <div
