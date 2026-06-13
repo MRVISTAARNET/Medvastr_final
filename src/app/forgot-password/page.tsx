@@ -11,22 +11,7 @@ export default function ForgotPasswordPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!email) { setMessage('Please enter your email address.'); setStatus('error'); return; }
-        setStatus('loading');
-        setMessage('');
-
-        try {
-            const res = await fetch(
-                `${API_BASE}/auth/forgot-password?email=${encodeURIComponent(email)}`,
-                { method: 'POST' }
-            );
-            const data = await res.json();
-            setMessage(data.message || 'If this email is registered you will receive a reset link shortly.');
-            setStatus('sent');
-        } catch {
-            setMessage('Something went wrong. Please try again.');
-            setStatus('error');
-        }
+        alert("Forgot password feature is currently not working. Please login with OTP instead. Thank you!");
     };
 
     return (

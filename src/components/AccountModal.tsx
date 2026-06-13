@@ -188,7 +188,7 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                     <label style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: '#666' }}>Password</label>
                     {mode === 'login' && (
-                      <span onClick={() => { setFpMode(true); setFpEmail(form.email); setFpMsg(""); }} style={{ fontSize: 12, color: '#008080', fontWeight: 600, cursor: 'pointer' }}>
+                      <span onClick={() => { alert("Forgot password feature is currently not working. Please login with OTP instead. Thank you!"); switchMode('login-otp'); }} style={{ fontSize: 12, color: '#008080', fontWeight: 600, cursor: 'pointer' }}>
                         Forgot Password?
                       </span>
                     )}

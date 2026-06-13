@@ -1,9 +1,29 @@
 const fs = require('fs');
 const path = require('path');
-const archiver = require('archiver'); // Re-checking if archiver exists in node_modules, but I should probably use a safer way.
+const archiver = require('archiver');
 
-// Since I cannot guarantee 'archiver' is installed in the user's project,
-// I will use a different approach. I'll use the 'jar' command but with a manual folder staging.
-// Actually, I shouldn't rely on jar if it failed before.
+const output = fs.createWriteStream(path.join(__dirname, 'medvastr-prod-final.zip'));
+const archive = archiver.create('zip', {
+    zlib: { level: 9 } // Highest compression
+});
 
-// Let's use powershell but do it correctly with Forward Slashes.
+output.on('close', function () {
+    console.log(archive.pointer() + ' total bytes');
+    console.log('Archive has been finalized and the output file descriptor has closed.');
+});
+
+archive.on('error', function (err) {
+    throw err;
+});
+
+archive.pipe(output);
+
+// Add the application JAR file at the root level securely
+archive.file('target/backend-0.0.1-SNAPSHOT.jar', { name: 'application.jar' });
+archive.file('Procfile', { name: 'Procfile' });
+
+console.log("Staging .ebextensions and .platform for AWS...");
+archive.directory('.ebextensions/', '.ebextensions');
+archive.directory('.platform/', '.platform');
+
+archive.finalize();
