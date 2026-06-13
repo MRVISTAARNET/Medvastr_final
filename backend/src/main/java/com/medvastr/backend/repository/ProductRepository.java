@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-        @org.springframework.data.jpa.repository.EntityGraph(attributePaths = { "images", "variants" })
+        @org.springframework.data.jpa.repository.EntityGraph(attributePaths = { "images" })
         Optional<Product> findBySlugAndActiveTrue(String slug);
 
         List<Product> findByFeaturedTrueAndActiveTrueOrderByRatingDesc();

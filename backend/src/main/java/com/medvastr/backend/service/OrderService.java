@@ -159,6 +159,7 @@ public class OrderService {
             decrementStock(finalSaved);
             preloadOrderRelations(finalSaved);
             emailService.sendOrderConfirmationEmail(finalSaved);
+            emailService.sendAdminNotification(finalSaved);
             shiprocketService.createOrder(finalSaved);
         }
 
@@ -190,6 +191,7 @@ public class OrderService {
             decrementStock(saved);
             preloadOrderRelations(saved);
             emailService.sendOrderConfirmationEmail(saved);
+            emailService.sendAdminNotification(saved);
             shiprocketService.createOrder(saved);
             return toDTO(saved);
         }

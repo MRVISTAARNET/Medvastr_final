@@ -41,9 +41,39 @@ public class EmailService {
 
     @Async
     public void sendOrderConfirmationEmail(Order order) {
-        String html = getOrderConfirmationHtml(order);
-        sendHtmlEmail(order.getUser().getEmail(), "Order Confirmed - " + order.getOrderNumber(), html,
-                "orders@medvastr.com", "Medvastr Orders");
+        String customerEmail = order.getUser().getEmail();
+        String subject = "Order Confirmed - " + order.getOrderNumber();
+        log.info("[EmailService] Sending order confirmation - Customer Email: {} | Subject: {}", customerEmail,
+                subject);
+
+        try {
+            String html = getOrderConfirmationHtml(order);
+            sendHtmlEmailInner(customerEmail, subject, html, "orders@medvastr.com", "Medvastr Orders");
+            log.info("[EmailService] Order Confirmation Status: SUCCESS | Customer Email: {} | Subject: {}",
+                    customerEmail, subject);
+        } catch (Exception ex) {
+            log.error("[EmailService] Order Confirmation Status: FAILED | Customer Email: {} | Subject: {}",
+                    customerEmail, subject, ex);
+            // We log the complete stack trace and do not throw, so order creation does not
+            // fail.
+        }
+    }
+
+    @Async
+    public void sendAdminNotification(Order order) {
+        String adminEmail = "admin@medvastr.com";
+        String subject = "New Order Received - " + order.getOrderNumber();
+        log.info("[EmailService] Sending admin notification - Admin Email: {} | Subject: {}", adminEmail, subject);
+
+        try {
+            String html = getOrderConfirmationHtml(order);
+            sendHtmlEmailInner(adminEmail, subject, html, "orders@medvastr.com", "Medvastr Bot");
+            log.info("[EmailService] Admin Notification Status: SUCCESS | Admin Email: {} | Subject: {}", adminEmail,
+                    subject);
+        } catch (Exception ex) {
+            log.error("[EmailService] Admin Notification Status: FAILED | Admin Email: {} | Subject: {}", adminEmail,
+                    subject, ex);
+        }
     }
 
     @Async
@@ -114,21 +144,26 @@ public class EmailService {
         sendHtmlEmail(toEmail, "Welcome to Medvastr - You're Subscribed!", html, "info@medvastr.com", "Medvastr");
     }
 
+    private void sendHtmlEmailInner(String to, String subject, String body, String alias, String aliasName)
+            throws Exception {
+        MimeMessage msg = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
+
+        helper.setFrom(fromEmail, aliasName);
+        helper.setReplyTo(alias);
+        helper.setTo(to);
+        helper.setSubject(subject);
+        helper.setText(body, true);
+
+        mailSender.send(msg);
+    }
+
     private void sendHtmlEmail(String to, String subject, String body, String alias, String aliasName) {
         try {
-            MimeMessage msg = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
-
-            helper.setFrom(fromEmail, aliasName);
-            helper.setReplyTo(alias);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(body, true);
-
-            mailSender.send(msg);
-            log.info("[EmailService] Email sent to {} | Subject: {}", to, subject);
+            sendHtmlEmailInner(to, subject, body, alias, aliasName);
+            log.info("[EmailService] Email sent to {} | Subject: {} | Status: SUCCESS", to, subject);
         } catch (Exception ex) {
-            log.error("[EmailService] Failed to send email to {}", to, ex);
+            log.error("[EmailService] Failed to send email to {} | Subject: {} | Status: FAILED", to, subject, ex);
         }
     }
 
