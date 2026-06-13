@@ -69,10 +69,10 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
 
   return (
     <div className="mega">
-      <div className="mega-in" style={{ gridTemplateColumns: '1.2fr 1fr 1fr' }}>
+      <div className="mega-in" style={{ gridTemplateColumns: '1.2fr 0.8fr 0.8fr 1fr' }}>
 
-        {/* COL 1: Deep Categories */}
-        <div className="mcol" style={{ gridColumn: "span 1" }}>
+        {/* COL 1: Categories Hierarchy */}
+        <div className="mcol">
           <div className="mcol-hd">{catLabel}</div>
           <ul className="m-deep-list">
             {subcats.length > 0 ? subcats.map((cat: any) => (
@@ -123,7 +123,7 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
             </div>
 
             {/* COL 3: Sizes */}
-            <div className="mcol" style={{ borderRight: "none" }}>
+            <div className="mcol">
               <div className="mcol-hd">Sizes</div>
               <div className="msize-grid">
                 {sizeLinks.map((s: any) => (
@@ -136,17 +136,41 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
                   </Link>
                 ))}
               </div>
+              <Link href="/products" className="msize-guide-btn">
+                View Size Guide →
+              </Link>
+            </div>
+
+            {/* COL 4: Featured Product Card */}
+            <div className="mcol" style={{ borderRight: "none" }}>
+              <div className="mcol-hd">Featured</div>
+              {featuredProduct ? (
+                <Link href={`/product/${featuredProduct.slug || featuredProduct.id}`} className="m-feat-card">
+                  <div className="m-feat-img">
+                    {featuredProduct.imgs?.[0] && <img src={featuredProduct.imgs[0]} alt={featuredProduct.name} />}
+                  </div>
+                  <div className="m-feat-info">
+                    <span className="m-feat-name">{featuredProduct.name}</span>
+                    <span className="m-feat-price">{fmt(featuredProduct.price)}</span>
+                  </div>
+                </Link>
+              ) : (
+                <div className="m-feat-empty">
+                  Medvastr Premium
+                </div>
+              )}
             </div>
           </>
         ) : (
-          <div className="mcol" style={{ gridColumn: "span 2", padding: "40px", background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)", marginLeft: "20px", borderRadius: 16, border: "1px solid #e2e8f0", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-            <h3 style={{ fontSize: 24, fontWeight: 800, color: "#0f7c6e", marginBottom: 16, letterSpacing: "-0.02em" }}>Premium {label} Supplies</h3>
+          <div className="mcol" style={{ gridColumn: "span 3", padding: "40px", background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)", marginLeft: "20px", borderRadius: 16, border: "1px solid #e2e8f0", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <h3 style={{ fontSize: 24, fontWeight: 800, color: "#0f7c6e", marginBottom: 16 }}>Premium {label} Supplies</h3>
             <p style={{ fontSize: 15, color: "#475569", lineHeight: 1.7, marginBottom: 30 }}>
-              Explore our comprehensive <b>{label.toLowerCase()}</b> inventory. Engineered for supreme durability and rigorous medical standards.
+              Explore our comprehensive collection for your medical facility. Engineered for durability and high clinical standards.
             </p>
             <Link
               href={label.toUpperCase().includes("BULK") ? "/bulk-orders" : `/products?cat=${parentCat?.slug}`}
-              style={{ display: "inline-flex", width: 'fit-content', alignItems: "center", justifyContent: "center", background: "#0f7c6e", color: "white", padding: "14px 28px", borderRadius: 8, fontSize: 14, fontWeight: 700, textDecoration: "none" }}
+              className="btn-p"
+              style={{ width: 'fit-content' }}
             >
               Explore Collection
             </Link>
@@ -156,13 +180,25 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
 
       <style jsx>{`
         .m-deep-list { list-style: none; padding: 0; margin: 0; }
-        .m-parent-li { margin-bottom: 20px; }
-        .m-p-link { font-weight: 800 !important; color: #0f172a !important; font-size: 15px !important; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px !important; }
-        .m-sub-list { list-style: none; padding-left: 20px; border-left: 1px solid #e2e8f0; margin-top: 5px; }
-        .m-sub-list li { padding: 4px 0; }
-        .m-sub-list a { font-size: 13px !important; color: #64748b !important; font-weight: 500 !important; }
-        .m-sub-list a:hover { color: #0f7c6e !important; }
-        .mcat-arrow { font-size: 10px; opacity: 0.5; }
+        .m-parent-li { margin-bottom: 25px; }
+        .m-p-link { font-weight: 850 !important; color: #0f172a !important; font-size: 14px !important; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px !important; text-transform: uppercase; letter-spacing: 0.5px; }
+        .m-sub-list { list-style: none; padding-left: 15px; border-left: 2px solid #f1f5f9; margin-top: 5px; }
+        .m-sub-list li { padding: 5px 0; }
+        .m-sub-list a { font-size: 13px !important; color: #64748b !important; font-weight: 600 !important; transition: color 0.2s; }
+        .m-sub-list a:hover { color: #008080 !important; }
+        .mcat-arrow { font-size: 10px; color: #94a3b8; }
+        
+        .msize-guide-btn { margin-top: 25px; display: inline-block; font-size: 12px; font-weight: 800; color: #008080; text-transform: uppercase; letter-spacing: 1px; text-decoration: none; border-bottom: 1px solid transparent; padding-bottom: 2px; transition: all 0.2s; }
+        .msize-guide-btn:hover { border-bottom-color: #008080; transform: translateX(5px); }
+
+        .m-feat-card { display: block; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; text-decoration: none; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); margin-top: 5px; }
+        .m-feat-card:hover { transform: translateY(-5px); border-color: #cbd5e1; }
+        .m-feat-img { height: 180px; background: #fff; overflow: hidden; }
+        .m-feat-img img { width: 100%; height: 100%; objectFit: cover; }
+        .m-feat-info { padding: 15px; display: flex; flex-direction: column; gap: 4px; }
+        .m-feat-name { font-size: 13px; font-weight: 700; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .m-feat-price { font-size: 14px; font-weight: 900; color: #008080; }
+        .m-feat-empty { height: 180px; display: flex; align-items: center; justify-content: center; background: #f1f5f9; color: #94a3b8; font-weight: 700; font-size: 12px; text-transform: uppercase; border-radius: 12px; }
       `}</style>
     </div>
   );
