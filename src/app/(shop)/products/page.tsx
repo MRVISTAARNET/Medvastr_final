@@ -91,7 +91,7 @@ function ProductsContent() {
     ...dynamicCats
   ];
 
-  const activeCatLabel = cats.find((c: any) => c.id === cat)?.l || (gen !== 'all' ? (gen.charAt(0).toUpperCase() + gen.slice(1) + " Collection") : "All Products");
+  let activeCatLabel = cats.find((c: any) => c.id === cat)?.l || (gen !== 'all' ? (gen.charAt(0).toUpperCase() + gen.slice(1) + " Collection") : "All Products");
 
   let staticBannerBase: string | null = null;
   let staticBannerTitle = "";
@@ -106,6 +106,7 @@ function ProductsContent() {
   } else if (cat === 'surgical' || cat === 'surgical-wear') {
     staticBannerBase = `${S3}/surgical-banner`;
     staticBannerTitle = "Surgical Wear";
+    activeCatLabel = "Surgical Wear";
   }
 
   return (
@@ -115,16 +116,18 @@ function ProductsContent() {
       )}
       <div className="sec" style={{ paddingBottom: 60 }}>
         {/* Breadcrumb */}
-        <div className="breadcrumb">
+        <div className="breadcrumb" style={{ marginBottom: staticBannerBase ? 20 : 30 }}>
           <Link href="/">Home</Link>
           <span className="sep">/</span>
           <span className="active">{activeCatLabel}</span>
         </div>
 
-        <div className="catalog-header">
-          <h1 className="catalog-title">{activeCatLabel}</h1>
-          <p className="catalog-subtitle">{f.length} high-performance items available</p>
-        </div>
+        {!staticBannerBase && (
+          <div className="catalog-header">
+            <h1 className="catalog-title">{activeCatLabel}</h1>
+            <p className="catalog-subtitle">{f.length} items available</p>
+          </div>
+        )}
 
         <div className="products-layout">
           {/* SIDEBAR */}
@@ -401,44 +404,43 @@ function ProductsContent() {
         .breadcrumb .active { color: #1e293b; font-weight: 700; }
 
         .catalog-header { margin-bottom: 35px; }
-        .catalog-title { font-size: 32px; font-weight: 900; color: #0f172a; margin-bottom: 6px; letter-spacing: -0.03em; }
+        .catalog-title { font-size: 36px; font-weight: 950; color: #0f172a; margin-bottom: 6px; letter-spacing: -0.04em; }
         .catalog-subtitle { font-size: 15px; color: #64748b; font-weight: 500; }
 
-        .products-layout { display: grid; grid-template-columns: 280px 1fr; gap: 40px; align-items: start; }
+        .products-layout { display: grid; grid-template-columns: 260px 1fr; gap: 40px; align-items: start; }
         
-        .sidebar { background: white; border: 1px solid #e2e8f0; border-radius: 20px; padding: 25px; position: sticky; top: 100px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        .sidebar { background: #ffffff; border: 1px solid #f1f5f9; border-radius: 20px; padding: 25px; position: sticky; top: 100px; box-shadow: 0 10px 40px rgba(0,0,0,0.02); }
         .sb-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9; }
-        .sb-title { font-size: 16px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px; }
+        .sb-title { font-size: 16px; font-weight: 900; color: #0f172a; text-transform: uppercase; letter-spacing: 1px; }
         
-        .sb-section { margin-bottom: 25px; }
-        .sb-lbl { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; margin-bottom: 15px; display: flex; align-items: center; gap: 6px; }
+        .sb-section { margin-bottom: 30px; }
+        .sb-lbl { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; margin-bottom: 18px; display: block; opacity: 0.8; }
         
-        .sb-chips { display: flex; flex-direction: column; gap: 8px; }
-        .sb-chip { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 10px; cursor: pointer; transition: all 0.2s; font-size: 14px; color: #475569; font-weight: 600; border: 1px solid transparent; }
+        .sb-chips { display: flex; flex-direction: column; gap: 6px; }
+        .sb-chip { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 12px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); font-size: 14px; color: #475569; font-weight: 600; }
         .sb-chip:hover { background: #f8fafc; color: #008080; }
-        .sb-chip.on { background: #f0f9f9; color: #008080; border-color: #008080; }
+        .sb-chip.on { background: #f0f9f9; color: #008080; font-weight: 700; }
         .sb-chip-left { display: flex; align-items: center; gap: 10px; }
-        .sb-chip-cnt { font-size: 11px; background: #f1f5f9; padding: 2px 8px; border-radius: 20px; color: #64748b; }
+        .sb-chip-cnt { font-size: 10px; background: #f1f5f9; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: #94a3b8; }
         .sb-chip.on .sb-chip-cnt { background: #008080; color: white; }
 
-        .sb-gender-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .sb-gender-btn { padding: 10px; text-align: center; border-radius: 10px; border: 1.5px solid #e2e8f0; font-size: 13px; font-weight: 700; color: #475569; cursor: pointer; transition: all 0.2s; }
-        .sb-gender-btn:hover { border-color: #cbd5e1; }
-        .sb-gender-btn.on { border-color: #008080; background: #f0f9f9; color: #008080; }
+        .sb-gender-row { display: grid; grid-template-columns: 1fr; gap: 6px; }
+        .sb-gender-btn { padding: 10px 14px; border-radius: 12px; font-size: 13px; font-weight: 600; color: #475569; cursor: pointer; transition: all 0.2s; background: #f8fafc; }
+        .sb-gender-btn:hover { background: #f1f5f9; }
+        .sb-gender-btn.on { background: #008080; color: #ffffff; box-shadow: 0 4px 12px rgba(0,128,128,0.25); }
 
-        .sb-price-btns { display: flex; flex-direction: column; gap: 8px; }
-        .sb-price-btn { padding: 10px 14px; border-radius: 10px; border: 1.5px solid #e2e8f0; font-size: 13px; font-weight: 600; color: #475569; cursor: pointer; transition: all 0.2s; }
-        .sb-price-btn:hover { border-color: #cbd5e1; }
-        .sb-price-btn.on { border-color: #008080; background: #f0f9f9; color: #008080; }
+        .sb-price-btns { display: flex; flex-direction: column; gap: 6px; }
+        .sb-price-btn { padding: 10px 14px; border-radius: 12px; font-size: 13px; font-weight: 600; color: #475569; cursor: pointer; transition: all 0.2s; background: #f8fafc; }
+        .sb-price-btn.on { background: #1e293b; color: #ffffff; }
 
-        .clr-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-        .clr-card { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #e2e8f0; cursor: pointer; transition: all 0.2s; position: relative; padding: 2px; }
-        .clr-card:hover { transform: scale(1.1); border-color: #008080; }
-        .clr-card.on { border-color: #008080; transform: scale(1.1); }
-        .clr-in { width: 100%; height: 100%; border-radius: 50%; }
+        .clr-chips { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+        .clr-card { width: 34px; height: 34px; border-radius: 50%; border: 2px solid #f1f5f9; cursor: pointer; transition: all 0.2s; position: relative; padding: 2px; }
+        .clr-card:hover { transform: scale(1.15); }
+        .clr-card.on { border-color: #008080; box-shadow: 0 0 0 1px #008080; }
+        .clr-in { width: 100%; height: 100%; border-radius: 50%; border: 1px solid rgba(0,0,0,0.05); }
 
-        .mob-filter-btn { display: none; width: 100%; padding: 14px; background: white; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 700; color: #0f172a; margin-bottom: 20px; align-items: center; justify-content: center; gap: 10px; cursor: pointer; }
-        .mob-filter-close { width: 36px; height: 36px; border-radius: 50%; background: #f1f5f9; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .mob-filter-btn { display: none; width: 100%; padding: 14px; background: #0f172a; border: none; border-radius: 12px; font-weight: 700; color: white; margin-bottom: 20px; align-items: center; justify-content: center; gap: 10px; cursor: pointer; }
+        .mob-filter-close { width: 40px; height: 40px; border-radius: 50%; background: #f1f5f9; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
         @media (max-width: 1024px) {
           .products-layout { grid-template-columns: 1fr; }
@@ -464,8 +466,8 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
       className="cat-banner"
       style={{
         width: '100%',
-        marginBottom: 25,
-        borderRadius: 20,
+        marginBottom: 30,
+        borderRadius: 24,
         overflow: 'hidden',
         minHeight: '220px',
         maxHeight: '280px',
@@ -475,13 +477,10 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
         display: 'flex',
         alignItems: 'center',
         padding: '0 50px',
-        position: 'relative'
+        position: 'relative',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
       }}
     >
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.6) 0%, transparent 70%)', zIndex: 1 }} />
-      <h2 style={{ color: 'white', fontSize: 38, fontWeight: 900, textShadow: '0 2px 15px rgba(0,0,0,0.3)', margin: 0, position: 'relative', zIndex: 2, letterSpacing: '-0.02em' }}>
-        {title}
-      </h2>
       <img src={src} alt="" style={{ display: 'none' }} onError={() => setIdx(i => i + 1)} />
     </div>
   );
