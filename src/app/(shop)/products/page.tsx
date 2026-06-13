@@ -109,41 +109,48 @@ function ProductsContent() {
     activeCatLabel = "Surgical Wear";
   }
 
+  const descMap: Record<string, string> = {
+    "Men's Collection": "Engineered for excellence, our men's scrub collection combines high-performance fabric with a professional fit that lasts throughout the longest shifts.",
+    "Women's Collection": "Designed for the modern healthcare hero, our women's collection offers a perfect blend of style, comfort, and functionality with our signature stretch fabric.",
+    "Surgical Wear": "Premium protection meets flexibility. Our surgical wear is crafted to meet the highest clinical standards while ensuring maximum comfort in the operating room.",
+    "All Products": "Explore our complete range of premium medical apparel, from high-performance scrubs to essential clinical accessories designed for healthcare professionals."
+  };
+
+  const activeDesc = descMap[staticBannerTitle || activeCatLabel] || descMap["All Products"];
+
   return (
-    <div className="page" style={{ background: '#f8fafc' }}>
+    <div className="page" style={{ background: '#ffffff' }}>
       {staticBannerBase && (
         <SmartBanner base={staticBannerBase} title={staticBannerTitle} />
       )}
       <div className="sec" style={{ paddingBottom: 60 }}>
         {/* Breadcrumb */}
-        <div className="breadcrumb" style={{ marginBottom: staticBannerBase ? 20 : 30 }}>
+        <div className="breadcrumb" style={{ marginBottom: 25 }}>
           <Link href="/">Home</Link>
           <span className="sep">/</span>
           <span className="active">{activeCatLabel}</span>
         </div>
 
-        {!staticBannerBase && (
-          <div className="catalog-header">
-            <h1 className="catalog-title">{activeCatLabel}</h1>
-            <p className="catalog-subtitle">{f.length} items available</p>
-          </div>
-        )}
+        <div className="catalog-header" style={{ marginBottom: 40 }}>
+          <h1 className="catalog-title">{activeCatLabel}</h1>
+          <p className="catalog-subtitle" style={{ maxWidth: 800, lineHeight: 1.6, color: '#64748b' }}>
+            {activeDesc}
+          </p>
+        </div>
 
         <div className="products-layout">
+          <button className="mob-filter-btn" onClick={() => setMobF(true)}>
+            <span style={{ fontSize: 18 }}>⚙️</span> Show Filters
+          </button>
+
           {/* SIDEBAR */}
           <div className={`sidebar${mobF ? " mob-on" : ""}`}>
             <div className="sb-header">
-              <div className="sb-title">
-                <span className="sb-title-ico">⚙️</span>
-                Filter Products
-              </div>
+              <div className="sb-title">Filters</div>
               <div style={{ display: "flex", gap: 10 }}>
-                {hasFilters && (
-                  <button className="sb-clear" onClick={reset}>
-                    ✕ Clear
-                  </button>
+                {mobF && (
+                  <button className="mob-filter-close" onClick={() => setMobF(false)}>✕</button>
                 )}
-                <button className="mob-filter-close" onClick={() => setMobF(false)}>✕</button>
               </div>
             </div>
 
@@ -397,54 +404,54 @@ function ProductsContent() {
       </div>
 
       <style jsx>{`
-        .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b; margin: 15px 0 25px; font-weight: 500; }
-        .breadcrumb a { color: #64748b; text-decoration: none; transition: color 0.2s; }
-        .breadcrumb a:hover { color: #008080; }
-        .breadcrumb .sep { opacity: 0.4; }
-        .breadcrumb .active { color: #1e293b; font-weight: 700; }
+        .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #94a3b8; margin: 10px 0 20px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
+        .breadcrumb a { color: #94a3b8; text-decoration: none; transition: color 0.3s; }
+        .breadcrumb a:hover { color: #1e293b; }
+        .breadcrumb .sep { opacity: 0.3; }
+        .breadcrumb .active { color: #1e293b; font-weight: 600; }
 
-        .catalog-header { margin-bottom: 35px; }
-        .catalog-title { font-size: 36px; font-weight: 950; color: #0f172a; margin-bottom: 6px; letter-spacing: -0.04em; }
-        .catalog-subtitle { font-size: 15px; color: #64748b; font-weight: 500; }
+        .catalog-header { margin-bottom: 40px; padding-bottom: 30px; border-bottom: 1px solid #f1f5f9; }
+        .catalog-title { font-size: 42px; font-weight: 800; color: #0f172a; margin-bottom: 12px; letter-spacing: -0.05em; }
+        .catalog-subtitle { font-size: 16px; color: #475569; font-weight: 400; max-width: 700px; line-height: 1.7; }
 
-        .products-layout { display: grid; grid-template-columns: 260px 1fr; gap: 40px; align-items: start; }
+        .products-layout { display: grid; grid-template-columns: 240px 1fr; gap: 60px; align-items: start; }
         
-        .sidebar { background: #ffffff; border: 1px solid #f1f5f9; border-radius: 20px; padding: 25px; position: sticky; top: 100px; box-shadow: 0 10px 40px rgba(0,0,0,0.02); }
-        .sb-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9; }
-        .sb-title { font-size: 16px; font-weight: 900; color: #0f172a; text-transform: uppercase; letter-spacing: 1px; }
+        .sidebar { background: #ffffff; border-right: 1px solid #f1f5f9; padding-right: 40px; position: sticky; top: 120px; }
+        .sb-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .sb-title { font-size: 12px; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 2px; }
         
-        .sb-section { margin-bottom: 30px; }
-        .sb-lbl { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #94a3b8; margin-bottom: 18px; display: block; opacity: 0.8; }
+        .sb-section { margin-bottom: 40px; }
+        .sb-lbl { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #1e293b; margin-bottom: 20px; display: block; border-bottom: 2px solid #0f172a; width: fit-content; padding-bottom: 4px; }
         
-        .sb-chips { display: flex; flex-direction: column; gap: 6px; }
-        .sb-chip { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 12px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); font-size: 14px; color: #475569; font-weight: 600; }
-        .sb-chip:hover { background: #f8fafc; color: #008080; }
-        .sb-chip.on { background: #f0f9f9; color: #008080; font-weight: 700; }
-        .sb-chip-left { display: flex; align-items: center; gap: 10px; }
-        .sb-chip-cnt { font-size: 10px; background: #f1f5f9; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: #94a3b8; }
-        .sb-chip.on .sb-chip-cnt { background: #008080; color: white; }
+        .sb-chips { display: flex; flex-direction: column; gap: 4px; }
+        .sb-chip { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f8fafc; cursor: pointer; transition: all 0.2s; font-size: 14px; color: #64748b; font-weight: 500; }
+        .sb-chip:hover { color: #0f172a; border-bottom-color: #e2e8f0; }
+        .sb-chip.on { color: #008080; border-bottom-color: #008080; font-weight: 700; }
+        .sb-chip-left { display: flex; align-items: center; gap: 12px; }
+        .sb-chip-cnt { font-size: 10px; color: #cbd5e1; font-weight: 400; }
+        .sb-chip.on .sb-chip-cnt { color: #008080; }
 
-        .sb-gender-row { display: grid; grid-template-columns: 1fr; gap: 6px; }
-        .sb-gender-btn { padding: 10px 14px; border-radius: 12px; font-size: 13px; font-weight: 600; color: #475569; cursor: pointer; transition: all 0.2s; background: #f8fafc; }
-        .sb-gender-btn:hover { background: #f1f5f9; }
-        .sb-gender-btn.on { background: #008080; color: #ffffff; box-shadow: 0 4px 12px rgba(0,128,128,0.25); }
+        .sb-gender-row { display: flex; flex-direction: column; gap: 4px; }
+        .sb-gender-btn { padding: 12px 0; font-size: 14px; font-weight: 500; color: #64748b; cursor: pointer; transition: all 0.2s; border-bottom: 1px solid #f8fafc; text-align: left; }
+        .sb-gender-btn:hover { color: #0f172a; }
+        .sb-gender-btn.on { color: #008080; border-bottom-color: #008080; font-weight: 700; }
 
-        .sb-price-btns { display: flex; flex-direction: column; gap: 6px; }
-        .sb-price-btn { padding: 10px 14px; border-radius: 12px; font-size: 13px; font-weight: 600; color: #475569; cursor: pointer; transition: all 0.2s; background: #f8fafc; }
-        .sb-price-btn.on { background: #1e293b; color: #ffffff; }
+        .sb-price-btns { display: flex; flex-direction: column; gap: 4px; }
+        .sb-price-btn { padding: 12px 0; font-size: 14px; font-weight: 500; color: #64748b; cursor: pointer; transition: all 0.2s; border-bottom: 1px solid #f8fafc; text-align: left; }
+        .sb-price-btn.on { color: #008080; border-bottom-color: #008080; font-weight: 700; }
 
-        .clr-chips { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-        .clr-card { width: 34px; height: 34px; border-radius: 50%; border: 2px solid #f1f5f9; cursor: pointer; transition: all 0.2s; position: relative; padding: 2px; }
-        .clr-card:hover { transform: scale(1.15); }
-        .clr-card.on { border-color: #008080; box-shadow: 0 0 0 1px #008080; }
-        .clr-in { width: 100%; height: 100%; border-radius: 50%; border: 1px solid rgba(0,0,0,0.05); }
+        .clr-chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding-top: 5px; }
+        .clr-card { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #e2e8f0; cursor: pointer; transition: all 0.3s; position: relative; padding: 3px; }
+        .clr-card:hover { transform: translateY(-3px); border-color: #008080; }
+        .clr-card.on { border-color: #0f172a; background: #f8fafc; transform: scale(1.1); }
+        .clr-in { width: 100%; height: 100%; border-radius: 50%; }
 
-        .mob-filter-btn { display: none; width: 100%; padding: 14px; background: #0f172a; border: none; border-radius: 12px; font-weight: 700; color: white; margin-bottom: 20px; align-items: center; justify-content: center; gap: 10px; cursor: pointer; }
+        .mob-filter-btn { display: none; width: 100%; padding: 16px; background: #0f172a; border: none; border-radius: 4px; font-weight: 700; color: white; margin-bottom: 30px; align-items: center; justify-content: center; gap: 12px; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; font-size: 12px; }
         .mob-filter-close { width: 40px; height: 40px; border-radius: 50%; background: #f1f5f9; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
         @media (max-width: 1024px) {
-          .products-layout { grid-template-columns: 1fr; }
-          .sidebar { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000; border-radius: 0; padding: 30px; display: none; }
+          .products-layout { grid-template-columns: 1fr; gap: 0; }
+          .sidebar { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000; border: none; padding: 40px; display: none; overflow-y: auto; }
           .sidebar.mob-on { display: block; }
           .mob-filter-btn { display: flex; }
         }
