@@ -183,16 +183,16 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
 
       <style jsx>{`
         .m-deep-list { list-style: none; padding: 0; margin: 0; }
-        .m-parent-li { margin-bottom: 25px; }
-        .m-p-link { font-weight: 850 !important; color: #0f172a !important; font-size: 14px !important; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px !important; text-transform: uppercase; letter-spacing: 0.5px; }
-        .m-sub-list { list-style: none; padding-left: 15px; border-left: 2px solid #f1f5f9; margin-top: 5px; }
-        .m-sub-list li { padding: 5px 0; }
-        .m-sub-list a { font-size: 13px !important; color: #64748b !important; font-weight: 600 !important; transition: color 0.2s; }
-        .m-sub-list a:hover { color: #008080 !important; }
+        .m-parent-li { margin-bottom: 12px; }
+        .m-p-link { font-weight: 850 !important; color: #0f172a !important; font-size: 13.5px !important; display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px !important; text-transform: uppercase; letter-spacing: 0.5px; }
+        .m-sub-list { list-style: none; padding-left: 15px; border-left: 2px solid #f1f5f9; margin-top: 4px; display: flex; flex-direction: column; gap: 4px; }
+        .m-sub-list li { padding: 2px 0; }
+        .m-sub-list a { font-size: 13px !important; color: #64748b !important; font-weight: 600 !important; transition: all 0.2s; }
+        .m-sub-list a:hover { color: #008080 !important; padding-left: 4px; }
         .mcat-arrow { font-size: 10px; color: #94a3b8; }
         
-        .msize-guide-btn { margin-top: 25px; display: inline-block; font-size: 12px; font-weight: 800; color: #008080; text-transform: uppercase; letter-spacing: 1px; text-decoration: none; border-bottom: 1px solid transparent; padding-bottom: 2px; transition: all 0.2s; }
-        .msize-guide-btn:hover { border-bottom-color: #008080; transform: translateX(5px); }
+        .msize-guide-btn { margin-top: 25px; display: flex; align-items: center; justify-content: center; width: 100%; border: 1.5px solid #008080; color: #008080; padding: 12px; border-radius: 12px; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; text-decoration: none; }
+        .msize-guide-btn:hover { background: #008080; color: white; box-shadow: 0 8px 20px rgba(0, 128, 128, 0.2); }
 
         .m-feat-card { display: block; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; text-decoration: none; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); margin-top: 5px; }
         .m-feat-card:hover { transform: translateY(-5px); border-color: #cbd5e1; }
