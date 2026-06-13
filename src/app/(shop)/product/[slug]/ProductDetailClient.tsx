@@ -155,7 +155,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
         </div>
 
         {/* MAIN 2-COLUMN LAYOUT */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60, marginBottom: 80, alignItems: 'start' }}>
+        <div className="pdp-grid">
 
           {/* LEFT: Image Gallery */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
