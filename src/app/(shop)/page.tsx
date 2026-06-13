@@ -41,10 +41,10 @@ export default function Home() {
   const tabProducts = (() => {
     const tab = TABS.find((t) => t.id === activeTab);
     if (!tab) return [];
-    return products.filter((x) => x.type === tab.type).slice(0, 8);
+    return products.filter((x) => x.type === tab.type).slice(0, 20);
   })();
 
-  const newArr = products.filter((p) => p.badge && ["New", "New Launch"].includes(p.badge)).slice(0, 4);
+  const newArr = products.filter((p) => p.badge && ["New", "New Launch"].includes(p.badge)).slice(0, 20);
 
   return (
     <div className="page">

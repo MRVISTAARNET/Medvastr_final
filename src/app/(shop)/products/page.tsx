@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import { COLS, fmt } from "@/lib/data";
@@ -108,42 +109,21 @@ function ProductsContent() {
   }
 
   return (
-    <div className="page">
+    <div className="page" style={{ background: '#f8fafc' }}>
       {staticBannerBase && (
         <SmartBanner base={staticBannerBase} title={staticBannerTitle} />
       )}
-      <div className="sec">
+      <div className="sec" style={{ paddingBottom: 60 }}>
         {/* Breadcrumb */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 7,
-            fontSize: 12.5,
-            color: "var(--lt)",
-            marginBottom: 22,
-            flexWrap: "wrap",
-          }}
-        >
-          <span style={{ cursor: "pointer", color: "var(--t)", fontWeight: 500 }}>Home</span>
-          <span style={{ color: "var(--bdr)" }}>›</span>
-          <strong style={{ color: "var(--ink)" }}>All Products</strong>
-          {cat !== "all" && (
-            <>
-              <span style={{ color: "var(--bdr)" }}>›</span>
-              <strong style={{ color: "var(--t)" }}>{activeCatLabel}</strong>
-            </>
-          )}
+        <div className="breadcrumb">
+          <Link href="/">Home</Link>
+          <span className="sep">/</span>
+          <span className="active">{activeCatLabel}</span>
         </div>
 
-        <div className="sec-hd">
-          <div>
-            <div className="sec-t">{activeCatLabel}</div>
-            <div className="sec-s">{f.length} products crafted for healthcare professionals</div>
-          </div>
-          <button className="mob-filter-btn" onClick={() => setMobF(true)}>
-            ⚙️ Filters
-          </button>
+        <div className="catalog-header">
+          <h1 className="catalog-title">{activeCatLabel}</h1>
+          <p className="catalog-subtitle">{f.length} high-performance items available</p>
         </div>
 
         <div className="products-layout">
@@ -414,61 +394,60 @@ function ProductsContent() {
       </div>
 
       <style jsx>{`
-        .mob-filter-btn {
-          display: none;
-          align-items: center;
-          gap: 8px;
-          padding: 8px 16px;
-          background: var(--wh);
-          border: 1.5px solid var(--bdr);
-          border-radius: 6px;
-          font-size: 13px;
-          font-weight: 600;
-        }
-        .mob-filter-close {
-          width: 30px;
-          height: 30px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: var(--warm);
-          border-radius: 50%;
-          font-size: 14px;
-        }
+        .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b; margin: 15px 0 25px; font-weight: 500; }
+        .breadcrumb a { color: #64748b; text-decoration: none; transition: color 0.2s; }
+        .breadcrumb a:hover { color: #008080; }
+        .breadcrumb .sep { opacity: 0.4; }
+        .breadcrumb .active { color: #1e293b; font-weight: 700; }
+
+        .catalog-header { margin-bottom: 35px; }
+        .catalog-title { font-size: 32px; font-weight: 900; color: #0f172a; margin-bottom: 6px; letter-spacing: -0.03em; }
+        .catalog-subtitle { font-size: 15px; color: #64748b; font-weight: 500; }
+
+        .products-layout { display: grid; grid-template-columns: 280px 1fr; gap: 40px; align-items: start; }
+        
+        .sidebar { background: white; border: 1px solid #e2e8f0; border-radius: 20px; padding: 25px; position: sticky; top: 100px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+        .sb-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9; }
+        .sb-title { font-size: 16px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px; }
+        
+        .sb-section { margin-bottom: 25px; }
+        .sb-lbl { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; margin-bottom: 15px; display: flex; align-items: center; gap: 6px; }
+        
+        .sb-chips { display: flex; flex-direction: column; gap: 8px; }
+        .sb-chip { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 10px; cursor: pointer; transition: all 0.2s; font-size: 14px; color: #475569; font-weight: 600; border: 1px solid transparent; }
+        .sb-chip:hover { background: #f8fafc; color: #008080; }
+        .sb-chip.on { background: #f0f9f9; color: #008080; border-color: #008080; }
+        .sb-chip-left { display: flex; align-items: center; gap: 10px; }
+        .sb-chip-cnt { font-size: 11px; background: #f1f5f9; padding: 2px 8px; border-radius: 20px; color: #64748b; }
+        .sb-chip.on .sb-chip-cnt { background: #008080; color: white; }
+
+        .sb-gender-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .sb-gender-btn { padding: 10px; text-align: center; border-radius: 10px; border: 1.5px solid #e2e8f0; font-size: 13px; font-weight: 700; color: #475569; cursor: pointer; transition: all 0.2s; }
+        .sb-gender-btn:hover { border-color: #cbd5e1; }
+        .sb-gender-btn.on { border-color: #008080; background: #f0f9f9; color: #008080; }
+
+        .sb-price-btns { display: flex; flex-direction: column; gap: 8px; }
+        .sb-price-btn { padding: 10px 14px; border-radius: 10px; border: 1.5px solid #e2e8f0; font-size: 13px; font-weight: 600; color: #475569; cursor: pointer; transition: all 0.2s; }
+        .sb-price-btn:hover { border-color: #cbd5e1; }
+        .sb-price-btn.on { border-color: #008080; background: #f0f9f9; color: #008080; }
+
+        .clr-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+        .clr-card { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #e2e8f0; cursor: pointer; transition: all 0.2s; position: relative; padding: 2px; }
+        .clr-card:hover { transform: scale(1.1); border-color: #008080; }
+        .clr-card.on { border-color: #008080; transform: scale(1.1); }
+        .clr-in { width: 100%; height: 100%; border-radius: 50%; }
+
+        .mob-filter-btn { display: none; width: 100%; padding: 14px; background: white; border: 1px solid #e2e8f0; border-radius: 12px; font-weight: 700; color: #0f172a; margin-bottom: 20px; align-items: center; justify-content: center; gap: 10px; cursor: pointer; }
+        .mob-filter-close { width: 36px; height: 36px; border-radius: 50%; background: #f1f5f9; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
         @media (max-width: 1024px) {
-          .mob-filter-btn { display: flex; }
-          .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--wh);
-            z-index: 2000;
-            padding: 20px;
-            overflow-y: auto;
-            display: none;
-          }
+          .products-layout { grid-template-columns: 1fr; }
+          .sidebar { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000; border-radius: 0; padding: 30px; display: none; }
           .sidebar.mob-on { display: block; }
-          .sb-header {
-             display: flex;
-             justify-content: space-between;
-             align-items: center;
-             margin-bottom: 25px;
-             padding-bottom: 15px;
-             border-bottom: 1px solid var(--bdr);
-          }
+          .mob-filter-btn { display: flex; }
         }
       `}</style>
     </div>
-  );
-}
-
-export default function ProductsPage() {
-  return (
-    <Suspense fallback={<div>Loading products...</div>}>
-      <ProductsContent />
-    </Suspense>
   );
 }
 
@@ -478,32 +457,40 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
   const [idx, setIdx] = React.useState(0);
   const src = idx < EXTS.length ? base + EXTS[idx] : null;
 
-  if (!src) return null; // all formats failed — show nothing
+  if (!src) return null;
 
   return (
     <div
+      className="cat-banner"
       style={{
         width: '100%',
-        marginBottom: 30,
-        borderRadius: 16,
+        marginBottom: 25,
+        borderRadius: 20,
         overflow: 'hidden',
-        minHeight: '400px',
-        aspectRatio: '21 / 9',
+        minHeight: '220px',
+        maxHeight: '280px',
         backgroundImage: `url(${src})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center top',
         display: 'flex',
         alignItems: 'center',
-        padding: 40,
+        padding: '0 50px',
         position: 'relative'
       }}
     >
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.6) 0%, transparent 60%)', zIndex: 1 }} />
-      <h2 style={{ color: 'white', fontSize: 42, fontWeight: 800, textShadow: '0 2px 10px rgba(0,0,0,0.5)', margin: 0, position: 'relative', zIndex: 2 }}>
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.6) 0%, transparent 70%)', zIndex: 1 }} />
+      <h2 style={{ color: 'white', fontSize: 38, fontWeight: 900, textShadow: '0 2px 15px rgba(0,0,0,0.3)', margin: 0, position: 'relative', zIndex: 2, letterSpacing: '-0.02em' }}>
         {title}
       </h2>
-      {/* Hidden img to detect load failures and try next extension */}
       <img src={src} alt="" style={{ display: 'none' }} onError={() => setIdx(i => i + 1)} />
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<div>Loading products...</div>}>
+      <ProductsContent />
+    </Suspense>
   );
 }
