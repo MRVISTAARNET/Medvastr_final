@@ -85,12 +85,21 @@ export default function Home() {
         <div className="cat-g">
           {[
             ["#dde3f0", "👨‍⚕️", "Uniforms & Scrubs", "scrubs"],
-            ["#f0dde4", "🥼", "Linen & Bedding", "linen"],
+            ["#f0dde4", "🥼", "Linen & Bedding", "bulk"],
             ["#ddf0e8", "🧥", "Surgical Wear", "surgical"],
-            ["#f0f0f0", "🩺", "Diagnostic & Caps", "diagnostic"],
-            ["#f8f8f8", "🛏️", "Bedding Supplies", "linen"],
+            ["#f0f0f0", "🩺", "Diagnostic & Caps", "bulk"],
+            ["#f8f8f8", "🛏️", "Bedding Supplies", "bulk"],
           ].map(([bg, em, nm, type]) => (
-            <Link href={`/products?cat=${type}`} className="cat-c" key={nm as string}>
+            <Link
+              href={type === "bulk" ? "/bulk-orders" : `/products?cat=${type}`}
+              className="cat-c"
+              key={nm as string}
+              onClick={() => {
+                if (type === "bulk") {
+                  alert("For these items, we provide exclusive bulk pricing for hospitals and clinics. Redirecting you to our Bulk Order page!");
+                }
+              }}
+            >
               <div className="cat-img" style={{ background: bg as string }}>
                 {em}
               </div>
