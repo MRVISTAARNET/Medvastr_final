@@ -107,8 +107,9 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const related = [...typedRelated, ...otherRelated].slice(0, 4);
 
   const visibleImageIndexes = colorImages.map((_, i) => i).filter((i) => !brokenImages[i]);
-  const activeImageIndex = visibleImageIndexes.includes(mainImg) ? mainImg : visibleImageIndexes[0] ?? -1;
-  const mainImageSrc = activeImageIndex >= 0 ? colorImages[activeImageIndex] : "";
+  const isVideoActive = mainImg === -1 && !!p.videoUrl;
+  const activeImageIndex = isVideoActive ? -1 : (visibleImageIndexes.includes(mainImg) ? mainImg : (visibleImageIndexes[0] ?? -1));
+  const mainImageSrc = (!isVideoActive && activeImageIndex >= 0) ? colorImages[activeImageIndex] : "";
 
   const avgRating =
     reviews.length > 0
@@ -158,8 +159,10 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
           {/* LEFT: Image Gallery */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div style={{ aspectRatio: '1/1', background: mainImageSrc ? '#f8f8f8' : (p.bg || '#f1f5f9'), borderRadius: 20, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-              {mainImageSrc ? (
+            <div style={{ aspectRatio: '1/1', background: isVideoActive ? '#000' : (mainImageSrc ? '#f8f8f8' : (p.bg || '#f1f5f9')), borderRadius: 20, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+              {isVideoActive ? (
+                <video src={p.videoUrl} autoPlay loop muted playsInline controls style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#000' }} />
+              ) : mainImageSrc ? (
                 <img src={mainImageSrc} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   onError={() => { if (activeImageIndex >= 0) setBrokenImages(prev => ({ ...prev, [activeImageIndex]: true })); }} />
               ) : (
@@ -167,8 +170,17 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               )}
               {p.badge && <div style={{ position: 'absolute', top: 16, left: 16, background: '#10b981', color: 'white', padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 700 }}>{p.badge}</div>}
             </div>
-            {visibleImageIndexes.length > 1 && (
-              <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(visibleImageIndexes.length, 5)}, 1fr)`, gap: 10 }}>
+
+            {(visibleImageIndexes.length > 1 || p.videoUrl) && (
+              <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(visibleImageIndexes.length + (p.videoUrl ? 1 : 0), 5)}, 1fr)`, gap: 10 }}>
+                {p.videoUrl && (
+                  <div onClick={() => setMainImg(-1)}
+                    style={{ aspectRatio: '1/1', borderRadius: 12, overflow: 'hidden', cursor: 'pointer', border: mainImg === -1 ? '2px solid #008080' : '2px solid #e2e8f0', transition: 'border 0.2s', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+                )}
                 {visibleImageIndexes.map((i) => (
                   <div key={i} onClick={() => setMainImg(i)}
                     style={{ aspectRatio: '1/1', borderRadius: 12, overflow: 'hidden', cursor: 'pointer', border: mainImg === i ? '2px solid #008080' : '2px solid #e2e8f0', transition: 'border 0.2s' }}>
