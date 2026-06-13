@@ -75,25 +75,28 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
         <div className="mcol">
           <div className="mcol-hd">{catLabel}</div>
           <ul className="m-deep-list">
-            {subcats.length > 0 ? subcats.map((cat: any) => (
-              <li key={cat.id} className="m-parent-li">
-                <Link href={`/products?cat=${cat.slug}${queryGen ? `&${queryGen}` : ""}`} className="m-p-link">
-                  {cat.navLabel || cat.name}
-                  {cat.children?.length > 0 && <span className="mcat-arrow">▾</span>}
-                </Link>
-                {cat.children?.length > 0 && (
-                  <ul className="m-sub-list">
-                    {cat.children.map((sub: any) => (
-                      <li key={sub.id}>
-                        <Link href={`/products?cat=${sub.slug}${queryGen ? `&${queryGen}` : ""}`}>
-                          {sub.navLabel || sub.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            )) : (
+            {subcats.length > 0 ? subcats.map((cat: any) => {
+              const baseHref = isClothing ? `/products?cat=${cat.slug}${queryGen ? `&${queryGen}` : ""}` : "/bulk-orders";
+              return (
+                <li key={cat.id} className="m-parent-li">
+                  <Link href={baseHref} className="m-p-link">
+                    {cat.navLabel || cat.name}
+                    {cat.children?.length > 0 && <span className="mcat-arrow">▾</span>}
+                  </Link>
+                  {cat.children?.length > 0 && (
+                    <ul className="m-sub-list">
+                      {cat.children.map((sub: any) => (
+                        <li key={sub.id}>
+                          <Link href={isClothing ? `/products?cat=${sub.slug}${queryGen ? `&${queryGen}` : ""}` : "/bulk-orders"}>
+                            {sub.navLabel || sub.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              );
+            }) : (
               <li>
                 <span style={{ fontSize: 12, opacity: 0.5, padding: "8px 10px", display: "block" }}>
                   No categories yet
