@@ -131,9 +131,8 @@ function ProductsContent() {
           <span className="active">{activeCatLabel}</span>
         </div>
 
-        <div className="catalog-header" style={{ marginBottom: 40 }}>
-          <h1 className="catalog-title">{activeCatLabel}</h1>
-          <p className="catalog-subtitle" style={{ maxWidth: 800, lineHeight: 1.6, color: '#64748b' }}>
+        <div className="catalog-header" style={{ marginBottom: 40, borderLeft: '4px solid #008080', paddingLeft: 20 }}>
+          <p className="catalog-subtitle" style={{ maxWidth: 850, fontSize: 17, lineHeight: 1.8, color: '#334155', margin: 0, fontWeight: 500 }}>
             {activeDesc}
           </p>
         </div>
@@ -145,127 +144,116 @@ function ProductsContent() {
 
           {/* SIDEBAR */}
           <div className={`sidebar${mobF ? " mob-on" : ""}`}>
-            <div className="sb-header">
-              <div className="sb-title">Filters</div>
-              <div style={{ display: "flex", gap: 10 }}>
-                {mobF && (
-                  <button className="mob-filter-close" onClick={() => setMobF(false)}>✕</button>
-                )}
-              </div>
+            <div className="sb-top-hd">
+              FILTERS
             </div>
 
-            <div className="sb-section">
-              <div className="sb-lbl">
-                <span className="sb-lbl-ico">📦</span>Category
+            <div className="sb-inner">
+              <div className="sb-header">
+                <div style={{ display: "flex", gap: 10, width: '100%', justifyContent: 'flex-end' }}>
+                  {hasFilters && (
+                    <button className="sb-clear" onClick={reset}>
+                      ✕ Reset All
+                    </button>
+                  )}
+                  {mobF && (
+                    <button className="mob-filter-close" onClick={() => setMobF(false)}>✕</button>
+                  )}
+                </div>
               </div>
-              <div className="sb-chips">
-                {cats.map((c) => (
-                  <div
-                    key={c.id}
-                    className={`sb-chip${cat === c.id ? " on" : ""}`}
-                    onClick={() => {
-                      setCat(c.id);
-                      setPg(1);
-                      setMobF(false);
-                    }}
-                  >
-                    <div className="sb-chip-left">
-                      <span className="sb-chip-ico">{c.ico}</span>
-                      <span>{c.l}</span>
+
+              {/* CATEGORY */}
+              <div className="sb-section">
+                <div className="sb-lbl">📦 CATEGORY</div>
+                <div className="sb-box-list">
+                  {cats.map((c) => (
+                    <div
+                      key={c.id}
+                      className={`sb-box-item${cat === c.id ? " on" : ""}`}
+                      onClick={() => { setCat(c.id); setPg(1); if (mobF) setMobF(false); }}
+                    >
+                      <div className="sb-box-l">
+                        <span style={{ fontSize: 16 }}>🏷️</span> {c.l}
+                      </div>
+                      <div className="sb-box-r">{c.n}</div>
                     </div>
-                    <span className="sb-chip-cnt">{c.n}</span>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
 
-            <div className="sb-section">
-              <div className="sb-lbl">
-                <span className="sb-lbl-ico">👤</span>Gender
+              {/* GENDER */}
+              <div className="sb-section">
+                <div className="sb-lbl">👤 GENDER</div>
+                <div className="sb-box-list">
+                  {[
+                    ["all", "All 🏥"],
+                    ["men", "Men �‍⚕️"],
+                    ["women", "Women 👩‍⚕️"],
+                    ["unisex", "Unisex ♾️"],
+                  ].map(([v, l]) => (
+                    <div
+                      key={v}
+                      className={`sb-box-item${gen === v ? " on" : ""}`}
+                      onClick={() => { setGen(v); setPg(1); if (mobF) setMobF(false); }}
+                    >
+                      <div className="sb-box-l">{l}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="sb-gender-row">
-                {[
-                  ["all", "All 🏥"],
-                  ["men", "Men 👨‍⚕️"],
-                  ["women", "Women 👩‍⚕️"],
-                  ["unisex", "Unisex ♾️"],
-                ].map(([v, l]) => (
-                  <div
-                    key={v}
-                    className={`sb-gender-btn${gen === v ? " on" : ""}`}
-                    onClick={() => {
-                      setGen(v);
-                      setPg(1);
-                    }}
-                  >
-                    {l}
-                  </div>
-                ))}
-              </div>
-            </div>
 
-            <div className="sb-section">
-              <div className="sb-lbl">
-                <span className="sb-lbl-ico">💰</span>Price Range
+              {/* PRICE */}
+              <div className="sb-section">
+                <div className="sb-lbl">🔥 PRICE RANGE</div>
+                <div className="sb-box-list">
+                  {[
+                    ["Under ₹1000", "", "999"],
+                    ["₹1k – ₹2k", "1000", "2000"],
+                    ["₹2k – ₹3k", "2000", "3000"],
+                    ["₹3k+", "3000", ""],
+                  ].map(([l, mn, mx]) => (
+                    <div
+                      key={l}
+                      className={`sb-box-item${minP === mn && maxP === mx ? " on" : ""}`}
+                      onClick={() => { setMinP(mn); setMaxP(mx); setPg(1); if (mobF) setMobF(false); }}
+                    >
+                      <div className="sb-box-l">{l}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="sb-price-btns">
-                {[
-                  ["Under ₹1000", "", "999"],
-                  ["₹1k – ₹2k", "1000", "2000"],
-                  ["₹2k – ₹3k", "2000", "3000"],
-                  ["₹3k+", "3000", ""],
-                ].map(([l, mn, mx]) => (
-                  <div
-                    key={l}
-                    className={`sb-price-btn${minP === mn && maxP === mx ? " on" : ""}`}
-                    onClick={() => {
-                      setMinP(mn);
-                      setMaxP(mx);
-                      setPg(1);
-                    }}
-                  >
-                    {l}
-                  </div>
-                ))}
-              </div>
-            </div>
 
-            <div className="sb-section">
-              <div className="sb-lbl">
-                <span className="sb-lbl-ico">🎨</span>Colours
+              <div className="sb-section">
+                <div className="sb-lbl">🎨 COLOURS</div>
+                <div className="clr-swatch-g">
+                  {COLS.map((c) => (
+                    <div
+                      key={c.n}
+                      className={`clr-swatch-c${colorFilter === c.n ? " on" : ""}`}
+                      onClick={() => { setColorFilter(prev => prev === c.n ? '' : c.n); setPg(1); }}
+                      title={c.n}
+                    >
+                      <div className="clr-swatch-in" style={{ background: c.h }} />
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="clr-chips">
-                {COLS.map((c) => (
-                  <div
-                    key={c.n}
-                    className={`clr-chip${colorFilter === c.n ? ' on' : ''}`}
-                    onClick={() => {
-                      setColorFilter(prev => prev === c.n ? '' : c.n);
-                      setPg(1);
-                    }}
-                    style={{ cursor: 'pointer', border: colorFilter === c.n ? '2px solid var(--teal)' : '2px solid transparent', borderRadius: 8, padding: '4px 8px', background: colorFilter === c.n ? '#f0fafa' : 'transparent' }}
-                  >
-                    <div className="clr-dot-sm" style={{ background: c.h }} />
-                    <span className="clr-name">{c.n}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
 
-            <div className="sb-section">
-              <div className="sb-lbl">
-                <span className="sb-lbl-ico">↕️</span>Sort By
+              <div className="sb-section">
+                <div className="sb-lbl">↕️ SORT PRODUCTS</div>
+                <select className="sort-sel-v2" value={sort} onChange={(e) => setSort(e.target.value)}>
+                  <option value="default">Default — Featured</option>
+                  <option value="pa">Price: Low → High</option>
+                  <option value="pd">Price: High → Low</option>
+                  <option value="rt">⭐ Top Rated</option>
+                  <option value="nw">🆕 Newest First</option>
+                </select>
               </div>
-              <select className="sort-sel" value={sort} onChange={(e) => setSort(e.target.value)}>
-                <option value="default">Default — Featured</option>
-                <option value="pa">Price: Low → High</option>
-                <option value="pd">Price: High → Low</option>
-                <option value="rt">⭐ Top Rated</option>
-                <option value="nw">🆕 Newest First</option>
-              </select>
-            </div>
 
-            <button className="btn-p" style={{ width: '100%', marginTop: 20 }} onClick={() => setMobF(false)}>Apply Filters</button>
+              {mobF && (
+                <button className="btn-p" style={{ width: '100%', marginTop: 20 }} onClick={() => setMobF(false)}>Show Items</button>
+              )}
+            </div>
           </div>
 
           {/* PRODUCTS AREA */}
@@ -404,59 +392,56 @@ function ProductsContent() {
       </div>
 
       <style jsx>{`
-        .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #94a3b8; margin: 10px 0 20px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; }
-        .breadcrumb a { color: #94a3b8; text-decoration: none; transition: color 0.3s; }
-        .breadcrumb a:hover { color: #1e293b; }
-        .breadcrumb .sep { opacity: 0.3; }
-        .breadcrumb .active { color: #1e293b; font-weight: 600; }
+        .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b; margin: 15px 0 25px; font-weight: 500; }
+        .breadcrumb a { color: #64748b; text-decoration: none; transition: color 0.2s; }
+        .breadcrumb a:hover { color: #008080; }
+        .breadcrumb .sep { opacity: 0.4; }
+        .breadcrumb .active { color: #1e293b; font-weight: 700; }
 
-        .catalog-header { margin-bottom: 40px; padding-bottom: 30px; border-bottom: 1px solid #f1f5f9; }
-        .catalog-title { font-size: 42px; font-weight: 800; color: #0f172a; margin-bottom: 12px; letter-spacing: -0.05em; }
-        .catalog-subtitle { font-size: 16px; color: #475569; font-weight: 400; max-width: 700px; line-height: 1.7; }
+        .catalog-header { margin-bottom: 40px; }
+        .catalog-title { font-size: 32px; font-weight: 900; color: #0f172a; margin-bottom: 6px; letter-spacing: -0.03em; }
 
-        .products-layout { display: grid; grid-template-columns: 240px 1fr; gap: 60px; align-items: start; }
+        .products-layout { display: grid; grid-template-columns: 280px 1fr; gap: 40px; align-items: start; }
         
-        .sidebar { background: #ffffff; border-right: 1px solid #f1f5f9; padding-right: 40px; position: sticky; top: 120px; }
-        .sb-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .sb-title { font-size: 12px; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 2px; }
+        .sidebar { background: white; border: 1px solid #e2e8f0; border-radius: 20px; overflow: hidden; position: sticky; top: 100px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
+        .sb-top-hd { background: #0f172a; color: #1e293b; padding: 20px; font-size: 13px; font-weight: 900; letter-spacing: 2px; text-align: center; border-bottom: 1px solid #1e293b; }
+        .sb-top-hd { color: #5eead4; } /* Teal text for header as in screenshot */
         
-        .sb-section { margin-bottom: 40px; }
-        .sb-lbl { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; color: #1e293b; margin-bottom: 20px; display: block; border-bottom: 2px solid #0f172a; width: fit-content; padding-bottom: 4px; }
+        .sb-inner { padding: 25px; }
+        .sb-header { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+        .sb-clear { background: none; border: none; font-size: 11px; font-weight: 800; color: #ef4444; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+
+        .sb-section { margin-bottom: 35px; border-top: 1px solid #f1f5f9; padding-top: 25px; }
+        .sb-section:first-of-type { border-top: none; padding-top: 0; }
         
-        .sb-chips { display: flex; flex-direction: column; gap: 4px; }
-        .sb-chip { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f8fafc; cursor: pointer; transition: all 0.2s; font-size: 14px; color: #64748b; font-weight: 500; }
-        .sb-chip:hover { color: #0f172a; border-bottom-color: #e2e8f0; }
-        .sb-chip.on { color: #008080; border-bottom-color: #008080; font-weight: 700; }
-        .sb-chip-left { display: flex; align-items: center; gap: 12px; }
-        .sb-chip-cnt { font-size: 10px; color: #cbd5e1; font-weight: 400; }
-        .sb-chip.on .sb-chip-cnt { color: #008080; }
+        .sb-lbl { font-size: 12px; font-weight: 900; color: #0f172a; margin-bottom: 20px; display: inline-block; border-bottom: 2px solid #0f172a; padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .sb-box-list { display: flex; flex-direction: column; gap: 8px; }
+        .sb-box-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); font-size: 15px; color: #64748b; font-weight: 600; }
+        .sb-box-item:hover { border-color: #cbd5e1; background: #f8fafc; }
+        .sb-box-item.on { background: #0f172a; border-color: #0f172a; color: #5eead4; box-shadow: 0 8px 20px rgba(15,23,42,0.15); }
+        .sb-box-item.on .sb-box-r { background: #1e293b; color: #5eead4; }
+        
+        .sb-box-l { display: flex; align-items: center; }
+        .sb-box-r { font-size: 11px; background: #f1f5f9; padding: 2px 8px; border-radius: 8px; color: #94a3b8; }
 
-        .sb-gender-row { display: flex; flex-direction: column; gap: 4px; }
-        .sb-gender-btn { padding: 12px 0; font-size: 14px; font-weight: 500; color: #64748b; cursor: pointer; transition: all 0.2s; border-bottom: 1px solid #f8fafc; text-align: left; }
-        .sb-gender-btn:hover { color: #0f172a; }
-        .sb-gender-btn.on { color: #008080; border-bottom-color: #008080; font-weight: 700; }
+        .clr-swatch-g { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .clr-swatch-c { width: 36px; height: 36px; border-radius: 10px; border: 2px solid #e2e8f0; padding: 3px; cursor: pointer; transition: all 0.2s; }
+        .clr-swatch-c:hover { transform: scale(1.1); border-color: #cbd5e1; }
+        .clr-swatch-c.on { border-color: #008080; background: #f0fafa; }
+        .clr-swatch-in { width: 100%; height: 100%; border-radius: 6px; }
 
-        .sb-price-btns { display: flex; flex-direction: column; gap: 4px; }
-        .sb-price-btn { padding: 12px 0; font-size: 14px; font-weight: 500; color: #64748b; cursor: pointer; transition: all 0.2s; border-bottom: 1px solid #f8fafc; text-align: left; }
-        .sb-price-btn.on { color: #008080; border-bottom-color: #008080; font-weight: 700; }
-
-        .clr-chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding-top: 5px; }
-        .clr-card { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #e2e8f0; cursor: pointer; transition: all 0.3s; position: relative; padding: 3px; }
-        .clr-card:hover { transform: translateY(-3px); border-color: #008080; }
-        .clr-card.on { border-color: #0f172a; background: #f8fafc; transform: scale(1.1); }
-        .clr-in { width: 100%; height: 100%; border-radius: 50%; }
-
-        .mob-filter-btn { display: none; width: 100%; padding: 16px; background: #0f172a; border: none; border-radius: 4px; font-weight: 700; color: white; margin-bottom: 30px; align-items: center; justify-content: center; gap: 12px; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; font-size: 12px; }
-        .mob-filter-close { width: 40px; height: 40px; border-radius: 50%; background: #f1f5f9; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .sort-sel-v2 { width: 100%; padding: 14px; border: 1.5px solid #e2e8f0; border-radius: 14px; font-size: 14px; font-weight: 600; color: #334155; background: #ffffff; outline: none; transition: border-color 0.2s; }
+        .sort-sel-v2:focus { border-color: #008080; }
 
         @media (max-width: 1024px) {
-          .products-layout { grid-template-columns: 1fr; gap: 0; }
-          .sidebar { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000; border: none; padding: 40px; display: none; overflow-y: auto; }
+          .products-layout { grid-template-columns: 1fr; }
+          .sidebar { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000; border-radius: 0; display: none; overflow-y: auto; }
           .sidebar.mob-on { display: block; }
-          .mob-filter-btn { display: flex; }
+          .mob-filter-btn { display: flex !important; }
         }
       `}</style>
-    </div>
+    </div >
   );
 }
 
