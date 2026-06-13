@@ -69,18 +69,29 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
 
   return (
     <div className="mega">
-      <div className="mega-in">
+      <div className="mega-in" style={{ gridTemplateColumns: '1.2fr 1fr 1fr' }}>
 
-        {/* COL 1: Categories with icons */}
-        <div className="mcol">
+        {/* COL 1: Deep Categories */}
+        <div className="mcol" style={{ gridColumn: "span 1" }}>
           <div className="mcol-hd">{catLabel}</div>
-          <ul>
+          <ul className="m-deep-list">
             {subcats.length > 0 ? subcats.map((cat: any) => (
-              <li key={cat.id}>
-                <Link href={`/products?cat=${cat.slug}${queryGen ? `&${queryGen}` : ""}`}>
+              <li key={cat.id} className="m-parent-li">
+                <Link href={`/products?cat=${cat.slug}${queryGen ? `&${queryGen}` : ""}`} className="m-p-link">
                   {cat.navLabel || cat.name}
-                  <span className="mcat-arrow">›</span>
+                  {cat.children?.length > 0 && <span className="mcat-arrow">▾</span>}
                 </Link>
+                {cat.children?.length > 0 && (
+                  <ul className="m-sub-list">
+                    {cat.children.map((sub: any) => (
+                      <li key={sub.id}>
+                        <Link href={`/products?cat=${sub.slug}${queryGen ? `&${queryGen}` : ""}`}>
+                          {sub.navLabel || sub.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             )) : (
               <li>
@@ -92,45 +103,9 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
           </ul>
         </div>
 
-        {/* COL 2: Products List - only show for clothing */}
-        {isClothing && (
-          <div className="mcol">
-            <div className="mcol-hd">Latest Products</div>
-            <div className="mprod-list" style={{ minHeight: 180 }}>
-              {allMenuProducts.length > 0 ? (
-                allMenuProducts.map((p) => (
-                  <Link
-                    key={p.id}
-                    href={`/product/${p.slug || p.id}`}
-                    className="mprod-li"
-                  >
-                    <div className="mprod-li-img">
-                      {p.imgs?.[0] && <img src={p.imgs[0]} alt={p.name} />}
-                    </div>
-                    <div className="mprod-li-info">
-                      <span className="mprod-li-name">{p.name}</span>
-                      <span className="mprod-li-prc">{fmt(p.price)}</span>
-                    </div>
-                  </Link>
-                ))
-              ) : (
-                <div style={{ padding: "20px 0", color: "#94a3b8", fontSize: 13, opacity: 0.8 }}>
-                  No new arrivals currently.
-                </div>
-              )}
-            </div>
-            <Link
-              href={`/products?${queryGen ? `${queryGen}` : ""}${parentSlug ? `&cat=${parentSlug}` : ""}`}
-              className="msize-guide"
-            >
-              Shop all &rsaquo;
-            </Link>
-          </div>
-        )}
-
         {isClothing ? (
           <>
-            {/* COL 3: Popular Colors */}
+            {/* COL 2: Popular Colors */}
             <div className="mcol">
               <div className="mcol-hd">Popular Colors</div>
               <div className="mega-clr-g">
@@ -145,17 +120,10 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
                   </Link>
                 ))}
               </div>
-              <Link
-                href={`/products?${queryGen ? `${queryGen}` : ""}`}
-                className="msize-guide"
-                style={{ marginTop: 10 }}
-              >
-                View all colors &rsaquo;
-              </Link>
             </div>
 
-            {/* COL 4: Sizes as pills */}
-            <div className="mcol">
+            {/* COL 3: Sizes */}
+            <div className="mcol" style={{ borderRight: "none" }}>
               <div className="mcol-hd">Sizes</div>
               <div className="msize-grid">
                 {sizeLinks.map((s: any) => (
@@ -168,72 +136,34 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
                   </Link>
                 ))}
               </div>
-              <Link
-                href={`/products?${queryGen ? `${queryGen}` : ""}`}
-                className="msize-guide"
-              >
-                View size guide &rsaquo;
-              </Link>
             </div>
           </>
         ) : (
-          <div className="mcol" style={{ gridColumn: "span 3", padding: "40px", background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)", margin: "20px 0 20px 20px", borderRadius: 16, border: "1px solid #e2e8f0", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <div className="mcol" style={{ gridColumn: "span 2", padding: "40px", background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)", marginLeft: "20px", borderRadius: 16, border: "1px solid #e2e8f0", display: "flex", flexDirection: "column", justifyContent: "center" }}>
             <h3 style={{ fontSize: 24, fontWeight: 800, color: "#0f7c6e", marginBottom: 16, letterSpacing: "-0.02em" }}>Premium {label} Supplies</h3>
-            <p style={{ fontSize: 15, color: "#475569", lineHeight: 1.7, marginBottom: 30, maxWidth: "500px" }}>
-              Explore our comprehensive <b>{label.toLowerCase()}</b> inventory. Engineered for supreme durability, optimal comfort, and rigorous medical standards. View our entire catalog and secure the absolute best quality for your facility.
+            <p style={{ fontSize: 15, color: "#475569", lineHeight: 1.7, marginBottom: 30 }}>
+              Explore our comprehensive <b>{label.toLowerCase()}</b> inventory. Engineered for supreme durability and rigorous medical standards.
             </p>
-            <div style={{ display: "flex", gap: "12px" }}>
-              <Link
-                href={label.toUpperCase().includes("BULK") ? "/bulk-orders" : `/products?cat=${parentCat?.slug}`}
-                style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", background: "#0f7c6e", color: "white", padding: "14px 28px", borderRadius: 8, fontSize: 14, fontWeight: 700, textDecoration: "none", transition: "background 0.2s" }}
-              >
-                Explore Collection
-              </Link>
-              {label.toUpperCase().includes("BULK") && (
-                <Link
-                  href="/contact"
-                  style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", background: "transparent", border: "1px solid #cbd5e1", color: "#334155", padding: "14px 28px", borderRadius: 8, fontSize: 14, fontWeight: 700, textDecoration: "none", transition: "background 0.2s" }}
-                >
-                  Request Quote
-                </Link>
-              )}
-            </div>
+            <Link
+              href={label.toUpperCase().includes("BULK") ? "/bulk-orders" : `/products?cat=${parentCat?.slug}`}
+              style={{ display: "inline-flex", width: 'fit-content', alignItems: "center", justifyContent: "center", background: "#0f7c6e", color: "white", padding: "14px 28px", borderRadius: 8, fontSize: 14, fontWeight: 700, textDecoration: "none" }}
+            >
+              Explore Collection
+            </Link>
           </div>
         )}
-
-        {/* COL 5: Featured Product card */}
-        <div className="mcol" style={{ borderRight: "none" }}>
-          <div className="mfeatured">
-            <div className="mfeatured-label">Featured Product</div>
-            {featuredProduct ? (
-              <>
-                <button className="mfeatured-wish" aria-label="Wishlist">&#9825;</button>
-                <div className="mfeatured-img">
-                  {featuredProduct.imgs?.[0] ? (
-                    <img
-                      src={featuredProduct.imgs[0]}
-                      alt={featuredProduct.name}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    />
-                  ) : (
-                    <span style={{ fontSize: 40 }}>🩺</span>
-                  )}
-                </div>
-                <div className="mfeatured-name">{featuredProduct.name}</div>
-                <div className="mfeatured-price">{fmt(featuredProduct.price)}</div>
-                <Link href={`/product/${featuredProduct.slug || featuredProduct.id}`} className="mfeatured-btn">
-                  Shop Now
-                </Link>
-              </>
-            ) : (
-              <div className="mfeatured-img" style={{ display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)", color: "#94a3b8", fontWeight: 600, fontSize: 14 }}>
-                <span style={{ opacity: 0.6 }}>Medvastr Premium</span>
-              </div>
-            )}
-          </div>
-        </div>
-
       </div>
+
+      <style jsx>{`
+        .m-deep-list { list-style: none; padding: 0; margin: 0; }
+        .m-parent-li { margin-bottom: 20px; }
+        .m-p-link { font-weight: 800 !important; color: #0f172a !important; font-size: 15px !important; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px !important; }
+        .m-sub-list { list-style: none; padding-left: 20px; border-left: 1px solid #e2e8f0; margin-top: 5px; }
+        .m-sub-list li { padding: 4px 0; }
+        .m-sub-list a { font-size: 13px !important; color: #64748b !important; font-weight: 500 !important; }
+        .m-sub-list a:hover { color: #0f7c6e !important; }
+        .mcat-arrow { font-size: 10px; opacity: 0.5; }
+      `}</style>
     </div>
   );
 }
