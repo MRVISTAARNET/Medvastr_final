@@ -61,35 +61,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className={`ft-col${openCol === 'unisex2' ? ' open' : ''}`}>
-          <h4 onClick={() => toggle('unisex2')}>
-            Apparel <span className="ft-arr">▾</span>
-          </h4>
-          <ul className="ft-lnks">
-            {[
-              ["Scrub Suits", "scrub-suit"],
-              ["Cotton T-Shirts", "cotton-crew-tshirt"],
-              ["Under Scrubs", "full-sleeve-compression-under-scrub"],
-              ["Surgeon Gowns", "surgeon-gown"],
-              ["Surgeon Caps", "surgeon-cap"]
-            ].map(([l, cat]) => (
-              <li key={l}><Link href={`/products?cat=${cat}`}>{l}</Link></li>
-            ))}
-          </ul>
-        </div>
 
-        <div className={`ft-col${openCol === 'company' ? ' open' : ''}`}>
-          <h4 onClick={() => toggle('company')}>
-            Company <span className="ft-arr">▾</span>
-          </h4>
-          <ul className="ft-lnks">
-            {[
-              ["About Us", "about"], ["Sustainability", "sustainability"], ["Shipping & Returns", "refund"], ["Privacy & Terms", "privacy"]
-            ].map(([l, p]) => (
-              <li key={l}><Link href={`/${p}`}>{l}</Link></li>
-            ))}
-          </ul>
-        </div>
 
         <div className={`ft-col${openCol === 'unisex' ? ' open' : ''}`}>
           <h4 onClick={() => toggle('unisex')}>
@@ -104,6 +76,19 @@ export default function Footer() {
               ["Surgeon Caps", "surgeon-cap"]
             ].map(([l, cat]) => (
               <li key={l}><Link href={`/products?cat=${cat}&gender=unisex`}>{l}</Link></li>
+            ))}
+          </ul>
+        </div>
+
+        <div className={`ft-col${openCol === 'company' ? ' open' : ''}`}>
+          <h4 onClick={() => toggle('company')}>
+            Company <span className="ft-arr">▾</span>
+          </h4>
+          <ul className="ft-lnks">
+            {[
+              ["About Us", "about"], ["Sustainability", "sustainability"], ["Shipping & Returns", "refund"], ["Privacy & Terms", "privacy"]
+            ].map(([l, p]) => (
+              <li key={l}><Link href={`/${p}`}>{l}</Link></li>
             ))}
           </ul>
         </div>
