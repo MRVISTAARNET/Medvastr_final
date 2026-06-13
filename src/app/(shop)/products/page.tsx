@@ -143,116 +143,107 @@ function ProductsContent() {
           </button>
 
           {/* SIDEBAR */}
-          <div className={`sidebar${mobF ? " mob-on" : ""}`}>
-            <div className="sb-top-hd">
-              FILTERS
+          <div className={`sidebar-v3${mobF ? " mob-on" : ""}`}>
+            <div className="sb3-header">
+              <div className="sb3-title-wrap">
+                <span className="sb3-title">FILTERS</span>
+                {hasFilters && <span className="sb3-count">1</span>}
+              </div>
+              <button className="sb3-clear" onClick={reset}>Clear All</button>
+              {mobF && <button className="sb3-mob-close" onClick={() => setMobF(false)}>✕</button>}
             </div>
 
-            <div className="sb-inner">
-              <div className="sb-header">
-                <div style={{ display: "flex", gap: 10, width: '100%', justifyContent: 'flex-end' }}>
-                  {hasFilters && (
-                    <button className="sb-clear" onClick={reset}>
-                      ✕ Reset All
-                    </button>
-                  )}
-                  {mobF && (
-                    <button className="mob-filter-close" onClick={() => setMobF(false)}>✕</button>
-                  )}
-                </div>
-              </div>
-
-              {/* CATEGORY */}
-              <div className="sb-section">
-                <div className="sb-lbl">📦 CATEGORY</div>
-                <div className="sb-box-list">
+            <div className="sb3-body">
+              {/* CATEGORIES */}
+              <div className="sb3-section">
+                <div className="sb3-sec-hd">CATEGORIES</div>
+                <div className="sb3-list">
                   {cats.map((c) => (
                     <div
                       key={c.id}
-                      className={`sb-box-item${cat === c.id ? " on" : ""}`}
+                      className={`sb3-item${cat === c.id ? " active" : ""}`}
                       onClick={() => { setCat(c.id); setPg(1); if (mobF) setMobF(false); }}
                     >
-                      <div className="sb-box-l">
-                        <span style={{ fontSize: 16 }}>🏷️</span> {c.l}
-                      </div>
-                      <div className="sb-box-r">{c.n}</div>
+                      <div className="sb3-check-box" />
+                      <span className="sb3-label">{c.l}</span>
+                      <span className="sb3-num">{c.n}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* GENDER */}
-              <div className="sb-section">
-                <div className="sb-lbl">👤 GENDER</div>
-                <div className="sb-box-list">
+              <div className="sb3-section">
+                <div className="sb3-sec-hd">GENDER</div>
+                <div className="sb3-list">
                   {[
-                    ["all", "All 🏥"],
-                    ["men", "Men �‍⚕️"],
-                    ["women", "Women 👩‍⚕️"],
-                    ["unisex", "Unisex ♾️"],
+                    ["all", "All"],
+                    ["men", "Men"],
+                    ["women", "Women"],
+                    ["unisex", "Unisex"],
                   ].map(([v, l]) => (
                     <div
                       key={v}
-                      className={`sb-box-item${gen === v ? " on" : ""}`}
+                      className={`sb3-item${gen === v ? " active" : ""}`}
                       onClick={() => { setGen(v); setPg(1); if (mobF) setMobF(false); }}
                     >
-                      <div className="sb-box-l">{l}</div>
+                      <div className="sb3-check-box" />
+                      <span className="sb3-label">{l}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* PRICE */}
-              <div className="sb-section">
-                <div className="sb-lbl">🔥 PRICE RANGE</div>
-                <div className="sb-box-list">
+              <div className="sb3-section">
+                <div className="sb3-sec-hd">PRICE</div>
+                <div className="sb3-list">
                   {[
                     ["Under ₹1000", "", "999"],
-                    ["₹1k – ₹2k", "1000", "2000"],
-                    ["₹2k – ₹3k", "2000", "3000"],
-                    ["₹3k+", "3000", ""],
+                    ["₹1000 - ₹2000", "1000", "2000"],
+                    ["₹2000 - ₹3000", "2000", "3000"],
+                    ["Above ₹3000", "3000", ""],
                   ].map(([l, mn, mx]) => (
                     <div
                       key={l}
-                      className={`sb-box-item${minP === mn && maxP === mx ? " on" : ""}`}
+                      className={`sb3-item${minP === mn && maxP === mx ? " active" : ""}`}
                       onClick={() => { setMinP(mn); setMaxP(mx); setPg(1); if (mobF) setMobF(false); }}
                     >
-                      <div className="sb-box-l">{l}</div>
+                      <div className="sb3-check-box" />
+                      <span className="sb3-label">{l}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="sb-section">
-                <div className="sb-lbl">🎨 COLOURS</div>
-                <div className="clr-swatch-g">
+              {/* COLORS */}
+              <div className="sb3-section">
+                <div className="sb3-sec-hd">COLOURS</div>
+                <div className="sb3-color-grid">
                   {COLS.map((c) => (
                     <div
                       key={c.n}
-                      className={`clr-swatch-c${colorFilter === c.n ? " on" : ""}`}
+                      className={`sb3-color-item${colorFilter === c.n ? " active" : ""}`}
                       onClick={() => { setColorFilter(prev => prev === c.n ? '' : c.n); setPg(1); }}
-                      title={c.n}
                     >
-                      <div className="clr-swatch-in" style={{ background: c.h }} />
+                      <div className="sb3-color-dot" style={{ background: c.h }} />
+                      <span className="sb3-color-name">{c.n}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="sb-section">
-                <div className="sb-lbl">↕️ SORT PRODUCTS</div>
-                <select className="sort-sel-v2" value={sort} onChange={(e) => setSort(e.target.value)}>
-                  <option value="default">Default — Featured</option>
-                  <option value="pa">Price: Low → High</option>
-                  <option value="pd">Price: High → Low</option>
-                  <option value="rt">⭐ Top Rated</option>
-                  <option value="nw">🆕 Newest First</option>
+              {/* SORT */}
+              <div className="sb3-section">
+                <div className="sb3-sec-hd">SORT BY</div>
+                <select className="sb3-select" value={sort} onChange={(e) => setSort(e.target.value)}>
+                  <option value="default">Default</option>
+                  <option value="pa">Price: Low to High</option>
+                  <option value="pd">Price: High to Low</option>
+                  <option value="rt">⭐ Ratings</option>
+                  <option value="nw">Newest Arrival</option>
                 </select>
               </div>
-
-              {mobF && (
-                <button className="btn-p" style={{ width: '100%', marginTop: 20 }} onClick={() => setMobF(false)}>Show Items</button>
-              )}
             </div>
           </div>
 
@@ -403,42 +394,60 @@ function ProductsContent() {
 
         .products-layout { display: grid; grid-template-columns: 280px 1fr; gap: 40px; align-items: start; }
         
-        .sidebar { background: white; border: 1px solid #e2e8f0; border-radius: 20px; overflow: hidden; position: sticky; top: 100px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
-        .sb-top-hd { background: #0f172a; color: #1e293b; padding: 20px; font-size: 13px; font-weight: 900; letter-spacing: 2px; text-align: center; border-bottom: 1px solid #1e293b; }
-        .sb-top-hd { color: #5eead4; } /* Teal text for header as in screenshot */
-        
-        .sb-inner { padding: 25px; }
-        .sb-header { display: flex; justify-content: flex-end; margin-bottom: 20px; }
-        .sb-clear { background: none; border: none; font-size: 11px; font-weight: 800; color: #ef4444; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        /* MODERN SIDEBAR V3 */
+        .sidebar-v3 { background: white; position: sticky; top: 120px; }
+        .sb3-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 25px; border-bottom: 1px solid #f1f5f9; margin-bottom: 30px; }
+        .sb3-title-wrap { display: flex; align-items: center; gap: 10px; }
+        .sb3-title { font-size: 15px; font-weight: 900; color: #0f172a; letter-spacing: 1.5px; }
+        .sb3-count { background: #ef4444; color: white; min-width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; }
+        .sb3-clear { background: none; border: none; font-size: 12px; font-weight: 600; color: #64748b; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+        .sb3-clear:hover { color: #ef4444; }
 
-        .sb-section { margin-bottom: 35px; border-top: 1px solid #f1f5f9; padding-top: 25px; }
-        .sb-section:first-of-type { border-top: none; padding-top: 0; }
+        .sb3-section { margin-bottom: 40px; }
+        .sb3-sec-hd { font-size: 13px; font-weight: 900; color: #0f172a; margin-bottom: 20px; letter-spacing: 1.2px; }
         
-        .sb-lbl { font-size: 12px; font-weight: 900; color: #0f172a; margin-bottom: 20px; display: inline-block; border-bottom: 2px solid #0f172a; padding-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; }
-        
-        .sb-box-list { display: flex; flex-direction: column; gap: 8px; }
-        .sb-box-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); font-size: 15px; color: #64748b; font-weight: 600; }
-        .sb-box-item:hover { border-color: #cbd5e1; background: #f8fafc; }
-        .sb-box-item.on { background: #0f172a; border-color: #0f172a; color: #5eead4; box-shadow: 0 8px 20px rgba(15,23,42,0.15); }
-        .sb-box-item.on .sb-box-r { background: #1e293b; color: #5eead4; }
-        
-        .sb-box-l { display: flex; align-items: center; }
-        .sb-box-r { font-size: 11px; background: #f1f5f9; padding: 2px 8px; border-radius: 8px; color: #94a3b8; }
+        .sb3-list { display: flex; flex-direction: column; gap: 14px; }
+        .sb3-item { display: flex; align-items: center; gap: 14px; cursor: pointer; transition: all 0.2s; }
+        .sb3-check-box { width: 18px; height: 18px; border: 1.5px solid #cbd5e1; border-radius: 4px; transition: all 0.2s; position: relative; }
+        .sb3-item.active .sb3-check-box { background: #008080; border-color: #008080; }
+        .sb3-item.active .sb3-check-box::after { content: '✓'; position: absolute; color: white; font-size: 10px; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+        .sb3-label { font-size: 14px; font-weight: 500; color: #475569; transition: color 0.2s; }
+        .sb3-item:hover .sb3-label { color: #008080; }
+        .sb3-item.active .sb3-label { color: #0f172a; font-weight: 700; }
+        .sb3-num { font-size: 12px; color: #94a3b8; margin-left: auto; font-weight: 500; }
 
-        .clr-swatch-g { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-        .clr-swatch-c { width: 36px; height: 36px; border-radius: 10px; border: 2px solid #e2e8f0; padding: 3px; cursor: pointer; transition: all 0.2s; }
-        .clr-swatch-c:hover { transform: scale(1.1); border-color: #cbd5e1; }
-        .clr-swatch-c.on { border-color: #008080; background: #f0fafa; }
-        .clr-swatch-in { width: 100%; height: 100%; border-radius: 6px; }
+        .sb3-color-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        .sb3-color-item { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .sb3-color-dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #e2e8f0; }
+        .sb3-color-name { font-size: 14px; color: #475569; font-weight: 500; }
+        .sb3-color-item.active .sb3-color-name { color: #0f172a; font-weight: 700; }
 
-        .sort-sel-v2 { width: 100%; padding: 14px; border: 1.5px solid #e2e8f0; border-radius: 14px; font-size: 14px; font-weight: 600; color: #334155; background: #ffffff; outline: none; transition: border-color 0.2s; }
-        .sort-sel-v2:focus { border-color: #008080; }
+        .sb3-select { width: 100%; border: 1px solid #e2e8f0; padding: 12px 15px; border-radius: 4px; font-size: 14px; font-weight: 600; color: #334155; appearance: none; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 15px center; background-size: 16px; cursor: pointer; transition: border 0.3s; }
+        .sb3-select:focus { border-color: #008080; }
+
+        /* SQUARE PRODUCT CARDS */
+        .prod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
+        .p-card { background: white; display: flex; flex-direction: column; overflow: hidden; position: relative; transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); border: 1.5px solid #f8fafc; }
+        .p-card:hover { transform: translateY(-8px); border-color: #f1f5f9; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+        .p-img-box { position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #f9fafb; }
+        .p-img-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; }
+        .p-card:hover .p-img-box img { transform: scale(1.08); }
+        
+        .p-info { padding: 20px 0; display: flex; flex-direction: column; gap: 8px; }
+        .p-nm { font-size: 15px; font-weight: 800; color: #1e293b; line-height: 1.4; text-decoration: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; transition: color 0.2s; }
+        .p-nm:hover { color: #008080; }
+        .p-cat { font-size: 12px; color: #94a3b8; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+        .p-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 5px; }
+        .p-prc { font-size: 18px; font-weight: 900; color: #0f172a; }
+        
+        .btn-add-p { background: none; border: 2px solid #0f172a; color: #0f172a; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; transition: all 0.2s; cursor: pointer; }
+        .btn-add-p:hover { background: #0f172a; color: white; }
 
         @media (max-width: 1024px) {
           .products-layout { grid-template-columns: 1fr; }
-          .sidebar { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000; border-radius: 0; display: none; overflow-y: auto; }
-          .sidebar.mob-on { display: block; }
-          .mob-filter-btn { display: flex !important; }
+          .sidebar-v3 { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000; border-radius: 0; display: none; overflow-y: auto; padding: 40px 25px; }
+          .sidebar-v3.mob-on { display: block; }
+          .sb3-mob-close { display: block !important; position: absolute; right: 25px; top: 40px; background: none; border: none; font-size: 24px; }
         }
       `}</style>
     </div >
