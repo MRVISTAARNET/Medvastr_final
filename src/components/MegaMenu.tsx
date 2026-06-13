@@ -20,6 +20,7 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
 
   const genStr = gender ? (gender === "men" ? "MEN" : "WOMEN") : "";
   const genKey = gender || "";
+  const queryGen = gender ? `gender=${gender}` : "";
 
   // Filter products by gender
   const genProducts = products.filter((p) => {
@@ -76,7 +77,7 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
           <ul>
             {subcats.length > 0 ? subcats.map((cat: any) => (
               <li key={cat.id}>
-                <Link href={`/products?cat=${cat.slug}${genStr ? `&gen=${genStr}` : ""}`}>
+                <Link href={`/products?cat=${cat.slug}${queryGen ? `&${queryGen}` : ""}`}>
                   {cat.navLabel || cat.name}
                   <span className="mcat-arrow">›</span>
                 </Link>
@@ -119,7 +120,7 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
               )}
             </div>
             <Link
-              href={`/products?${genStr ? `gen=${genStr}` : ""}${parentSlug ? `&cat=${parentSlug}` : ""}`}
+              href={`/products?${queryGen ? `${queryGen}` : ""}${parentSlug ? `&cat=${parentSlug}` : ""}`}
               className="msize-guide"
             >
               Shop all &rsaquo;
@@ -136,7 +137,7 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
                 {colours.map((c) => (
                   <Link
                     key={c.l}
-                    href={`/products?color=${encodeURIComponent(c.c)}${genStr ? `&gen=${genStr}` : ""}${parentSlug ? `&cat=${parentSlug}` : ""}`}
+                    href={`/products?color=${encodeURIComponent(c.c)}${queryGen ? `&${queryGen}` : ""}${parentSlug ? `&cat=${parentSlug}` : ""}`}
                     className="mclr"
                   >
                     <div className="mclr-d" style={{ background: c.h }} />
@@ -145,7 +146,7 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
                 ))}
               </div>
               <Link
-                href={`/products?${genStr ? `gen=${genStr}` : ""}`}
+                href={`/products?${queryGen ? `${queryGen}` : ""}`}
                 className="msize-guide"
                 style={{ marginTop: 10 }}
               >
@@ -160,7 +161,7 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
                 {sizeLinks.map((s: any) => (
                   <Link
                     key={s.sizeValue || s.name}
-                    href={`/products?size=${s.sizeValue || s.name}${genStr ? `&gen=${genStr}` : ""}${parentSlug ? `&cat=${parentSlug}` : ""}`}
+                    href={`/products?size=${s.sizeValue || s.name}${queryGen ? `&${queryGen}` : ""}${parentSlug ? `&cat=${parentSlug}` : ""}`}
                     className="msize-pill"
                   >
                     {s.sizeValue || s.name}
@@ -168,7 +169,7 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
                 ))}
               </div>
               <Link
-                href={`/products?${genStr ? `gen=${genStr}` : ""}`}
+                href={`/products?${queryGen ? `${queryGen}` : ""}`}
                 className="msize-guide"
               >
                 View size guide &rsaquo;

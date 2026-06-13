@@ -11,7 +11,7 @@ function ProductsContent() {
   const searchParams = useSearchParams();
   const initCat = searchParams.get("cat") || "all";
   const initColor = searchParams.get("color") || "";
-  const initGen = searchParams.get("gender")?.toLowerCase() || searchParams.get("gen")?.toLowerCase() || "all";
+  const initGen = searchParams.get("gender")?.toLowerCase() || "all";
   const { products, banners } = useApp();
 
   const [cat, setCat] = useState(initCat);

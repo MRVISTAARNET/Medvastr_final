@@ -7,8 +7,8 @@ import { PRODUCTS, fmt } from "@/lib/data";
 import DynamicNav, { NavItem } from "./DynamicNav";
 
 const FALLBACK_NAV: NavItem[] = [
-  { id: 1, label: "Men", href: "/products?gen=men", itemType: "MEGA_MENU", gender: "men", categorySlug: "men" },
-  { id: 2, label: "Women", href: "/products?gen=women", itemType: "MEGA_MENU", gender: "women", categorySlug: "women" },
+  { id: 1, label: "Men", href: "/products?gender=men", itemType: "MEGA_MENU", gender: "men", categorySlug: "men" },
+  { id: 2, label: "Women", href: "/products?gender=women", itemType: "MEGA_MENU", gender: "women", categorySlug: "women" },
   { id: 3, label: "Surgical Wear", href: "/products?cat=surgical-wear", itemType: "MEGA_MENU", categorySlug: "surgical-wear" },
   { id: 4, label: "Bulk Order", href: "/bulk-orders", itemType: "MEGA_MENU", categorySlug: "bulk-order" },
   { id: 5, label: "About Us", href: "/about", itemType: "LINK" },
