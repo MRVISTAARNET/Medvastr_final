@@ -67,9 +67,13 @@ export default function Footer() {
           </h4>
           <ul className="ft-lnks">
             {[
-              ["Flexy Fit Scrub", "men"], ["Green Sheets", "linen"], ["Cardiac Sheets", "linen"], ["Bed Blankets", "linen"]
+              ["Scrub Suits", "scrub-suit"],
+              ["Cotton T-Shirts", "cotton-crew-tshirt-men"],
+              ["Under Scrubs", "full-sleeve-compression-under-scrub-men"],
+              ["Surgeon Gowns", "surgeon-gown-men"],
+              ["Surgeon Caps", "surgeon-cap-men"]
             ].map(([l, cat]) => (
-              <li key={l}><Link href={`/products?cat=${cat}`}>{l}</Link></li>
+              <li key={l}><Link href={`/products?cat=${cat}&gender=men`}>{l}</Link></li>
             ))}
           </ul>
         </div>
@@ -80,9 +84,29 @@ export default function Footer() {
           </h4>
           <ul className="ft-lnks">
             {[
-              ["Flexy Fit Scrub", "women"], ["Maternity Gowns", "surgical"], ["Patient Dress", "surgical"], ["Scrubs with Logo", "uniforms"], ["OT Gowns", "surgical"]
+              ["Scrub Suits", "scrub-suit"],
+              ["Cotton T-Shirts", "cotton-crew-tshirt-women"],
+              ["Under Scrubs", "full-sleeve-compression-under-scrub-women"],
+              ["Surgeon Gowns", "surgeon-gown-women"],
+              ["Surgeon Caps", "surgeon-cap-women"]
             ].map(([l, cat]) => (
-              <li key={l}><Link href={`/products?cat=${cat}`}>{l}</Link></li>
+              <li key={l}><Link href={`/products?cat=${cat}&gender=women`}>{l}</Link></li>
+            ))}
+          </ul>
+        </div>
+
+        <div className={`ft-col${openCol === 'linen' ? ' open' : ''}`}>
+          <h4 onClick={() => toggle('linen')}>
+            Linen & Bedding <span className="ft-arr">▾</span>
+          </h4>
+          <ul className="ft-lnks">
+            {[
+              ["Linen & Bedding", "linen-and-bedding"],
+              ["Green Linen Sheets", "green-linen-sheets"],
+              ["Brown Blankets", "brown-blankets"],
+              ["Maternity Gowns", "maternity-gown"]
+            ].map(([l, cat]) => (
+              <li key={l}><Link href={`/bulk-orders`}>{l}</Link></li>
             ))}
           </ul>
         </div>
