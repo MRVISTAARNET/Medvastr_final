@@ -61,36 +61,19 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className={`ft-col${openCol === 'men' ? ' open' : ''}`}>
-          <h4 onClick={() => toggle('men')}>
-            Men <span className="ft-arr">▾</span>
+        <div className={`ft-col${openCol === 'unisex2' ? ' open' : ''}`}>
+          <h4 onClick={() => toggle('unisex2')}>
+            Apparel <span className="ft-arr">▾</span>
           </h4>
           <ul className="ft-lnks">
             {[
               ["Scrub Suits", "scrub-suit"],
-              ["Cotton T-Shirts", "cotton-crew-tshirt-men"],
-              ["Under Scrubs", "full-sleeve-compression-under-scrub-men"],
-              ["Surgeon Gowns", "surgeon-gown-men"],
-              ["Surgeon Caps", "surgeon-cap-men"]
+              ["Cotton T-Shirts", "cotton-crew-tshirt"],
+              ["Under Scrubs", "full-sleeve-compression-under-scrub"],
+              ["Surgeon Gowns", "surgeon-gown"],
+              ["Surgeon Caps", "surgeon-cap"]
             ].map(([l, cat]) => (
-              <li key={l}><Link href={`/products?cat=${cat}&gender=men`}>{l}</Link></li>
-            ))}
-          </ul>
-        </div>
-
-        <div className={`ft-col${openCol === 'women' ? ' open' : ''}`}>
-          <h4 onClick={() => toggle('women')}>
-            Women <span className="ft-arr">▾</span>
-          </h4>
-          <ul className="ft-lnks">
-            {[
-              ["Scrub Suits", "scrub-suit"],
-              ["Cotton T-Shirts", "cotton-crew-tshirt-women"],
-              ["Under Scrubs", "full-sleeve-compression-under-scrub-women"],
-              ["Surgeon Gowns", "surgeon-gown-women"],
-              ["Surgeon Caps", "surgeon-cap-women"]
-            ].map(([l, cat]) => (
-              <li key={l}><Link href={`/products?cat=${cat}&gender=women`}>{l}</Link></li>
+              <li key={l}><Link href={`/products?cat=${cat}`}>{l}</Link></li>
             ))}
           </ul>
         </div>
@@ -179,8 +162,8 @@ export default function Footer() {
           max-width: 1400px;
           margin: 0 auto;
           display: grid;
-          grid-template-columns: 2.5fr 1fr 1fr 1fr 1fr 1fr;
-          gap: 40px;
+          grid-template-columns: 2.5fr 1fr 1fr 1fr 1fr;
+          gap: 45px;
           align-items: start;
         }
         .ft-brand {
