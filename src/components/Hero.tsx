@@ -101,7 +101,7 @@ function SmartSlide({ base }: { base: string }) {
   const [idx, setIdx] = React.useState(0);
   const src = idx < EXTS.length ? base + EXTS[idx] : null;
 
-  if (!src) return <div className="slide-bg" style={{ background: '#0f172a', height: '100%' }} />;
+  if (!src) return null;
 
   return (
     <div

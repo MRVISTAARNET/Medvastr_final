@@ -137,11 +137,11 @@ function ProductsContent() {
           </p>
         </div>
 
-        <div className="products-layout">
-          <button className="mob-filter-btn" onClick={() => setMobF(true)}>
-            <span style={{ fontSize: 18 }}>⚙️</span> Show Filters
-          </button>
+        <button className="mob-filter-btn" onClick={() => setMobF(true)}>
+          <span style={{ fontSize: 18 }}>⚙️</span> Show Filters
+        </button>
 
+        <div className="products-layout">
           {/* SIDEBAR */}
           <div className={`sidebar-v3${mobF ? " mob-on" : ""}`}>
             <div className="sb3-header">
@@ -392,7 +392,11 @@ function ProductsContent() {
         .catalog-header { margin-bottom: 40px; }
         .catalog-title { font-size: 32px; font-weight: 900; color: #0f172a; margin-bottom: 6px; letter-spacing: -0.03em; }
 
+        .mob-filter-btn { display: none; align-items: center; gap: 8px; background: #0f172a; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; margin-bottom: 20px; }
+
         .products-layout { display: grid; grid-template-columns: 280px 1fr; gap: 40px; align-items: start; }
+        .products-right { min-width: 0; }
+        .pg-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 28px; }
         
         /* MODERN SIDEBAR V3 */
         .sidebar-v3 { background: white; position: sticky; top: 120px; }
@@ -444,6 +448,7 @@ function ProductsContent() {
         .btn-add-p:hover { background: #0f172a; color: white; }
 
         @media (max-width: 1024px) {
+          .mob-filter-btn { display: flex !important; }
           .products-layout { grid-template-columns: 1fr; }
           .sidebar-v3 { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000; border-radius: 0; display: none; overflow-y: auto; padding: 40px 25px; }
           .sidebar-v3.mob-on { display: block; }

@@ -139,8 +139,8 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
                   </Link>
                 ))}
               </div>
-              <Link href="/products" className="msize-guide-btn">
-                View Size Guide →
+              <Link href="/sizeguide" className="msize-guide-btn">
+                📏 Size Guide
               </Link>
             </div>
 
@@ -191,8 +191,8 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
         .m-sub-list a:hover { color: #008080 !important; padding-left: 4px; }
         .mcat-arrow { font-size: 10px; color: #94a3b8; }
         
-        .msize-guide-btn { margin-top: 25px; display: flex; align-items: center; justify-content: center; width: 100%; border: 1.5px solid #008080; color: #008080; padding: 12px; border-radius: 12px; font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: 1.5px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; text-decoration: none; }
-        .msize-guide-btn:hover { background: #008080; color: white; box-shadow: 0 8px 20px rgba(0, 128, 128, 0.2); }
+        .msize-guide-btn { margin-top: 18px; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; background: #008080; color: white; padding: 12px 16px; border-radius: 8px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; transition: all 0.25s; cursor: pointer; text-decoration: none; box-shadow: 0 4px 14px rgba(0,128,128,0.25); }
+        .msize-guide-btn:hover { background: #006666; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,128,128,0.35); }
 
         .m-feat-card { display: block; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; text-decoration: none; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); margin-top: 5px; }
         .m-feat-card:hover { transform: translateY(-5px); border-color: #cbd5e1; }
