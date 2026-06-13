@@ -92,12 +92,6 @@ export default function ProductCard({ p }: PCardProps) {
 
         {p.fab && <p className="pc-fabric">{p.fab}</p>}
 
-        {/* Barcode Badge */}
-        {p.barcode && (
-          <p className="text-xs text-gray-500 font-mono mb-2">
-            📦 SKU: {p.barcode}
-          </p>
-        )}
 
         {/* Colors */}
         {p.clrs && p.clrs.length > 0 && (
@@ -107,21 +101,13 @@ export default function ProductCard({ p }: PCardProps) {
                 key={i}
                 className={`pc-color ${ci === i ? "active" : ""}`}
                 style={{ backgroundColor: c }}
-                onClick={() => setCi(i)}
+                onClick={(e) => { e.preventDefault(); setCi(i); }}
                 title={p.clrNms?.[i] || `Color ${i + 1}`}
               />
             ))}
           </div>
         )}
 
-        {/* Sizes Info */}
-        {p.sizes && p.sizes.length > 0 && (
-          <p className="text-xs text-gray-600 mb-2">
-            Available in: <span className="font-medium">{p.sizes.join(", ")}</span>
-          </p>
-        )}
-
-        {/* Price */}
         <div className="pc-pricing">
           <span className="pc-price-current">{fmt(p.price)}</span>
           {p.origPrice && <span className="pc-price-original">{fmt(p.origPrice)}</span>}

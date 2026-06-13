@@ -141,117 +141,85 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+    <div style={{ minHeight: '100vh', background: '#f8fafc' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '32px 24px' }}>
+
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-slate-600 mb-8 pb-6 border-b border-slate-200">
-          <button onClick={() => router.push("/")} className="hover:text-emerald-600 transition">Home</button>
-          <span className="text-slate-400">›</span>
-          <button onClick={() => router.push("/products")} className="hover:text-emerald-600 transition">{p.type}</button>
-          <span className="text-slate-400">›</span>
-          <span className="font-semibold text-slate-900">{p.name}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#64748b', marginBottom: 32, paddingBottom: 20, borderBottom: '1px solid #e2e8f0' }}>
+          <button onClick={() => router.push('/')} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 13 }}>Home</button>
+          <span style={{ color: '#cbd5e1' }}>›</span>
+          <button onClick={() => router.push('/products')} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 13 }}>{p.type}</button>
+          <span style={{ color: '#cbd5e1' }}>›</span>
+          <span style={{ fontWeight: 700, color: '#0f172a' }}>{p.name}</span>
         </div>
 
-        {/* ─── MAIN 2-COLUMN GRID ─── */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          {/* LEFT: Image Gallery */}
-          <div className="flex flex-col gap-4">
-            {/* Main Image */}
-            <div
-              className="aspect-square bg-slate-100 rounded-2xl overflow-hidden flex items-center justify-center relative"
-              style={{ background: mainImageSrc ? "#f8f8f8" : p.bg }}
-            >
-              {mainImageSrc ? (
-                <img
-                  src={mainImageSrc}
-                  alt={`${p.name} — ${p.clrNms?.[ci] || "view"}`}
-                  className="w-full h-full object-contain"
-                  onError={() => {
-                    if (activeImageIndex >= 0)
-                      setBrokenImages((prev) => ({ ...prev, [activeImageIndex]: true }));
-                  }}
-                />
-              ) : (
-                <span className="text-9xl">{p.emo}</span>
-              )}
-              {p.badge && (
-                <div className="absolute top-4 left-4 bg-emerald-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                  {p.badge}
-                </div>
-              )}
-            </div>
+        {/* MAIN 2-COLUMN LAYOUT */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60, marginBottom: 80, alignItems: 'start' }}>
 
-            {/* Thumbnail Gallery */}
+          {/* LEFT: Image Gallery */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ aspectRatio: '1/1', background: mainImageSrc ? '#f8f8f8' : (p.bg || '#f1f5f9'), borderRadius: 20, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+              {mainImageSrc ? (
+                <img src={mainImageSrc} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  onError={() => { if (activeImageIndex >= 0) setBrokenImages(prev => ({ ...prev, [activeImageIndex]: true })); }} />
+              ) : (
+                <span style={{ fontSize: 80 }}>{p.emo}</span>
+              )}
+              {p.badge && <div style={{ position: 'absolute', top: 16, left: 16, background: '#10b981', color: 'white', padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 700 }}>{p.badge}</div>}
+            </div>
             {visibleImageIndexes.length > 1 && (
-              <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${Math.min(visibleImageIndexes.length, 5)}, 1fr)` }}>
+              <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(visibleImageIndexes.length, 5)}, 1fr)`, gap: 10 }}>
                 {visibleImageIndexes.map((i) => (
-                  <div
-                    key={i}
-                    onClick={() => setMainImg(i)}
-                    className={`aspect-square rounded-lg overflow-hidden cursor-pointer transition-all ${
-                      mainImg === i
-                        ? 'ring-2 ring-emerald-500 border-2 border-emerald-500'
-                        : 'border-2 border-slate-200 hover:border-emerald-300'
-                    }`}
-                  >
-                    <img
-                      src={colorImages[i]} alt={`view ${i + 1}`}
-                      className="w-full h-full object-cover"
-                      onError={() => setBrokenImages((prev) => ({ ...prev, [i]: true }))}
-                    />
+                  <div key={i} onClick={() => setMainImg(i)}
+                    style={{ aspectRatio: '1/1', borderRadius: 12, overflow: 'hidden', cursor: 'pointer', border: mainImg === i ? '2px solid #008080' : '2px solid #e2e8f0', transition: 'border 0.2s' }}>
+                    <img src={colorImages[i]} alt={`view ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={() => setBrokenImages(prev => ({ ...prev, [i]: true }))} />
                   </div>
                 ))}
               </div>
             )}
           </div>
 
-          {/* RIGHT: Product Info (Sticky) */}
-          <div className="lg:sticky lg:top-24 lg:h-fit">
-            <div className="bg-white rounded-2xl shadow-lg p-8 space-y-6">
+          {/* RIGHT: Product Info */}
+          <div style={{ position: 'sticky', top: 100 }}>
+            <div style={{ background: 'white', borderRadius: 20, boxShadow: '0 4px 30px rgba(0,0,0,0.06)', padding: 40, display: 'flex', flexDirection: 'column', gap: 24 }}>
+
               {/* Collection Tag */}
-              <div className="inline-block bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full text-sm font-semibold">
-                {p.fab || "Premium"} Collection
+              <div style={{ display: 'inline-block', background: '#ecfdf5', color: '#059669', padding: '6px 16px', borderRadius: 20, fontSize: 13, fontWeight: 700, width: 'fit-content' }}>
+                {p.fab || 'Premium'} Collection
               </div>
 
               {/* Title */}
-              <h1 className="text-3xl md:text-4xl font-bold text-slate-900">{p.name}</h1>
+              <h1 style={{ fontSize: 30, fontWeight: 900, color: '#0f172a', margin: 0, lineHeight: 1.2 }}>{p.name}</h1>
 
-              {/* Rating & Reviews */}
-              <div className="flex items-center gap-4 pb-4 border-b border-slate-200">
-                <div className="flex items-center gap-2">
-                  <span className="text-lg text-amber-400">{"★".repeat(Math.floor(Number(avgRating)))}</span>
-                  <span className="font-semibold text-slate-900">{avgRating}</span>
-                </div>
-                <span className="text-sm text-slate-600">{reviews.length} Verified Reviews</span>
-                <span className="ml-auto text-sm font-semibold text-emerald-600">✓ In Stock</span>
+              {/* Rating */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingBottom: 20, borderBottom: '1px solid #f1f5f9' }}>
+                <span style={{ color: '#fbbf24', fontSize: 18 }}>{'★'.repeat(Math.floor(Number(avgRating)))}</span>
+                <span style={{ fontWeight: 700, color: '#0f172a' }}>{avgRating}</span>
+                <span style={{ fontSize: 13, color: '#64748b' }}>{reviews.length} Verified Reviews</span>
+                <span style={{ marginLeft: 'auto', fontSize: 13, fontWeight: 700, color: '#10b981' }}>✓ In Stock</span>
               </div>
 
               {/* Price */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-3">
-                  <span className="text-3xl font-bold text-slate-900">{fmt(p.price)}</span>
-                  {p.origPrice && <span className="text-lg text-slate-500 line-through">{fmt(p.origPrice)}</span>}
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <span style={{ fontSize: 32, fontWeight: 900, color: '#0f172a' }}>{fmt(p.price)}</span>
+                  {p.origPrice && <span style={{ fontSize: 18, color: '#94a3b8', textDecoration: 'line-through' }}>{fmt(p.origPrice)}</span>}
+                  {p.origPrice && <span style={{ background: '#fef2f2', color: '#ef4444', fontSize: 12, fontWeight: 800, padding: '2px 8px', borderRadius: 6 }}>{Math.round(((p.origPrice - p.price) / p.origPrice) * 100)}% OFF</span>}
                 </div>
-                <p className="text-xs text-slate-600">Inclusive of all taxes</p>
+                <p style={{ fontSize: 12, color: '#94a3b8', margin: '4px 0 0' }}>Inclusive of all taxes</p>
               </div>
 
               {/* Color Selector */}
               {p.clrs && p.clrs.length > 0 && (
-                <div className="space-y-3">
-                  <label className="block text-sm font-semibold text-slate-900">
-                    Colour: <span className="text-emerald-600">{p.clrNms?.[ci] || cn(p.clrs[ci])}</span>
+                <div>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#0f172a', marginBottom: 10 }}>
+                    Colour: <span style={{ color: '#008080' }}>{p.clrNms?.[ci] || cn(p.clrs[ci])}</span>
                   </label>
-                  <div className="flex gap-3 flex-wrap">
+                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
                     {p.clrs.map((c, i) => (
-                      <button
-                        key={i}
-                        onClick={() => handleColorChange(i)}
-                        className={`w-12 h-12 rounded-lg border-2 transition-all ${
-                          ci === i ? 'border-slate-900 ring-2 ring-slate-900' : 'border-slate-200'
-                        }`}
-                        style={{ backgroundColor: c }}
-                        title={p.clrNms?.[i] || c}
-                      />
+                      <button key={i} onClick={() => handleColorChange(i)}
+                        style={{ width: 44, height: 44, borderRadius: 10, border: ci === i ? '3px solid #0f172a' : '2px solid #e2e8f0', backgroundColor: c, cursor: 'pointer', outline: ci === i ? '2px solid #fff' : 'none', outlineOffset: -4 }}
+                        title={p.clrNms?.[i] || c} />
                     ))}
                   </div>
                 </div>
@@ -259,21 +227,14 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
               {/* Size Selector */}
               {productSizes.length > 0 && (
-                <div className="space-y-3">
-                  <label className="block text-sm font-semibold text-slate-900">
-                    Size: <span className="text-emerald-600">{sz}</span>
+                <div>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#0f172a', marginBottom: 10 }}>
+                    Size: <span style={{ color: '#008080' }}>{sz}</span>
                   </label>
-                  <div className="flex gap-2 flex-wrap">
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                     {productSizes.map((s) => (
-                      <button
-                        key={s}
-                        onClick={() => setSz(s)}
-                        className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-                          sz === s
-                            ? 'bg-emerald-600 text-white'
-                            : 'bg-slate-100 text-slate-900 hover:bg-slate-200'
-                        }`}
-                      >
+                      <button key={s} onClick={() => setSz(s)}
+                        style={{ padding: '8px 18px', borderRadius: 8, fontWeight: 700, fontSize: 13, border: sz === s ? '2px solid #008080' : '1.5px solid #e2e8f0', background: sz === s ? '#008080' : 'white', color: sz === s ? 'white' : '#475569', cursor: 'pointer', transition: 'all 0.2s' }}>
                         {s}
                       </button>
                     ))}
@@ -281,70 +242,50 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                 </div>
               )}
 
-              {/* Quantity & Add to Cart */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-3 border-2 border-slate-200 rounded-lg p-2">
-                    <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="w-8 h-8 flex items-center justify-center hover:bg-slate-100 rounded transition">−</button>
-                    <span className="w-8 text-center font-semibold">{qty}</span>
-                    <button onClick={() => setQty((q) => q + 1)} className="w-8 h-8 flex items-center justify-center hover:bg-slate-100 rounded transition">+</button>
+              {/* Qty + Add to Bag */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, border: '1.5px solid #e2e8f0', borderRadius: 10, padding: '8px 16px' }}>
+                    <button onClick={() => setQty(q => Math.max(1, q - 1))} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: '#0f172a', width: 28, height: 28 }}>−</button>
+                    <span style={{ fontWeight: 700, minWidth: 24, textAlign: 'center' }}>{qty}</span>
+                    <button onClick={() => setQty(q => q + 1)} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: '#0f172a', width: 28, height: 28 }}>+</button>
                   </div>
-                  <button
-                    onClick={() => toggleWishlist(p.id)}
-                    className="text-2xl hover:scale-110 transition"
-                  >
-                    {wished ? "❤️" : "🤍"}
-                  </button>
+                  <button onClick={() => toggleWishlist(p.id)} style={{ background: 'none', border: 'none', fontSize: 26, cursor: 'pointer' }}>{wished ? '❤️' : '🤍'}</button>
                 </div>
-                <button
-                  onClick={() => {
-                    addToCart(p, ci, sz || productSizes[0] || "M");
-                  }}
-                  className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-4 rounded-lg transition"
-                >
+                <button onClick={() => addToCart(p, ci, sz || productSizes[0] || 'M')}
+                  style={{ width: '100%', background: '#0f172a', color: 'white', border: 'none', borderRadius: 12, padding: '16px 24px', fontWeight: 800, fontSize: 15, cursor: 'pointer', transition: 'background 0.2s', letterSpacing: 0.3 }}>
                   Add to Bag — {fmt(p.price * qty)}
                 </button>
               </div>
 
               {/* Trust Badges */}
-              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-slate-200">
-                {[
-                  ["🚚", "Free Delivery", "₹999+"],
-                  ["🔄", "Easy Returns", "7 Days"],
-                  ["✅", "Quality", "Guaranteed"]
-                ].map(([icon, label, detail]) => (
-                  <div key={label} className="text-center">
-                    <div className="text-2xl mb-1">{icon}</div>
-                    <div className="text-xs font-semibold text-slate-900">{label}</div>
-                    <div className="text-xs text-slate-600">{detail}</div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, paddingTop: 20, borderTop: '1px solid #f1f5f9' }}>
+                {[['🚚', 'Free Delivery', '₹999+'], ['🔄', 'Easy Returns', '7 Days'], ['✅', 'Quality', 'Guaranteed']].map(([icon, label, detail]) => (
+                  <div key={label} style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: 22, marginBottom: 4 }}>{icon}</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#0f172a' }}>{label}</div>
+                    <div style={{ fontSize: 11, color: '#94a3b8' }}>{detail}</div>
                   </div>
                 ))}
               </div>
 
               {/* Accordions */}
-              <div className="space-y-0 border-t border-slate-200 pt-6">
+              <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: 20 }}>
                 <Accordion title="📋 Product Details" defaultOpen={true}>
-                  <div className="mb-4 text-slate-700">{p.desc}</div>
-                  <div className="space-y-3 text-sm">
-                    {([
-                      ["Fabric", p.fabD || p.fab || "Premium, breathable stretch fabric"],
-                      ["Fit", p.fit || "Tailored athletic fit"],
-                      p.pockets ? ["Pockets", `${p.pockets} Functional Pockets`] : null,
-                      ["Weight", p.wt || "Lightweight"],
-                      ["Care", p.care || "Machine washable"],
-                    ] as Array<[string, string] | null>)
-                      .filter((item): item is [string, string] => item !== null)
-                      .map(([label, value]) => (
-                        <div key={label} className="flex gap-4 pb-2 border-b border-slate-100">
-                          <strong className="text-slate-900 min-w-24">{label}</strong>
-                          <span className="text-slate-600">{value}</span>
+                  <div style={{ marginBottom: 16, color: '#475569', lineHeight: 1.7 }}>{p.desc}</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {([[' Fabric', p.fabD || p.fab], ['Fit', p.fit], p.pockets ? ['Pockets', `${p.pockets} Functional Pockets`] : null, ['Weight', p.wt], ['Care', p.care]] as Array<[string, string] | null>)
+                      .filter((x): x is [string, string] => !!x && !!x[1])
+                      .map(([lbl, val]) => (
+                        <div key={lbl} style={{ display: 'flex', gap: 16, paddingBottom: 8, borderBottom: '1px solid #f8fafc' }}>
+                          <strong style={{ color: '#0f172a', minWidth: 80, fontSize: 13 }}>{lbl}</strong>
+                          <span style={{ color: '#64748b', fontSize: 13 }}>{val}</span>
                         </div>
                       ))}
                   </div>
                 </Accordion>
-
                 <Accordion title="🚚 Shipping & Returns">
-                  <div className="space-y-2 text-sm text-slate-700">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13, color: '#64748b' }}>
                     <p>• Free shipping on orders above ₹999</p>
                     <p>• Standard delivery: 3–7 business days</p>
                     <p>• Easy 7-day returns on unworn items</p>
@@ -356,89 +297,70 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
           </div>
         </div>
 
-        {/* ─── REVIEWS SECTION ─── */}
-        <div className="border-t-2 border-slate-200 pt-12">
-          <h2 className="text-3xl font-bold text-slate-900 mb-2">Customer Reviews</h2>
-          <p className="text-slate-600 mb-8">{reviews.length} Verified Reviews</p>
+        {/* REVIEWS */}
+        <div style={{ borderTop: '2px solid #f1f5f9', paddingTop: 60 }}>
+          <h2 style={{ fontSize: 28, fontWeight: 900, color: '#0f172a', marginBottom: 8 }}>Customer Reviews</h2>
+          <p style={{ color: '#94a3b8', marginBottom: 32, fontSize: 14 }}>{reviews.length} Verified Reviews</p>
 
           {revLoading ? (
-            <div className="py-8 text-center text-slate-500">Loading reviews...</div>
+            <div style={{ padding: '40px 0', textAlign: 'center', color: '#94a3b8' }}>Loading reviews...</div>
           ) : reviews.length > 0 ? (
-            <div className="space-y-4 mb-8">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 40 }}>
               {reviews.map((r, i) => (
-                <div key={r.id || i} className="bg-white rounded-lg p-6 border border-slate-200 hover:shadow-md transition">
-                  <div className="flex items-start gap-4 mb-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">
-                      {(r.userName || "U")[0].toUpperCase()}
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-semibold text-slate-900">{r.userName || "Verified Customer"}</div>
-                      <div className="text-xs text-slate-500 flex items-center gap-2">
-                        <span>{r.createdAt ? new Date(r.createdAt).toLocaleDateString("en-IN") : ""}</span>
-                        <span className="text-amber-400">{"★".repeat(r.rating || 5)}</span>
+                <div key={r.id || i} style={{ background: 'white', borderRadius: 16, padding: 24, border: '1px solid #f1f5f9', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
+                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg,#008080,#0f766e)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14 }}>{(r.userName || 'U')[0].toUpperCase()}</div>
+                    <div>
+                      <div style={{ fontWeight: 700, color: '#0f172a', fontSize: 14 }}>{r.userName || 'Verified Customer'}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#94a3b8' }}>
+                        <span>{r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN') : ''}</span>
+                        <span style={{ color: '#fbbf24' }}>{'★'.repeat(r.rating || 5)}</span>
                       </div>
                     </div>
                   </div>
-                  {r.title && <div className="font-semibold text-slate-900 mb-2">{r.title}</div>}
-                  <p className="text-slate-700 text-sm leading-relaxed">{r.body}</p>
+                  <p style={{ color: '#475569', fontSize: 14, lineHeight: 1.6, margin: 0 }}>{r.body}</p>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="py-8 text-center text-slate-500 bg-slate-50 rounded-lg">
+            <div style={{ padding: '40px 0', textAlign: 'center', color: '#94a3b8', background: '#f8fafc', borderRadius: 16, marginBottom: 32 }}>
               No reviews yet. Be the first to share your experience!
             </div>
           )}
 
           {/* Review Form */}
-          <div className="bg-gradient-to-br from-slate-50 to-emerald-50 rounded-xl p-8 border-2 border-slate-200">
-            <h3 className="text-xl font-bold text-slate-900 mb-6">Share Your Feedback</h3>
-            <div className="space-y-4">
+          <div style={{ background: 'white', borderRadius: 20, padding: 40, border: '1px solid #f1f5f9', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
+            <h3 style={{ fontSize: 20, fontWeight: 800, color: '#0f172a', marginBottom: 24 }}>Share Your Feedback</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div>
-                <label className="block text-sm font-semibold text-slate-900 mb-3">Rating</label>
-                <div className="flex items-center gap-2">
+                <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#0f172a', marginBottom: 10 }}>Rating</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   {[1, 2, 3, 4, 5].map((n) => (
-                    <button
-                      key={n}
-                      onClick={() => setRating(n)}
-                      className={`w-10 h-10 rounded-lg font-bold text-lg transition-all ${
-                        rating >= n
-                          ? 'bg-amber-400 text-white'
-                          : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
-                      }`}
-                    >
-                      ★
-                    </button>
+                    <button key={n} onClick={() => setRating(n)}
+                      style={{ width: 40, height: 40, borderRadius: 8, fontWeight: 700, fontSize: 18, border: 'none', background: rating >= n ? '#fbbf24' : '#f1f5f9', color: rating >= n ? 'white' : '#94a3b8', cursor: 'pointer', transition: 'all 0.2s' }}>★</button>
                   ))}
-                  <span className="ml-3 text-sm text-slate-600 font-semibold">
-                    {["", "Poor", "Fair", "Good", "Very Good", "Excellent"][rating]}
-                  </span>
+                  <span style={{ marginLeft: 10, fontSize: 13, color: '#64748b', fontWeight: 600 }}>{['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'][rating]}</span>
                 </div>
               </div>
-              <div>
-                <textarea
-                  value={revBody}
-                  onChange={(e) => setRevBody(e.target.value)}
-                  placeholder="Share your honest experience with this product..."
-                  className="w-full h-24 p-4 border-2 border-slate-300 rounded-lg focus:border-emerald-500 focus:outline-none resize-none text-sm"
-                />
-              </div>
-              <button
-                onClick={handleSubmitReview}
-                disabled={submitting || !revBody.trim()}
-                className="bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-8 rounded-lg transition"
-              >
-                {submitting ? "Submitting..." : "Submit Review"}
+              <textarea value={revBody} onChange={(e) => setRevBody(e.target.value)}
+                placeholder="Share your honest experience with this product..."
+                style={{ width: '100%', height: 100, padding: 16, border: '1.5px solid #e2e8f0', borderRadius: 12, fontSize: 14, fontFamily: 'inherit', resize: 'none', outline: 'none', boxSizing: 'border-box' }} />
+              <button onClick={handleSubmitReview} disabled={submitting || !revBody.trim()}
+                style={{ background: '#008080', color: 'white', border: 'none', borderRadius: 10, padding: '14px 32px', fontWeight: 800, fontSize: 14, cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting || !revBody.trim() ? 0.5 : 1, width: 'fit-content', transition: 'all 0.2s' }}>
+                {submitting ? 'Submitting...' : 'Submit Review'}
               </button>
             </div>
           </div>
         </div>
 
-        {/* ─── RELATED PRODUCTS ─── */}
+        {/* YOU MAY ALSO LIKE */}
         {related.length > 0 && (
-          <div className="mt-16 pt-12 border-t-2 border-slate-200">
-            <h2 className="text-3xl font-bold text-slate-900 mb-8">You May Also Like</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div style={{ marginTop: 80, paddingTop: 60, borderTop: '2px solid #f1f5f9' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 40 }}>
+              <h2 style={{ fontSize: 28, fontWeight: 900, color: '#0f172a', margin: 0 }}>You May Also Like</h2>
+              <button onClick={() => router.push('/products')} style={{ background: 'none', border: '1.5px solid #e2e8f0', borderRadius: 8, padding: '8px 20px', fontSize: 13, fontWeight: 700, color: '#64748b', cursor: 'pointer' }}>View All →</button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24 }}>
               {related.map((rel) => (
                 <ProductCard key={rel.id} p={rel} />
               ))}
@@ -450,3 +372,4 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
     </div>
   );
 }
+
