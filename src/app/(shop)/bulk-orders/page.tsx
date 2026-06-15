@@ -371,7 +371,7 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
       style={{
         width: "100%",
         marginBottom: 30,
-        height: "360px",
+        height: "clamp(280px, 40vh, 400px)",
         backgroundImage: `url(${src})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -380,16 +380,24 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
         justifyContent: "center",
         flexDirection: "column",
         position: "relative",
-        boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
+        boxShadow: "0 4px 30px rgba(0,0,0,0.1)",
+        overflow: "hidden"
       }}
     >
-      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.35)", zIndex: 1 }} />
-      <div style={{ position: "relative", zIndex: 2, textAlign: "center", color: "white" }}>
-        <h1 style={{ fontSize: "3rem", fontWeight: 900, marginBottom: "12px", textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.5))", zIndex: 1 }} />
+      <div style={{ position: "relative", zIndex: 2, textAlign: "center", color: "white", padding: "0 20px" }}>
+        <h1 style={{
+          fontSize: "clamp(2rem, 8vw, 3.5rem)",
+          fontWeight: 950,
+          marginBottom: "12px",
+          textShadow: "0 4px 15px rgba(0,0,0,0.4)",
+          lineHeight: 1.1,
+          letterSpacing: "-1px"
+        }}>
           {title}
         </h1>
-        <p style={{ fontSize: "1.1rem", opacity: 0.9, maxWidth: "600px", margin: "0 auto" }}>
-          Premium medical apparel for institutions
+        <p style={{ fontSize: "1.2rem", opacity: 0.95, maxWidth: "700px", margin: "0 auto", fontWeight: 600 }}>
+          Superior quality medical apparel for premier institutions
         </p>
       </div>
       <img src={src} alt="" style={{ display: "none" }} onError={() => setIdx((i) => i + 1)} />

@@ -124,9 +124,9 @@ export default function BulkProductPage() {
                         </div>
 
                         <div className="cta-box">
-                            <p className="cta-text">Want to buy in bulk? Please send an enquiry for best pricing.</p>
+                            <p className="cta-text">Looking for bulk pricing? Send us an enquiry today!</p>
                             <Link href={`/contact?subject=Bulk Enquiry: ${item.name}`} className="enquiry-btn">
-                                Enquiry Now for {item.name}
+                                ✉️ Send Enquiry for {item.name}
                             </Link>
                         </div>
                     </div>
