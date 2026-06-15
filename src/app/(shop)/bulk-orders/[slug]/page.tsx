@@ -34,7 +34,7 @@ const BULK_ITEMS: Record<string, any> = {
             "Stitched edges for durability",
             "Flame retardant treated"
         ],
-        bulkInfo: "Minimum order 20 units. Special rates for hospital-wide procurement."
+        bulkInfo: "Minimum order 50 units. Special rates for hospital-wide procurement."
     },
     "maternity-gown": {
         name: "Maternity Gown",
@@ -67,6 +67,11 @@ export default function BulkProductPage() {
             </div>
         );
     }
+
+    // Fallback if image fails
+    const handleImageError = (e: any) => {
+        e.target.src = "https://placehold.co/600x800/f1f5f9/94a3b8?text=" + encodeURIComponent(item.name);
+    };
 
     return (
         <div className="page" style={{ background: "#f8fafc", minHeight: "100vh", paddingBottom: "100px" }}>
@@ -118,9 +123,12 @@ export default function BulkProductPage() {
                             <p>{item.bulkInfo}</p>
                         </div>
 
-                        <Link href="/contact" className="enquiry-btn">
-                            Enquiry Now
-                        </Link>
+                        <div className="cta-box">
+                            <p className="cta-text">Want to buy in bulk? Please send an enquiry for best pricing.</p>
+                            <Link href={`/contact?subject=Bulk Enquiry: ${item.name}`} className="enquiry-btn">
+                                Enquiry Now for {item.name}
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -253,24 +261,39 @@ export default function BulkProductPage() {
           line-height: 1.6;
         }
 
+        .cta-box {
+          margin-top: 50px;
+          padding: 30px;
+          background: #f0fdf4;
+          border-radius: 24px;
+          border: 2px dashed #008080;
+          text-align: center;
+        }
+
+        .cta-text {
+          font-size: 16px;
+          font-weight: 700;
+          color: #0f172a;
+          margin-bottom: 20px;
+        }
+
         .enquiry-btn {
-          display: block;
-          background: #008080;
+          display: inline-block;
+          background: linear-gradient(135deg, #008080 0%, #006666 100%);
           color: white;
           text-align: center;
-          padding: 20px;
-          border-radius: 14px;
+          padding: 18px 44px;
+          border-radius: 100px;
           font-size: 18px;
           font-weight: 800;
           text-decoration: none;
-          transition: all 0.3s;
-          box-shadow: 0 10px 25px rgba(0,128,128,0.2);
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          box-shadow: 0 10px 30px rgba(0,128,128,0.25);
         }
 
         .enquiry-btn:hover {
-          transform: translateY(-3px);
-          background: #006666;
-          box-shadow: 0 15px 35px rgba(0,128,128,0.3);
+          transform: translateY(-5px) scale(1.02);
+          box-shadow: 0 20px 45px rgba(0,128,128,0.35);
         }
 
         @media (max-width: 900px) {

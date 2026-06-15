@@ -277,9 +277,7 @@ export default function BulkOrderPage() {
                 { t: "Linen & Bedding", slug: "linen-bedding", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-linen.png", d: "High-performance institutional linens designed for over 200+ industrial washes." },
                 { t: "Brown blanket", slug: "brown-blanket", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-blanket.png", d: "Professional grade ward blankets offering supreme warmth and infection control compliance." },
                 { t: "Maternity Gown", slug: "maternity-gown", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-maternity.png", d: "Breathable, ergonomic maternity wear optimized for patient comfort and ease of care." },
-                { t: "Surgical Drapes", slug: "surgical-drapes", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-drapes.png", d: "Liquid-resistant, sterile-ready surgical drapes for high-precision operating environments." },
-                { t: "Department Uniforms", slug: "dept-uniforms", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-uniforms.png", d: "Color-coded uniform sets for nursing, support staff, and security personnel." },
-                { t: "Patient Apparel", slug: "patient-apparel", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-patient.png", d: "Soft, durable patient gowns and pajamas designed for clinical accessibility." }
+                { t: "Patient Dresses", slug: "patient-apparel", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-patient.png", d: "Soft, durable patient gowns and pajamas designed for clinical accessibility." }
               ].map(item => (
                 <Link key={item.slug} href={`/bulk-orders/${item.slug}`} style={{ textDecoration: 'none' }}>
                   <div className="bulk-card" style={{
@@ -331,8 +329,8 @@ export default function BulkOrderPage() {
               For orders beyond standard tiers or special requirements, our team is ready to provide personalized quotes and support.
             </p>
             <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <Link href="/contact?subject=bulk-order-inquiry" style={{ background: '#059669', color: 'white', padding: '14px 30px', borderRadius: '12px', fontWeight: 700, fontSize: '16px', textDecoration: 'none' }}>
-                📧 Request Custom Quote
+              <Link href="/contact?subject=bulk-order-inquiry" style={{ background: '#059669', color: 'white', padding: '16px 40px', borderRadius: '100px', fontWeight: 800, fontSize: '18px', textDecoration: 'none', boxShadow: '0 10px 25px rgba(5,150,105,0.3)' }}>
+                📧 Request Custom Pricing
               </Link>
               <a href="tel:+918976488911" style={{ border: '2px solid rgba(255,255,255,0.4)', color: 'white', padding: '14px 30px', borderRadius: '12px', fontWeight: 700, fontSize: '16px', textDecoration: 'none' }}>
                 📱 Call Us Now

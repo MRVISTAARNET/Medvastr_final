@@ -105,8 +105,13 @@ export default function DynamicNav({
                 className="nl"
                 onClick={(e) => {
                   if (typeof window !== "undefined" && window.innerWidth <= 1024) {
-                    e.preventDefault();
-                    setMo(mo === key ? null : key);
+                    if (mo !== key) {
+                      e.preventDefault();
+                      setMo(key);
+                    } else {
+                      // Already open, allow navigation
+                      close();
+                    }
                   }
                 }}
               >

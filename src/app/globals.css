@@ -1268,7 +1268,7 @@ textarea {
 .hero {
   position: relative;
   overflow: hidden;
-  background: var(--ink);
+  background: #ffffff;
 }
 
 .hero-track {
