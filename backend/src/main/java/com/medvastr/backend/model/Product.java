@@ -18,11 +18,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.BatchSize;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "products")
@@ -115,15 +116,18 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
-    private List<ProductVariant> variants = new ArrayList<>();
+    @BatchSize(size = 20)
+    private Set<ProductVariant> variants = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
-    private List<ProductImage> images = new ArrayList<>();
+    @BatchSize(size = 20)
+    private Set<ProductImage> images = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
-    private List<Review> reviews = new ArrayList<>();
+    @BatchSize(size = 20)
+    private Set<Review> reviews = new LinkedHashSet<>();
 
     @CreationTimestamp
     private LocalDateTime createdAt;

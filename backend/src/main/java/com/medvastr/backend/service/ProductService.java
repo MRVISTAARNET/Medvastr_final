@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -126,7 +127,7 @@ public class ProductService {
         if (r.getImageUrls() != null) {
             p.setImages(r.getImageUrls().stream()
                     .map(url -> ProductImage.builder().imageUrl(url).product(p).build())
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toCollection(LinkedHashSet::new)));
         }
 
         p.setVariants(buildVariants(r, p));
@@ -173,12 +174,11 @@ public class ProductService {
         if (r.getCategoryId() != null)
             catRepo.findById(r.getCategoryId()).ifPresent(p::setCategory);
 
-        // Update Images (simple replacement)
         if (r.getImageUrls() != null) {
             p.getImages().clear();
             p.getImages().addAll(r.getImageUrls().stream()
                     .map(url -> ProductImage.builder().imageUrl(url).product(p).build())
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toCollection(LinkedHashSet::new)));
         }
 
         p.getVariants().clear();
@@ -346,7 +346,7 @@ public class ProductService {
                 .build();
     }
 
-    private List<ProductVariant> buildVariants(ProductRequest r, Product p) {
+    private Set<ProductVariant> buildVariants(ProductRequest r, Product p) {
         if (r.getVariants() != null && !r.getVariants().isEmpty()) {
             return r.getVariants().stream()
                     .map(v -> ProductVariant.builder()
@@ -358,10 +358,10 @@ public class ProductService {
                             .sku(v.getSku())
                             .imageUrl(v.getImageUrl())
                             .build())
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
         }
 
-        return new ArrayList<>();
+        return new LinkedHashSet<>();
     }
 
     private String slug(String n) {
