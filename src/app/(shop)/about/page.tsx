@@ -265,28 +265,29 @@ export default function AboutPage() {
 
         .cta-button {
           display: inline-block;
-          background: linear-gradient(135deg, ${COLORS.teal} 0%, #0d9488 100%);
-          color: ${COLORS.white};
-          padding: 22px 60px;
+          background: linear-gradient(135deg, #ff4d4d 0%, #ff8c1a 50%, #ffcc00 100%);
+          color: white;
+          padding: 24px 70px;
           border-radius: 100px;
-          font-size: 20px;
-          font-weight: 800;
+          font-size: 24px;
+          font-weight: 900;
           text-decoration: none;
           transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          box-shadow: 0 15px 35px rgba(0,128,128,0.3);
+          box-shadow: 0 15px 45px rgba(255, 77, 77, 0.4);
           letter-spacing: 0.5px;
-          position: relative;
-          overflow: hidden;
+          text-transform: uppercase;
+          border: none;
+          cursor: pointer;
         }
 
         .cta-button:hover {
-          transform: translateY(-5px) scale(1.02);
-          box-shadow: 0 20px 45px rgba(0,128,128,0.4);
-          background: linear-gradient(135deg, #009999 0%, #00b3b3 100%);
+          transform: translateY(-8px) scale(1.05);
+          box-shadow: 0 25px 55px rgba(255, 77, 77, 0.5);
+          filter: brightness(1.1);
         }
 
         .cta-button:active {
-          transform: translateY(-2px);
+          transform: translateY(-2px) scale(0.98);
         }
 
         @media (max-width: 900px) {

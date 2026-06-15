@@ -186,24 +186,24 @@ export default function BulkProductPage() {
 
         .prod-title {
           font-size: 56px;
-          font-weight: 900;
+          font-weight: 950;
           color: #0f172a;
-          margin-bottom: 15px;
+          margin-bottom: 5px;
           letter-spacing: -2px;
-          line-height: 1;
+          line-height: 1.1;
         }
 
         .bulk-badge {
           display: inline-block;
-          background: linear-gradient(135deg, #0d9488 0%, #059669 100%);
+          background: #3b82f6;
           color: white;
-          padding: 8px 20px;
-          border-radius: 100px;
-          font-size: 12px;
-          font-weight: 800;
-          margin-bottom: 30px;
-          letter-spacing: 1.5px;
-          box-shadow: 0 10px 20px rgba(5,150,105,0.2);
+          padding: 6px 16px;
+          border-radius: 6px;
+          font-size: 11px;
+          font-weight: 900;
+          margin-bottom: 35px;
+          letter-spacing: 1px;
+          text-transform: uppercase;
         }
 
         .prod-desc {
@@ -279,21 +279,24 @@ export default function BulkProductPage() {
 
         .enquiry-btn {
           display: inline-block;
-          background: linear-gradient(135deg, #008080 0%, #006666 100%);
+          background: linear-gradient(135deg, #ff4c29 0%, #ff1e56 100%);
           color: white;
           text-align: center;
-          padding: 18px 44px;
+          padding: 20px 50px;
           border-radius: 100px;
-          font-size: 18px;
-          font-weight: 800;
+          font-size: 20px;
+          font-weight: 900;
           text-decoration: none;
           transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          box-shadow: 0 10px 30px rgba(0,128,128,0.25);
+          box-shadow: 0 12px 35px rgba(255, 30, 86, 0.35);
+          text-transform: uppercase;
+          letter-spacing: 1px;
         }
 
         .enquiry-btn:hover {
-          transform: translateY(-5px) scale(1.02);
-          box-shadow: 0 20px 45px rgba(0,128,128,0.35);
+          transform: translateY(-8px) scale(1.03);
+          box-shadow: 0 22px 50px rgba(255, 30, 86, 0.45);
+          filter: brightness(1.1);
         }
 
         @media (max-width: 900px) {

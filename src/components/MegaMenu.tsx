@@ -76,7 +76,7 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
           <div className="mcol-hd">{catLabel}</div>
           <ul className="m-deep-list">
             {subcats.length > 0 ? subcats.map((cat: any) => {
-              const baseHref = isClothing ? `/products?cat=${cat.slug}${queryGen ? `&${queryGen}` : ""}` : "/bulk-orders";
+              const baseHref = isClothing ? `/products?cat=${cat.slug}${queryGen ? `&${queryGen}` : ""}` : `/bulk-orders/${cat.slug}`;
               return (
                 <li key={cat.id} className="m-parent-li">
                   <Link href={baseHref} className="m-p-link">
@@ -87,7 +87,7 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
                     <ul className="m-sub-list">
                       {cat.children.map((sub: any) => (
                         <li key={sub.id}>
-                          <Link href={isClothing ? `/products?cat=${sub.slug}${queryGen ? `&${queryGen}` : ""}` : "/bulk-orders"}>
+                          <Link href={isClothing ? `/products?cat=${sub.slug}${queryGen ? `&${queryGen}` : ""}` : `/bulk-orders/${sub.slug}`}>
                             {sub.navLabel || sub.name}
                           </Link>
                         </li>
@@ -173,7 +173,18 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
             <Link
               href={label.toUpperCase().includes("BULK") ? "/bulk-orders" : `/products?cat=${parentCat?.slug}`}
               className="btn-p"
-              style={{ width: 'fit-content' }}
+              style={{
+                width: 'fit-content',
+                background: 'linear-gradient(135deg, #ff4c29 0%, #ff1e56 100%)',
+                color: 'white',
+                padding: '14px 30px',
+                borderRadius: '100px',
+                fontWeight: 900,
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                border: 'none',
+                boxShadow: '0 10px 25px rgba(255,30,86,0.3)'
+              }}
             >
               Explore Collection
             </Link>

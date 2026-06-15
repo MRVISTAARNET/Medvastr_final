@@ -68,14 +68,18 @@ export default function DynamicNav({
     return (
       <div className="flexy-sub" style={{ minWidth: 260, padding: "20px 24px", display: "block", left: 0, borderTop: "3px solid #0f172a" }}>
         <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-          {subs.map((sub: any) => (
-            <li key={sub.id} style={{ padding: "8px 0", borderBottom: "1px solid #f1f5f9" }}>
-              <Link href={`/products?cat=${sub.slug}`} onClick={close} style={{ textDecoration: "none", color: "#374151", fontWeight: 600, fontSize: "14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span>{sub.navLabel || sub.name}</span>
-                <span style={{ color: "#0f7c6e", fontSize: "12px", opacity: 0.6 }}>›</span>
-              </Link>
-            </li>
-          ))}
+          {subs.map((sub: any) => {
+            const isBulk = item.label.toUpperCase().includes("BULK") || item.categorySlug === "bulk-orders";
+            const href = isBulk ? `/bulk-orders/${sub.slug}` : `/products?cat=${sub.slug}`;
+            return (
+              <li key={sub.id} style={{ padding: "8px 0", borderBottom: "1px solid #f1f5f9" }}>
+                <Link href={href} onClick={close} style={{ textDecoration: "none", color: "#374151", fontWeight: 600, fontSize: "14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span>{sub.navLabel || sub.name}</span>
+                  <span style={{ color: "#0f7c6e", fontSize: "12px", opacity: 0.6 }}>›</span>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </div>
     );

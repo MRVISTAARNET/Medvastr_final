@@ -295,11 +295,11 @@ export default function BulkOrderPage() {
                       <img src={item.img} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.6s ease' }} alt={item.t} className="card-img" />
                       <div className="card-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(0,128,128,0)', transition: 'all 0.3s' }}></div>
                     </div>
-                    <div style={{ padding: '32px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <h4 style={{ fontSize: '22px', fontWeight: 800, color: '#0f172a', marginBottom: '12px' }}>{item.t}</h4>
-                      <p style={{ fontSize: '15px', color: '#64748b', marginBottom: '24px', lineHeight: 1.6, flex: 1 }}>{item.d}</p>
-                      <div style={{ display: 'flex', alignItems: 'center', color: '#008080', fontWeight: 800, fontSize: '14px', gap: '8px' }}>
-                        View Details <span style={{ fontSize: '18px' }}>→</span>
+                    <div style={{ padding: '35px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <h4 style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a', marginBottom: '16px', letterSpacing: '-0.5px' }}>{item.t}</h4>
+                      <p style={{ fontSize: '15px', color: '#64748b', marginBottom: '28px', lineHeight: 1.7, flex: 1 }}>{item.d}</p>
+                      <div style={{ display: 'flex', alignItems: 'center', color: '#ff4c29', fontWeight: 900, fontSize: '14px', gap: '10px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                        View Details <span style={{ fontSize: '20px' }}>→</span>
                       </div>
                     </div>
                   </div>
@@ -329,7 +329,7 @@ export default function BulkOrderPage() {
               For orders beyond standard tiers or special requirements, our team is ready to provide personalized quotes and support.
             </p>
             <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <Link href="/contact?subject=bulk-order-inquiry" style={{ background: '#059669', color: 'white', padding: '16px 40px', borderRadius: '100px', fontWeight: 800, fontSize: '18px', textDecoration: 'none', boxShadow: '0 10px 25px rgba(5,150,105,0.3)' }}>
+              <Link href="/contact?subject=bulk-order-inquiry" style={{ background: 'linear-gradient(135deg, #ff4c29 0%, #ff1e56 100%)', color: 'white', padding: '16px 40px', borderRadius: '100px', fontWeight: 900, fontSize: '18px', textDecoration: 'none', boxShadow: '0 10px 30px rgba(255,30,86,0.3)', textTransform: 'uppercase', letterSpacing: '1px' }}>
                 📧 Request Custom Pricing
               </Link>
               <a href="tel:+918976488911" style={{ border: '2px solid rgba(255,255,255,0.4)', color: 'white', padding: '14px 30px', borderRadius: '12px', fontWeight: 700, fontSize: '16px', textDecoration: 'none' }}>
