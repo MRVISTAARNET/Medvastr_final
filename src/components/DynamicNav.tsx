@@ -59,8 +59,7 @@ export default function DynamicNav({
     const cat = categoryTree.find((c) =>
       c.slug === item.categorySlug ||
       c.name.toLowerCase() === item.label.toLowerCase() ||
-      (item.label.toUpperCase() === "BULK ORDER" && c.slug === "bulk-orders") ||
-      (item.label.toUpperCase() === "BULK ORDERS" && c.slug === "bulk-orders")
+      (["BULK ORDER", "BULK ORDERS"].includes(item.label.toUpperCase()) && (c.slug === "bulk-orders" || c.slug === "bulk-order"))
     );
     const subs = cat?.children || [];
     if (!subs.length) return null;
@@ -93,7 +92,7 @@ export default function DynamicNav({
         const matchingCat = categoryTree.find((c) =>
           c.slug === item.categorySlug ||
           c.name.toLowerCase() === item.label.toLowerCase() ||
-          (item.label.toUpperCase().includes("BULK ORDER") && c.slug === "bulk-orders")
+          (["BULK ORDER", "BULK ORDERS"].includes(item.label.toUpperCase()) && (c.slug === "bulk-orders" || c.slug === "bulk-order"))
         );
         const hasSubs = matchingCat?.children && matchingCat.children.length > 0;
 

@@ -33,7 +33,7 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
     (parentSlug && c.slug === parentSlug) ||
     (gender && c.slug === genKey) ||
     (label && c.name.toLowerCase() === label.toLowerCase()) ||
-    (label === "BULK ORDER" && c.slug === "bulk-orders")
+    (["BULK ORDER", "BULK ORDERS"].includes(label.toUpperCase()) && (c.slug === "bulk-orders" || c.slug === "bulk-order"))
   );
   const subcats: any[] = parentCat?.children || [];
 

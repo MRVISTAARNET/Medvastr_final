@@ -93,10 +93,12 @@ export default function AboutPage() {
       </section>
 
       {/* 3. FOOTER CTA */}
-      <section className="about-cta">
-        <div className="cta-content">
-          <h2>Experience the Medvastr Difference.</h2>
-          <Link href="/products" className="cta-button">
+      <section className="about-cta" style={{ background: '#f8fafc', padding: '120px 24px' }}>
+        <div className="cta-content" style={{ maxWidth: '800px', margin: '0 auto' }}>
+          <h2 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 950, marginBottom: '50px', color: '#0f172a', letterSpacing: '-1.5px', lineHeight: 1.1 }}>
+            Ready to experience the Medvastr difference?
+          </h2>
+          <Link href="/products" className="premium-btn">
             Explore Our Products
           </Link>
         </div>
@@ -111,7 +113,7 @@ export default function AboutPage() {
 
         .about-hero {
           height: 600px;
-          background: url('https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-1.png');
+          background: #ffffff url('https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-1.png');
           background-size: cover;
           background-position: center;
           position: relative;
@@ -263,31 +265,34 @@ export default function AboutPage() {
           letter-spacing: -1px;
         }
 
-        .cta-button {
+        .premium-btn {
           display: inline-block;
-          background: linear-gradient(135deg, #ff4d4d 0%, #ff8c1a 50%, #ffcc00 100%);
+          background: linear-gradient(135deg, #ff4d4d 0%, #ff8c1a 30%, #ffcc00 60%, #ff8c1a 85%, #ff4d4d 100%);
+          background-size: 200% auto;
           color: white;
-          padding: 24px 70px;
+          padding: 24px 80px;
           border-radius: 100px;
           font-size: 24px;
           font-weight: 900;
           text-decoration: none;
           transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          box-shadow: 0 15px 45px rgba(255, 77, 77, 0.4);
-          letter-spacing: 0.5px;
+          box-shadow: 0 20px 50px rgba(255, 77, 77, 0.4), inset 0 2px 2px rgba(255,255,255,0.4);
+          letter-spacing: 2px;
           text-transform: uppercase;
-          border: none;
+          border: 3px solid white;
           cursor: pointer;
+          position: relative;
+          overflow: hidden;
         }
 
-        .cta-button:hover {
-          transform: translateY(-8px) scale(1.05);
-          box-shadow: 0 25px 55px rgba(255, 77, 77, 0.5);
-          filter: brightness(1.1);
+        .premium-btn:hover {
+          transform: translateY(-10px) scale(1.05);
+          box-shadow: 0 30px 60px rgba(255, 77, 77, 0.6);
+          background-position: right center;
         }
 
-        .cta-button:active {
-          transform: translateY(-2px) scale(0.98);
+        .premium-btn:active {
+          transform: translateY(-2px);
         }
 
         @media (max-width: 900px) {

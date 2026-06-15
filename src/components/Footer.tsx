@@ -69,14 +69,16 @@ export default function Footer() {
           </h4>
           <ul className="ft-lnks">
             {[
-              ["Scrub Suits", "scrub-suit"],
-              ["Cotton T-Shirts", "cotton-crew-tshirt"],
-              ["Under Scrubs", "full-sleeve-compression-under-scrub"],
-              ["Surgeon Gowns", "surgeon-gown"],
-              ["Surgeon Caps", "surgeon-cap"],
-              ["Linen & Bedding", "linen-and-bedding"]
-            ].map(([l, cat]) => (
-              <li key={l}><Link href={`/products?cat=${cat}`}>{l}</Link></li>
+              ["Scrub Suits", "scrub-suit", false],
+              ["Cotton T-Shirts", "cotton-crew-tshirt", false],
+              ["Under Scrubs", "full-sleeve-compression-under-scrub", false],
+              ["Surgeon Gowns", "surgeon-gown", false],
+              ["Surgeon Caps", "surgeon-cap", false],
+              ["Linen & Bedding", "linen-and-bedding", true]
+            ].map(([l, cat, isBulk]) => (
+              <li key={l as string}>
+                <Link href={isBulk ? `/bulk-orders/${cat}` : `/products?cat=${cat}`}>{l as string}</Link>
+              </li>
             ))}
           </ul>
         </div>

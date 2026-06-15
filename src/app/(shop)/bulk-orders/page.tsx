@@ -274,7 +274,7 @@ export default function BulkOrderPage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
               {[
-                { t: "Linen & Bedding", slug: "linen-bedding", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-linen.png", d: "High-performance institutional linens designed for over 200+ industrial washes." },
+                { t: "Linen & Bedding", slug: "linen-and-bedding", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-linen.png", d: "High-performance institutional linens designed for over 200+ industrial washes." },
                 { t: "Brown blanket", slug: "brown-blanket", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-blanket.png", d: "Professional grade ward blankets offering supreme warmth and infection control compliance." },
                 { t: "Maternity Gown", slug: "maternity-gown", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-maternity.png", d: "Breathable, ergonomic maternity wear optimized for patient comfort and ease of care." },
                 { t: "Patient Dresses", slug: "patient-apparel", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-patient.png", d: "Soft, durable patient gowns and pajamas designed for clinical accessibility." }
