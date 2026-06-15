@@ -1,3 +1,4 @@
+"use client";
 import React, { useContext, useState, useMemo } from "react";
 import { AppContext } from "@/context/AppContext";
 import ProductCard from "@/components/ProductCard";
