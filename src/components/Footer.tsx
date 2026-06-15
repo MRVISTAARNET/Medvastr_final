@@ -63,9 +63,9 @@ export default function Footer() {
 
 
 
-        <div className={`ft-col${openCol === 'unisex' ? ' open' : ''}`}>
-          <h4 onClick={() => toggle('unisex')}>
-            Unisex <span className="ft-arr">▾</span>
+        <div className={`ft-col${openCol === 'links' ? ' open' : ''}`}>
+          <h4 onClick={() => toggle('links')}>
+            Quick Links <span className="ft-arr">▾</span>
           </h4>
           <ul className="ft-lnks">
             {[
@@ -73,9 +73,10 @@ export default function Footer() {
               ["Cotton T-Shirts", "cotton-crew-tshirt"],
               ["Under Scrubs", "full-sleeve-compression-under-scrub"],
               ["Surgeon Gowns", "surgeon-gown"],
-              ["Surgeon Caps", "surgeon-cap"]
+              ["Surgeon Caps", "surgeon-cap"],
+              ["Linen & Bedding", "linen-and-bedding"]
             ].map(([l, cat]) => (
-              <li key={l}><Link href={`/products?cat=${cat}&gender=unisex`}>{l}</Link></li>
+              <li key={l}><Link href={`/products?cat=${cat}`}>{l}</Link></li>
             ))}
           </ul>
         </div>
@@ -86,25 +87,9 @@ export default function Footer() {
           </h4>
           <ul className="ft-lnks">
             {[
-              ["About Us", "about"], ["Sustainability", "sustainability"], ["Shipping & Returns", "refund"], ["Privacy & Terms", "privacy"]
+              ["About Us", "about"], ["Shipping & Returns", "refund"], ["Privacy & Terms", "privacy"]
             ].map(([l, p]) => (
               <li key={l}><Link href={`/${p}`}>{l}</Link></li>
-            ))}
-          </ul>
-        </div>
-
-        <div className={`ft-col${openCol === 'linen' ? ' open' : ''}`}>
-          <h4 onClick={() => toggle('linen')}>
-            Linen & Bedding <span className="ft-arr">▾</span>
-          </h4>
-          <ul className="ft-lnks">
-            {[
-              ["Linen & Bedding", "linen-and-bedding"],
-              ["Green Linen Sheets", "green-linen-sheets"],
-              ["Brown Blankets", "brown-blankets"],
-              ["Maternity Gowns", "maternity-gown"]
-            ].map(([l, cat]) => (
-              <li key={l}><Link href={`/bulk-orders`}>{l}</Link></li>
             ))}
           </ul>
         </div>
@@ -147,7 +132,7 @@ export default function Footer() {
           max-width: 1400px;
           margin: 0 auto;
           display: grid;
-          grid-template-columns: 2.5fr 1fr 1fr 1fr 1fr;
+          grid-template-columns: 2.5fr 1fr 1fr 1fr;
           gap: 45px;
           align-items: start;
         }

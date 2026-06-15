@@ -4,6 +4,7 @@ import com.medvastr.backend.model.Order;
 import com.medvastr.backend.model.OrderItem;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import jakarta.annotation.PostConstruct;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,6 +55,31 @@ public class ShiprocketService {
     private final ConcurrentHashMap<String, TokenData> tokenCache = new ConcurrentHashMap<>();
     private static final String TOKEN_CACHE_KEY = "shiprocket_token";
     private static final long TOKEN_TTL_MILLIS = 24 * 60 * 60 * 1000; // 24 hours
+
+    @PostConstruct
+    public void testAuth() {
+        log.info("========== SHIPROCKET DIAGNOSTICS ==========");
+        if (!enabled) {
+            log.info("Shiprocket Service: DISABLED");
+            log.info("============================================");
+            return;
+        }
+        log.info("Shiprocket Service: ENABLED");
+        String maskedEmail = (email != null && email.length() > 3) ? email.substring(0, 3) + "****" : "NOT SET";
+        log.info("Shiprocket Email: {}", maskedEmail);
+        log.info("Attempting startup auth test...");
+        try {
+            String token = login();
+            if (token != null) {
+                log.info("Startup Auth Test: SUCCESS");
+            } else {
+                log.error("Startup Auth Test: FAILED (Check credentials!)");
+            }
+        } catch (Exception e) {
+            log.error("Startup Auth Test: EXCEPTION - {}", e.getMessage());
+        }
+        log.info("============================================");
+    }
 
     private synchronized String getValidToken() throws Exception {
         TokenData cached = tokenCache.get(TOKEN_CACHE_KEY);

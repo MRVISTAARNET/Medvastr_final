@@ -97,26 +97,31 @@ function ProductsContent() {
   let staticBannerTitle = "";
 
   const S3 = "https://medvastr-assets.s3.ap-south-1.amazonaws.com";
-  if (gen === 'men') {
-    staticBannerBase = `${S3}/men-banner`;
-    staticBannerTitle = "Men's Collection";
-  } else if (gen === 'women') {
-    staticBannerBase = `${S3}/women-banner`;
-    staticBannerTitle = "Women's Collection";
-  } else if (cat === 'surgical' || cat === 'surgical-wear') {
-    staticBannerBase = `${S3}/surgical-banner`;
-    staticBannerTitle = "Surgical Wear";
-    activeCatLabel = "Surgical Wear";
+
+  // 100% DYNAMIC BANNER LOGIC
+  // It will now automatically look for "[category-slug]-banner" in S3
+  if (cat !== "all") {
+    staticBannerBase = `${S3}/${cat}-banner`;
+    staticBannerTitle = activeCatLabel;
+  } else if (gen !== "all") {
+    staticBannerBase = `${S3}/${gen}-banner`;
+    staticBannerTitle = gen.charAt(0).toUpperCase() + gen.slice(1) + " Collection";
+  } else {
+    staticBannerBase = `${S3}/all-products-banner`;
+    staticBannerTitle = "All Products";
   }
 
+  // DYNAMIC DESCRIPTION
+  const genericDesc = `Explore our comprehensive collection of ${activeCatLabel.toLowerCase()}, engineered for durability and high clinical standards.`;
   const descMap: Record<string, string> = {
-    "Men's Collection": "Engineered for excellence, our men's scrub collection combines high-performance fabric with a professional fit that lasts throughout the longest shifts.",
-    "Women's Collection": "Designed for the modern healthcare hero, our women's collection offers a perfect blend of style, comfort, and functionality with our signature stretch fabric.",
-    "Surgical Wear": "Premium protection meets flexibility. Our surgical wear is crafted to meet the highest clinical standards while ensuring maximum comfort in the operating room.",
-    "All Products": "Explore our complete range of premium medical apparel, from high-performance scrubs to essential clinical accessories designed for healthcare professionals."
+    "Premium Scrub Collection": "Experience ultimate comfort with our anti-microbial, moisture-wicking scrubs designed for long hospital shifts.",
+    "DRIFT Jackets": "Our signature DRIFT jackets provide the perfect layer for chilly hospital corridors.",
+    "Men's Collection": "Engineered for excellence, our men's collection combines high-performance fabric with a professional fit.",
+    "Women's Collection": "Designed for the modern healthcare hero, our women's collection offers a perfect blend of style and functionality.",
+    "All Products": "Explore our complete range of premium medical apparel, designed for healthcare professionals."
   };
 
-  const activeDesc = descMap[staticBannerTitle || activeCatLabel] || descMap["All Products"];
+  const activeDesc = descMap[staticBannerTitle] || genericDesc;
 
   return (
     <div className="page" style={{ background: '#ffffff' }}>
@@ -475,11 +480,11 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
         marginBottom: 30,
         borderRadius: 24,
         overflow: 'hidden',
-        minHeight: '220px',
-        maxHeight: '280px',
+        minHeight: '300px',
+        maxHeight: '400px',
         backgroundImage: `url(${src})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center top',
+        backgroundPosition: 'center',
         display: 'flex',
         alignItems: 'center',
         padding: '0 50px',

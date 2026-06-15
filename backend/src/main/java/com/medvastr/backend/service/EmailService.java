@@ -3,6 +3,7 @@ package com.medvastr.backend.service;
 import com.medvastr.backend.model.Inquiry;
 import com.medvastr.backend.model.Order;
 import com.medvastr.backend.model.OrderItem;
+import jakarta.annotation.PostConstruct;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +24,41 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
+    @Value("${spring.mail.host}")
+    private String smtpHost;
+
+    @Value("${spring.mail.port}")
+    private String smtpPort;
+
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-    @Value("${app.frontend.url:http://localhost:3000}")
+    @Value("${spring.mail.properties.mail.smtp.ssl.enable}")
+    private String sslEnabled;
+
+    @Value("${spring.mail.properties.mail.smtp.starttls.enable}")
+    private String starttlsEnabled;
+
+    @Value("${app.frontend.url:https://medvastr.com}")
     private String frontendUrl;
+
+    @PostConstruct
+    public void logSmtpConfig() {
+        log.info("========== SMTP DIAGNOSTICS ==========");
+        log.info("SMTP Host: {}", smtpHost);
+        log.info("SMTP Port: {}", smtpPort);
+        log.info("SMTP SSL Enabled: {}", sslEnabled);
+        log.info("SMTP STARTTLS Enabled: {}", starttlsEnabled);
+        String maskedUser = (fromEmail != null && fromEmail.length() > 3)
+                ? fromEmail.substring(0, 3) + "****"
+                : "NOT SET";
+        log.info("SMTP Username: {}", maskedUser);
+        log.info("Frontend URL: {}", frontendUrl);
+        if (fromEmail == null || fromEmail.isEmpty()) {
+            log.error("CRITICAL: spring.mail.username (MAIL_USERNAME) is NOT SET. Emails will fail.");
+        }
+        log.info("======================================");
+    }
 
     private static final String BRAND_COLOR = "#008080";
     private static final String SECONDARY_COLOR = "#1a2b4a";
@@ -146,6 +177,12 @@ public class EmailService {
 
     private void sendHtmlEmailInner(String to, String subject, String body, String alias, String aliasName)
             throws Exception {
+        if (fromEmail == null || fromEmail.isEmpty()) {
+            throw new IllegalStateException(
+                    "SMTP Username (fromEmail) is not configured. Check MAIL_USERNAME environment variable.");
+        }
+
+        log.debug("[EmailService] Creating MimeMessage for recipient: {} | Subject: {}", to, subject);
         MimeMessage msg = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
 
@@ -155,7 +192,9 @@ public class EmailService {
         helper.setSubject(subject);
         helper.setText(body, true);
 
+        log.info("[EmailService] Attempting to send email via {} to {}", smtpHost, to);
         mailSender.send(msg);
+        log.info("[EmailService] SMTP Send successful to {}", to);
     }
 
     private void sendHtmlEmail(String to, String subject, String body, String alias, String aliasName) {

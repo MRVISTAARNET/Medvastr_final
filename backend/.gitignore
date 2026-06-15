@@ -33,5 +33,3 @@ build/
 .vscode/
 *.txt
 *.log
-*.jar
-*.zip
