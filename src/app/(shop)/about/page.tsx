@@ -98,9 +98,9 @@ export default function AboutPage() {
           <h2 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 950, marginBottom: '50px', color: '#0f172a', letterSpacing: '-1.5px', lineHeight: 1.1 }}>
             Ready to experience the Medvastr difference?
           </h2>
-          <Link href="/products" className="premium-btn">
+          <a href="/products" className="premium-btn">
             Explore Our Products
-          </Link>
+          </a>
         </div>
       </section>
 

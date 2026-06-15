@@ -86,9 +86,9 @@ export default function BulkProductPage() {
                             You are requesting details for <strong>{slug}</strong>. We provide high-grade institutional supplies
                             for professional healthcare environments. Please send an enquiry for precise specifications and bulk pricing.
                         </p>
-                        <Link href={`/contact?subject=Bulk Inquiry: ${slug}`} className="enquiry-btn">
+                        <a href={`/contact?subject=Bulk Inquiry: ${slug}`} className="enquiry-btn">
                             ✉️ Request Quick Quote for {String(slug).replace(/-/g, ' ')}
-                        </Link>
+                        </a>
                         <div style={{ marginTop: "30px" }}>
                             <Link href="/bulk-orders" style={{ color: "#64748b", fontWeight: 600, textDecoration: "none" }}>← Back to Bulk Orders</Link>
                         </div>
@@ -175,9 +175,9 @@ export default function BulkProductPage() {
 
                         <div className="cta-box">
                             <p className="cta-text">Looking for bulk pricing? Send us an enquiry today!</p>
-                            <Link href={`/contact?subject=Bulk Enquiry: ${item.name}`} className="enquiry-btn">
+                            <a href={`/contact?subject=Bulk Enquiry: ${item.name}`} className="enquiry-btn">
                                 ✉️ Send Enquiry for {item.name}
-                            </Link>
+                            </a>
                         </div>
                     </div>
                 </div>

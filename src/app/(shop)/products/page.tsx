@@ -443,7 +443,7 @@ function ProductsContent() {
 
         .products-layout { display: grid; grid-template-columns: 280px 1fr; gap: 40px; align-items: start; }
         .products-right { min-width: 0; }
-        .pg-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 28px; }
+        .pg-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 24px; }
         
         /* MODERN SIDEBAR V3 */
         .sidebar-v3 { background: white; position: sticky; top: 120px; }

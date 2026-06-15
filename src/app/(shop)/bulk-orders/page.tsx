@@ -63,7 +63,7 @@ export default function BulkOrderPage() {
       <div style={{ maxWidth: '1120px', margin: '0 auto', padding: '0 24px 64px' }}>
 
         {/* Stats Grid Overlay (Premium Look) */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '16px', marginTop: '-40px', position: 'relative', zIndex: 10 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '16px', marginTop: '0px', zIndex: 10 }}>
           {stats.map(([icon, title, sub]) => (
             <div key={title} style={{ background: 'white', borderRadius: '16px', padding: '24px 16px', border: '1px solid #e2e8f0', boxShadow: '0 10px 40px rgba(0,0,0,0.06)', textAlign: 'center' }}>
               <div style={{ fontSize: '28px', marginBottom: '8px' }}>{icon}</div>
@@ -295,11 +295,26 @@ export default function BulkOrderPage() {
                       <img src={item.img} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.6s ease' }} alt={item.t} className="card-img" />
                       <div className="card-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(0,128,128,0)', transition: 'all 0.3s' }}></div>
                     </div>
-                    <div style={{ padding: '35px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                      <h4 style={{ fontSize: '24px', fontWeight: 900, color: '#0f172a', marginBottom: '16px', letterSpacing: '-0.5px' }}>{item.t}</h4>
-                      <p style={{ fontSize: '15px', color: '#64748b', marginBottom: '28px', lineHeight: 1.7, flex: 1 }}>{item.d}</p>
-                      <div style={{ display: 'flex', alignItems: 'center', color: '#ff4c29', fontWeight: 900, fontSize: '14px', gap: '10px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                        View Details <span style={{ fontSize: '20px' }}>→</span>
+                    <div style={{ padding: '28px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <h4 style={{ fontSize: '22px', fontWeight: 900, color: '#0f172a', marginBottom: '12px', letterSpacing: '-0.5px' }}>{item.t}</h4>
+                      <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '24px', lineHeight: 1.7, flex: 1 }}>{item.d}</p>
+                      <div style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        background: 'linear-gradient(135deg, #ff4c29 0%, #ff1e56 100%)',
+                        color: 'white',
+                        padding: '12px 24px',
+                        borderRadius: '12px',
+                        fontWeight: 800,
+                        fontSize: '13px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '1px',
+                        boxShadow: '0 6px 20px rgba(255,30,86,0.3)',
+                        transition: 'all 0.3s',
+                      }}>
+                        View Details <span style={{ fontSize: '16px' }}>→</span>
                       </div>
                     </div>
                   </div>
@@ -361,18 +376,22 @@ export default function BulkOrderPage() {
 function SmartBanner({ base, title }: { base: string; title: string }) {
   const EXTS = [".png", ".jpg", ".jpeg"];
   const [idx, setIdx] = React.useState(0);
+  const [loaded, setLoaded] = React.useState(false);
   const src = idx < EXTS.length ? base + EXTS[idx] : null;
 
-  if (!src) return null;
-
+  // Always render a stable container to prevent layout shift during hydration
   return (
     <div
-      className="cat-banner"
       style={{
         width: "100%",
         marginBottom: 30,
         height: "clamp(280px, 40vh, 400px)",
-        backgroundImage: `url(${src})`,
+        background: src && !loaded
+          ? "#0f172a"
+          : src
+            ? "none"
+            : "linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)",
+        backgroundImage: src ? `url(${src})` : undefined,
         backgroundSize: "cover",
         backgroundPosition: "center",
         display: "flex",
@@ -380,27 +399,19 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
         justifyContent: "center",
         flexDirection: "column",
         position: "relative",
-        boxShadow: "0 4px 30px rgba(0,0,0,0.1)",
-        overflow: "hidden"
+        overflow: "hidden",
       }}
     >
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.5))", zIndex: 1 }} />
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.55))", zIndex: 1 }} />
       <div style={{ position: "relative", zIndex: 2, textAlign: "center", color: "white", padding: "0 20px" }}>
-        <h1 style={{
-          fontSize: "clamp(2rem, 8vw, 3.5rem)",
-          fontWeight: 950,
-          marginBottom: "12px",
-          textShadow: "0 4px 15px rgba(0,0,0,0.4)",
-          lineHeight: 1.1,
-          letterSpacing: "-1px"
-        }}>
+        <h1 style={{ fontSize: "clamp(2rem, 8vw, 3.5rem)", fontWeight: 950, marginBottom: "12px", textShadow: "0 4px 15px rgba(0,0,0,0.4)", lineHeight: 1.1, letterSpacing: "-1px" }}>
           {title}
         </h1>
         <p style={{ fontSize: "1.2rem", opacity: 0.95, maxWidth: "700px", margin: "0 auto", fontWeight: 600 }}>
           Superior quality medical apparel for premier institutions
         </p>
       </div>
-      <img src={src} alt="" style={{ display: "none" }} onError={() => setIdx((i) => i + 1)} />
+      {src && <img src={src} alt="" style={{ display: "none" }} onLoad={() => setLoaded(true)} onError={() => setIdx((i) => i + 1)} />}
     </div>
   );
 }
