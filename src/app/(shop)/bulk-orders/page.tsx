@@ -265,39 +265,63 @@ export default function BulkOrderPage() {
           </div>
 
           {/* ── BULK PRODUCT CATALOG ── */}
-          <div style={{ marginBottom: '64px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '40px' }}>
-              <div>
-                <h2 style={{ fontSize: 'clamp(1.5rem, 3.5vw, 2.25rem)', fontWeight: 800, color: '#0f172a' }}>Bulk Product Categories</h2>
-                <p style={{ color: '#64748b', marginTop: '6px', fontSize: '16px' }}>Direct from manufacturer institutional pricing</p>
-              </div>
-              <Link href="/products" style={{ color: '#059669', fontWeight: 700, background: '#ecfdf5', padding: '10px 22px', borderRadius: '10px', textDecoration: 'none', border: '1.5px solid #a7f3d0', transition: 'all 0.15s' }}>
-                View Individual Items →
-              </Link>
+          <div style={{ marginBottom: '80px' }}>
+            <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+              <div style={{ display: 'inline-block', background: '#ecfdf4', color: '#059669', padding: '8px 20px', borderRadius: '100px', fontSize: '13px', fontWeight: 800, marginBottom: '16px', letterSpacing: '1px' }}>INSTITUTIONAL GRADE</div>
+              <h2 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 900, color: '#0f172a', letterSpacing: '-1.5px' }}>Bulk Product Categories</h2>
+              <p style={{ color: '#64748b', marginTop: '10px', fontSize: '18px', maxWidth: '700px', margin: '12px auto 0' }}>Premium medical textiles and apparel supplied directly to top hospitals and clinics nationwide.</p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '28px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
               {[
-                { t: "Linen & Bedding", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-linen.png", d: "High-performance institutional linens." },
-                { t: "Brown blanket", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-blanket.png", d: "Professional grade ward blankets." },
-                { t: "Maternity Gown", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-maternity.png", d: "Comfortable ergonomic maternity wear." }
+                { t: "Linen & Bedding", slug: "linen-bedding", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-linen.png", d: "High-performance institutional linens designed for over 200+ industrial washes." },
+                { t: "Brown blanket", slug: "brown-blanket", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-blanket.png", d: "Professional grade ward blankets offering supreme warmth and infection control compliance." },
+                { t: "Maternity Gown", slug: "maternity-gown", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-maternity.png", d: "Breathable, ergonomic maternity wear optimized for patient comfort and ease of care." },
+                { t: "Surgical Drapes", slug: "surgical-drapes", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-drapes.png", d: "Liquid-resistant, sterile-ready surgical drapes for high-precision operating environments." },
+                { t: "Department Uniforms", slug: "dept-uniforms", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-uniforms.png", d: "Color-coded uniform sets for nursing, support staff, and security personnel." },
+                { t: "Patient Apparel", slug: "patient-apparel", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-patient.png", d: "Soft, durable patient gowns and pajamas designed for clinical accessibility." }
               ].map(item => (
-                <div key={item.t} style={{ borderRadius: '20px', overflow: 'hidden', background: 'white', border: '1px solid #e2e8f0', boxShadow: '0 10px 30px rgba(0,0,0,0.04)' }}>
-                  <div style={{ height: '240px', background: '#f1f5f9', position: 'relative' }}>
-                    <img src={item.img} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={item.t} />
+                <Link key={item.slug} href={`/bulk-orders/${item.slug}`} style={{ textDecoration: 'none' }}>
+                  <div className="bulk-card" style={{
+                    borderRadius: '24px',
+                    overflow: 'hidden',
+                    background: 'white',
+                    border: '1px solid #e2e8f0',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.04)',
+                    transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}>
+                    <div style={{ height: '280px', overflow: 'hidden', position: 'relative' }}>
+                      <img src={item.img} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.6s ease' }} alt={item.t} className="card-img" />
+                      <div className="card-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(0,128,128,0)', transition: 'all 0.3s' }}></div>
+                    </div>
+                    <div style={{ padding: '32px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                      <h4 style={{ fontSize: '22px', fontWeight: 800, color: '#0f172a', marginBottom: '12px' }}>{item.t}</h4>
+                      <p style={{ fontSize: '15px', color: '#64748b', marginBottom: '24px', lineHeight: 1.6, flex: 1 }}>{item.d}</p>
+                      <div style={{ display: 'flex', alignItems: 'center', color: '#008080', fontWeight: 800, fontSize: '14px', gap: '8px' }}>
+                        View Details <span style={{ fontSize: '18px' }}>→</span>
+                      </div>
+                    </div>
                   </div>
-                  <div style={{ padding: '24px' }}>
-                    <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a', marginBottom: '8px' }}>{item.t}</h4>
-                    <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '16px' }}>{item.d}</p>
-                    <Link href="/contact" style={{ display: 'block', textDecoration: 'none' }}>
-                      <button style={{ width: '100%', padding: '12px', background: '#0f172a', color: 'white', border: 'none', borderRadius: '10px', fontWeight: 700, cursor: 'pointer' }}>
-                        Inquire for {item.t}
-                      </button>
-                    </Link>
-                  </div>
-                </div>
+                </Link>
               ))}
             </div>
+
+            <style jsx>{`
+              .bulk-card:hover {
+                transform: translateY(-12px);
+                box-shadow: 0 25px 50px rgba(0,128,128,0.1);
+                border-color: #008080;
+              }
+              .bulk-card:hover .card-img {
+                transform: scale(1.1);
+              }
+              .bulk-card:hover .card-overlay {
+                background: rgba(0,128,128,0.05);
+              }
+            `}</style>
           </div>
 
           {/* ── CTA ── */}

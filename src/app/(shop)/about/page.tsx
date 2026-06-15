@@ -16,10 +16,6 @@ export default function AboutPage() {
       {/* 1. HERO BANNER */}
       <section className="about-hero">
         <div className="hero-overlay"></div>
-        <div className="hero-content">
-          <h1>About Medvastr</h1>
-          <p>Dedicated to changing medical apparel for the better.</p>
-        </div>
       </section>
 
       {/* 2. MAIN CONTENT */}
@@ -114,8 +110,10 @@ export default function AboutPage() {
         }
 
         .about-hero {
-          height: 400px;
-          background: linear-gradient(135deg, ${COLORS.navy} 0%, #1e293b 100%);
+          height: 600px;
+          background: url('https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-1.png');
+          background-size: cover;
+          background-position: center;
           position: relative;
           display: flex;
           align-items: center;
@@ -128,8 +126,8 @@ export default function AboutPage() {
         .hero-overlay {
           position: absolute;
           inset: 0;
-          background: url('https://www.transparenttextures.com/patterns/cubes.png');
-          opacity: 0.1;
+          background: rgba(0,0,0,0.1);
+          opacity: 1;
         }
 
         .hero-content {
@@ -267,21 +265,28 @@ export default function AboutPage() {
 
         .cta-button {
           display: inline-block;
-          background: ${COLORS.teal};
+          background: linear-gradient(135deg, ${COLORS.teal} 0%, #0d9488 100%);
           color: ${COLORS.white};
-          padding: 18px 48px;
+          padding: 22px 60px;
           border-radius: 100px;
-          font-size: 18px;
-          font-weight: 700;
+          font-size: 20px;
+          font-weight: 800;
           text-decoration: none;
-          transition: all 0.3s ease;
-          box-shadow: 0 10px 20px rgba(0,128,128,0.2);
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          box-shadow: 0 15px 35px rgba(0,128,128,0.3);
+          letter-spacing: 0.5px;
+          position: relative;
+          overflow: hidden;
         }
 
         .cta-button:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 15px 30px rgba(0,128,128,0.3);
-          background: #006666;
+          transform: translateY(-5px) scale(1.02);
+          box-shadow: 0 20px 45px rgba(0,128,128,0.4);
+          background: linear-gradient(135deg, #009999 0%, #00b3b3 100%);
+        }
+
+        .cta-button:active {
+          transform: translateY(-2px);
         }
 
         @media (max-width: 900px) {

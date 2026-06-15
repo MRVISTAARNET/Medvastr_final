@@ -68,13 +68,42 @@ function ProductsContent() {
 
   const hasFilters = cat !== "all" || gen !== "all" || minP || maxP || colorFilter;
 
-  const typeConfigs: Record<string, { ico: string; l: string }> = {
-    scrubs: { ico: "🥼", l: "Scrubs" },
-    stethoscope: { ico: "🩺", l: "Stethoscope" },
-    labcoat: { ico: "🥼", l: "Lab Coats" },
-    jacket: { ico: "🧥", l: "DRIFT Jacket" },
-    underscrub: { ico: "👕", l: "Underscrubs" },
-    accessories: { ico: "🧢", l: "Accessories" }
+  const typeConfigs: Record<string, { ico: string; l: string; d: string }> = {
+    scrubs: {
+      ico: "🥼",
+      l: "Premium Scrubs",
+      d: "Our signature scrubs are engineered with specialized fabric that is anti-microbial, moisture-wicking, and features a four-way stretch for maximum comfort during long shifts."
+    },
+    stethoscope: {
+      ico: "🩺",
+      l: "Diagnostic Tools",
+      d: "Precision-engineered stethoscopes and diagnostic tools designed for healthcare professionals who demand accuracy and durability."
+    },
+    labcoat: {
+      ico: "🥼",
+      l: "Professional Lab Coats",
+      d: "Classic yet modern lab coats that offer a professional look while providing protection and functionality with strategically placed pockets."
+    },
+    jacket: {
+      ico: "🧥",
+      l: "Performance Jackets",
+      d: "Stay warm and professional in chilly hospital environments with our DRIFT jackets, featuring breathable insulation and a sleek fit."
+    },
+    underscrub: {
+      ico: "👕",
+      l: "Elite Underscrubs",
+      d: "Specifically designed to be worn under your scrubs, these moisture-wicking layers provide extra warmth and comfort without the bulk."
+    },
+    surgical: {
+      ico: "✂️",
+      l: "Surgical Wear",
+      d: "High-performance surgical gowns and apparel designed to meet the rigorous standards of the operating room environment."
+    },
+    accessories: {
+      ico: "🧢",
+      l: "Essential Accessories",
+      d: "Complete your professional look with our range of high-quality caps, compression socks, and other healthcare essentials."
+    }
   };
 
   const uniqueTypes = Array.from(new Set(products.map(p => p.type)));
@@ -87,7 +116,7 @@ function ProductsContent() {
   }));
 
   const cats = [
-    { id: "all", ico: "🏷️", l: "All Products", n: products.length },
+    { id: "all", ico: "🏷️", l: "Complete Collection", n: products.length },
     ...dynamicCats
   ];
 
@@ -99,7 +128,6 @@ function ProductsContent() {
   const S3 = "https://medvastr-assets.s3.ap-south-1.amazonaws.com";
 
   // 100% DYNAMIC BANNER LOGIC
-  // It will now automatically look for "[category-slug]-banner" in S3
   if (cat !== "all") {
     staticBannerBase = `${S3}/${cat}-banner`;
     staticBannerTitle = activeCatLabel;
@@ -108,36 +136,50 @@ function ProductsContent() {
     staticBannerTitle = gen.charAt(0).toUpperCase() + gen.slice(1) + " Collection";
   } else {
     staticBannerBase = `${S3}/all-products-banner`;
-    staticBannerTitle = "All Products";
+    staticBannerTitle = "The Medvastr Collection";
   }
 
   // DYNAMIC DESCRIPTION
-  const genericDesc = `Explore our comprehensive collection of ${activeCatLabel.toLowerCase()}, engineered for durability and high clinical standards.`;
+  const genericDesc = `Experience the perfect blend of style, comfort, and professional utility with our ${activeCatLabel.toLowerCase()}. Every piece is designed specifically for healthcare heroes.`;
+
   const descMap: Record<string, string> = {
-    "Premium Scrub Collection": "Experience ultimate comfort with our anti-microbial, moisture-wicking scrubs designed for long hospital shifts.",
-    "DRIFT Jackets": "Our signature DRIFT jackets provide the perfect layer for chilly hospital corridors.",
-    "Men's Collection": "Engineered for excellence, our men's collection combines high-performance fabric with a professional fit.",
-    "Women's Collection": "Designed for the modern healthcare hero, our women's collection offers a perfect blend of style and functionality.",
-    "All Products": "Explore our complete range of premium medical apparel, designed for healthcare professionals."
+    "Men's Collection": "Engineered for excellence and performance, our men's collection combines rugged durability with a professional fit that respects the demands of your profession.",
+    "Women's Collection": "Designed for the modern healthcare hero, our women's collection offers a perfect blend of sophisticated style, functional design, and ultimate comfortable movement.",
+    "The Medvastr Collection": "Explore our complete range of premium medical apparel and equipment, each piece reflecting our decade-long commitment to those who care for others.",
+    "Surgical Wear": "Engineered for the highest standards of safety and comfort in the operating room. Our surgical collection is designed to provide maximum barrier protection while allowing for unrestricted movement."
   };
 
-  const activeDesc = descMap[staticBannerTitle] || genericDesc;
+  const activeDesc = typeConfigs[cat]?.d || descMap[staticBannerTitle] || genericDesc;
 
   return (
     <div className="page" style={{ background: '#ffffff' }}>
       {staticBannerBase && (
-        <SmartBanner base={staticBannerBase} title={staticBannerTitle} />
+        <SmartBanner base={staticBannerBase} title={staticBannerTitle} subtitle={activeDesc} />
       )}
       <div className="sec" style={{ paddingBottom: 60 }}>
         {/* Breadcrumb */}
-        <div className="breadcrumb" style={{ marginBottom: 25 }}>
+        <div className="breadcrumb" style={{ marginBottom: 35 }}>
           <Link href="/">Home</Link>
           <span className="sep">/</span>
-          <span className="active">{activeCatLabel}</span>
+          <Link href="/products">Shop</Link>
+          {cat !== "all" && (
+            <>
+              <span className="sep">/</span>
+              <span className="active">{activeCatLabel}</span>
+            </>
+          )}
+          {gen !== "all" && (
+            <>
+              <span className="sep">/</span>
+              <span className="active">{gen.charAt(0).toUpperCase() + gen.slice(1)}</span>
+            </>
+          )}
         </div>
 
-        <div className="catalog-header" style={{ marginBottom: 40, borderLeft: '4px solid #008080', paddingLeft: 20 }}>
-          <p className="catalog-subtitle" style={{ maxWidth: 850, fontSize: 17, lineHeight: 1.8, color: '#334155', margin: 0, fontWeight: 500 }}>
+        <div className="catalog-header" style={{ marginBottom: 50 }}>
+          <h1 className="catalog-title" style={{ fontSize: '42px', marginBottom: '15px' }}>{staticBannerTitle}</h1>
+          <div style={{ width: '60px', height: '4px', background: '#008080', marginBottom: '25px', borderRadius: '2px' }}></div>
+          <p className="catalog-subtitle" style={{ maxWidth: '800px', fontSize: '19px', lineHeight: '1.7', color: '#475569', margin: 0, fontWeight: 400 }}>
             {activeDesc}
           </p>
         </div>
@@ -465,7 +507,7 @@ function ProductsContent() {
 }
 
 // Auto-tries .png → .jpg → .jpeg so any format uploaded to S3 works
-function SmartBanner({ base, title }: { base: string; title: string }) {
+function SmartBanner({ base, title, subtitle }: { base: string; title: string; subtitle?: string }) {
   const EXTS = ['.png', '.jpg', '.jpeg'];
   const [idx, setIdx] = React.useState(0);
   const src = idx < EXTS.length ? base + EXTS[idx] : null;
@@ -480,18 +522,24 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
         marginBottom: 30,
         borderRadius: 24,
         overflow: 'hidden',
-        minHeight: '300px',
-        maxHeight: '400px',
-        backgroundImage: `url(${src})`,
+        minHeight: '400px',
+        maxHeight: '500px',
+        backgroundImage: `linear-gradient(to right, rgba(10, 15, 28, 0.8), rgba(10, 15, 28, 0.2)), url(${src})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         display: 'flex',
-        alignItems: 'center',
-        padding: '0 50px',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: '0 80px',
         position: 'relative',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.05)'
+        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+        color: 'white'
       }}
     >
+      <div style={{ maxWidth: '600px' }}>
+        <h1 style={{ fontSize: '56px', fontWeight: 900, marginBottom: '20px', letterSpacing: '-2px' }}>{title}</h1>
+        {subtitle && <p style={{ fontSize: '20px', opacity: 0.9, lineHeight: '1.6', fontWeight: 500 }}>{subtitle}</p>}
+      </div>
       <img src={src} alt="" style={{ display: 'none' }} onError={() => setIdx(i => i + 1)} />
     </div>
   );
