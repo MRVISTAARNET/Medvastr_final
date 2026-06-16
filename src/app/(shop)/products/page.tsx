@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import { COLS, fmt } from "@/lib/data";
@@ -120,7 +121,8 @@ function ProductsContent() {
     ...dynamicCats
   ];
 
-  let activeCatLabel = cats.find((c: any) => c.id === cat)?.l || (gen !== 'all' ? (gen.charAt(0).toUpperCase() + gen.slice(1) + " Collection") : "All Products");
+  let rawCatLabel = cat !== 'all' ? cat.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : null;
+  let activeCatLabel = cats.find((c: any) => c.id === cat)?.l || rawCatLabel || (gen !== 'all' ? (gen.charAt(0).toUpperCase() + gen.slice(1) + " Collection") : "All Products");
 
   let staticBannerBase: string | null = null;
   let staticBannerTitle = "";
@@ -162,16 +164,16 @@ function ProductsContent() {
           <Link href="/">Home</Link>
           <span className="sep">/</span>
           <Link href="/products">Shop</Link>
+          {gen !== "all" && (
+            <>
+              <span className="sep">/</span>
+              <Link href={`/products?gender=${gen}`}>{gen.charAt(0).toUpperCase() + gen.slice(1)}</Link>
+            </>
+          )}
           {cat !== "all" && (
             <>
               <span className="sep">/</span>
               <span className="active">{activeCatLabel}</span>
-            </>
-          )}
-          {gen !== "all" && (
-            <>
-              <span className="sep">/</span>
-              <span className="active">{gen.charAt(0).toUpperCase() + gen.slice(1)}</span>
             </>
           )}
         </div>
@@ -506,13 +508,9 @@ function ProductsContent() {
   );
 }
 
-// Auto-tries .png → .jpg → .jpeg so any format uploaded to S3 works
+// Now uses Next.js Image optimization directly with .jpg extension
 function SmartBanner({ base, title, subtitle }: { base: string; title: string; subtitle?: string }) {
-  const EXTS = ['.png', '.jpg', '.jpeg'];
-  const [idx, setIdx] = React.useState(0);
-  const src = idx < EXTS.length ? base + EXTS[idx] : null;
-
-  if (!src) return null;
+  const src = base + ".jpg";
 
   return (
     <div
@@ -524,9 +522,6 @@ function SmartBanner({ base, title, subtitle }: { base: string; title: string; s
         overflow: 'hidden',
         minHeight: '400px',
         maxHeight: '500px',
-        backgroundImage: `linear-gradient(to right, rgba(10, 15, 28, 0.8), rgba(10, 15, 28, 0.2)), url(${src})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -536,11 +531,13 @@ function SmartBanner({ base, title, subtitle }: { base: string; title: string; s
         color: 'white'
       }}
     >
-      <div style={{ maxWidth: '600px' }}>
+      <Image src={src} alt={title} fill style={{ objectFit: 'cover', zIndex: -2 }} priority />
+      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(10, 15, 28, 0.8), rgba(10, 15, 28, 0.2))', zIndex: -1 }}></div>
+
+      <div style={{ maxWidth: '600px', zIndex: 1 }}>
         <h1 style={{ fontSize: '56px', fontWeight: 900, marginBottom: '20px', letterSpacing: '-2px' }}>{title}</h1>
         {subtitle && <p style={{ fontSize: '20px', opacity: 0.9, lineHeight: '1.6', fontWeight: 500 }}>{subtitle}</p>}
       </div>
-      <img src={src} alt="" style={{ display: 'none' }} onError={() => setIdx(i => i + 1)} />
     </div>
   );
 }

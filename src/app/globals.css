@@ -1982,7 +1982,6 @@ textarea {
   position: relative;
   width: 100%;
   aspect-ratio: 3/4;
-  background: #f8fafc;
   overflow: hidden;
 }
 
@@ -1994,7 +1993,7 @@ textarea {
 }
 
 .pc-modern:hover .pc-img-main {
-  transform: scale(1.08);
+  transform: scale(0.95);
 }
 
 .pc-badges {

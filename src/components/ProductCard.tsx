@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Product, fmt } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
 import { getImagesForColor, getSizesForColor } from "@/lib/productUtils";
@@ -34,7 +35,7 @@ export default function ProductCard({ p }: PCardProps) {
       <div className="pc-image-wrapper">
         <Link href={productPath} className="pc-img-link">
           {displayImg ? (
-            <img src={displayImg} alt={p.name} className="pc-img-main" loading="lazy" />
+            <Image src={displayImg} alt={p.name} fill className="pc-img-main" sizes="(max-width: 768px) 100vw, 300px" />
           ) : (
             <div className="pc-emo-placeholder" style={{ background: p.bg }}>
               <span className="pc-emo-icon">{p.emo}</span>

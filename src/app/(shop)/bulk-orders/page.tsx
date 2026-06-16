@@ -3,6 +3,7 @@ import React, { useContext, useState, useMemo } from "react";
 import { AppContext } from "@/context/AppContext";
 import ProductCard from "@/components/ProductCard";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function BulkOrderPage() {
   const ctx = useContext(AppContext);
@@ -292,7 +293,7 @@ export default function BulkOrderPage() {
                     flexDirection: 'column'
                   }}>
                     <div style={{ height: '280px', overflow: 'hidden', position: 'relative' }}>
-                      <img src={item.img} style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.6s ease' }} alt={item.t} className="card-img" />
+                      <Image src={item.img} alt={item.t} fill style={{ objectFit: 'cover', transition: 'transform 0.6s ease' }} className="card-img" sizes="(max-width: 768px) 100vw, 400px" />
                       <div className="card-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(0,128,128,0)', transition: 'all 0.3s' }}></div>
                     </div>
                     <div style={{ padding: '28px', flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -374,10 +375,7 @@ export default function BulkOrderPage() {
 }
 
 function SmartBanner({ base, title }: { base: string; title: string }) {
-  const EXTS = [".png", ".jpg", ".jpeg"];
-  const [idx, setIdx] = React.useState(0);
-  const [loaded, setLoaded] = React.useState(false);
-  const src = idx < EXTS.length ? base + EXTS[idx] : null;
+  const src = base + ".jpg";
 
   // Always render a stable container to prevent layout shift during hydration
   return (
@@ -386,14 +384,7 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
         width: "100%",
         marginBottom: 30,
         height: "clamp(280px, 40vh, 400px)",
-        background: src && !loaded
-          ? "#0f172a"
-          : src
-            ? "none"
-            : "linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)",
-        backgroundImage: src ? `url(${src})` : undefined,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -402,6 +393,7 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
         overflow: "hidden",
       }}
     >
+      <Image src={src} alt={title} fill style={{ objectFit: 'cover' }} priority />
       <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.55))", zIndex: 1 }} />
       <div style={{ position: "relative", zIndex: 2, textAlign: "center", color: "white", padding: "0 20px" }}>
         <h1 style={{ fontSize: "clamp(2rem, 8vw, 3.5rem)", fontWeight: 950, marginBottom: "12px", textShadow: "0 4px 15px rgba(0,0,0,0.4)", lineHeight: 1.1, letterSpacing: "-1px" }}>
@@ -411,7 +403,6 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
           Superior quality medical apparel for premier institutions
         </p>
       </div>
-      {src && <img src={src} alt="" style={{ display: "none" }} onLoad={() => setLoaded(true)} onError={() => setIdx((i) => i + 1)} />}
     </div>
   );
 }
