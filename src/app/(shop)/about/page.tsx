@@ -113,7 +113,7 @@ export default function AboutPage() {
 
         .about-hero {
           height: 600px;
-          background: #ffffff url('https://medvastr-assets.s3.ap-south-1.amazonaws.com/about-1.png');
+          background: #ffffff url('https://d2tnzshqdaedbc.cloudfront.net/about-1.png');
           background-size: cover;
           background-position: center;
           position: relative;

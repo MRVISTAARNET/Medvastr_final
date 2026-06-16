@@ -4,7 +4,7 @@ import React, { useState } from "react";
 
 import Link from "next/link";
 
-const S3_BASE = "https://medvastr-assets.s3.ap-south-1.amazonaws.com/home-bulk-banner";
+const S3_BASE = "https://d2tnzshqdaedbc.cloudfront.net/home-bulk-banner";
 const EXTS = ['.png', '.jpg', '.jpeg'];
 
 export default function BulkOrderBanner() {

@@ -4,97 +4,97 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 
 const BULK_ITEMS: Record<string, any> = {
-    "brown-blanket": {
-        name: "Brown Blanket",
-        desc: "Plush yet lightweight ward blankets that provide essential warmth. These blankets are designed for easy maintenance and fast drying times, ideal for high-churn clinical environments.",
-        images: [
-            "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-blanket.png",
-            "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-blanket-2.png",
-            "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-blanket-3.png",
-        ],
-        features: [
-            "Thermal insulation",
-            "Hypoallergenic material",
-            "Stitched edges for durability",
-            "Flame retardant treated"
-        ],
-        bulkInfo: "Minimum order 50 units. Special rates for hospital-wide procurement."
-    },
-    "maternity-gown": {
-        name: "Maternity Gown",
-        desc: "Ergonomically designed maternity gowns providing ease of access for nursing and clinical checks. Made from breathable, lightweight fabric to ensure mother's comfort during stay.",
-        images: [
-            "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-maternity.png",
-            "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-maternity-2.png",
-            "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-maternity-3.png",
-        ],
-        features: [
-            "Side access panels",
-            "Soft poplin fabric",
-            "Snap button closures",
-            "Generous fit"
-        ],
-        bulkInfo: "Multiple patterns available. Inquire for custom color schemes."
-    },
-    "linen-and-bedding": {
-        name: "Linen & Bedding",
-        desc: "Hospital-grade linens designed for durability and patient comfort. Our bedding is engineered to withstand over 200 industrial washes while maintaining its softness and structural integrity.",
-        images: [
-            "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-linen.png",
-            "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-linen-2.png",
-            "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-linen-3.png",
-        ],
-        features: [
-            "Anti-microbial finish",
-            "High thread count for comfort",
-            "Color-coded by department",
-            "Shrink-resistant fabric"
-        ],
-        bulkInfo: "Standard bulk discount applies. Custom embroidery available for orders above 100 sets."
-    },
-    "patient-apparel": {
-        name: "Patient Dresses",
-        desc: "Soft, durable patient gowns and pajamas designed for clinical accessibility and patient dignity. Made from breathable cotton blends.",
-        images: [
-            "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-patient.png",
-            "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-patient-2.png",
-        ],
-        features: [
-            "Easy-tie closures",
-            "Breathable cotton blend",
-            "Reinforced seams",
-            "Unisex design"
-        ],
-        bulkInfo: "Bulk pricing starts at 100 units. Custom sizes available."
-    }
+  "brown-blanket": {
+    name: "Brown Blanket",
+    desc: "Plush yet lightweight ward blankets that provide essential warmth. These blankets are designed for easy maintenance and fast drying times, ideal for high-churn clinical environments.",
+    images: [
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-blanket.png",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-blanket-2.png",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-blanket-3.png",
+    ],
+    features: [
+      "Thermal insulation",
+      "Hypoallergenic material",
+      "Stitched edges for durability",
+      "Flame retardant treated"
+    ],
+    bulkInfo: "Minimum order 50 units. Special rates for hospital-wide procurement."
+  },
+  "maternity-gown": {
+    name: "Maternity Gown",
+    desc: "Ergonomically designed maternity gowns providing ease of access for nursing and clinical checks. Made from breathable, lightweight fabric to ensure mother's comfort during stay.",
+    images: [
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-maternity.png",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-maternity-2.png",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-maternity-3.png",
+    ],
+    features: [
+      "Side access panels",
+      "Soft poplin fabric",
+      "Snap button closures",
+      "Generous fit"
+    ],
+    bulkInfo: "Multiple patterns available. Inquire for custom color schemes."
+  },
+  "linen-and-bedding": {
+    name: "Linen & Bedding",
+    desc: "Hospital-grade linens designed for durability and patient comfort. Our bedding is engineered to withstand over 200 industrial washes while maintaining its softness and structural integrity.",
+    images: [
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-linen.png",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-linen-2.png",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-linen-3.png",
+    ],
+    features: [
+      "Anti-microbial finish",
+      "High thread count for comfort",
+      "Color-coded by department",
+      "Shrink-resistant fabric"
+    ],
+    bulkInfo: "Standard bulk discount applies. Custom embroidery available for orders above 100 sets."
+  },
+  "patient-apparel": {
+    name: "Patient Dresses",
+    desc: "Soft, durable patient gowns and pajamas designed for clinical accessibility and patient dignity. Made from breathable cotton blends.",
+    images: [
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-patient.png",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-patient-2.png",
+    ],
+    features: [
+      "Easy-tie closures",
+      "Breathable cotton blend",
+      "Reinforced seams",
+      "Unisex design"
+    ],
+    bulkInfo: "Bulk pricing starts at 100 units. Custom sizes available."
+  }
 };
 
 export default function BulkProductPage() {
-    const { slug } = useParams();
-    const item = BULK_ITEMS[slug as string];
-    const [mainImg, setMainImg] = useState(item?.images[0] || "");
+  const { slug } = useParams();
+  const item = BULK_ITEMS[slug as string];
+  const [mainImg, setMainImg] = useState(item?.images[0] || "");
 
-    if (!item) {
-        // Fallback for dynamic categories not in hardcoded list
-        return (
-            <div className="page" style={{ background: "#f8fafc", minHeight: "100vh", paddingBottom: "100px" }}>
-                <div className="sec" style={{ textAlign: "center", paddingTop: "120px" }}>
-                    <div style={{ maxWidth: "800px", margin: "0 auto", background: "white", padding: "60px", borderRadius: "32px", boxShadow: "0 20px 60px rgba(0,0,0,0.05)" }}>
-                        <div style={{ fontSize: "64px", marginBottom: "20px" }}>📦</div>
-                        <h1 style={{ fontSize: "42px", fontWeight: 950, marginBottom: "20px", color: "#0f172a" }}>Professional Bulk Request</h1>
-                        <p style={{ fontSize: "18px", color: "#64748b", marginBottom: "40px", lineHeight: 1.8 }}>
-                            You are requesting details for <strong>{slug}</strong>. We provide high-grade institutional supplies
-                            for professional healthcare environments. Please send an enquiry for precise specifications and bulk pricing.
-                        </p>
-                        <a href={`/contact?subject=Bulk Inquiry: ${slug}`} className="enquiry-btn">
-                            ✉️ Request Quick Quote for {String(slug).replace(/-/g, ' ')}
-                        </a>
-                        <div style={{ marginTop: "30px" }}>
-                            <Link href="/bulk-orders" style={{ color: "#64748b", fontWeight: 600, textDecoration: "none" }}>← Back to Bulk Orders</Link>
-                        </div>
-                    </div>
-                </div>
-                <style jsx>{`
+  if (!item) {
+    // Fallback for dynamic categories not in hardcoded list
+    return (
+      <div className="page" style={{ background: "#f8fafc", minHeight: "100vh", paddingBottom: "100px" }}>
+        <div className="sec" style={{ textAlign: "center", paddingTop: "120px" }}>
+          <div style={{ maxWidth: "800px", margin: "0 auto", background: "white", padding: "60px", borderRadius: "32px", boxShadow: "0 20px 60px rgba(0,0,0,0.05)" }}>
+            <div style={{ fontSize: "64px", marginBottom: "20px" }}>📦</div>
+            <h1 style={{ fontSize: "42px", fontWeight: 950, marginBottom: "20px", color: "#0f172a" }}>Professional Bulk Request</h1>
+            <p style={{ fontSize: "18px", color: "#64748b", marginBottom: "40px", lineHeight: 1.8 }}>
+              You are requesting details for <strong>{slug}</strong>. We provide high-grade institutional supplies
+              for professional healthcare environments. Please send an enquiry for precise specifications and bulk pricing.
+            </p>
+            <a href={`/contact?subject=Bulk Inquiry: ${slug}`} className="enquiry-btn">
+              ✉️ Request Quick Quote for {String(slug).replace(/-/g, ' ')}
+            </a>
+            <div style={{ marginTop: "30px" }}>
+              <Link href="/bulk-orders" style={{ color: "#64748b", fontWeight: 600, textDecoration: "none" }}>← Back to Bulk Orders</Link>
+            </div>
+          </div>
+        </div>
+        <style jsx>{`
                     .enquiry-btn {
                         display: inline-block;
                         background: linear-gradient(135deg, #ff4c29 0%, #ff1e56 100%);
@@ -114,76 +114,76 @@ export default function BulkProductPage() {
                         box-shadow: 0 20px 45px rgba(255, 30, 86, 0.4);
                     }
                 `}</style>
+      </div>
+    );
+  }
+
+  // Fallback if image fails
+  const handleImageError = (e: any) => {
+    e.target.src = "https://placehold.co/600x800/f1f5f9/94a3b8?text=" + encodeURIComponent(item.name);
+  };
+
+  return (
+    <div className="page" style={{ background: "#f8fafc", minHeight: "100vh", paddingBottom: "100px" }}>
+      <div className="sec">
+        {/* Breadcrumb */}
+        <div style={{ marginBottom: "30px", fontSize: "14px", color: "#64748b" }}>
+          <Link href="/">Home</Link> <span style={{ margin: "0 8px" }}>/</span>
+          <Link href="/bulk-orders">Bulk Orders</Link> <span style={{ margin: "0 8px" }}>/</span>
+          <span style={{ color: "#0f172a", fontWeight: 700 }}>{item.name}</span>
+        </div>
+
+        <div className="bulk-product-layout">
+          {/* IMAGE GALLERY */}
+          <div className="gallery-column">
+            <div className="main-image-box">
+              <img src={mainImg} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             </div>
-        );
-    }
-
-    // Fallback if image fails
-    const handleImageError = (e: any) => {
-        e.target.src = "https://placehold.co/600x800/f1f5f9/94a3b8?text=" + encodeURIComponent(item.name);
-    };
-
-    return (
-        <div className="page" style={{ background: "#f8fafc", minHeight: "100vh", paddingBottom: "100px" }}>
-            <div className="sec">
-                {/* Breadcrumb */}
-                <div style={{ marginBottom: "30px", fontSize: "14px", color: "#64748b" }}>
-                    <Link href="/">Home</Link> <span style={{ margin: "0 8px" }}>/</span>
-                    <Link href="/bulk-orders">Bulk Orders</Link> <span style={{ margin: "0 8px" }}>/</span>
-                    <span style={{ color: "#0f172a", fontWeight: 700 }}>{item.name}</span>
+            <div className="thumbs-row">
+              {item.images.map((img: string, i: number) => (
+                <div
+                  key={i}
+                  className={`thumb ${mainImg === img ? "active" : ""}`}
+                  onClick={() => setMainImg(img)}
+                >
+                  <img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 </div>
+              ))}
+            </div>
+          </div>
 
-                <div className="bulk-product-layout">
-                    {/* IMAGE GALLERY */}
-                    <div className="gallery-column">
-                        <div className="main-image-box">
-                            <img src={mainImg} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                        </div>
-                        <div className="thumbs-row">
-                            {item.images.map((img: string, i: number) => (
-                                <div
-                                    key={i}
-                                    className={`thumb ${mainImg === img ? "active" : ""}`}
-                                    onClick={() => setMainImg(img)}
-                                >
-                                    <img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+          {/* PRODUCT INFO */}
+          <div className="info-column">
+            <h1 className="prod-title">{item.name}</h1>
+            <div className="bulk-badge">INSTITUTIONAL PRICING</div>
 
-                    {/* PRODUCT INFO */}
-                    <div className="info-column">
-                        <h1 className="prod-title">{item.name}</h1>
-                        <div className="bulk-badge">INSTITUTIONAL PRICING</div>
+            <p className="prod-desc">{item.desc}</p>
 
-                        <p className="prod-desc">{item.desc}</p>
-
-                        <div className="features-list">
-                            <h3>Key Features</h3>
-                            <ul>
-                                {item.features.map((f: string) => (
-                                    <li key={f}>✓ {f}</li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        <div className="bulk-notice">
-                            <h3>📦 Bulk Information</h3>
-                            <p>{item.bulkInfo}</p>
-                        </div>
-
-                        <div className="cta-box">
-                            <p className="cta-text">Looking for bulk pricing? Send us an enquiry today!</p>
-                            <a href={`/contact?subject=Bulk Enquiry: ${item.name}`} className="enquiry-btn">
-                                ✉️ Send Enquiry for {item.name}
-                            </a>
-                        </div>
-                    </div>
-                </div>
+            <div className="features-list">
+              <h3>Key Features</h3>
+              <ul>
+                {item.features.map((f: string) => (
+                  <li key={f}>✓ {f}</li>
+                ))}
+              </ul>
             </div>
 
-            <style jsx>{`
+            <div className="bulk-notice">
+              <h3>📦 Bulk Information</h3>
+              <p>{item.bulkInfo}</p>
+            </div>
+
+            <div className="cta-box">
+              <p className="cta-text">Looking for bulk pricing? Send us an enquiry today!</p>
+              <a href={`/contact?subject=Bulk Enquiry: ${item.name}`} className="enquiry-btn">
+                ✉️ Send Enquiry for {item.name}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
         .bulk-product-layout {
           display: grid;
           grid-template-columns: 1.2fr 1fr;
@@ -359,6 +359,6 @@ export default function BulkProductPage() {
           }
         }
       `}</style>
-        </div>
-    );
+    </div>
+  );
 }

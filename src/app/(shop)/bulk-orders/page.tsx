@@ -53,7 +53,7 @@ export default function BulkOrderPage() {
     ["Do you offer customization?", "Yes! Custom branding, packaging, and labeling available. Contact our team for details."],
   ];
 
-  const S3 = "https://medvastr-assets.s3.ap-south-1.amazonaws.com";
+  const S3 = "https://d2tnzshqdaedbc.cloudfront.net";
 
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f8fafc 0%, #ecfdf5 50%, #f0fdfa 100%)' }}>
@@ -275,10 +275,10 @@ export default function BulkOrderPage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
               {[
-                { t: "Linen & Bedding", slug: "linen-and-bedding", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-linen.png", d: "High-performance institutional linens designed for over 200+ industrial washes." },
-                { t: "Brown blanket", slug: "brown-blanket", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-blanket.png", d: "Professional grade ward blankets offering supreme warmth and infection control compliance." },
-                { t: "Maternity Gown", slug: "maternity-gown", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-maternity.png", d: "Breathable, ergonomic maternity wear optimized for patient comfort and ease of care." },
-                { t: "Patient Dresses", slug: "patient-apparel", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/bulk-patient.png", d: "Soft, durable patient gowns and pajamas designed for clinical accessibility." }
+                { t: "Linen & Bedding", slug: "linen-and-bedding", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-linen.png", d: "High-performance institutional linens designed for over 200+ industrial washes." },
+                { t: "Brown blanket", slug: "brown-blanket", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-blanket.png", d: "Professional grade ward blankets offering supreme warmth and infection control compliance." },
+                { t: "Maternity Gown", slug: "maternity-gown", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-maternity.png", d: "Breathable, ergonomic maternity wear optimized for patient comfort and ease of care." },
+                { t: "Patient Dresses", slug: "patient-apparel", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-patient.png", d: "Soft, durable patient gowns and pajamas designed for clinical accessibility." }
               ].map(item => (
                 <Link key={item.slug} href={`/bulk-orders/${item.slug}`} style={{ textDecoration: 'none' }}>
                   <div className="bulk-card" style={{

@@ -127,7 +127,7 @@ export default function SizeGuidePage() {
       {/* Banner Section */}
       <div style={{ width: '100%', height: '320px', borderRadius: '24px', marginBottom: '40px', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.1)', background: '#f1f5f9' }}>
         <img
-          src="https://medvastr-assets.s3.ap-south-1.amazonaws.com/sizeguide-banner.png"
+          src="https://d2tnzshqdaedbc.cloudfront.net/sizeguide-banner.png"
           alt="Size Guide Header"
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           onError={(e) => {

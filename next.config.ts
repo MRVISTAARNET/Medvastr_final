@@ -29,6 +29,10 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "d2tnzshqdaedbc.cloudfront.net",
+      },
+      {
+        protocol: "https",
         hostname: "medvastr-assets.s3.ap-south-1.amazonaws.com",
       },
       {

@@ -107,9 +107,13 @@ function ProductsContent() {
     }
   };
 
-  const uniqueTypes = Array.from(new Set(products.map(p => p.type)));
+  const uniqueTypes = Array.from(new Set(products.map((p) => p.type)));
 
-  const dynamicCats = uniqueTypes.map((t: string) => ({
+  const allBaseTypes = Object.keys(typeConfigs);
+  const extraTypes = uniqueTypes.filter(t => !typeConfigs[t]);
+  const allTypesToRender = [...allBaseTypes, ...extraTypes];
+
+  const dynamicCats = allTypesToRender.map((t: string) => ({
     id: t,
     ico: typeConfigs[t]?.ico || '🏷️',
     l: typeConfigs[t]?.l || t.charAt(0).toUpperCase() + t.slice(1),
@@ -127,7 +131,7 @@ function ProductsContent() {
   let staticBannerBase: string | null = null;
   let staticBannerTitle = "";
 
-  const S3 = "https://medvastr-assets.s3.ap-south-1.amazonaws.com";
+  const S3 = "https://d2tnzshqdaedbc.cloudfront.net";
 
   // 100% DYNAMIC BANNER LOGIC
   if (cat !== "all") {

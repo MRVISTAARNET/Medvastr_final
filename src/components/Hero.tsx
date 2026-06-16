@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { SLIDES } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
 import { normalizeMediaUrl } from "@/lib/api";
@@ -12,7 +13,7 @@ interface HeroProps {
 export default function Hero({ onShop }: HeroProps) {
   const [cur, setCur] = useState(0);
   const [au, setAu] = useState(true);
-  const S3_BASE = "https://medvastr-assets.s3.ap-south-1.amazonaws.com";
+  const S3_BASE = "https://d2tnzshqdaedbc.cloudfront.net";
   const [dynamicSlides] = useState([
     { base: `${S3_BASE}/home-hero-1` },
     { base: `${S3_BASE}/home-hero-2` },
@@ -39,7 +40,7 @@ export default function Hero({ onShop }: HeroProps) {
       <div className="hero-track" style={{ transform: `translateX(-${cur * 100}%)` }}>
         {dynamicSlides.map((s, i) => (
           <div className="hero-slide" key={i}>
-            <SmartSlide base={s.base} />
+            <SmartSlide base={s.base} priority={i === 0} />
           </div>
         ))}
       </div>
@@ -95,30 +96,19 @@ export default function Hero({ onShop }: HeroProps) {
   );
 }
 
-// Tries .png first, then .jpg, then .jpeg automatically
-function SmartSlide({ base }: { base: string }) {
-  const EXTS = ['.png', '.jpg', '.jpeg'];
-  const [idx, setIdx] = React.useState(0);
-  const src = idx < EXTS.length ? base + EXTS[idx] : null;
-
-  if (!src) return null;
+// Replaced waterfall image loading with Next.js optimized Image component
+function SmartSlide({ base, priority }: { base: string, priority?: boolean }) {
+  const src = base + '.jpg'; // Stop waterfall! Assert extension.
 
   return (
-    <div
-      className="slide-bg"
-      style={{
-        backgroundImage: `url(${src})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        height: '100%'
-      }}
-    >
-      {/* Hidden img tag used only to detect load errors */}
-      <img
+    <div className="slide-bg" style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <Image
         src={src}
-        alt=""
-        style={{ display: 'none' }}
-        onError={() => setIdx(i => i + 1)}
+        alt="Hero Promotional Banner"
+        fill
+        style={{ objectFit: 'cover', objectPosition: 'center' }}
+        priority={priority}
+        sizes="100vw"
       />
     </div>
   );

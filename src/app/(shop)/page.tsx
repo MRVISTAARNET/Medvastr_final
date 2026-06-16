@@ -2,12 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import dynamic from 'next/dynamic';
 import Hero from "@/components/Hero";
 import ProductCard from "@/components/ProductCard";
-import VideoSection from "@/components/VideoSection";
-import AboutHomeSection from "@/components/AboutHomeSection";
-import BulkOrderBanner from "@/components/BulkOrderBanner";
-import PressSection from "@/components/PressSection";
+
+// Dynamically import "below the fold" sections to drastically reduce bundle size and LCP times
+const VideoSection = dynamic(() => import("@/components/VideoSection"));
+const AboutHomeSection = dynamic(() => import("@/components/AboutHomeSection"));
+const BulkOrderBanner = dynamic(() => import("@/components/BulkOrderBanner"));
+const PressSection = dynamic(() => import("@/components/PressSection"));
 import { COLS, B } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
 import { API_BASE } from "@/lib/api";
@@ -41,10 +44,10 @@ export default function Home() {
   const tabProducts = (() => {
     const tab = TABS.find((t) => t.id === activeTab);
     if (!tab) return [];
-    return products.filter((x) => x.type === tab.type).slice(0, 20);
+    return products.filter((x) => x.type === tab.type).slice(0, 8); // Reduced to 8 to prevent DOM bloat
   })();
 
-  const newArr = products.filter((p) => p.badge && ["New", "New Launch"].includes(p.badge)).slice(0, 20);
+  const newArr = products.filter((p) => p.badge && ["New", "New Launch"].includes(p.badge)).slice(0, 8); // Reduced to 8
 
   return (
     <div className="page">
