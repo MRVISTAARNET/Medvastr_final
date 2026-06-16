@@ -141,6 +141,13 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
     }
   };
 
+  const selectedVariant = useMemo(() => {
+    const hex = p.clrs?.[ci];
+    return p.variants?.find((v: any) => v.size === sz && v.colorHex === hex);
+  }, [p.variants, ci, sz]);
+
+  const isOutOfStock = selectedVariant ? selectedVariant.stockQuantity <= 0 : false;
+
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '32px 24px' }}>
@@ -208,7 +215,12 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                 <span style={{ color: '#fbbf24', fontSize: 18 }}>{'★'.repeat(Math.floor(Number(avgRating)))}</span>
                 <span style={{ fontWeight: 700, color: '#0f172a' }}>{avgRating}</span>
                 <span style={{ fontSize: 13, color: '#64748b' }}>{reviews.length} Verified Reviews</span>
-                <span style={{ marginLeft: 'auto', fontSize: 13, fontWeight: 700, color: '#10b981' }}>✓ In Stock</span>
+                <span style={{
+                  marginLeft: 'auto', fontSize: 13, fontWeight: 700,
+                  color: isOutOfStock ? '#ef4444' : '#10b981'
+                }}>
+                  {isOutOfStock ? '✕ Out of Stock' : '✓ In Stock'}
+                </span>
               </div>
 
               {/* Price */}
@@ -257,16 +269,31 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               {/* Qty + Add to Bag */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, border: '1.5px solid #e2e8f0', borderRadius: 10, padding: '8px 16px' }}>
-                    <button onClick={() => setQty(q => Math.max(1, q - 1))} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: '#0f172a', width: 28, height: 28 }}>−</button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, border: '1.5px solid #e2e8f0', borderRadius: 10, padding: '8px 16px', opacity: isOutOfStock ? 0.5 : 1 }}>
+                    <button onClick={() => setQty(q => Math.max(1, q - 1))} disabled={isOutOfStock} style={{ background: 'none', border: 'none', fontSize: 18, cursor: isOutOfStock ? 'not-allowed' : 'pointer', color: '#0f172a', width: 28, height: 28 }}>-</button>
                     <span style={{ fontWeight: 700, minWidth: 24, textAlign: 'center' }}>{qty}</span>
-                    <button onClick={() => setQty(q => q + 1)} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer', color: '#0f172a', width: 28, height: 28 }}>+</button>
+                    <button onClick={() => setQty(q => q + 1)} disabled={isOutOfStock} style={{ background: 'none', border: 'none', fontSize: 18, cursor: isOutOfStock ? 'not-allowed' : 'pointer', color: '#0f172a', width: 28, height: 28 }}>+</button>
                   </div>
                   <button onClick={() => toggleWishlist(p.id)} style={{ background: 'none', border: 'none', fontSize: 26, cursor: 'pointer' }}>{wished ? '❤️' : '🤍'}</button>
                 </div>
-                <button onClick={() => addToCart(p, ci, sz || productSizes[0] || 'M')}
-                  style={{ width: '100%', background: '#0f172a', color: 'white', border: 'none', borderRadius: 12, padding: '16px 24px', fontWeight: 800, fontSize: 15, cursor: 'pointer', transition: 'background 0.2s', letterSpacing: 0.3 }}>
-                  Add to Bag — {fmt(p.price * qty)}
+                <button
+                  onClick={() => addToCart(p, ci, sz || productSizes[0] || 'M')}
+                  disabled={isOutOfStock}
+                  style={{
+                    width: '100%',
+                    background: isOutOfStock ? '#cbd5e1' : '#0f172a',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: 12,
+                    padding: '16px 24px',
+                    fontWeight: 800,
+                    fontSize: 15,
+                    cursor: isOutOfStock ? 'not-allowed' : 'pointer',
+                    transition: 'background 0.2s',
+                    letterSpacing: 0.3
+                  }}
+                >
+                  {isOutOfStock ? 'SOLD OUT' : `Add to Bag — ${fmt(p.price * qty)}`}
                 </button>
               </div>
 

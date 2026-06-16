@@ -411,6 +411,13 @@ export default function AdminProducts() {
                     <option value="unisex">Unisex</option>
                   </select>
                 </div>
+                <div className="fg">
+                  <label>Visibility Status</label>
+                  <select id="p-active" value={form.active ? "true" : "false"} onChange={(e) => setForm((prev: any) => ({ ...prev, active: e.target.value === "true" }))}>
+                    <option value="true">Active (Published)</option>
+                    <option value="false">Inactive (Draft)</option>
+                  </select>
+                </div>
               </div>
               <div className="fg">
                 <label>Description</label>

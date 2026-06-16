@@ -376,6 +376,8 @@ public class OrderService {
                         .productName(i.getProductName())
                         .size(i.getSize())
                         .colorName(i.getColorName())
+                        .colorHex(i.getColorHex())
+                        .imageUrl(i.getVariant() != null ? i.getVariant().getImageUrl() : null)
                         .quantity(i.getQuantity())
                         .unitPrice(i.getUnitPrice())
                         .totalPrice(i.getTotalPrice())

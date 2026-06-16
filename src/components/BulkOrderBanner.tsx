@@ -1,20 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
-
+import React from "react";
 import Link from "next/link";
-
-const S3_BASE = "https://d2tnzshqdaedbc.cloudfront.net/home-bulk-banner";
-const EXTS = ['.png', '.jpg', '.jpeg'];
+import Image from "next/image";
 
 export default function BulkOrderBanner() {
-  const [idx, setIdx] = useState(0);
-  const src = idx < EXTS.length ? S3_BASE + EXTS[idx] : null;
+  const src = "https://d2tnzshqdaedbc.cloudfront.net/home-bulk-banner.jpg";
 
   return (
     <Link href="/bulk-orders" className="bulk-banner-link">
-      <div className="bulk-banner" style={src ? { backgroundImage: `url('${src}')`, cursor: 'pointer' } : { cursor: 'pointer' }}>
-        {src && <img src={src} alt="" style={{ display: 'none' }} onError={() => setIdx(i => i + 1)} />}
+      <div className="bulk-banner" style={{ position: 'relative', overflow: 'hidden', cursor: 'pointer' }}>
+        <Image
+          src={src}
+          alt="Bulk Order Program"
+          fill
+          style={{ objectFit: 'cover' }}
+          sizes="100vw"
+        />
       </div>
     </Link>
   );

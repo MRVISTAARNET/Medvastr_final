@@ -17,8 +17,9 @@ public class OrderItemDTO {
     private String emoji;
     private String size;
     private String colorName;
+    private String colorHex;
+    private String imageUrl;
     private Integer quantity;
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
 }
-
