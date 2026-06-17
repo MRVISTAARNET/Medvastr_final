@@ -8,7 +8,7 @@ import { API_BASE, authHeaders, getToken } from '@/lib/api';
 import { validateImageUpload } from '@/lib/uploadValidation';
 import { logError } from '@/lib/logger';
 import Barcode from 'react-barcode';
-import { toPng } from 'html-to-image';
+import { toJpeg } from 'html-to-image';
 
 // Re-defining starRating as it's a UI helper
 const getStars = (r: number) => {
@@ -259,9 +259,9 @@ export default function AdminProducts() {
   const downloadBarcode = async () => {
     if (labelRef.current === null) return;
     try {
-      const dataUrl = await toPng(labelRef.current, { cacheBust: true, pixelRatio: 3 });
+      const dataUrl = await toJpeg(labelRef.current, { cacheBust: true, pixelRatio: 3 });
       const link = document.createElement('a');
-      link.download = `barcode-${form.sku || 'product'}.png`;
+      link.download = `barcode-${form.sku || 'product'}.jpg`;
       link.href = dataUrl;
       link.click();
     } catch (err) {

@@ -64,7 +64,7 @@ export default function BulkOrderPage() {
       <div style={{ maxWidth: '1120px', margin: '0 auto', padding: '0 24px 64px' }}>
 
         {/* Stats Grid Overlay (Premium Look) */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '16px', marginTop: '0px', zIndex: 10 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '16px', marginTop: '40px', zIndex: 10 }}>
           {stats.map(([icon, title, sub]) => (
             <div key={title} style={{ background: 'white', borderRadius: '16px', padding: '24px 16px', border: '1px solid #e2e8f0', boxShadow: '0 10px 40px rgba(0,0,0,0.06)', textAlign: 'center' }}>
               <div style={{ fontSize: '28px', marginBottom: '8px' }}>{icon}</div>

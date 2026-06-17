@@ -25,10 +25,6 @@ export default function AboutPage() {
           sizes="100vw"
         />
         <div className="hero-overlay"></div>
-        <div className="hero-content">
-          <h1>Crafting the Future of Healthcare Apparel</h1>
-          <p>Where functionality meets premium style.</p>
-        </div>
       </section>
 
       {/* 2. MAIN CONTENT */}
@@ -126,8 +122,7 @@ export default function AboutPage() {
 
         .about-hero {
           width: 100%;
-          aspect-ratio: 1536 / 1024;
-          max-height: 85vh;
+          min-height: 80vh;
           position: relative;
           display: flex;
           align-items: center;

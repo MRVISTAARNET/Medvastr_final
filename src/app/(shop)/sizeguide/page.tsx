@@ -127,14 +127,14 @@ export default function SizeGuidePage() {
       {/* Banner Section */}
       <div style={{ width: '100%', height: '320px', borderRadius: '24px', marginBottom: '40px', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.1)', background: '#f1f5f9' }}>
         <img
-          src="https://d2tnzshqdaedbc.cloudfront.net/sizeguide-banner.png"
+          src="https://d2tnzshqdaedbc.cloudfront.net/sizeguide-banner.jpg"
           alt="Size Guide Header"
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           onError={(e) => {
             (e.target as any).style.display = 'none';
             (e.target as any).parentElement.innerHTML = `
               <div style="height:100%; display:flex; align-items:center; justify-content:center; color:#64748b; font-weight:700; font-size:18px; border:2px dashed #94a3b8; border-radius:24px">
-                📷 Image: sizeguide-banner.png (Upload to S3)
+                📷 Image: sizeguide-banner.jpg (Upload to S3)
               </div>
             `;
           }}

@@ -185,7 +185,6 @@ export default function BulkProductPage() {
           display: grid;
           grid-template-columns: 1.2fr 1fr;
           gap: 80px;
-          align-items: start;
         }
 
         .gallery-column {
@@ -205,7 +204,7 @@ export default function BulkProductPage() {
 
         .info-column {
           position: sticky;
-          top: 100px;
+          top: 120px;
         }
 
         .prod-title {
