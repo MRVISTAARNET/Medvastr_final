@@ -30,7 +30,6 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
       <main>
         <ErrorBoundary>{children}</ErrorBoundary>
       </main>
-      <MarqueeTicker />
       <Footer />
       <CartDrawer open={cartO} onClose={() => setCartO(false)} />
       <WishlistDrawer open={wishO} onClose={() => setWishO(false)} />

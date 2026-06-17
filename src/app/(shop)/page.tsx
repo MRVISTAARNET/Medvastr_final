@@ -10,7 +10,7 @@ import ProductCard from "@/components/ProductCard";
 const VideoSection = dynamic(() => import("@/components/VideoSection"));
 const AboutHomeSection = dynamic(() => import("@/components/AboutHomeSection"));
 const BulkOrderBanner = dynamic(() => import("@/components/BulkOrderBanner"));
-const PressSection = dynamic(() => import("@/components/PressSection"));
+import MarqueeTicker from "@/components/MarqueeTicker";
 import { COLS, B } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
 import { API_BASE } from "@/lib/api";
@@ -86,31 +86,27 @@ export default function Home() {
           </Link>
         </div>
         <div className="cat-g">
-          {[
-            ["#dde3f0", "👨‍⚕️", "Uniforms & Scrubs", "scrubs"],
-            ["#f0dde4", "🥼", "Linen & Bedding", "bulk"],
-            ["#ddf0e8", "🧥", "Surgical Wear", "surgical"],
-            ["#f0f0f0", "🩺", "Diagnostic & Caps", "bulk"],
-            ["#f8f8f8", "🛏️", "Bedding Supplies", "bulk"],
-          ].map(([bg, em, nm, type]) => (
-            <Link
-              href={type === "bulk" ? "/bulk-orders" : `/products?cat=${type}`}
-              className="cat-c"
-              key={nm as string}
-              onClick={() => {
-                if (type === "bulk") {
-                  alert("For these items, we provide exclusive bulk pricing for hospitals and clinics. Redirecting you to our Bulk Order page!");
-                }
-              }}
-            >
-              <div className="cat-img" style={{ background: bg as string }}>
-                {em}
-              </div>
-              <div className="cat-l">
-                {nm}
-              </div>
-            </Link>
-          ))}
+          <div className="cat-g">
+            {[
+              { nm: "Scrub Suit", href: "/products?cat=scrub-suit", img: "cat-scrub-suit.jpg" },
+              { nm: "Cotton Crew T-Shirt", href: "/products?cat=cotton-crew-tshirt", img: "cat-tshirt.jpg" },
+              { nm: "Full Sleeve Under Scrub", href: "/products?cat=full-sleeve-compression-under-scrub", img: "cat-under-scrub.jpg" },
+              { nm: "Surgeon Gown", href: "/products?cat=surgeon-gown", img: "cat-gown.jpg" },
+              { nm: "Surgeon Cap", href: "/products?cat=surgeon-cap", img: "cat-cap.jpg" },
+              { nm: "Bulk Orders", href: "/bulk-orders", img: "cat-bulk.jpg" },
+            ].map(c => (
+              <Link href={c.href} className="cat-c" key={c.nm}>
+                <div className="cat-img-box">
+                  <img
+                    src={`https://d2tnzshqdaedbc.cloudfront.net/${c.img}`}
+                    alt={c.nm}
+                    onError={(e) => { (e.target as any).src = "https://placehold.co/400x400/f1f5f9/64748b?text=" + c.nm }}
+                  />
+                </div>
+                <div className="cat-l">{c.nm}</div>
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -206,7 +202,9 @@ export default function Home() {
       </div>
 
       <VideoSection />
-      <PressSection />
+      <div style={{ marginTop: '0px', marginBottom: '0px' }}>
+        <MarqueeTicker />
+      </div>
 
       <BulkOrderBanner />
       <AboutHomeSection />
@@ -216,8 +214,8 @@ export default function Home() {
         <div className="rev-in">
           <div className="sec-hd">
             <div>
-              <div className="sec-t">What Doctors Are Saying</div>
-              <div className="sec-s">Trusted by 50,000+ healthcare professionals</div>
+              <div className="sec-t">What Our Customers Say</div>
+              <div className="sec-s">Real stories and feedback from healthcare professionals across India</div>
             </div>
           </div>
           <div className="rev-g">

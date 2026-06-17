@@ -202,6 +202,7 @@ export default function BulkProductPage() {
           gap: 80px;
           align-items: flex-start;
           width: 100%;
+          overflow: visible;
         }
 
         .gallery-column {
@@ -221,10 +222,12 @@ export default function BulkProductPage() {
 
         .info-column {
           flex: 1;
+          position: -webkit-sticky;
           position: sticky;
           top: 120px;
           align-self: flex-start;
           height: fit-content;
+          z-index: 10;
         }
 
         .prod-title {
