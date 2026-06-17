@@ -122,7 +122,7 @@ export default function AboutPage() {
 
         .about-hero {
           width: 100%;
-          min-height: 80vh;
+          min-height: 100vh;
           position: relative;
           display: flex;
           align-items: center;

@@ -125,7 +125,7 @@ export default function SizeGuidePage() {
   return (
     <div style={S.wrap}>
       {/* Banner Section */}
-      <div style={{ width: '100%', height: '320px', borderRadius: '24px', marginBottom: '40px', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.1)', background: '#f1f5f9' }}>
+      <div style={{ width: '100%', height: '500px', borderRadius: '24px', marginBottom: '40px', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.1)', background: '#f1f5f9' }}>
         <img
           src="https://d2tnzshqdaedbc.cloudfront.net/sizeguide-banner.jpg"
           alt="Size Guide Header"
