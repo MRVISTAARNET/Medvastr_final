@@ -202,7 +202,7 @@ export default function BulkProductPage() {
           gap: 80px;
           align-items: flex-start;
           width: 100%;
-          overflow: visible;
+          position: relative;
         }
 
         .gallery-column {
@@ -224,7 +224,7 @@ export default function BulkProductPage() {
           flex: 1;
           position: -webkit-sticky;
           position: sticky;
-          top: 120px;
+          top: 150px;
           align-self: flex-start;
           height: fit-content;
           z-index: 10;
@@ -345,10 +345,17 @@ export default function BulkProductPage() {
           filter: brightness(1.1);
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 1024px) {
           .bulk-product-layout {
-            grid-template-columns: 1fr;
+            flex-direction: column;
             gap: 40px;
+          }
+          .gallery-column {
+             width: 100%;
+          }
+          .info-column {
+            position: static;
+             width: 100%;
           }
           .prod-title {
             font-size: 32px;
