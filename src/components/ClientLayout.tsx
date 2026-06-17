@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Announcement from "@/components/Announcement";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import MarqueeTicker from "@/components/MarqueeTicker";
 import CartDrawer from "@/components/CartDrawer";
 import WishlistDrawer from "@/components/WishlistDrawer";
 import AccountModal from "@/components/AccountModal";
@@ -29,6 +30,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
       <main>
         <ErrorBoundary>{children}</ErrorBoundary>
       </main>
+      <MarqueeTicker />
       <Footer />
       <CartDrawer open={cartO} onClose={() => setCartO(false)} />
       <WishlistDrawer open={wishO} onClose={() => setWishO(false)} />

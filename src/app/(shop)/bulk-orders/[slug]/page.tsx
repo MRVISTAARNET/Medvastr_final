@@ -68,6 +68,22 @@ const BULK_ITEMS: Record<string, any> = {
       "Unisex design"
     ],
     bulkInfo: "Bulk pricing starts at 100 units. Custom sizes available."
+  },
+  "scrub-suit": {
+    name: "Scrub Suit",
+    desc: "Premium medical scrubs crafted from high-performance fabric that resistant to fading, shrinking, and wrinkles. Features multi-pocket utility and an ergonomic design for all-day comfort.",
+    images: [
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-scrub-suit-1.jpg",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-scrub-suit-2.jpg",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-scrub-suit-3.jpg",
+    ],
+    features: [
+      "Moisture-wicking fabric",
+      "Four-way stretch",
+      "Anti-wrinkle finish",
+      "Multiple utility pockets"
+    ],
+    bulkInfo: "Bulk orders above 50 sets qualify for institutional pricing. Custom embroidery/logo available."
   }
 };
 
@@ -182,13 +198,14 @@ export default function BulkProductPage() {
 
       <style jsx>{`
         .bulk-product-layout {
-          display: grid;
-          grid-template-columns: 1.2fr 1fr;
+          display: flex;
           gap: 80px;
-          align-items: start;
+          align-items: flex-start;
+          width: 100%;
         }
 
         .gallery-column {
+          flex: 1.2;
           display: flex;
           flex-direction: column;
           gap: 20px;
@@ -203,10 +220,11 @@ export default function BulkProductPage() {
         }
 
         .info-column {
+          flex: 1;
           position: sticky;
-          top: 100px;
+          top: 120px;
+          align-self: flex-start;
           height: fit-content;
-          overflow: visible;
         }
 
         .prod-title {
