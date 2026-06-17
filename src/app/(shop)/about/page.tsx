@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const COLORS = {
   navy: "#0a0f1c",
@@ -15,7 +16,19 @@ export default function AboutPage() {
     <div className="about-page">
       {/* 1. HERO BANNER */}
       <section className="about-hero">
+        <Image
+          src="https://d2tnzshqdaedbc.cloudfront.net/about-1.jpg"
+          alt="Medvastr Excellence"
+          fill
+          priority
+          style={{ objectFit: 'cover' }}
+          sizes="100vw"
+        />
         <div className="hero-overlay"></div>
+        <div className="hero-content">
+          <h1>Crafting the Future of Healthcare Apparel</h1>
+          <p>Where functionality meets premium style.</p>
+        </div>
       </section>
 
       {/* 2. MAIN CONTENT */}
@@ -112,10 +125,9 @@ export default function AboutPage() {
         }
 
         .about-hero {
-          height: 600px;
-          background: #ffffff url('https://d2tnzshqdaedbc.cloudfront.net/about-1.png');
-          background-size: cover;
-          background-position: center;
+          width: 100%;
+          aspect-ratio: 1536 / 1024;
+          max-height: 85vh;
           position: relative;
           display: flex;
           align-items: center;
@@ -123,13 +135,14 @@ export default function AboutPage() {
           text-align: center;
           color: ${COLORS.white};
           overflow: hidden;
+          background: #000;
         }
 
         .hero-overlay {
           position: absolute;
           inset: 0;
-          background: rgba(0,0,0,0.1);
-          opacity: 1;
+          background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.2));
+          z-index: 1;
         }
 
         .hero-content {

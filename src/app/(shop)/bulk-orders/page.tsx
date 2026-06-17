@@ -59,7 +59,7 @@ export default function BulkOrderPage() {
     <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f8fafc 0%, #ecfdf5 50%, #f0fdfa 100%)' }}>
 
       {/* ── HERO BANNER ── */}
-      <SmartBanner base={`${S3}/bulk-banner`} title="Bulk Orders for Healthcare" />
+      <SmartBanner base={`${S3}/bulk-order-banner`} title="Bulk Orders for Healthcare" />
 
       <div style={{ maxWidth: '1120px', margin: '0 auto', padding: '0 24px 64px' }}>
 
@@ -275,10 +275,10 @@ export default function BulkOrderPage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
               {[
-                { t: "Linen & Bedding", slug: "linen-and-bedding", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-linen.png", d: "High-performance institutional linens designed for over 200+ industrial washes." },
-                { t: "Brown blanket", slug: "brown-blanket", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-blanket.png", d: "Professional grade ward blankets offering supreme warmth and infection control compliance." },
-                { t: "Maternity Gown", slug: "maternity-gown", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-maternity.png", d: "Breathable, ergonomic maternity wear optimized for patient comfort and ease of care." },
-                { t: "Patient Dresses", slug: "patient-apparel", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-patient.png", d: "Soft, durable patient gowns and pajamas designed for clinical accessibility." }
+                { t: "Linen & Bedding", slug: "linen-and-bedding", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-linen.jpg", d: "High-performance institutional linens designed for over 200+ industrial washes." },
+                { t: "Brown blanket", slug: "brown-blanket", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-blanket.jpg", d: "Professional grade ward blankets offering supreme warmth and infection control compliance." },
+                { t: "Maternity Gown", slug: "maternity-gown", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-maternity.jpg", d: "Breathable, ergonomic maternity wear optimized for patient comfort and ease of care." },
+                { t: "Patient Dresses", slug: "patient-apparel", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-patient.jpg", d: "Soft, durable patient gowns and pajamas designed for clinical accessibility." }
               ].map(item => (
                 <Link key={item.slug} href={`/bulk-orders/${item.slug}`} style={{ textDecoration: 'none' }}>
                   <div className="bulk-card" style={{
@@ -292,7 +292,7 @@ export default function BulkOrderPage() {
                     display: 'flex',
                     flexDirection: 'column'
                   }}>
-                    <div style={{ height: '280px', overflow: 'hidden', position: 'relative' }}>
+                    <div style={{ aspectRatio: '1 / 1', overflow: 'hidden', position: 'relative' }}>
                       <Image src={item.img} alt={item.t} fill style={{ objectFit: 'cover', transition: 'transform 0.6s ease' }} className="card-img" sizes="(max-width: 768px) 100vw, 400px" />
                       <div className="card-overlay" style={{ position: 'absolute', inset: 0, background: 'rgba(0,128,128,0)', transition: 'all 0.3s' }}></div>
                     </div>
@@ -377,32 +377,20 @@ export default function BulkOrderPage() {
 function SmartBanner({ base, title }: { base: string; title: string }) {
   const src = base + ".jpg";
 
-  // Always render a stable container to prevent layout shift during hydration
   return (
     <div
       style={{
         width: "100%",
-        marginBottom: 30,
-        height: "clamp(280px, 40vh, 400px)",
-        background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)",
+        aspectRatio: "1920 / 480",
+        background: "#000",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        flexDirection: "column",
         position: "relative",
         overflow: "hidden",
       }}
     >
       <Image src={src} alt={title} fill style={{ objectFit: 'cover' }} priority />
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.55))", zIndex: 1 }} />
-      <div style={{ position: "relative", zIndex: 2, textAlign: "center", color: "white", padding: "0 20px" }}>
-        <h1 style={{ fontSize: "clamp(2rem, 8vw, 3.5rem)", fontWeight: 950, marginBottom: "12px", textShadow: "0 4px 15px rgba(0,0,0,0.4)", lineHeight: 1.1, letterSpacing: "-1px" }}>
-          {title}
-        </h1>
-        <p style={{ fontSize: "1.2rem", opacity: 0.95, maxWidth: "700px", margin: "0 auto", fontWeight: 600 }}>
-          Superior quality medical apparel for premier institutions
-        </p>
-      </div>
     </div>
   );
 }

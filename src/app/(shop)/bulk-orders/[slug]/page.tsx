@@ -8,9 +8,8 @@ const BULK_ITEMS: Record<string, any> = {
     name: "Brown Blanket",
     desc: "Plush yet lightweight ward blankets that provide essential warmth. These blankets are designed for easy maintenance and fast drying times, ideal for high-churn clinical environments.",
     images: [
-      "https://d2tnzshqdaedbc.cloudfront.net/bulk-blanket.png",
-      "https://d2tnzshqdaedbc.cloudfront.net/bulk-blanket-2.png",
-      "https://d2tnzshqdaedbc.cloudfront.net/bulk-blanket-3.png",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-blanket-1.jpg",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-blanket-2.jpg",
     ],
     features: [
       "Thermal insulation",
@@ -24,9 +23,9 @@ const BULK_ITEMS: Record<string, any> = {
     name: "Maternity Gown",
     desc: "Ergonomically designed maternity gowns providing ease of access for nursing and clinical checks. Made from breathable, lightweight fabric to ensure mother's comfort during stay.",
     images: [
-      "https://d2tnzshqdaedbc.cloudfront.net/bulk-maternity.png",
-      "https://d2tnzshqdaedbc.cloudfront.net/bulk-maternity-2.png",
-      "https://d2tnzshqdaedbc.cloudfront.net/bulk-maternity-3.png",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-maternity-1.jpg",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-maternity-2.jpg",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-maternity-3.jpg",
     ],
     features: [
       "Side access panels",
@@ -40,9 +39,8 @@ const BULK_ITEMS: Record<string, any> = {
     name: "Linen & Bedding",
     desc: "Hospital-grade linens designed for durability and patient comfort. Our bedding is engineered to withstand over 200 industrial washes while maintaining its softness and structural integrity.",
     images: [
-      "https://d2tnzshqdaedbc.cloudfront.net/bulk-linen.png",
-      "https://d2tnzshqdaedbc.cloudfront.net/bulk-linen-2.png",
-      "https://d2tnzshqdaedbc.cloudfront.net/bulk-linen-3.png",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-linen-1.jpg",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-linen-2.jpg",
     ],
     features: [
       "Anti-microbial finish",
@@ -56,8 +54,12 @@ const BULK_ITEMS: Record<string, any> = {
     name: "Patient Dresses",
     desc: "Soft, durable patient gowns and pajamas designed for clinical accessibility and patient dignity. Made from breathable cotton blends.",
     images: [
-      "https://d2tnzshqdaedbc.cloudfront.net/bulk-patient.png",
-      "https://d2tnzshqdaedbc.cloudfront.net/bulk-patient-2.png",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-patient-1.jpg",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-patient-2.jpg",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-patient-3.jpg",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-patient-4.jpg",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-patient-5.jpg",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-patient-6.jpg",
     ],
     features: [
       "Easy-tie closures",
@@ -72,7 +74,6 @@ const BULK_ITEMS: Record<string, any> = {
 export default function BulkProductPage() {
   const { slug } = useParams();
   const item = BULK_ITEMS[slug as string];
-  const [mainImg, setMainImg] = useState(item?.images[0] || "");
 
   if (!item) {
     // Fallback for dynamic categories not in hardcoded list
@@ -134,22 +135,18 @@ export default function BulkProductPage() {
         </div>
 
         <div className="bulk-product-layout">
-          {/* IMAGE GALLERY */}
+          {/* IMAGE GALLERY - VERTICAL STACK */}
           <div className="gallery-column">
-            <div className="main-image-box">
-              <img src={mainImg} alt={item.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            </div>
-            <div className="thumbs-row">
-              {item.images.map((img: string, i: number) => (
-                <div
-                  key={i}
-                  className={`thumb ${mainImg === img ? "active" : ""}`}
-                  onClick={() => setMainImg(img)}
-                >
-                  <img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
-              ))}
-            </div>
+            {item.images.map((img: string, i: number) => (
+              <div key={i} className="main-image-box">
+                <img
+                  src={img}
+                  alt={`${item.name} ${i + 1}`}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  onError={handleImageError}
+                />
+              </div>
+            ))}
           </div>
 
           {/* PRODUCT INFO */}
@@ -192,46 +189,23 @@ export default function BulkProductPage() {
         }
 
         .gallery-column {
-          position: sticky;
-          top: 120px;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
         }
 
         .main-image-box {
-          aspect-ratio: 16/10;
+          aspect-ratio: 1 / 1;
           background: white;
           border-radius: 32px;
           overflow: hidden;
-          box-shadow: 0 20px 60px rgba(0,0,0,0.08);
-          margin-bottom: 25px;
+          box-shadow: 0 10px 40px rgba(0,0,0,0.06);
           border: 1px solid #f1f5f9;
         }
 
-        .thumbs-row {
-          display: flex;
-          gap: 20px;
-          justify-content: center;
-        }
-
-        .thumb {
-          width: 100px;
-          height: 70px;
-          border-radius: 16px;
-          overflow: hidden;
-          cursor: pointer;
-          border: 3px solid transparent;
-          transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          opacity: 0.6;
-        }
-
-        .thumb:hover {
-          opacity: 1;
-          transform: translateY(-5px);
-        }
-
-        .thumb.active {
-          border-color: #008080;
-          box-shadow: 0 10px 25px rgba(0,128,128,0.2);
-          opacity: 1;
+        .info-column {
+          position: sticky;
+          top: 100px;
         }
 
         .prod-title {
