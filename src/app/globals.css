@@ -5612,14 +5612,13 @@ html {
 
 /* Bulk Banner */
 .bulk-banner {
-  /* Background image is set dynamically via admin dashboard (S3 URL) */
   background-color: #fbfaf8;
-  margin: 64px 0;
+  margin: 40px 0;
   width: 100%;
   aspect-ratio: 16 / 4;
   position: relative;
   overflow: hidden;
-  background-size: contain;
+  background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
 }
