@@ -536,8 +536,6 @@ function SmartBanner({ base, title, subtitle }: { base: string; title: string; s
       }}
     >
       <Image src={src} alt={title} fill style={{ objectFit: 'cover', zIndex: -2 }} priority />
-      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(10, 15, 28, 0.8), rgba(10, 15, 28, 0.2))', zIndex: -1 }}></div>
-
       <div style={{ maxWidth: '600px', zIndex: 1 }}>
         <h1 style={{ fontSize: '56px', fontWeight: 900, marginBottom: '20px', letterSpacing: '-2px' }}>{title}</h1>
         {subtitle && <p style={{ fontSize: '20px', opacity: 0.9, lineHeight: '1.6', fontWeight: 500 }}>{subtitle}</p>}

@@ -24,7 +24,6 @@ export default function AboutPage() {
           style={{ objectFit: 'cover' }}
           sizes="100vw"
         />
-        <div className="hero-overlay"></div>
       </section>
 
       {/* 2. MAIN CONTENT */}
@@ -130,15 +129,8 @@ export default function AboutPage() {
           text-align: center;
           color: ${COLORS.white};
           overflow: hidden;
-          background: #000;
         }
 
-        .hero-overlay {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.2));
-          z-index: 1;
-        }
 
         .hero-content {
           position: relative;
