@@ -1577,9 +1577,15 @@ textarea {
 .info-column {
   position: -webkit-sticky !important;
   position: sticky !important;
-  top: 15% !important;
+  top: 100px !important;
   height: auto !important;
   z-index: 100 !important;
+}
+
+.page.static {
+  animation: none !important;
+  transform: none !important;
+  opacity: 1 !important;
 }
 
 @media (max-width: 1200px) {

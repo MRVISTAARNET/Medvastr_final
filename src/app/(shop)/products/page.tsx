@@ -123,7 +123,7 @@ function ProductsContent() {
   const cats = [
     { id: "all", ico: "🏷️", l: "Complete Collection", n: products.length },
     ...dynamicCats
-  ];
+  ].filter(c => c.n > 0);
 
   let rawCatLabel = cat !== 'all' ? cat.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : null;
   let activeCatLabel = cats.find((c: any) => c.id === cat)?.l || rawCatLabel || (gen !== 'all' ? (gen.charAt(0).toUpperCase() + gen.slice(1) + " Collection") : "All Products");
@@ -156,11 +156,17 @@ function ProductsContent() {
   };
 
   const activeDesc = typeConfigs[cat]?.d || descMap[staticBannerTitle] || genericDesc;
+  const isSurgical = ["surgical-wear", "surgeon-cap", "surgeon-gown"].includes(cat);
 
   return (
     <div className="page" style={{ background: '#ffffff' }}>
       {staticBannerBase && (
-        <SmartBanner base={staticBannerBase} title={staticBannerTitle} subtitle={activeDesc} />
+        <SmartBanner
+          base={staticBannerBase}
+          title={staticBannerTitle}
+          subtitle={activeDesc}
+          hideText={isSurgical}
+        />
       )}
       <div className="sec" style={{ paddingBottom: 60 }}>
         {/* Breadcrumb */}
@@ -183,7 +189,7 @@ function ProductsContent() {
         </div>
 
         <div className="catalog-header" style={{ marginBottom: 50 }}>
-          <h1 className="catalog-title" style={{ fontSize: '42px', marginBottom: '15px' }}>{staticBannerTitle}</h1>
+          <h2 className="catalog-title" style={{ fontSize: '28px', marginBottom: '15px' }}>{staticBannerTitle}</h2>
           <div style={{ width: '60px', height: '4px', background: '#008080', marginBottom: '25px', borderRadius: '2px' }}></div>
           <p className="catalog-subtitle" style={{ maxWidth: '800px', fontSize: '19px', lineHeight: '1.7', color: '#475569', margin: 0, fontWeight: 400 }}>
             {activeDesc}
@@ -513,7 +519,7 @@ function ProductsContent() {
 }
 
 // Now uses Next.js Image optimization directly with .jpg extension
-function SmartBanner({ base, title, subtitle }: { base: string; title: string; subtitle?: string }) {
+function SmartBanner({ base, title, subtitle, hideText }: { base: string; title: string; subtitle?: string, hideText?: boolean }) {
   const src = base + ".jpg";
 
   return (
@@ -524,8 +530,7 @@ function SmartBanner({ base, title, subtitle }: { base: string; title: string; s
         marginBottom: 30,
         borderRadius: 24,
         overflow: 'hidden',
-        minHeight: '400px',
-        maxHeight: '500px',
+        aspectRatio: '1600 / 600',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
@@ -536,10 +541,12 @@ function SmartBanner({ base, title, subtitle }: { base: string; title: string; s
       }}
     >
       <Image src={src} alt={title} fill style={{ objectFit: 'cover', zIndex: -2 }} priority />
-      <div style={{ maxWidth: '600px', zIndex: 1 }}>
-        <h1 style={{ fontSize: '56px', fontWeight: 900, marginBottom: '20px', letterSpacing: '-2px' }}>{title}</h1>
-        {subtitle && <p style={{ fontSize: '20px', opacity: 0.9, lineHeight: '1.6', fontWeight: 500 }}>{subtitle}</p>}
-      </div>
+      {!hideText && (
+        <div style={{ maxWidth: '600px', zIndex: 1 }}>
+          <h1 style={{ fontSize: '56px', fontWeight: 900, marginBottom: '20px', letterSpacing: '-2px' }}>{title}</h1>
+          {subtitle && <p style={{ fontSize: '20px', opacity: 0.9, lineHeight: '1.6', fontWeight: 500 }}>{subtitle}</p>}
+        </div>
+      )}
     </div>
   );
 }

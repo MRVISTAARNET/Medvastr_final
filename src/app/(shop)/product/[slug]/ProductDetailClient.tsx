@@ -149,7 +149,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const isOutOfStock = selectedVariant ? selectedVariant.stockQuantity <= 0 : false;
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8fafc' }}>
+    <div className="page static" style={{ minHeight: '100vh', background: '#f8fafc' }}>
       <div style={{ maxWidth: 1280, margin: '0 auto', padding: '32px 24px' }}>
 
         {/* Breadcrumb */}

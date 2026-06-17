@@ -50,7 +50,7 @@ const BULK_ITEMS: Record<string, any> = {
     ],
     bulkInfo: "Standard bulk discount applies. Custom embroidery available for orders above 100 sets."
   },
-  "patient-apparel": {
+  "patient-dress": {
     name: "Patient Dresses",
     desc: "Soft, durable patient gowns and pajamas designed for clinical accessibility and patient dignity. Made from breathable cotton blends.",
     images: [
@@ -141,7 +141,7 @@ export default function BulkProductPage() {
   };
 
   return (
-    <div style={{ background: "#ffffff", minHeight: "100vh", paddingBottom: "100px", position: 'relative' }}>
+    <div className="page static" style={{ background: "#ffffff", minHeight: "100vh", paddingBottom: "100px", position: 'relative' }}>
       <div className="sec">
         {/* Breadcrumb */}
         <div style={{ marginBottom: "30px", fontSize: "14px", color: "#64748b" }}>
