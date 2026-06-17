@@ -134,9 +134,12 @@ function ProductsContent() {
   const S3 = "https://d2tnzshqdaedbc.cloudfront.net";
 
   // 100% DYNAMIC BANNER LOGIC
+  // 100% DYNAMIC BANNER LOGIC
   if (cat !== "all") {
     staticBannerBase = `${S3}/${cat}-banner`;
-    staticBannerTitle = activeCatLabel;
+    staticBannerTitle = (gen !== "all")
+      ? `${gen.charAt(0).toUpperCase() + gen.slice(1)}'s ${activeCatLabel}`
+      : activeCatLabel;
   } else if (gen !== "all") {
     staticBannerBase = `${S3}/${gen}-banner`;
     staticBannerTitle = gen.charAt(0).toUpperCase() + gen.slice(1) + " Collection";
