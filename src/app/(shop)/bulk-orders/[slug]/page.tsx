@@ -19,6 +19,21 @@ const BULK_ITEMS: Record<string, any> = {
     ],
     bulkInfo: "Minimum order 50 units. Special rates for hospital-wide procurement."
   },
+  "brown-blankets": {
+    name: "Brown Blanket",
+    desc: "Plush yet lightweight ward blankets that provide essential warmth. These blankets are designed for easy maintenance and fast drying times, ideal for high-churn clinical environments.",
+    images: [
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-blanket-1.jpg",
+      "https://d2tnzshqdaedbc.cloudfront.net/bulk-blanket-2.jpg",
+    ],
+    features: [
+      "Thermal insulation",
+      "Hypoallergenic material",
+      "Stitched edges for durability",
+      "Flame retardant treated"
+    ],
+    bulkInfo: "Minimum order 50 units. Special rates for hospital-wide procurement."
+  },
   "maternity-gown": {
     name: "Maternity Gown",
     desc: "Ergonomically designed maternity gowns providing ease of access for nursing and clinical checks. Made from breathable, lightweight fabric to ensure mother's comfort during stay.",
@@ -222,9 +237,6 @@ export default function BulkProductPage() {
 
         .info-column {
           flex: 1;
-          position: -webkit-sticky;
-          position: sticky;
-          top: 180px;
           align-self: flex-start;
           height: fit-content;
           z-index: 99;

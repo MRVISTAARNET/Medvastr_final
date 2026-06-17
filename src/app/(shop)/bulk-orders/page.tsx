@@ -276,7 +276,7 @@ export default function BulkOrderPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
               {[
                 { t: "Linen & Bedding", slug: "linen-and-bedding", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-linen.jpg", d: "High-performance institutional linens designed for over 200+ industrial washes." },
-                { t: "Brown blanket", slug: "brown-blanket", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-blanket.jpg", d: "Professional grade ward blankets offering supreme warmth and infection control compliance." },
+                { t: "Brown blanket", slug: "brown-blankets", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-blanket.jpg", d: "Professional grade ward blankets offering supreme warmth and infection control compliance." },
                 { t: "Maternity Gown", slug: "maternity-gown", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-maternity.jpg", d: "Breathable, ergonomic maternity wear optimized for patient comfort and ease of care." },
                 { t: "Patient Dresses", slug: "patient-dress", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-patient.jpg", d: "Soft, durable patient gowns and pajamas designed for clinical accessibility." },
                 { t: "Scrub Suit", slug: "scrub-suit", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-scrub-suit.jpg", d: "High-performance medical scrubs designed for maximum comfort and flexibility during long clinical shifts." }
