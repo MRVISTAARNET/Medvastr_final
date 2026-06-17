@@ -133,17 +133,26 @@ function ProductsContent() {
 
   const S3 = "https://d2tnzshqdaedbc.cloudfront.net";
 
-  // 100% DYNAMIC BANNER LOGIC
-  // 100% DYNAMIC BANNER LOGIC
-  if (cat !== "all") {
+  const isSurgical = ["surgical-wear", "surgeon-cap", "surgeon-gown"].includes(cat);
+
+  // 100% DYNAMIC BANNER LOGIC (Ecommerce Priority System)
+  if (isSurgical) {
+    staticBannerBase = `${S3}/surgical-wear-banner`;
+    staticBannerTitle = activeCatLabel;
+  } else if (cat !== "all" && gen !== "all") {
+    // Try Gender-Specific Category Banners (Men's Scrubs, etc)
+    staticBannerBase = `${S3}/${gen}-${cat}-banner`;
+    staticBannerTitle = `${gen.charAt(0).toUpperCase() + gen.slice(1)}'s ${activeCatLabel}`;
+  } else if (cat !== "all") {
+    // Falls back to generic Category Banner
     staticBannerBase = `${S3}/${cat}-banner`;
-    staticBannerTitle = (gen !== "all")
-      ? `${gen.charAt(0).toUpperCase() + gen.slice(1)}'s ${activeCatLabel}`
-      : activeCatLabel;
+    staticBannerTitle = activeCatLabel;
   } else if (gen !== "all") {
+    // Main gender collections
     staticBannerBase = `${S3}/${gen}-banner`;
     staticBannerTitle = gen.charAt(0).toUpperCase() + gen.slice(1) + " Collection";
   } else {
+    // The mother of all banners
     staticBannerBase = `${S3}/all-products-banner`;
     staticBannerTitle = "The Medvastr Collection";
   }
@@ -159,8 +168,6 @@ function ProductsContent() {
   };
 
   const activeDesc = typeConfigs[cat]?.d || descMap[staticBannerTitle] || genericDesc;
-  const isSurgical = ["surgical-wear", "surgeon-cap", "surgeon-gown"].includes(cat);
-
   return (
     <div className="page" style={{ background: '#ffffff' }}>
       {staticBannerBase && (
