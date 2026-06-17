@@ -125,7 +125,7 @@ export default function BulkProductPage() {
   };
 
   return (
-    <div className="page" style={{ background: "#f8fafc", minHeight: "100vh", paddingBottom: "100px" }}>
+    <div className="page" style={{ background: "#ffffff", minHeight: "100vh", paddingBottom: "100px" }}>
       <div className="sec">
         {/* Breadcrumb */}
         <div style={{ marginBottom: "30px", fontSize: "14px", color: "#64748b" }}>
@@ -185,6 +185,7 @@ export default function BulkProductPage() {
           display: grid;
           grid-template-columns: 1.2fr 1fr;
           gap: 80px;
+          align-items: start;
         }
 
         .gallery-column {
@@ -198,8 +199,7 @@ export default function BulkProductPage() {
           background: white;
           border-radius: 32px;
           overflow: hidden;
-          box-shadow: 0 10px 40px rgba(0,0,0,0.06);
-          border: 1px solid #f1f5f9;
+          border: 1px solid #e2e8f0;
         }
 
         .info-column {
