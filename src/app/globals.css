@@ -1558,10 +1558,28 @@ textarea {
 
 /* Category Grid */
 .cat-g {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  display: grid !important;
+  grid-template-columns: repeat(6, 1fr) !important;
   gap: 32px;
   margin-top: 50px;
+  width: 100% !important;
+}
+
+/* STICKY REINFORCEMENT */
+.bulk-product-layout {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 60px !important;
+  position: relative !important;
+  width: 100% !important;
+}
+
+.info-column {
+  position: -webkit-sticky !important;
+  position: sticky !important;
+  top: 15% !important;
+  height: auto !important;
+  z-index: 100 !important;
 }
 
 @media (max-width: 1200px) {

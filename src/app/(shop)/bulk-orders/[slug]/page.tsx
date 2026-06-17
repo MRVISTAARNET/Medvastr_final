@@ -141,7 +141,7 @@ export default function BulkProductPage() {
   };
 
   return (
-    <div className="page" style={{ background: "#ffffff", minHeight: "100vh", paddingBottom: "100px", overflow: 'visible' }}>
+    <div style={{ background: "#ffffff", minHeight: "100vh", paddingBottom: "100px", position: 'relative' }}>
       <div className="sec">
         {/* Breadcrumb */}
         <div style={{ marginBottom: "30px", fontSize: "14px", color: "#64748b" }}>
@@ -224,10 +224,10 @@ export default function BulkProductPage() {
           flex: 1;
           position: -webkit-sticky;
           position: sticky;
-          top: 150px;
+          top: 180px;
           align-self: flex-start;
           height: fit-content;
-          z-index: 10;
+          z-index: 99;
         }
 
         .prod-title {

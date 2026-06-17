@@ -86,27 +86,25 @@ export default function Home() {
           </Link>
         </div>
         <div className="cat-g">
-          <div className="cat-g">
-            {[
-              { nm: "Scrub Suit", href: "/products?cat=scrub-suit", img: "cat-scrub-suit.jpg" },
-              { nm: "Cotton Crew T-Shirt", href: "/products?cat=cotton-crew-tshirt", img: "cat-tshirt.jpg" },
-              { nm: "Full Sleeve Under Scrub", href: "/products?cat=full-sleeve-compression-under-scrub", img: "cat-under-scrub.jpg" },
-              { nm: "Surgeon Gown", href: "/products?cat=surgeon-gown", img: "cat-gown.jpg" },
-              { nm: "Surgeon Cap", href: "/products?cat=surgeon-cap", img: "cat-cap.jpg" },
-              { nm: "Bulk Orders", href: "/bulk-orders", img: "cat-bulk.jpg" },
-            ].map(c => (
-              <Link href={c.href} className="cat-c" key={c.nm}>
-                <div className="cat-img-box">
-                  <img
-                    src={`https://d2tnzshqdaedbc.cloudfront.net/${c.img}`}
-                    alt={c.nm}
-                    onError={(e) => { (e.target as any).src = "https://placehold.co/400x400/f1f5f9/64748b?text=" + c.nm }}
-                  />
-                </div>
-                <div className="cat-l">{c.nm}</div>
-              </Link>
-            ))}
-          </div>
+          {[
+            { nm: "Scrub Suit", href: "/products?cat=scrub-suit", img: "cat-scrub-suit.jpg" },
+            { nm: "Cotton Crew T-Shirt", href: "/products?cat=cotton-crew-tshirt", img: "cat-tshirt.jpg" },
+            { nm: "Full Sleeve Under Scrub", href: "/products?cat=full-sleeve-compression-under-scrub", img: "cat-under-scrub.jpg" },
+            { nm: "Surgeon Gown", href: "/products?cat=surgeon-gown", img: "cat-gown.jpg" },
+            { nm: "Surgeon Cap", href: "/products?cat=surgeon-cap", img: "cat-cap.jpg" },
+            { nm: "Bulk Orders", href: "/bulk-orders", img: "cat-bulk.jpg" },
+          ].map(c => (
+            <Link href={c.href} className="cat-c" key={c.nm}>
+              <div className="cat-img-box">
+                <img
+                  src={`https://d2tnzshqdaedbc.cloudfront.net/${c.img}`}
+                  alt={c.nm}
+                  onError={(e) => { (e.target as any).src = "https://placehold.co/400x400/f1f5f9/64748b?text=" + c.nm }}
+                />
+              </div>
+              <div className="cat-l">{c.nm}</div>
+            </Link>
+          ))}
         </div>
       </div>
 
@@ -202,7 +200,7 @@ export default function Home() {
       </div>
 
       <VideoSection />
-      <div style={{ marginTop: '0px', marginBottom: '0px' }}>
+      <div style={{ margin: '60px 0' }}>
         <MarqueeTicker />
       </div>
 

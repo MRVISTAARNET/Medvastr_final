@@ -10,7 +10,7 @@ const FALLBACK_NAV: NavItem[] = [
   { id: 1, label: "Men", href: "/products?gender=men", itemType: "MEGA_MENU", gender: "men", categorySlug: "men" },
   { id: 2, label: "Women", href: "/products?gender=women", itemType: "MEGA_MENU", gender: "women", categorySlug: "women" },
   { id: 3, label: "Surgical Wear", href: "/products?cat=surgical-wear", itemType: "MEGA_MENU", categorySlug: "surgical-wear" },
-  { id: 4, label: "Bulk Order", href: "/bulk-orders", itemType: "MEGA_MENU", categorySlug: "bulk-order" },
+  { id: 4, label: "Bulk Order", href: "/bulk-orders", itemType: "LINK" },
   { id: 5, label: "About Us", href: "/about", itemType: "LINK" },
   { id: 6, label: "Blogs", href: "/blog", itemType: "LINK" },
   { id: 7, label: "Contact Us", href: "/contact", itemType: "LINK" },
