@@ -115,7 +115,7 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
                 {colours.map((c) => (
                   <Link
                     key={c.l}
-                    href={`/products?color=${encodeURIComponent(c.c)}${queryGen ? `&${queryGen}` : ""}${parentSlug ? `&cat=${parentSlug}` : ""}`}
+                    href={`/products?color=${encodeURIComponent(c.c)}${gender ? `&gender=${gender}` : ""}`}
                     className="mclr"
                   >
                     <div className="mclr-d" style={{ background: c.h }} />
@@ -132,7 +132,7 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
                 {sizeLinks.map((s: any) => (
                   <Link
                     key={s.sizeValue || s.name}
-                    href={`/products?size=${s.sizeValue || s.name}${queryGen ? `&${queryGen}` : ""}${parentSlug ? `&cat=${parentSlug}` : ""}`}
+                    href={`/products?size=${s.sizeValue || s.name}${gender ? `&gender=${gender}` : ""}`}
                     className="msize-pill"
                   >
                     {s.sizeValue || s.name}

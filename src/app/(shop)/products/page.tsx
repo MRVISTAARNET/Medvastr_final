@@ -174,8 +174,6 @@ function ProductsContent() {
         <SmartBanner
           base={staticBannerBase}
           title={staticBannerTitle}
-          subtitle={activeDesc}
-          hideText={isSurgical}
         />
       )}
       <div className="sec" style={{ paddingBottom: 60 }}>
@@ -528,9 +526,18 @@ function ProductsContent() {
   );
 }
 
-// Now uses Next.js Image optimization directly with .jpg extension
-function SmartBanner({ base, title, subtitle, hideText }: { base: string; title: string; subtitle?: string, hideText?: boolean }) {
-  const src = base + ".jpg";
+// SmartBanner: always hides text, tries jpg/png/webp so your S3 upload always works
+function SmartBanner({ base, title }: { base: string; title: string; }) {
+  const [src, setSrc] = React.useState(base + ".jpg");
+  const [failed, setFailed] = React.useState(false);
+
+  const tryNext = () => {
+    if (src.endsWith(".jpg")) { setSrc(base + ".png"); }
+    else if (src.endsWith(".png")) { setSrc(base + ".webp"); }
+    else { setFailed(true); }
+  };
+
+  if (failed) return null;
 
   return (
     <div
@@ -541,25 +548,22 @@ function SmartBanner({ base, title, subtitle, hideText }: { base: string; title:
         borderRadius: 24,
         overflow: 'hidden',
         aspectRatio: '1600 / 600',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        padding: '0 80px',
         position: 'relative',
         boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-        color: 'white'
+        background: '#f1f5f9',
       }}
     >
-      <Image src={src} alt={title} fill style={{ objectFit: 'cover', zIndex: -2 }} priority />
-      {!hideText && (
-        <div style={{ maxWidth: '600px', zIndex: 1 }}>
-          <h1 style={{ fontSize: '56px', fontWeight: 900, marginBottom: '20px', letterSpacing: '-2px' }}>{title}</h1>
-          {subtitle && <p style={{ fontSize: '20px', opacity: 0.9, lineHeight: '1.6', fontWeight: 500 }}>{subtitle}</p>}
-        </div>
-      )}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={title}
+        onError={tryNext}
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+      />
     </div>
   );
 }
+
 
 export default function ProductsPage() {
   return (
