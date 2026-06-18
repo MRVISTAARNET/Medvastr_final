@@ -104,6 +104,8 @@ export default function AdminProducts() {
     return raw.replace(/\s+/g, ' ').trim();
   };
 
+  const isVideo = (url: string) => /\.(mp4|webm|ogg|mov)$/i.test(url);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
     const key = id.replace('p-', '');
@@ -487,13 +489,44 @@ export default function AdminProducts() {
                   <div className="fg">
                     <label>Product Images (Drag to reorder after upload)</label>
                     <input type="file" accept="image/*" multiple onChange={(e) => handleFileUpload(e, 'imgs', true)} />
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
-                      {Array.isArray(form.imgs) && form.imgs.map((url: string, i: number) => (
-                        <div key={i} style={{ position: 'relative', width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', border: '2px solid #fff', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-                          <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="preview" />
-                          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.6)', color: 'white', fontSize: '9px', textAlign: 'center', fontWeight: 800 }}>#{i + 1}</div>
-                        </div>
-                      ))}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '16px' }}>
+                      {Array.isArray(form.imgs) && form.imgs.map((url: string, i: number) => {
+                        const currentClr = url.split('?clr=')[1] || 'all';
+                        const colorInputs = (form.clrs || '').split(',').map((c: string) => c.trim()).filter(Boolean);
+
+                        return (
+                          <div key={i} style={{ width: '120px', background: '#fff', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+                            <div style={{ position: 'relative', width: '100%', aspectRatio: '1/1' }}>
+                              {isVideo(url) ? (
+                                <div style={{ width: '100%', height: '100%', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '20px' }}>🎬</div>
+                              ) : (
+                                <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="preview" />
+                              )}
+                              <div style={{ position: 'absolute', top: 4, right: 4, width: '20px', height: '20px', background: '#ef4444', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', cursor: 'pointer', fontWeight: 900 }}
+                                onClick={() => {
+                                  const next = [...form.imgs];
+                                  next.splice(i, 1);
+                                  setForm((prev: any) => ({ ...prev, imgs: next }));
+                                }}>✕</div>
+                            </div>
+                            <div style={{ padding: '8px' }}>
+                              <select
+                                value={currentClr}
+                                style={{ width: '100%', fontSize: '10px', padding: '4px', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+                                onChange={(e) => {
+                                  const next = [...form.imgs];
+                                  const base = url.split('?')[0];
+                                  next[i] = e.target.value === 'all' ? base : `${base}?clr=${e.target.value}`;
+                                  setForm((prev: any) => ({ ...prev, imgs: next }));
+                                }}
+                              >
+                                <option value="all">Unassigned</option>
+                                {colorInputs.map((c: string) => <option key={c} value={getColHex(c)}>{c}</option>)}
+                              </select>
+                            </div>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                   <div className="fg">

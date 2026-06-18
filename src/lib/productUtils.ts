@@ -33,20 +33,26 @@ function buildClrImgs(api: any, normalizedImgs: string[]): Record<string, string
   if (colors.length === 0) return clrImgs;
 
   colors.forEach((c, i) => {
+    // 1. First priority: Check for explicit tagging (?clr=#hex)
+    const tagged = normalizedImgs.filter(u => u.toLowerCase().includes(`?clr=${c.hex.toLowerCase()}`));
+
+    // 2. Second priority: Variant Hero Image
     const variantImg = (api.variants || []).find(
       (v: any) => v.colorHex === c.hex && v.imageUrl
     )?.imageUrl;
-    if (variantImg) {
+
+    if (tagged.length > 0) {
+      clrImgs[c.hex] = tagged;
+    } else if (variantImg) {
       const primary = normalizeMediaUrl(variantImg);
-      const extras = normalizedImgs.filter((u) => u !== primary);
+      const extras = normalizedImgs.filter((u) => u !== primary && !u.includes('?clr='));
       clrImgs[c.hex] = [primary, ...extras];
-      return;
-    }
-    if (normalizedImgs.length >= colors.length) {
+    } else if (normalizedImgs.length >= colors.length) {
+      // 3. Fallback: Sequential grouping
       const per = Math.max(1, Math.ceil(normalizedImgs.length / colors.length));
       clrImgs[c.hex] = normalizedImgs.slice(i * per, (i + 1) * per);
     } else {
-      clrImgs[c.hex] = normalizedImgs.length ? normalizedImgs : [];
+      clrImgs[c.hex] = normalizedImgs.filter(u => !u.includes('?clr='));
     }
   });
   return clrImgs;
