@@ -150,7 +150,8 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
               {featuredProduct ? (
                 <Link href={`/product/${featuredProduct.slug || featuredProduct.id}`} className="m-feat-card">
                   <div className="m-feat-img">
-                    {featuredProduct.imgs?.[0] && <img src={featuredProduct.imgs[0]} alt={featuredProduct.name} />}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    {featuredProduct.imgs?.[0] && <img src={featuredProduct.imgs[0]} alt={featuredProduct.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                   </div>
                   <div className="m-feat-info">
                     <span className="m-feat-name">{featuredProduct.name}</span>

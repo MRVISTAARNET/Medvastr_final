@@ -13,6 +13,7 @@ function ProductsContent() {
   const initCat = searchParams.get("cat") || "all";
   const initColor = searchParams.get("color") || "";
   const initGen = searchParams.get("gender")?.toLowerCase() || "all";
+  const initSize = searchParams.get("size") || "";
   const { products, banners } = useApp();
 
   const [cat, setCat] = useState(initCat);
@@ -21,21 +22,25 @@ function ProductsContent() {
   const [minP, setMinP] = useState("");
   const [maxP, setMaxP] = useState("");
   const [colorFilter, setColorFilter] = useState(initColor);
+  const [sizeFilter, setSizeFilter] = useState(initSize);
   const [pg, setPg] = useState(1);
   const [mobF, setMobF] = useState(false);
 
   useEffect(() => {
     setCat(initCat);
     setColorFilter(initColor);
+    setSizeFilter(initSize);
     setGen(initGen);
     setPg(1);
-  }, [initCat, initColor, initGen]);
+  }, [initCat, initColor, initSize, initGen]);
 
   const PER = 9;
 
   let f = products.filter((p) => {
     if (cat !== "all" && p.type !== cat) return false;
-    if (gen !== "all" && p.gen !== "unisex" && p.gen !== gen) return false;
+    // Case-insensitive gender comparison — fixes men/women redirect bug
+    const pGen = (p.gen || "").toLowerCase();
+    if (gen !== "all" && pGen !== "unisex" && pGen !== gen.toLowerCase()) return false;
     if (minP && p.price < parseInt(minP)) return false;
     if (maxP && p.price > parseInt(maxP)) return false;
     if (colorFilter) {
@@ -45,6 +50,14 @@ function ProductsContent() {
         hex.toLowerCase() === colorFilter.toLowerCase()
       );
       if (!colorMatch) return false;
+    }
+    if (sizeFilter) {
+      const sizeMatch = (p as any).sizes?.some((s: string) =>
+        s.toUpperCase() === sizeFilter.toUpperCase()
+      ) || (p as any).variants?.some((v: any) =>
+        v.size?.toUpperCase() === sizeFilter.toUpperCase()
+      );
+      if (!sizeMatch) return false;
     }
     return true;
   });
@@ -64,10 +77,11 @@ function ProductsContent() {
     setMinP("");
     setMaxP("");
     setColorFilter("");
+    setSizeFilter("");
     setPg(1);
   };
 
-  const hasFilters = cat !== "all" || gen !== "all" || minP || maxP || colorFilter;
+  const hasFilters = cat !== "all" || gen !== "all" || minP || maxP || colorFilter || sizeFilter;
 
   const typeConfigs: Record<string, { ico: string; l: string; d: string }> = {
     scrubs: {
