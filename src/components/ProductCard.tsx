@@ -56,7 +56,9 @@ export default function ProductCard({ p }: PCardProps) {
 
         {/* Quick Labels (Badges) */}
         <div className="pc-badges">
-          {p.badge && <div className={`pc-badge badge-${p.badge.toLowerCase().replace(/\s/g, "")}`}>{p.badge}</div>}
+          {p.badge && p.badge.split(',').map((b, i) => (
+            <div key={i} className={`pc-badge badge-${b.trim().toLowerCase().replace(/\s/g, "")}`}>{b.trim()}</div>
+          ))}
           {discount > 0 && <div className="pc-badge badge-sale">-{discount}%</div>}
         </div>
       </div>

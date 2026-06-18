@@ -8,17 +8,19 @@ export default function NewArrivalsPage() {
   if (!ctx) return null;
 
   const { collections, products } = ctx;
-  
+
   // Get New Arrivals collection
   const newArrivalsCollection = collections.find((c: any) => c.collectionType === "NEW_ARRIVALS");
-  
+
   // Get recently added products (from last 30 days)
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-  
+
   const newArrivals = products.filter((p: any) => {
     const createdDate = new Date(p.createdAt);
-    return createdDate > thirtyDaysAgo;
+    const isRecentlyAdded = createdDate > thirtyDaysAgo;
+    const hasNewBadge = (p.badge || "").toLowerCase().includes("new");
+    return isRecentlyAdded || hasNewBadge;
   });
 
   return (

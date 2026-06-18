@@ -44,10 +44,17 @@ export default function Home() {
   const tabProducts = (() => {
     const tab = TABS.find((t) => t.id === activeTab);
     if (!tab) return [];
-    return products.filter((x) => x.type === tab.type).slice(0, 8); // Reduced to 8 to prevent DOM bloat
+    // Only show products in this tab that are also tagged as Bestseller
+    return products.filter((x) =>
+      x.type === tab.type &&
+      (x.badge || "").includes("Bestseller")
+    ).slice(0, 8);
   })();
 
-  const newArr = products.filter((p) => p.badge && ["New", "New Launch"].includes(p.badge)).slice(0, 8); // Reduced to 8
+  const newArr = products.filter((p) =>
+    (p.badge || "").includes("New") ||
+    (p.badge || "").includes("New Launch")
+  ).slice(0, 8);
 
   return (
     <div className="page">

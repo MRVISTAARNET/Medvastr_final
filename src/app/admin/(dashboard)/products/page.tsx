@@ -354,7 +354,7 @@ export default function AdminProducts() {
                         <span style={{ color: '#f59e0b', letterSpacing: '-1px' }}>{getStars(p.rating || 0)}</span>
                         <span style={{ fontSize: '12px', color: 'var(--txt3)', marginLeft: '6px' }}>{p.rating || 0}</span>
                       </td>
-                      <td>{p.badge ? <span className="badge b-purple">{p.badge}</span> : '-'}</td>
+                      <td>{p.badge ? (p.badge.split(',').map((b: string, i: number) => <span key={i} className="badge b-purple" style={{ marginRight: '4px', marginBottom: '4px' }}>{b.trim()}</span>)) : '-'}</td>
                       <td>{(p as any).active ? <span className="badge b-grn">Active</span> : <span className="badge b-red">Inactive</span>}</td>
                       <td>
                         <div className="act-btns">
@@ -431,14 +431,26 @@ export default function AdminProducts() {
                   <select id="p-gen" value={form.gen} onChange={handleInputChange}>
                     <option value="men">Men</option>
                     <option value="women">Women</option>
-                    <option value="unisex">Unisex</option>
+                    <option value="unisex">Unisex (Shows in both Men & Women)</option>
                   </select>
                 </div>
                 <div className="fg">
-                  <label>Visibility Status</label>
+                  <label>Style / Fit Group</label>
+                  <select id="p-styleId" value={form.styleId} onChange={handleInputChange}>
+                    <option value="top">Top</option>
+                    <option value="bottom">Bottom</option>
+                    <option value="set">Full Set</option>
+                    <option value="tshirt">T-Shirt / Crew</option>
+                    <option value="underscrub">Under Scrub</option>
+                    <option value="cap">Cap / Accessory</option>
+                    <option value="linen">Linen / Bedding</option>
+                  </select>
+                </div>
+                <div className="fg">
+                  <label>Status</label>
                   <select id="p-active" value={form.active ? "true" : "false"} onChange={(e) => setForm((prev: any) => ({ ...prev, active: e.target.value === "true" }))}>
-                    <option value="true">Active (Published)</option>
-                    <option value="false">Inactive (Draft)</option>
+                    <option value="true">Active</option>
+                    <option value="false">Hidden</option>
                   </select>
                 </div>
               </div>
@@ -459,19 +471,32 @@ export default function AdminProducts() {
                 </div>
               </div>
               <div className="fg-row">
-                <div className="fg">
-                  <label>Badge</label>
-                  <select id="p-badge" value={form.badge} onChange={handleInputChange}>
-                    <option value="">None</option>
-                    <option value="Bestseller">Bestseller</option>
-                    <option value="New">New</option>
-                    <option value="Premium">Premium</option>
-                    <option value="New Launch">New Launch</option>
-                    <option value="10% Off">10% Off</option>
-                  </select>
+                <div className="fg" style={{ gridColumn: 'span 2' }}>
+                  <label>Badges (Select Multiple)</label>
+                  <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', padding: '12px', background: '#f8fafc', borderRadius: '12px', border: '1.5px solid #e2e8f0' }}>
+                    {["Bestseller", "New", "New Launch", "Premium", "10% Off", "Limited Edition"].map(tag => (
+                      <label key={tag} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>
+                        <input
+                          type="checkbox"
+                          checked={(form.badge || "").includes(tag)}
+                          onChange={(e) => {
+                            const current = (form.badge || "").split(',').map((s: string) => s.trim()).filter(Boolean);
+                            let next;
+                            if (e.target.checked) {
+                              next = [...current, tag];
+                            } else {
+                              next = current.filter((t: string) => t !== tag);
+                            }
+                            setForm((prev: any) => ({ ...prev, badge: next.join(', ') }));
+                          }}
+                        />
+                        {tag}
+                      </label>
+                    ))}
+                  </div>
                 </div>
                 <div className="fg">
-                  <label>Emoji Shortcut</label>
+                  <label>Emoji</label>
                   <input type="text" id="p-emo" value={form.emo} onChange={handleInputChange} placeholder="🥼" />
                 </div>
               </div>
