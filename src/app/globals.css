@@ -1559,13 +1559,19 @@ textarea {
 /* Category Grid - Refined for Premium Look */
 .cat-g {
   display: grid !important;
-  grid-template-columns: repeat(6, 1fr) !important;
-  gap: 24px;
+  grid-template-columns: repeat(8, 1fr) !important;
+  gap: 16px;
   margin-top: 40px;
   width: 100% !important;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 1600px) {
+  .cat-g {
+    grid-template-columns: repeat(6, 1fr) !important;
+  }
+}
+
+@media (max-width: 1200px) {
   .cat-g {
     grid-template-columns: repeat(4, 1fr) !important;
   }
@@ -1630,7 +1636,7 @@ textarea {
 }
 
 .cat-img-box {
-  height: 180px;
+  height: 130px;
   width: 100%;
   overflow: hidden;
   background: #f8fafc;
@@ -1651,8 +1657,8 @@ textarea {
 }
 
 .cat-l {
-  padding: 15px 10px;
-  font-size: 13px;
+  padding: 10px 6px;
+  font-size: 11px;
   font-weight: 800;
   color: #1e293b;
   text-transform: uppercase;
