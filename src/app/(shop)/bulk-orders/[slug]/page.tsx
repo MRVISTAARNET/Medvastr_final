@@ -209,6 +209,17 @@ export default function BulkProductPage() {
             </div>
           </div>
         </div>
+
+        {/* BOTTOM CTA - WIDE BUTTON */}
+        <div className="bottom-cta-section">
+          <div className="bottom-cta-card">
+            <h2>Ready to place a bulk order?</h2>
+            <p>Get the best institutional pricing for {item.name}. Our team will get back to you within 24 hours.</p>
+            <a href={`/contact?subject=Bulk Enquiry: ${item.name}`} className="enquiry-btn-wide">
+              ✉️ Send Enquiry for {item.name}
+            </a>
+          </div>
+        </div>
       </div>
 
       <style jsx>{`
@@ -356,6 +367,60 @@ export default function BulkProductPage() {
         .enquiry-btn:hover {
           transform: translateY(-8px) scale(1.03);
           box-shadow: 0 22px 50px rgba(255, 30, 86, 0.45);
+          filter: brightness(1.1);
+        }
+
+        .bottom-cta-section {
+          margin-top: 80px;
+          padding: 60px 0;
+          border-top: 1px solid #e2e8f0;
+          text-align: center;
+        }
+
+        .bottom-cta-card {
+          background: #f8fafc;
+          padding: 60px 40px;
+          border-radius: 40px;
+          border: 1px solid #e2e8f0;
+          max-width: 900px;
+          margin: 0 auto;
+        }
+
+        .bottom-cta-card h2 {
+          font-size: 40px;
+          font-weight: 950;
+          color: #0f172a;
+          margin-bottom: 12px;
+          letter-spacing: -1.5px;
+        }
+
+        .bottom-cta-card p {
+          font-size: 18px;
+          color: #64748b;
+          margin-bottom: 40px;
+        }
+
+        .enquiry-btn-wide {
+          display: inline-block;
+          width: 100%;
+          max-width: 500px;
+          background: linear-gradient(135deg, #ff4c29 0%, #ff1e56 100%);
+          color: white;
+          text-align: center;
+          padding: 24px 50px;
+          border-radius: 100px;
+          font-size: 20px;
+          font-weight: 900;
+          text-decoration: none;
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          box-shadow: 0 15px 45px rgba(255, 30, 86, 0.4);
+          text-transform: uppercase;
+          letter-spacing: 1.5px;
+        }
+
+        .enquiry-btn-wide:hover {
+          transform: translateY(-8px) scale(1.02);
+          box-shadow: 0 25px 60px rgba(255, 30, 86, 0.5);
           filter: brightness(1.1);
         }
 

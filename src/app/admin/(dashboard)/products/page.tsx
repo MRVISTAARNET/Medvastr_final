@@ -222,14 +222,6 @@ export default function AdminProducts() {
         sizes: sizeInputs,
         clrs: colorInputs.map((c: string) => getColHex(c)).filter(Boolean),
         variants,
-        weight: form.weight,
-        care: form.care,
-        stretch: form.stretch,
-        fabD: form.fabD,
-        pockets: parseInt(form.pockets) || 0,
-        videoUrl: form.videoUrl,
-        rating: editingProduct?.rating || 4.5,
-        rev: editingProduct?.rev || 0,
         active: true
       };
 
@@ -240,15 +232,7 @@ export default function AdminProducts() {
       } else {
         const saved = await addProduct(pData);
         if (saved) {
-          // Instead of closing, set to editing mode so they can download barcode
           setEditingProduct(saved);
-          setForm({
-            ...saved,
-            imgs: saved.imgs?.[0] || '',
-            sizes: saved.sizes?.join(', ') || '',
-            clrs: saved.clrs?.join(', ') || '',
-            catId: saved.catId || ''
-          });
         }
       }
     } else {
@@ -256,12 +240,49 @@ export default function AdminProducts() {
     }
   };
 
-  const downloadBarcode = async () => {
-    if (labelRef.current === null) return;
+  const downloadAllBarcodes = async () => {
+    if (!editingProduct?.variants?.length) return;
+    const variants = editingProduct.variants;
+
+    // Check if we have multiple variants
+    if (!confirm(`This will download ${variants.length} barcode labels. Continue?`)) return;
+
+    for (let i = 0; i < variants.length; i++) {
+      const v = variants[i];
+      // Note: In a real production app, we'd use a ZIP library or a server-side PDF generator.
+      // For this demo, we'll download them sequentially.
+      const vForm = {
+        ...form,
+        barcode: v.sku,
+        sku: v.sku,
+        currentSize: v.size,
+        currentColor: v.colorName
+      };
+
+      // We temporarily update the preview to the specific variant
+      const labelNode = document.getElementById(`label-${i}`);
+      if (!labelNode) continue;
+
+      try {
+        const dataUrl = await toJpeg(labelNode, { cacheBust: true, pixelRatio: 2 });
+        const link = document.createElement('a');
+        link.download = `barcode-${v.sku}.jpg`;
+        link.href = dataUrl;
+        link.click();
+        // Add a small delay to avoid browser blocking
+        await new Promise(r => setTimeout(r, 500));
+      } catch (err) {
+        console.error(`Barcode ${v.sku} failed`, err);
+      }
+    }
+  };
+
+  const downloadBarcode = async (ref: React.RefObject<HTMLDivElement | null>, sku: string) => {
+    if (!ref.current) return;
     try {
-      const dataUrl = await toJpeg(labelRef.current, { cacheBust: true, pixelRatio: 3 });
+      const dataUrl = await toJpeg(ref.current, { cacheBust: true, pixelRatio: 3 });
       const link = document.createElement('a');
-      link.download = `barcode-${form.sku || 'product'}.jpg`;
+      link.download = `barcode-${sku || 'product'}.jpg`;
       link.href = dataUrl;
       link.click();
     } catch (err) {
@@ -453,35 +474,115 @@ export default function AdminProducts() {
                 </div>
               </div>
               {/* Media Upload */}
-              <div className="fg-row">
-                <div className="fg">
-                  <label>Images (ordered by color)</label>
-                  <input type="file" accept="image/*" multiple onChange={(e) => handleFileUpload(e, 'imgs', true)} />
-                  {Array.isArray(form.imgs) && form.imgs.length > 0 && (
-                    <p style={{ fontSize: '12px', color: 'var(--teal)', marginTop: '4px' }}>✓ {form.imgs.length} file(s) selected</p>
-                  )}
-                </div>
-                <div className="fg">
-                  <label>Product Video (Optional)</label>
-                  <input type="file" accept="video/*" onChange={(e) => handleFileUpload(e, 'videoUrl', false)} />
-                  {form.videoUrl && (
-                    <p style={{ fontSize: '12px', color: 'var(--txt4)', marginTop: '4px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{form.videoUrl.split('/').pop()}</p>
-                  )}
+              <div className="media-section" style={{ background: '#f0f9ff', padding: '24px', borderRadius: '20px', border: '1px solid #bae6fd', marginTop: '24px', marginBottom: '24px' }}>
+                <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#0c4a6e', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>📸</span> Media & Color Pairing
+                </h3>
+                <p style={{ fontSize: '13px', color: '#0369a1', marginBottom: '20px', lineHeight: 1.5 }}>
+                  <strong>Important:</strong> Upload images in the <strong>same order</strong> as your colors. <br />
+                  (e.g. If colors are <em>Blue, Red</em>: Upload Blue images first, then Red images).
+                </p>
+
+                <div className="fg-row">
+                  <div className="fg">
+                    <label>Product Images (Drag to reorder after upload)</label>
+                    <input type="file" accept="image/*" multiple onChange={(e) => handleFileUpload(e, 'imgs', true)} />
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
+                      {Array.isArray(form.imgs) && form.imgs.map((url: string, i: number) => (
+                        <div key={i} style={{ position: 'relative', width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', border: '2px solid #fff', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                          <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="preview" />
+                          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.6)', color: 'white', fontSize: '9px', textAlign: 'center', fontWeight: 800 }}>#{i + 1}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="fg">
+                    <label>Product Video (Optional)</label>
+                    <input type="file" accept="video/*" onChange={(e) => handleFileUpload(e, 'videoUrl', false)} />
+                    {form.videoUrl && (
+                      <p style={{ fontSize: '12px', color: '#0369a1', marginTop: '8px', fontWeight: 700 }}>✓ Video Uploaded</p>
+                    )}
+                  </div>
                 </div>
               </div>
 
               {/* Properties & Variants */}
-              <div className="fg-row">
-                <div className="fg">
-                  <label>Sizes (CSV)</label>
-                  <input type="text" id="p-sizes" value={form.sizes} onChange={handleInputChange} placeholder="S, M, L, XL" />
+              <div className="variant-section" style={{ background: '#f8fafc', padding: '24px', borderRadius: '20px', border: '1px solid #e2e8f0', marginTop: '24px' }}>
+                <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#0f172a', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>🎨</span> Variant Management & Barcodes
+                </h3>
+
+                <div className="fg-row">
+                  <div className="fg">
+                    <label>Sizes (Separated by comma)</label>
+                    <input type="text" id="p-sizes" value={form.sizes} onChange={handleInputChange} placeholder="XS, S, M, L, XL" />
+                  </div>
+                  <div className="fg">
+                    <label>Colors (Separated by comma)</label>
+                    <input type="text" id="p-clrs" value={form.clrs} onChange={handleInputChange} placeholder="Navy Blue, Deep Maroon" />
+                  </div>
                 </div>
-                <div className="fg">
-                  <label>Colors (CSV Names)</label>
-                  <input type="text" id="p-clrs" value={form.clrs} onChange={handleInputChange} placeholder="Dark Blue, Maroon" />
-                </div>
+
+                {editingProduct && (
+                  <div style={{ marginTop: '20px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                      <p style={{ fontSize: '13px', fontWeight: 700, color: '#64748b' }}>Generated Inventory Variants ({editingProduct.variants?.length})</p>
+                      <button type="button" className="btn-primary" style={{ fontSize: '12px', padding: '8px 16px' }} onClick={downloadAllBarcodes}>⬇️ Download All Barcodes</button>
+                    </div>
+
+                    <div style={{ maxHeight: '300px', overflowY: 'auto', border: '1px solid #e2e8f0', borderRadius: '12px', background: 'white' }}>
+                      <table style={{ width: '100%', fontSize: '12px', borderCollapse: 'collapse' }}>
+                        <thead style={{ position: 'sticky', top: 0, background: '#f1f5f9' }}>
+                          <tr>
+                            <th style={{ textAlign: 'left', padding: '10px' }}>Variant</th>
+                            <th style={{ textAlign: 'left', padding: '10px' }}>SKU</th>
+                            <th style={{ textAlign: 'center', padding: '10px' }}>Labels</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {editingProduct.variants?.map((v: any, idx: number) => (
+                            <tr key={idx} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                              <td style={{ padding: '10px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                  <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: v.colorHex }} />
+                                  <strong>{v.size}</strong> <span style={{ opacity: 0.6 }}>/</span> {v.colorName}
+                                </div>
+                              </td>
+                              <td style={{ padding: '10px', fontFamily: 'monospace' }}>{v.sku}</td>
+                              <td style={{ padding: '10px', textAlign: 'center' }}>
+                                <button type="button" style={{ color: '#008080', fontWeight: 800 }} onClick={() => {
+                                  const node = document.getElementById(`label-${idx}`);
+                                  if (node) {
+                                    const mockLink = { current: node };
+                                    downloadBarcode(mockLink as any, v.sku);
+                                  }
+                                }}>Print</button>
+                                {/* Hidden Labels for printing */}
+                                <div style={{ position: 'absolute', left: '-9999px', top: '-9999px' }}>
+                                  <div id={`label-${idx}`} style={{ width: '350px', padding: '30px', background: 'white', border: '2px solid black', color: 'black', fontFamily: 'sans-serif' }}>
+                                    <div style={{ textAlign: 'center', fontSize: '28px', fontWeight: 900, marginBottom: '10px', borderBottom: '2px solid black', paddingBottom: '10px' }}>{B.name.toUpperCase()}</div>
+                                    <div style={{ fontSize: '14px', marginBottom: '4px' }}><strong>ID:</strong> {v.sku}</div>
+                                    <div style={{ fontSize: '14px', marginBottom: '4px' }}><strong>PRODUCT:</strong> {form.name}</div>
+                                    <div style={{ fontSize: '14px', marginBottom: '4px' }}><strong>SIZE:</strong> {v.size}</div>
+                                    <div style={{ fontSize: '14px', marginBottom: '10px' }}><strong>COLOR:</strong> {v.colorName}</div>
+                                    <div style={{ fontSize: '24px', fontWeight: 900, marginTop: '10px' }}>MRP: ₹ {form.price}</div>
+                                    <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
+                                      <Barcode value={v.sku} width={1.5} height={50} fontSize={12} />
+                                    </div>
+                                    <div style={{ marginTop: '15px', fontSize: '10px', textAlign: 'center', opacity: 0.7 }}>medvastr.com | {B.phone1}</div>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
               </div>
-              <div className="fg-row">
+
+              <div className="fg-row" style={{ marginTop: '24px' }}>
                 <div className="fg">
                   <label>Fabric / Material</label>
                   <input type="text" id="p-fab" value={form.fab} onChange={handleInputChange} placeholder="Classic / ecoflex™" />
@@ -563,7 +664,7 @@ export default function AdminProducts() {
                         Phone: {B.phone1}
                       </div>
                     </div>
-                    <button type="button" className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold shadow-md transition-all flex items-center gap-2" onClick={downloadBarcode}>
+                    <button type="button" className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold shadow-md transition-all flex items-center gap-2" onClick={() => downloadBarcode(labelRef, form.barcode)}>
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                       Download PDF Label
                     </button>
