@@ -82,19 +82,51 @@ export default function AdminProducts() {
     }
   }, [form.name, form.styleId, form.clrs, form.brand, editingProduct]);
 
+  // SKU Mapping Codes
+  const GENDER_CODES: Record<string, string> = { men: 'MEN', women: 'WOM', unisex: 'UNI' };
+  const CAT_CODES: Record<string, string> = {
+    top: 'TOP', bottom: 'BOT', set: 'SET', tshirt: 'TSH', underscrub: 'USC', cap: 'CAP', linen: 'LIN'
+  };
+  const PRODUCT_NAME_CODES: Record<string, string> = {
+    'flexi fit v scrub': 'FVS',
+    'classic scrub': 'CLS',
+    'cotton crew tshirt': 'CCT',
+    'compression under scrub': 'CUS',
+    'surgical gown': 'SGN',
+    'surgical cap': 'SCP'
+  };
+  const COLOR_CODES: Record<string, string> = {
+    'navy blue': 'NB', 'light blue': 'LB', 'maroon': 'MR', 'wine': 'WN',
+    'black': 'BK', 'lavender': 'LV', 'green': 'GN', 'grey': 'GR', 'teal': 'TL'
+  };
+
+  const getProductCode = (name: string) => {
+    const n = name.toLowerCase();
+    for (const [key, code] of Object.entries(PRODUCT_NAME_CODES)) {
+      if (n.includes(key)) return code;
+    }
+    return 'PRD'; // Default
+  };
+
+  const getColCode = (name: string) => {
+    const n = name.trim().toLowerCase();
+    if (COLOR_CODES[n]) return COLOR_CODES[n];
+    return n.slice(0, 2).toUpperCase();
+  };
+
   // Color Map (Name to Hex)
   const COLOR_MAP: Record<string, string> = {
-    'dark blue': '#1a2b4a', 'navy': '#000080', 'royal blue': '#4169e1', 'light blue': '#add8e6',
+    'navy blue': '#1a2b4a', 'navy': '#000080', 'royal blue': '#4169e1', 'light blue': '#add8e6',
     'maroon': '#800000', 'wine': '#722f37', 'black': '#000000', 'white': '#ffffff',
     'green': '#2e7d32', 'olive': '#556b2f', 'teal': '#008080', 'grey': '#808080',
-    'pink': '#ffc0cb', 'purple': '#800080', 'burgundy': '#800020'
+    'pink': '#ffc0cb', 'purple': '#800080', 'burgundy': '#800020', 'lavender': '#e6e6fa'
   };
 
   const getColHex = (name: string) => {
     const n = name.trim().toLowerCase();
     if (COLOR_MAP[n]) return COLOR_MAP[n];
     if (n.startsWith('#')) return n;
-    return '#cccccc'; // fallback
+    return '#cccccc';
   };
 
   const getColName = (input: string) => {
@@ -199,13 +231,24 @@ export default function AdminProducts() {
       const variantStock = 100;
       const imgList = Array.isArray(form.imgs) ? form.imgs : form.imgs ? [form.imgs] : [];
       const variants = sizeInputs.flatMap((size: string) =>
-        colorInputs.map((colorInput: string) => ({
-          size,
-          colorName: getColName(colorInput),
-          colorHex: getColHex(colorInput),
-          stockQuantity: variantStock,
-          sku: `${form.sku || 'MV'}-${size}-${getColName(colorInput).replace(/\s+/g, '').toUpperCase()}`
-        }))
+        colorInputs.map((colorInput: string) => {
+          const gCode = GENDER_CODES[form.gen] || 'MEN';
+          const cCode = CAT_CODES[form.styleId] || 'TOP';
+          const pCode = getProductCode(form.name);
+          const colCode = getColCode(colorInput);
+          const sCode = size.replace(/\s+/g, '').toUpperCase();
+          const SKU = `${gCode}-${cCode}-${pCode}-${colCode}-${sCode}`;
+          const BarcodeValue = SKU.replace(/-/g, '');
+
+          return {
+            size,
+            colorName: getColName(colorInput),
+            colorHex: getColHex(colorInput),
+            stockQuantity: variantStock,
+            sku: SKU,
+            barcode: BarcodeValue
+          };
+        })
       );
       // Assign hero images per colour based on the user's manual pairing (?clr= tag)
       colorInputs.forEach((colorInput: string) => {
@@ -505,67 +548,111 @@ export default function AdminProducts() {
                   <input type="text" id="p-emo" value={form.emo} onChange={handleInputChange} placeholder="🥼" />
                 </div>
               </div>
-              {/* Media Upload */}
-              <div className="media-section" style={{ background: '#f0f9ff', padding: '24px', borderRadius: '20px', border: '1px solid #bae6fd', marginTop: '24px', marginBottom: '24px' }}>
-                <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#0c4a6e', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span>📸</span> Media & Color Pairing
-                </h3>
-                <p style={{ fontSize: '13px', color: '#0369a1', marginBottom: '20px', lineHeight: 1.5 }}>
-                  <strong>Important:</strong> Upload images in the <strong>same order</strong> as your colors. <br />
-                  (e.g. If colors are <em>Blue, Red</em>: Upload Blue images first, then Red images).
-                </p>
+              {/* Media Upload — REDESIGNED: COLOR-GROUPED */}
+              <div className="media-section" style={{ background: '#f8fafc', padding: '28px', borderRadius: '24px', border: '1px solid #e2e8f0', marginTop: '24px', marginBottom: '24px' }}>
+                <div style={{ marginBottom: '24px' }}>
+                  <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span>📸</span> Media & Color Pairing
+                  </h3>
+                  <p style={{ fontSize: '13px', color: '#64748b' }}>
+                    Assign images to specific colors. The first image in each color group will be the primary thumbnail.
+                  </p>
+                </div>
 
-                <div className="fg-row">
-                  <div className="fg">
-                    <label>Product Images (Drag to reorder after upload)</label>
-                    <input type="file" accept="image/*" multiple onChange={(e) => handleFileUpload(e, 'imgs', true)} />
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '16px' }}>
-                      {Array.isArray(form.imgs) && form.imgs.map((url: string, i: number) => {
-                        const currentClr = url.split('?clr=')[1] || 'all';
-                        const colorInputs = (form.clrs || '').split(',').map((c: string) => c.trim()).filter(Boolean);
+                <div className="fg" style={{ marginBottom: '24px' }}>
+                  <label style={{ fontWeight: 700, color: '#0f172a' }}>Upload New Media (Images/Videos)</label>
+                  <input
+                    type="file"
+                    accept="image/*,video/*"
+                    multiple
+                    onChange={(e) => handleFileUpload(e, 'imgs', true)}
+                    style={{ marginTop: '8px', padding: '12px', background: '#fff', borderRadius: '12px', border: '2px dashed #cbd5e1', width: '100%' }}
+                  />
+                </div>
 
-                        return (
-                          <div key={i} style={{ width: '120px', background: '#fff', borderRadius: '12px', overflow: 'hidden', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
-                            <div style={{ position: 'relative', width: '100%', aspectRatio: '1/1' }}>
-                              {isVideo(url) ? (
-                                <div style={{ width: '100%', height: '100%', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '20px' }}>🎬</div>
-                              ) : (
-                                <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="preview" />
-                              )}
-                              <div style={{ position: 'absolute', top: 4, right: 4, width: '20px', height: '20px', background: '#ef4444', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', cursor: 'pointer', fontWeight: 900 }}
-                                onClick={() => {
-                                  const next = [...form.imgs];
-                                  next.splice(i, 1);
-                                  setForm((prev: any) => ({ ...prev, imgs: next }));
-                                }}>✕</div>
-                            </div>
-                            <div style={{ padding: '8px' }}>
-                              <select
-                                value={currentClr}
-                                style={{ width: '100%', fontSize: '10px', padding: '4px', borderRadius: '4px', border: '1px solid #cbd5e1' }}
-                                onChange={(e) => {
-                                  const next = [...form.imgs];
-                                  const base = url.split('?')[0];
-                                  next[i] = e.target.value === 'all' ? base : `${base}?clr=${e.target.value}`;
-                                  setForm((prev: any) => ({ ...prev, imgs: next }));
-                                }}
-                              >
-                                <option value="all">Unassigned</option>
-                                {colorInputs.map((c: string) => <option key={c} value={getColHex(c)}>{c}</option>)}
-                              </select>
-                            </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  {(() => {
+                    const colorInputs = (form.clrs || '').split(',').map((c: string) => c.trim()).filter(Boolean);
+                    const allGroups = [...colorInputs, 'Unassigned'];
+
+                    return allGroups.map(colorName => {
+                      const hex = colorName === 'Unassigned' ? 'all' : getColHex(colorName);
+                      const groupImgs = (form.imgs || []).filter((url: string) => {
+                        const tag = url.split('?clr=')[1] || 'all';
+                        return tag === hex;
+                      });
+
+                      if (groupImgs.length === 0 && colorName === 'Unassigned') return null;
+
+                      return (
+                        <div key={colorName} style={{ background: '#fff', padding: '20px', borderRadius: '16px', border: '1px solid #e2e8f0', boxShadow: '0 2px 10px rgba(0,0,0,0.02)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                            {colorName !== 'Unassigned' && <div style={{ width: '14px', height: '14px', borderRadius: '50%', background: hex, border: '1px solid rgba(0,0,0,0.1)' }} />}
+                            <span style={{ fontWeight: 800, fontSize: '14px', color: '#0f172a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                              {colorName} {colorName !== 'Unassigned' ? 'Media' : ''}
+                            </span>
+                            <span style={{ fontSize: '12px', color: '#94a3b8', marginLeft: 'auto' }}>{groupImgs.length} items</span>
                           </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                  <div className="fg">
-                    <label>Product Video (Optional)</label>
-                    <input type="file" accept="video/*" onChange={(e) => handleFileUpload(e, 'videoUrl', false)} />
-                    {form.videoUrl && (
-                      <p style={{ fontSize: '12px', color: '#0369a1', marginTop: '8px', fontWeight: 700 }}>✓ Video Uploaded</p>
-                    )}
-                  </div>
+
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
+                            {groupImgs.map((url: string) => {
+                              const originalIdx = form.imgs.indexOf(url);
+                              return (
+                                <div key={url} style={{ width: '100px', position: 'relative' }}>
+                                  <div style={{ width: '100%', aspectRatio: '1/1', borderRadius: '10px', overflow: 'hidden', border: '1px solid #f1f5f9' }}>
+                                    {isVideo(url) ? (
+                                      <div style={{ width: '100%', height: '100%', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>🎬</div>
+                                    ) : (
+                                      <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="preview" />
+                                    )}
+                                  </div>
+
+                                  {/* Delete */}
+                                  <div
+                                    style={{ position: 'absolute', top: -5, right: -5, width: '20px', height: '20px', background: '#ef4444', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', cursor: 'pointer', fontWeight: 900, boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+                                    onClick={() => {
+                                      const next = [...form.imgs];
+                                      next.splice(originalIdx, 1);
+                                      setForm((prev: any) => ({ ...prev, imgs: next }));
+                                    }}
+                                  >✕</div>
+
+                                  {/* Color Cycler / Move */}
+                                  <select
+                                    value={hex}
+                                    style={{ width: '100%', fontSize: '9px', marginTop: '6px', padding: '4px', borderRadius: '6px', border: '1px solid #e2e8f0', background: '#f8fafc' }}
+                                    onChange={(e) => {
+                                      const next = [...form.imgs];
+                                      const base = url.split('?')[0];
+                                      next[originalIdx] = e.target.value === 'all' ? base : `${base}?clr=${e.target.value}`;
+                                      setForm((prev: any) => ({ ...prev, imgs: next }));
+                                    }}
+                                  >
+                                    <option value="all">Unassigned</option>
+                                    {colorInputs.map((c: string) => <option key={c} value={getColHex(c)}>{c}</option>)}
+                                  </select>
+                                </div>
+                              );
+                            })}
+
+                            {groupImgs.length === 0 && (
+                              <div style={{ padding: '20px', border: '2px dashed #f1f5f9', borderRadius: '10px', width: '100%', textAlign: 'center', color: '#94a3b8', fontSize: '12px' }}>
+                                No images assigned to {colorName}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    });
+                  })()}
+                </div>
+
+                <div className="fg" style={{ marginTop: '24px' }}>
+                  <label style={{ fontWeight: 700 }}>Primary Product Video (Optional)</label>
+                  <input type="file" accept="video/*" onChange={(e) => handleFileUpload(e, 'videoUrl', false)} />
+                  {form.videoUrl && (
+                    <p style={{ fontSize: '12px', color: '#0369a1', marginTop: '8px', fontWeight: 700 }}>✓ Video Uploaded</p>
+                  )}
                 </div>
               </div>
 
