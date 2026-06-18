@@ -237,6 +237,8 @@ export default function BulkProductPage() {
 
         .info-column {
           flex: 1;
+          position: sticky;
+          top: 100px;
           align-self: flex-start;
           height: fit-content;
           z-index: 99;

@@ -186,6 +186,7 @@ function ProductsContent() {
     <div className="page" style={{ background: '#ffffff' }}>
       {staticBannerBase && (
         <SmartBanner
+          key={staticBannerBase}
           base={staticBannerBase}
           title={staticBannerTitle}
         />
@@ -569,6 +570,11 @@ function ProductsContent() {
 function SmartBanner({ base, title }: { base: string; title: string; }) {
   const [src, setSrc] = React.useState(base + ".jpg");
   const [failed, setFailed] = React.useState(false);
+
+  React.useEffect(() => {
+    setSrc(base + ".jpg");
+    setFailed(false);
+  }, [base]);
 
   const tryNext = () => {
     if (src.endsWith(".jpg")) { setSrc(base + ".png"); }
