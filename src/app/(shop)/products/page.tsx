@@ -154,7 +154,11 @@ function ProductsContent() {
 
   // 100% DYNAMIC BANNER LOGIC (Ecommerce Priority System)
   if (isSurgical) {
-    staticBannerBase = `${S3}/surgical-wear-banner`;
+    if (catKey === 'surgeon-gown' || catKey === 'surgeon-cap') {
+      staticBannerBase = `${S3}/${catKey}-banner`;
+    } else {
+      staticBannerBase = `${S3}/surgical-wear-banner`;
+    }
     staticBannerTitle = genKey !== "all" ? `${genKey.charAt(0).toUpperCase() + genKey.slice(1)}'s ${activeCatLabel}` : activeCatLabel;
   } else if (catKey !== "all" && genKey !== "all") {
     // Try Gender-Specific Category Banners (Men's Scrubs, etc)
