@@ -153,24 +153,29 @@ function ProductsContent() {
   if (catKey === 'scrubs') bannerCat = 'scrub-suit';
 
   // 100% DYNAMIC BANNER LOGIC (Ecommerce Priority System)
+  const genName = genKey !== "all" ? genKey.charAt(0).toUpperCase() + genKey.slice(1) : "";
+  const titlePrefix = genName ? `${genName}'s ` : "";
+
+  // Prevent double naming (e.g. "Men's Scrub Suit Men")
+  const safeTitle = (activeCatLabel.includes(genName) && genName !== "") ? activeCatLabel : `${titlePrefix}${activeCatLabel}`;
+
   if (isSurgical) {
     staticBannerBase = `${S3}/surgical-wear-banner`;
-    staticBannerTitle = genKey !== "all" ? `${genKey.charAt(0).toUpperCase() + genKey.slice(1)}'s ${activeCatLabel}` : activeCatLabel;
+    staticBannerTitle = safeTitle;
   } else if (catKey !== "all" && genKey !== "all") {
-    // Try Gender-Specific Category Banners (Men's Scrubs, etc)
+    // Try Gender-Specific Category Banners
     staticBannerBase = `${S3}/${genKey}-${bannerCat}-banner`;
-    staticBannerTitle = `${genKey.charAt(0).toUpperCase() + genKey.slice(1)}'s ${activeCatLabel}`;
+    staticBannerTitle = safeTitle;
   } else if (catKey !== "all") {
-    // Try General Category Banners
+    // General Category
     staticBannerBase = `${S3}/${bannerCat}-banner`;
     staticBannerTitle = activeCatLabel;
   } else if (genKey !== "all") {
     // Gender Landing (Men's Collection)
     staticBannerBase = `${S3}/${genKey}-banner`;
-    staticBannerTitle = `${gen.charAt(0).toUpperCase() + gen.slice(1)}'s Collection`;
-  }
-  else {
-    // The mother of all banners
+    staticBannerTitle = `${genName}'s Collection`;
+  } else {
+    // Main landing
     staticBannerBase = `${S3}/all-products-banner`;
     staticBannerTitle = "The Medvastr Collection";
   }
