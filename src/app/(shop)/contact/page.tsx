@@ -18,7 +18,7 @@ export default function ContactPage() {
     <div style={{ backgroundColor: "#ffffff", minHeight: "100vh", position: "relative" }}>
 
       {/* Top Banner Section */}
-      <div style={{
+      <div className="contact-banner" style={{
         height: "60vh",
         minHeight: "450px",
         background: "url('https://d2tnzshqdaedbc.cloudfront.net/contact-banner.jpg') center/cover",
@@ -264,6 +264,7 @@ export default function ContactPage() {
 
         @media (max-width: 768px) {
           .responsive-grid { grid-template-columns: 1fr !important; gap: 28px !important; }
+          .contact-banner { height: 220px !important; min-height: auto !important; }
         }
       `}</style>
     </div>

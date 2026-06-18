@@ -134,8 +134,8 @@ export default function AboutPage() {
 
         @media (max-width: 768px) {
           .about-hero {
-            height: 300px;
-            min-height: 40vh;
+            height: 230px;
+            min-height: auto;
           }
         }
 

@@ -1268,7 +1268,7 @@ textarea {
 .hero {
   position: relative;
   overflow: hidden;
-  background: #ffffff;
+  background: transparent;
 }
 
 .hero-track {
@@ -1286,8 +1286,8 @@ textarea {
 
 @media (max-width: 768px) {
   .hero-slide {
-    min-height: 260px;
-    height: auto;
+    height: 320px !important;
+    min-height: 320px !important;
   }
 }
 

@@ -101,7 +101,7 @@ function SmartSlide({ base, priority }: { base: string, priority?: boolean }) {
   const src = base + '.jpg'; // Stop waterfall! Assert extension.
 
   return (
-    <div className="slide-bg" style={{ position: 'relative', width: '100%', height: '100%' }}>
+    <div className="slide-bg">
       <Image
         src={src}
         alt="Hero Promotional Banner"
