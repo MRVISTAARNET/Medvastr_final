@@ -107,9 +107,15 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const related = [...typedRelated, ...otherRelated].slice(0, 4);
 
   const visibleImageIndexes = colorImages.map((_, i) => i).filter((i) => !brokenImages[i]);
-  const isVideoActive = mainImg === -1 && !!p.videoUrl;
-  const activeImageIndex = isVideoActive ? -1 : (visibleImageIndexes.includes(mainImg) ? mainImg : (visibleImageIndexes[0] ?? -1));
-  const mainImageSrc = (!isVideoActive && activeImageIndex >= 0) ? colorImages[activeImageIndex] : "";
+  const isVideo = (url: string) => /\.(mp4|webm|ogg|mov)$/i.test(url);
+  const activeImageIndex = (mainImg === -1 && !!p.videoUrl) ? -1 : (visibleImageIndexes.includes(mainImg) ? mainImg : (visibleImageIndexes[0] ?? -1));
+  const isVideoActive = (mainImg === -1 && !!p.videoUrl) || (activeImageIndex >= 0 && isVideo(colorImages[activeImageIndex] || ""));
+  const mainMediaSrc = (mainImg === -1 && !!p.videoUrl)
+    ? p.videoUrl
+    : (activeImageIndex >= 0 ? colorImages[activeImageIndex] : "");
+
+  const renderedVideoSrc = isVideoActive ? mainMediaSrc : "";
+  const renderedImageSrc = !isVideoActive ? mainMediaSrc : "";
 
   const avgRating =
     reviews.length > 0
@@ -166,11 +172,11 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
           {/* LEFT: Image Gallery */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div style={{ aspectRatio: '1/1', background: isVideoActive ? '#000' : (mainImageSrc ? '#f8f8f8' : (p.bg || '#f1f5f9')), borderRadius: 20, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+            <div style={{ aspectRatio: '1/1', background: isVideoActive ? '#000' : (renderedImageSrc ? '#f8f8f8' : (p.bg || '#f1f5f9')), borderRadius: 20, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
               {isVideoActive ? (
-                <video src={p.videoUrl} autoPlay loop muted playsInline controls style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#000' }} />
-              ) : mainImageSrc ? (
-                <img src={mainImageSrc} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                <video src={renderedVideoSrc} autoPlay loop muted playsInline controls style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#000' }} />
+              ) : renderedImageSrc ? (
+                <img src={renderedImageSrc} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   onError={() => { if (activeImageIndex >= 0) setBrokenImages(prev => ({ ...prev, [activeImageIndex]: true })); }} />
               ) : (
                 <span style={{ fontSize: 80 }}>{p.emo}</span>
