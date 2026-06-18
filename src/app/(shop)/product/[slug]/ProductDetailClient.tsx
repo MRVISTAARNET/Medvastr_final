@@ -301,6 +301,30 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                 >
                   {isOutOfStock ? 'SOLD OUT' : `Add to Bag — ${fmt(p.price * qty)}`}
                 </button>
+
+                {/* Bulk Order Callout */}
+                <div
+                  onClick={() => router.push('/bulk-orders')}
+                  style={{
+                    marginTop: 8,
+                    padding: '16px',
+                    background: '#f0fdf4',
+                    borderRadius: 12,
+                    border: '1px dashed #22c55e',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s'
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.02)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                >
+                  <div style={{ fontSize: 13, fontWeight: 800, color: '#166534', marginBottom: 4 }}>🏢 Institutional / Bulk Orders</div>
+                  <div style={{ fontSize: 12, color: '#16a34a', fontWeight: 600 }}>
+                    Min 50 pcs needed • Sizes as per requirement
+                  </div>
+                  <div style={{ fontSize: 11, color: '#15803d', marginTop: 8, textDecoration: 'underline', fontWeight: 700 }}>
+                    View Bulk Pricing & Savings →
+                  </div>
+                </div>
               </div>
 
               {/* Trust Badges */}

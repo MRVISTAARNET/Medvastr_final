@@ -47,10 +47,10 @@ export default function BulkOrderPage() {
   ];
 
   const faqs = [
-    ["What is the minimum order quantity?", "Minimum bulk order starts from 10 items. For smaller quantities, check our regular retail section."],
+    ["What is the minimum order quantity?", "Minimum bulk order starts from 50 items to qualify for institutional pricing and customization."],
+    ["Can I choose different sizes?", "Absolutely! You can provide sizes as per your requirement across the total quantity."],
     ["Can I mix different products?", "Yes! You can mix and match any products. Bulk discount applies to total quantity."],
     ["What's the delivery time?", "Standard delivery: 5-7 business days. Express delivery within 2-3 days available on request."],
-    ["Do you offer customization?", "Yes! Custom branding, packaging, and labeling available. Contact our team for details."],
   ];
 
   const S3 = "https://d2tnzshqdaedbc.cloudfront.net";
@@ -140,16 +140,20 @@ export default function BulkOrderPage() {
 
               {/* Left: Quantity Input */}
               <div>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', marginBottom: '32px' }}>📊 Select Your Quantity</h3>
+                <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', marginBottom: '12px' }}>📊 Select Your Quantity</h3>
+                <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '32px' }}>
+                  <strong>Min 50 pcs</strong> required for professional pricing. <br />
+                  <span style={{ color: '#059669', fontWeight: 600 }}>✨ Sizes as per your requirement</span>
+                </p>
 
                 <div style={{ marginBottom: '24px' }}>
                   <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0f172a', marginBottom: '10px' }}>Total Items</label>
                   <input
                     type="number"
-                    min="1"
-                    max="500"
+                    min="50"
+                    max="5000"
                     value={selectedQuantity}
-                    onChange={(e) => setSelectedQuantity(Math.min(500, Math.max(1, parseInt(e.target.value) || 1)))}
+                    onChange={(e) => setSelectedQuantity(Math.min(5000, Math.max(50, parseInt(e.target.value) || 50)))}
                     style={{ width: '100%', padding: '14px 20px', border: '2px solid #a7f3d0', borderRadius: '14px', fontSize: '1.25rem', fontWeight: 800, textAlign: 'center', outline: 'none', boxSizing: 'border-box' }}
                   />
                 </div>
