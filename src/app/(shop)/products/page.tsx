@@ -147,7 +147,12 @@ function ProductsContent() {
 
   const S3 = "https://d2tnzshqdaedbc.cloudfront.net";
 
-  const isSurgical = ["surgical-wear", "surgeon-cap", "surgeon-gown"].includes(cat);
+  const isSurgical = ["surgical-wear", "surgeon-cap", "surgeon-gown", "gowns", "caps"].includes(cat);
+
+  // Normalize cat for banner filenames
+  let bannerCat = cat;
+  if (cat.includes('t-shirt')) bannerCat = cat.replace('t-shirt', 'tshirt');
+  if (cat === 'full-sleeve-under-scrub') bannerCat = 'full-sleeve-compression-under-scrub';
 
   // 100% DYNAMIC BANNER LOGIC (Ecommerce Priority System)
   if (isSurgical) {
@@ -155,17 +160,18 @@ function ProductsContent() {
     staticBannerTitle = activeCatLabel;
   } else if (cat !== "all" && gen !== "all") {
     // Try Gender-Specific Category Banners (Men's Scrubs, etc)
-    staticBannerBase = `${S3}/${gen}-${cat}-banner`;
+    staticBannerBase = `${S3}/${gen}-${bannerCat}-banner`;
     staticBannerTitle = `${gen.charAt(0).toUpperCase() + gen.slice(1)}'s ${activeCatLabel}`;
   } else if (cat !== "all") {
-    // Falls back to generic Category Banner
-    staticBannerBase = `${S3}/${cat}-banner`;
+    // Try General Category Banners
+    staticBannerBase = `${S3}/${bannerCat}-banner`;
     staticBannerTitle = activeCatLabel;
   } else if (gen !== "all") {
-    // Main gender collections
+    // Gender Landing (Men's Collection)
     staticBannerBase = `${S3}/${gen}-banner`;
-    staticBannerTitle = gen.charAt(0).toUpperCase() + gen.slice(1) + " Collection";
-  } else {
+    staticBannerTitle = `${gen.charAt(0).toUpperCase() + gen.slice(1)}'s Collection`;
+  }
+  else {
     // The mother of all banners
     staticBannerBase = `${S3}/all-products-banner`;
     staticBannerTitle = "The Medvastr Collection";
