@@ -1286,7 +1286,7 @@ textarea {
 
 @media (max-width: 768px) {
   .hero-slide {
-    min-height: 400px;
+    min-height: 260px;
     height: auto;
   }
 }
@@ -4171,8 +4171,8 @@ footer {
 @media (max-width: 768px) {
   .hero-slide {
     height: auto;
-    min-height: 500px;
-    padding: 60px 20px;
+    min-height: 260px;
+    padding: 40px 20px;
   }
 
   .slide-body {
