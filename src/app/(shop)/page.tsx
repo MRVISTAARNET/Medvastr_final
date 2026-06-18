@@ -90,11 +90,9 @@ export default function Home() {
             { nm: "Scrub Suit", href: "/products?cat=scrub-suit", img: "cat-scrub-suit.jpg" },
             { nm: "Cotton Crew T-Shirt", href: "/products?cat=cotton-crew-tshirt", img: "cat-tshirt.jpg" },
             { nm: "Full Sleeve Under Scrub", href: "/products?cat=full-sleeve-compression-under-scrub", img: "cat-under-scrub.jpg" },
-            { nm: "Surgeon Gown", href: "/products?cat=surgical-wear", img: "cat-gown.jpg" },
-            { nm: "Surgeon Cap", href: "/products?cat=surgical-wear", img: "cat-cap.jpg" },
-            { nm: "Lab Coat", href: "/products?cat=lab-coat", img: "cat-lab-coat.jpg" },
+            { nm: "Surgeon Gown", href: "/products?cat=surgeon-gown", img: "cat-gown.jpg" },
+            { nm: "Surgeon Cap", href: "/products?cat=surgeon-cap", img: "cat-cap.jpg" },
             { nm: "Bulk Orders", href: "/bulk-orders", img: "cat-bulk.jpg" },
-            { nm: "New Arrivals", href: "/new-arrivals", img: "cat-new.jpg" },
           ].map(c => (
             <Link href={c.href} className="cat-c" key={c.nm}>
               <div className="cat-img-box">

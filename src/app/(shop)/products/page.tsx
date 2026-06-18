@@ -146,29 +146,32 @@ function ProductsContent() {
   let staticBannerTitle = "";
 
   const S3 = "https://d2tnzshqdaedbc.cloudfront.net";
+  const catKey = cat.toLowerCase();
+  const genKey = gen.toLowerCase();
 
-  const isSurgical = ["surgical-wear", "surgeon-cap", "surgeon-gown", "gowns", "caps"].includes(cat);
+  const isSurgical = ["surgical-wear", "surgeon-cap", "surgeon-gown", "gowns", "caps"].includes(catKey);
 
   // Normalize cat for banner filenames
-  let bannerCat = cat;
-  if (cat.includes('t-shirt')) bannerCat = cat.replace('t-shirt', 'tshirt');
-  if (cat === 'full-sleeve-under-scrub') bannerCat = 'full-sleeve-compression-under-scrub';
+  let bannerCat = catKey;
+  if (catKey.includes('t-shirt')) bannerCat = catKey.replace('t-shirt', 'tshirt');
+  if (catKey.includes('under-scrub')) bannerCat = 'full-sleeve-compression-under-scrub';
+  if (catKey === 'scrubs') bannerCat = 'scrub-suit';
 
   // 100% DYNAMIC BANNER LOGIC (Ecommerce Priority System)
   if (isSurgical) {
     staticBannerBase = `${S3}/surgical-wear-banner`;
     staticBannerTitle = activeCatLabel;
-  } else if (cat !== "all" && gen !== "all") {
+  } else if (catKey !== "all" && genKey !== "all") {
     // Try Gender-Specific Category Banners (Men's Scrubs, etc)
-    staticBannerBase = `${S3}/${gen}-${bannerCat}-banner`;
-    staticBannerTitle = `${gen.charAt(0).toUpperCase() + gen.slice(1)}'s ${activeCatLabel}`;
-  } else if (cat !== "all") {
+    staticBannerBase = `${S3}/${genKey}-${bannerCat}-banner`;
+    staticBannerTitle = `${genKey.charAt(0).toUpperCase() + genKey.slice(1)}'s ${activeCatLabel}`;
+  } else if (catKey !== "all") {
     // Try General Category Banners
     staticBannerBase = `${S3}/${bannerCat}-banner`;
     staticBannerTitle = activeCatLabel;
-  } else if (gen !== "all") {
+  } else if (genKey !== "all") {
     // Gender Landing (Men's Collection)
-    staticBannerBase = `${S3}/${gen}-banner`;
+    staticBannerBase = `${S3}/${genKey}-banner`;
     staticBannerTitle = `${gen.charAt(0).toUpperCase() + gen.slice(1)}'s Collection`;
   }
   else {
@@ -328,7 +331,7 @@ function ProductsContent() {
               <div className="sb3-section">
                 <div className="sb3-sec-hd">SIZE</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 6 }}>
-                  {["XS", "S", "M", "L", "XL", "2XL", "3XL"].map((s) => (
+                  {["XS", "S", "M", "L", "XL", "2XL"].map((s) => (
                     <button
                       key={s}
                       onClick={() => { setSizeFilter((prev: string) => prev === s ? '' : s); setPg(1); }}

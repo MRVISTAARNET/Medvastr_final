@@ -57,10 +57,9 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
       { l: "Black", h: "#111827", c: "Black" },
     ];
 
-  const sizeLinks = sizes.length > 0 ? sizes.slice(0, 9) : [
+  const sizeLinks = sizes.length > 0 ? sizes.slice(0, 6) : [
     { sizeValue: "XS" }, { sizeValue: "S" }, { sizeValue: "M" },
     { sizeValue: "L" }, { sizeValue: "XL" }, { sizeValue: "XXL" },
-    { sizeValue: "3XL" }, { sizeValue: "4XL" }, { sizeValue: "5XL" },
   ];
 
   const catLabel = gender === "men" ? "MEN CATEGORIES" : gender === "women" ? "WOMEN CATEGORIES" : `${label.toUpperCase()} CATEGORIES`;
