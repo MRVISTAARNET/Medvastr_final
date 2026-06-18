@@ -207,13 +207,18 @@ export default function AdminProducts() {
           sku: `${form.sku || 'MV'}-${size}-${getColName(colorInput).replace(/\s+/g, '').toUpperCase()}`
         }))
       );
-      // Assign one hero image per colour (1st image → 1st colour, etc.)
-      colorInputs.forEach((colorInput: string, colorIdx: number) => {
+      // Assign hero images per colour based on the user's manual pairing (?clr= tag)
+      colorInputs.forEach((colorInput: string) => {
         const hex = getColHex(colorInput);
-        const imageUrl = imgList[colorIdx] || imgList[0];
-        if (!imageUrl) return;
-        const first = variants.find((v: { colorHex: string }) => v.colorHex === hex);
-        if (first) (first as { imageUrl?: string }).imageUrl = imageUrl;
+        // Find the first image tagged with this color, or fallback to the very first image
+        const matchedImg = imgList.find((url: string) => url.includes(`?clr=${hex}`)) || imgList[0];
+
+        if (matchedImg) {
+          const matchingVariants = variants.filter((v: { colorHex: string }) => v.colorHex === hex);
+          matchingVariants.forEach((v: any) => {
+            v.imageUrl = matchedImg;
+          });
+        }
       });
 
       const pData: any = {
