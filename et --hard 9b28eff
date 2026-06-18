@@ -1,0 +1,82 @@
+[33m9b28eff[m UX Update: Added 50pc minimum and custom size notice to Bulk Order and Product pages
+[1mdiff --git a/medvastr-FIXED-deploy-v5.zip b/medvastr-FIXED-deploy-v5.zip[m
+[1mnew file mode 100644[m
+[1mindex 0000000..0e8be36[m
+Binary files /dev/null and b/medvastr-FIXED-deploy-v5.zip differ
+[1mdiff --git a/src/app/(shop)/bulk-orders/page.tsx b/src/app/(shop)/bulk-orders/page.tsx[m
+[1mindex a245259..ce8155b 100644[m
+[1m--- a/src/app/(shop)/bulk-orders/page.tsx[m
+[1m+++ b/src/app/(shop)/bulk-orders/page.tsx[m
+[36m@@ -47,10 +47,10 @@[m [mexport default function BulkOrderPage() {[m
+   ];[m
+ [m
+   const faqs = [[m
+[31m-    ["What is the minimum order quantity?", "Minimum bulk order starts from 10 items. For smaller quantities, check our regular retail section."],[m
+[32m+[m[32m    ["What is the minimum order quantity?", "Minimum bulk order starts from 50 items to qualify for institutional pricing and customization."],[m
+[32m+[m[32m    ["Can I choose different sizes?", "Absolutely! You can provide sizes as per your requirement across the total quantity."],[m
+     ["Can I mix different products?", "Yes! You can mix and match any products. Bulk discount applies to total quantity."],[m
+     ["What's the delivery time?", "Standard delivery: 5-7 business days. Express delivery within 2-3 days available on request."],[m
+[31m-    ["Do you offer customization?", "Yes! Custom branding, packaging, and labeling available. Contact our team for details."],[m
+   ];[m
+ [m
+   const S3 = "https://d2tnzshqdaedbc.cloudfront.net";[m
+[36m@@ -140,16 +140,20 @@[m [mexport default function BulkOrderPage() {[m
+ [m
+               {/* Left: Quantity Input */}[m
+               <div>[m
+[31m-                <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', marginBottom: '32px' }}>📊 Select Your Quantity</h3>[m
+[32m+[m[32m                <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', marginBottom: '12px' }}>📊 Select Your Quantity</h3>[m
+[32m+[m[32m                <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '32px' }}>[m
+[32m+[m[32m                  <strong>Min 50 pcs</strong> required for professional pricing. <br />[m
+[32m+[m[32m                  <span style={{ color: '#059669', fontWeight: 600 }}>✨ Sizes as per your requirement</span>[m
+[32m+[m[32m                </p>[m
+ [m
+                 <div style={{ marginBottom: '24px' }}>[m
+                   <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#0f172a', marginBottom: '10px' }}>Total Items</label>[m
+                   <input[m
+                     type="number"[m
+[31m-                    min="1"[m
+[31m-                    max="500"[m
+[32m+[m[32m                    min="50"[m
+[32m+[m[32m                    max="5000"[m
+                     value={selectedQuantity}[m
+[31m-                    onChange={(e) => setSelectedQuantity(Math.min(500, Math.max(1, parseInt(e.target.value) || 1)))}[m
+[32m+[m[32m                    onChange={(e) => setSelectedQuantity(Math.min(5000, Math.max(50, parseInt(e.target.value) || 50)))}[m
+                     style={{ width: '100%', padding: '14px 20px', border: '2px solid #a7f3d0', borderRadius: '14px', fontSize: '1.25rem', fontWeight: 800, textAlign: 'center', outline: 'none', boxSizing: 'border-box' }}[m
+                   />[m
+                 </div>[m
+[1mdiff --git a/src/app/(shop)/product/[slug]/ProductDetailClient.tsx b/src/app/(shop)/product/[slug]/ProductDetailClient.tsx[m
+[1mindex bd4f0d1..a44022a 100644[m
+[1m--- a/src/app/(shop)/product/[slug]/ProductDetailClient.tsx[m
+[1m+++ b/src/app/(shop)/product/[slug]/ProductDetailClient.tsx[m
+[36m@@ -301,6 +301,30 @@[m [mexport default function ProductDetailClient({ initialProduct }: { initialProduct[m
+                 >[m
+                   {isOutOfStock ? 'SOLD OUT' : `Add to Bag — ${fmt(p.price * qty)}`}[m
+                 </button>[m
+[32m+[m
+[32m+[m[32m                {/* Bulk Order Callout */}[m
+[32m+[m[32m                <div[m
+[32m+[m[32m                  onClick={() => router.push('/bulk-orders')}[m
+[32m+[m[32m                  style={{[m
+[32m+[m[32m                    marginTop: 8,[m
+[32m+[m[32m                    padding: '16px',[m
+[32m+[m[32m                    background: '#f0fdf4',[m
+[32m+[m[32m                    borderRadius: 12,[m
+[32m+[m[32m                    border: '1px dashed #22c55e',[m
+[32m+[m[32m                    cursor: 'pointer',[m
+[32m+[m[32m                    transition: 'transform 0.2s'[m
+[32m+[m[32m                  }}[m
+[32m+[m[32m                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.02)')}[m
+[32m+[m[32m                  onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}[m
+[32m+[m[32m                >[m
+[32m+[m[32m                  <div style={{ fontSize: 13, fontWeight: 800, color: '#166534', marginBottom: 4 }}>🏢 Institutional / Bulk Orders</div>[m
+[32m+[m[32m                  <div style={{ fontSize: 12, color: '#16a34a', fontWeight: 600 }}>[m
+[32m+[m[32m                    Min 50 pcs needed • Sizes as per requirement[m
+[32m+[m[32m                  </div>[m
+[32m+[m[32m                  <div style={{ fontSize: 11, color: '#15803d', marginTop: 8, textDecoration: 'underline', fontWeight: 700 }}>[m
+[32m+[m[32m                    View Bulk Pricing & Savings →[m
+[32m+[m[32m                  </div>[m
+[32m+[m[32m                </div>[m
+               </div>[m
+ [m
+               {/* Trust Badges */}[m
