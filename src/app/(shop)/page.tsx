@@ -135,7 +135,7 @@ export default function Home() {
       <div className="sec">
         <div className="sec-hd">
           <div>
-            <div className="sec-t">Flexi fit V scrub Bestsellers</div>
+            <div className="sec-t">Shop Flexi-Fit V Scrub</div>
             <div className="sec-s">Classic comfort and durability for peak performance</div>
           </div>
           <Link href="/products?cat=scrub-suit" className="va">
@@ -164,7 +164,7 @@ export default function Home() {
       <div className="sec">
         <div className="sec-hd">
           <div>
-            <div className="sec-t">Cotton Crew T-shirt Bestsellers</div>
+            <div className="sec-t">Shop Cotton Crew T-Shirt</div>
             <div className="sec-s">Premium essentials for your everyday routine</div>
           </div>
           <Link href="/products?cat=cotton-crew-tshirt" className="va">
