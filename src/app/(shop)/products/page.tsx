@@ -144,13 +144,16 @@ function ProductsContent() {
   const catKey = cat.toLowerCase();
   const genKey = gen.toLowerCase();
 
-  const isSurgical = ["surgical-wear", "surgeon-cap", "surgeon-gown", "gowns", "caps"].includes(catKey);
+  const isSurgical = ["surgical", "gown", "cap"].some(word => catKey.includes(word));
 
   // Normalize cat for banner filenames
   let bannerCat = catKey;
   if (catKey.includes('t-shirt')) bannerCat = catKey.replace('t-shirt', 'tshirt');
   if (catKey.includes('under-scrub')) bannerCat = 'full-sleeve-compression-under-scrub';
-  if (catKey === 'scrubs') bannerCat = 'scrub-suit';
+  if (catKey.includes('scrub')) bannerCat = 'scrub-suit';
+
+  // Strip gender suffixes from bannerCat for cleaner S3 matching
+  bannerCat = bannerCat.replace(/-men$/, '').replace(/-women$/, '');
 
   // 100% DYNAMIC BANNER LOGIC (Ecommerce Priority System)
   const genName = genKey !== "all" ? genKey.charAt(0).toUpperCase() + genKey.slice(1) : "";
