@@ -92,7 +92,7 @@ export default function Home() {
             { nm: "Full Sleeve Under Scrub", href: "/products?cat=full-sleeve-compression-under-scrub", img: "cat-under-scrub.jpg" },
             { nm: "Surgeon Gown", href: "/products?cat=surgical-wear", img: "cat-gown.jpg" },
             { nm: "Surgeon Cap", href: "/products?cat=surgical-wear", img: "cat-cap.jpg" },
-            { nm: "Patient Gown", href: "/products?cat=patient-gown", img: "cat-patient.jpg" },
+            { nm: "Lab Coat", href: "/products?cat=lab-coat", img: "cat-lab-coat.jpg" },
             { nm: "Bulk Orders", href: "/bulk-orders", img: "cat-bulk.jpg" },
             { nm: "New Arrivals", href: "/new-arrivals", img: "cat-new.jpg" },
           ].map(c => (
