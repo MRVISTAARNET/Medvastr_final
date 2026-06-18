@@ -181,6 +181,8 @@ export default function Home() {
         </div>
       </div>
 
+      {/* FEATURE STRIP */}
+
       <div className="feat-strip">
         {[
           ["🧪", "Lab Tested", "Quality certified"],

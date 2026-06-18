@@ -94,11 +94,6 @@ function ProductsContent() {
       l: "Diagnostic Tools",
       d: "Precision-engineered stethoscopes and diagnostic tools designed for healthcare professionals who demand accuracy and durability."
     },
-    labcoat: {
-      ico: "🥼",
-      l: "Professional Lab Coats",
-      d: "Classic yet modern lab coats that offer a professional look while providing protection and functionality with strategically placed pockets."
-    },
     jacket: {
       ico: "🧥",
       l: "Performance Jackets",
@@ -160,7 +155,7 @@ function ProductsContent() {
   // 100% DYNAMIC BANNER LOGIC (Ecommerce Priority System)
   if (isSurgical) {
     staticBannerBase = `${S3}/surgical-wear-banner`;
-    staticBannerTitle = activeCatLabel;
+    staticBannerTitle = genKey !== "all" ? `${genKey.charAt(0).toUpperCase() + genKey.slice(1)}'s ${activeCatLabel}` : activeCatLabel;
   } else if (catKey !== "all" && genKey !== "all") {
     // Try Gender-Specific Category Banners (Men's Scrubs, etc)
     staticBannerBase = `${S3}/${genKey}-${bannerCat}-banner`;
