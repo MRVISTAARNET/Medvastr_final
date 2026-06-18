@@ -35,7 +35,7 @@ export default function ProductCard({ p }: PCardProps) {
       <div className="pc-image-wrapper">
         <Link href={productPath} className="pc-img-link">
           {displayImg ? (
-            <Image src={displayImg} alt={p.name} fill className="pc-img-main" sizes="(max-width: 768px) 100vw, 300px" />
+            <Image src={displayImg} alt={p.name} fill className="pc-img-main" sizes="(max-width: 768px) 100vw, 300px" priority />
           ) : (
             <div className="pc-emo-placeholder" style={{ background: p.bg }}>
               <span className="pc-emo-icon">{p.emo}</span>
@@ -63,41 +63,46 @@ export default function ProductCard({ p }: PCardProps) {
         </div>
       </div>
 
-      {/* Info Section */}
+      {/* Info Section - Matching Screenshot */}
       <div className="pc-info">
-        <div className="pc-top">
-          <span className="pc-cat">{p.type}</span>
-          <div className="pc-rating">
-            <span className="pc-star">★</span> {p.rating.toFixed(1)}
+        <div className="pc-top-meta">
+          <div className="pc-brand-box">
+            <span className="pc-brand-name">Medvastr</span>
+            <span className="pc-info-icon">ⓘ</span>
+          </div>
+          <div className="pc-rating-box">
+            <span className="pc-star-avg">★</span>
+            <span className="pc-rating-val">{p.rating.toFixed(1)}</span>
           </div>
         </div>
 
-        <Link href={productPath} className="pc-name">
+        <Link href={productPath} className="pc-product-name">
           {p.name}
         </Link>
 
+        <div className="pc-price-line">
+          <span className="pc-curr-price">{fmt(p.price)}</span>
+          {p.origPrice && <span className="pc-was-price">{fmt(p.origPrice)}</span>}
+        </div>
+
         {/* Dynamic Color Swatches */}
         {p.clrs && p.clrs.length > 0 && (
-          <div className="pc-clrs">
+          <div className="pc-swatches">
             {p.clrs.slice(0, 5).map((c, i) => (
               <div
                 key={i}
-                className={`pc-clr-dot ${ci === i ? "active" : ""}`}
+                className={`pc-swatch ${ci === i ? "active" : ""}`}
                 style={{ background: c }}
                 onClick={(e) => { e.preventDefault(); setCi(i); }}
               />
             ))}
-            {p.clrs.length > 5 && <span className="pc-clr-more">+{p.clrs.length - 5}</span>}
+            {p.clrs.length > 1 && <span className="pc-swatch-more">+{p.clrs.length - 1} more</span>}
           </div>
         )}
 
-        <div className="pc-bottom">
-          <div className="pc-price-wrap">
-            <span className="pc-price">{fmt(p.price)}</span>
-            {p.origPrice && <span className="pc-old-price">{fmt(p.origPrice)}</span>}
-          </div>
-          <button className="pc-add-btn" onClick={() => addToCart(p, ci, defaultSize)}>
-            + Add
+        <div className="pc-foot-actions">
+          <button className="pc-quick-add" onClick={() => addToCart(p, ci, defaultSize)}>
+            + Quick Add
           </button>
         </div>
       </div>

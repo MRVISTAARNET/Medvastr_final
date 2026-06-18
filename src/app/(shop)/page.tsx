@@ -131,42 +131,62 @@ export default function Home() {
         </div>
       </div>
 
-      {/* BESTSELLING */}
+      {/* BESTSELLING SECTION 1: FLEXI FIT V SCRUB */}
       <div className="sec">
         <div className="sec-hd">
           <div>
-            <div className="sec-t">Bestselling Scrubs</div>
-            <div className="sec-s">Most loved by healthcare professionals across India</div>
+            <div className="sec-t">Flexi fit V scrub Bestsellers</div>
+            <div className="sec-s">Classic comfort and durability for peak performance</div>
           </div>
-          <Link href={`/products?cat=${TABS.find((t) => t.id === activeTab)?.type || "all"}`} className="va">
-            View All {TABS.find((t) => t.id === activeTab)?.label || "Scrubs"} →
+          <Link href="/products?cat=scrub-suit" className="va">
+            Shop All Scrubs →
           </Link>
         </div>
 
-        <div className="tabs">
-          {TABS.map((t) => (
-            <div key={t.id} className={`tab${activeTab === t.id ? " on" : ""}`} onClick={() => setActiveTab(t.id)}>
-              {t.label}
-            </div>
-          ))}
+        <div className="pg-5">
+          {products
+            .filter(p => p.name.toLowerCase().includes("flexi fit v scrub"))
+            .slice(0, 5)
+            .map((p) => (
+              <ProductCard key={p.id} p={p} />
+            ))
+          }
+          {/* Fallback if no specific products found: show top scrubs */}
+          {products.filter(p => p.name.toLowerCase().includes("flexi fit v scrub")).length === 0 &&
+            products.filter(p => p.type === "scrubs").slice(0, 5).map(p => (
+              <ProductCard key={p.id} p={p} />
+            ))
+          }
+        </div>
+      </div>
+
+      {/* BESTSELLING SECTION 2: COTTON CREW TSHIRT */}
+      <div className="sec">
+        <div className="sec-hd">
+          <div>
+            <div className="sec-t">Cotton Crew T-shirt Bestsellers</div>
+            <div className="sec-s">Premium essentials for your everyday routine</div>
+          </div>
+          <Link href="/products?cat=cotton-crew-tshirt" className="va">
+            Shop All T-Shirts →
+          </Link>
         </div>
 
-        {tabProducts.length > 0 ? (
-          <div className="pg-4">
-            {tabProducts.map((p) => (
+        <div className="pg-5">
+          {products
+            .filter(p => p.name.toLowerCase().includes("cotton crew tshirt") || p.name.toLowerCase().includes("crew tshirt"))
+            .slice(0, 5)
+            .map((p) => (
               <ProductCard key={p.id} p={p} />
-            ))}
-          </div>
-        ) : (
-          <div style={{ textAlign: "center", padding: "48px 20px", color: "var(--lt)" }}>
-            <div style={{ fontSize: 40, marginBottom: 12 }}>🔍</div>
-            <div style={{ fontSize: 16, fontWeight: 600, color: "var(--ink2)", marginBottom: 8 }}>Coming Soon</div>
-            <div style={{ fontSize: 14 }}>More products in this category will be available soon.</div>
-            <Link href="/products" className="btn-t" style={{ marginTop: 16 }}>
-              Browse All Products →
-            </Link>
-          </div>
-        )}
+            ))
+          }
+          {/* Fallback: show top tshirts */}
+          {products.filter(p => p.name.toLowerCase().includes("cotton crew tshirt") || p.name.toLowerCase().includes("crew tshirt")).length === 0 &&
+            products.filter(p => p.type === "cotton-crew-tshirt").slice(0, 5).map(p => (
+              <ProductCard key={p.id} p={p} />
+            ))
+          }
+        </div>
       </div>
 
 
@@ -181,7 +201,7 @@ export default function Home() {
             View All New Arrivals →
           </Link>
         </div>
-        <div className="pg-4">
+        <div className="pg-5">
           {newArr.map((p) => (
             <ProductCard key={p.id} p={p} />
           ))}
