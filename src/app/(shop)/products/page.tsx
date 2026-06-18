@@ -148,9 +148,13 @@ function ProductsContent() {
 
   // Normalize cat for banner filenames
   let bannerCat = catKey;
-  if (catKey.includes('t-shirt')) bannerCat = catKey.replace('t-shirt', 'tshirt');
-  if (catKey.includes('under-scrub')) bannerCat = 'full-sleeve-compression-under-scrub';
-  if (catKey.includes('scrub')) bannerCat = 'scrub-suit';
+  if (catKey.includes('t-shirt')) {
+    bannerCat = catKey.replace('t-shirt', 'tshirt');
+  } else if (catKey.includes('under-scrub')) {
+    bannerCat = 'full-sleeve-compression-under-scrub';
+  } else if (catKey.includes('scrub')) {
+    bannerCat = 'scrub-suit';
+  }
 
   // Strip gender suffixes from bannerCat for cleaner S3 matching
   bannerCat = bannerCat.replace(/-men$/, '').replace(/-women$/, '');
