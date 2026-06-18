@@ -48,7 +48,7 @@ export default function AdminProducts() {
       setForm({
         name: '', type: 'scrubs', price: '', originalPrice: '', badge: '', desc: '',
         gen: 'unisex', fab: '', fit: '', catId: '', imgs: [], emo: '📦',
-        sku: '', styleId: '', brand: 'Medvastr', sizes: 'XS, S, M, L, XL', clrs: '', barcode: '',
+        sku: '', styleId: '', brand: 'Medvastr', sizes: 'XS, S, M, L, XL, 2XL', clrs: '', barcode: '',
         weight: '', care: '', stretch: '', fabD: '', pockets: '', videoUrl: ''
       });
     }

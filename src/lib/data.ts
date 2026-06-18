@@ -17,7 +17,7 @@ export const COLS = [
   { n: "Wine", h: "#722f37" },
 ];
 
-export const SIZES = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
+export const SIZES = ["XS", "S", "M", "L", "XL", "2XL"];
 
 export const cn = (h: string) => COLS.find((c) => c.h === h)?.n || "Default";
 
