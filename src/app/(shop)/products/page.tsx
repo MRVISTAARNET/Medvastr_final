@@ -228,7 +228,7 @@ function ProductsContent() {
             <div className="sb3-header">
               <div className="sb3-title-wrap">
                 <span className="sb3-title">FILTERS</span>
-                {hasFilters && <span className="sb3-count">1</span>}
+                {hasFilters && <span className="sb3-count">{[cat !== "all", gen !== "all", !!(minP || maxP), !!colorFilter, !!sizeFilter].filter(Boolean).length}</span>}
               </div>
               <button className="sb3-clear" onClick={reset}>Clear All</button>
               {mobF && <button className="sb3-mob-close" onClick={() => setMobF(false)}>✕</button>}
@@ -305,11 +305,36 @@ function ProductsContent() {
                     <div
                       key={c.n}
                       className={`sb3-color-item${colorFilter === c.n ? " active" : ""}`}
-                      onClick={() => { setColorFilter(prev => prev === c.n ? '' : c.n); setPg(1); }}
+                      onClick={() => { setColorFilter((prev: string) => prev === c.n ? '' : c.n); setPg(1); }}
                     >
                       <div className="sb3-color-dot" style={{ background: c.h }} />
                       <span className="sb3-color-name">{c.n}</span>
+                      {colorFilter === c.n && (
+                        <span style={{ marginLeft: 'auto', color: '#008080', fontWeight: 900, fontSize: 15 }}>✓</span>
+                      )}
                     </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* SIZES */}
+              <div className="sb3-section">
+                <div className="sb3-sec-hd">SIZE</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 6 }}>
+                  {["XS", "S", "M", "L", "XL", "2XL", "3XL"].map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => { setSizeFilter((prev: string) => prev === s ? '' : s); setPg(1); }}
+                      style={{
+                        padding: '6px 14px', borderRadius: 8, fontSize: 13, fontWeight: 700,
+                        border: sizeFilter === s ? '2px solid #008080' : '1.5px solid #e2e8f0',
+                        background: sizeFilter === s ? '#008080' : 'white',
+                        color: sizeFilter === s ? 'white' : '#475569',
+                        cursor: 'pointer', transition: 'all 0.15s',
+                      }}
+                    >
+                      {s}
+                    </button>
                   ))}
                 </div>
               </div>
