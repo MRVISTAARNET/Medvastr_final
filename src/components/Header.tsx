@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useApp } from "@/context/AppContext";
-import { PRODUCTS, fmt } from "@/lib/data";
+import { fmt } from "@/lib/data";
 import DynamicNav, { NavItem } from "./DynamicNav";
 
 const FALLBACK_NAV: NavItem[] = [

@@ -228,7 +228,7 @@ function ProductsContent() {
         </div>
 
         <div className="catalog-header" style={{ marginBottom: 50 }}>
-          <h2 className="catalog-title" style={{ fontSize: '28px', marginBottom: '15px' }}>{staticBannerTitle}</h2>
+          <h1 className="catalog-title" style={{ fontSize: '28px', marginBottom: '15px' }}>{staticBannerTitle}</h1>
           <div style={{ width: '60px', height: '4px', background: '#008080', marginBottom: '25px', borderRadius: '2px' }}></div>
           <p className="catalog-subtitle" style={{ maxWidth: '800px', fontSize: '19px', lineHeight: '1.7', color: '#475569', margin: 0, fontWeight: 400 }}>
             {activeDesc}

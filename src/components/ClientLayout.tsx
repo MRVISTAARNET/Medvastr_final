@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Announcement from "@/components/Announcement";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -16,7 +16,14 @@ import { AppProvider, useApp } from "@/context/AppContext";
 function LayoutContent({ children }: { children: React.ReactNode }) {
   const [cartO, setCartO] = useState(false);
   const [wishO, setWishO] = useState(false);
+  const [showBtt, setShowBtt] = useState(false);
   const { user, isAuthOpen, setIsAuthOpen } = useApp();
+
+  useEffect(() => {
+    const onScroll = () => setShowBtt(window.scrollY > 300);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
     <>
@@ -36,15 +43,17 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
       {isAuthOpen && <AccountModal onClose={() => setIsAuthOpen(false)} />}
       <Toast />
       <FloatingPopups />
-      <button
-        type="button"
-        className="btt show"
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        style={{ display: "flex" }}
-        aria-label="Back to top"
-      >
-        ↑
-      </button>
+      {showBtt && (
+        <button
+          type="button"
+          className="btt show"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          style={{ display: "flex" }}
+          aria-label="Back to top"
+        >
+          ↑
+        </button>
+      )}
     </>
   );
 }

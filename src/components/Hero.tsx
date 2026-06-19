@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import { SLIDES } from "@/lib/data";
+
 import { useApp } from "@/context/AppContext";
 import { normalizeMediaUrl } from "@/lib/api";
 

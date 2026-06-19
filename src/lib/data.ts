@@ -69,38 +69,9 @@ export interface Product {
   tags?: string;
 }
 
-export const PRODUCTS: Product[] = [];
 
 
-export const SLIDES = [
-  {
-    img: "",
-    ey: "Limited Time Offer",
-    h: "Premium Scrubs for",
-    em: " Professionals",
-    p: "Engineered for 12-hour shifts. Lab-tested durability. 200+ washes guaranteed.",
-    c1: "Shop Now",
-    c2: "Learn More",
-  },
-  {
-    img: "",
-    ey: "Supply List 2026",
-    h: "Premium Hospital",
-    em: " Linen",
-    p: "High-quality, durable and lab-tested linen designed for demanding healthcare environments.",
-    c1: "Explore Linen",
-    c2: "View All",
-  },
-];
 
-export const REVIEWS: any[] = [];
-
-export const PROMOS: Record<string, number> = {
-  MEDVASTR10: 0.1,
-  FIRSTORDER: 0.15,
-  DOCTOR20: 0.2,
-  BULK50: 0.5,
-};
 
 export const fmt = (n: number) => "₹ " + Number(n || 0).toLocaleString("en-IN");
 export const fmtNum = (n: number) => Number(n || 0).toLocaleString("en-IN");

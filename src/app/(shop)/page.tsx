@@ -16,7 +16,7 @@ import { useApp } from "@/context/AppContext";
 import { API_BASE } from "@/lib/api";
 
 export default function Home() {
-  const { products, banners } = useApp();
+  const { products, banners, toast } = useApp();
   const promoBanners = banners.filter((b: any) => b.isActive && (b.position === "PROMO" || b.position === "HOME_MIDDLE"));
   const TABS = [
     { id: "scrubs", label: "Uniforms & Scrubs", type: "scrubs" },
@@ -309,13 +309,13 @@ export default function Home() {
                 });
                 const data = await res.json();
                 if (data.success) {
-                  alert("Thank you for subscribing! Check your email for your discount code.");
+                  toast("Thank you! Check your email for your discount code.", "ok");
                   input.value = "";
                 } else {
-                  alert(data.message || "Failed to subscribe");
+                  toast(data.message || "Failed to subscribe", "bad");
                 }
               } catch (e) {
-                alert("Something went wrong. Please try again later.");
+                toast("Something went wrong. Please try again later.", "bad");
               }
             }}
           >

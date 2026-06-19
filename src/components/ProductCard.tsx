@@ -35,7 +35,7 @@ export default function ProductCard({ p }: PCardProps) {
       <div className="pc-image-wrapper">
         <Link href={productPath} className="pc-img-link">
           {displayImg ? (
-            <Image src={displayImg} alt={p.name} fill className="pc-img-main" sizes="(max-width: 768px) 100vw, 300px" priority />
+            <Image src={displayImg} alt={p.name} fill className="pc-img-main" sizes="(max-width: 768px) 100vw, 300px" />
           ) : (
             <div className="pc-emo-placeholder" style={{ background: p.bg }}>
               <span className="pc-emo-icon">{p.emo}</span>

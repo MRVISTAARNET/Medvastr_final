@@ -5,6 +5,9 @@ import ProductCard from "@/components/ProductCard";
 import Link from "next/link";
 import Image from "next/image";
 
+
+
+
 export default function BulkOrderPage() {
   const ctx = useContext(AppContext);
   const [selectedQuantity, setSelectedQuantity] = useState(50);
@@ -380,14 +383,28 @@ export default function BulkOrderPage() {
 }
 
 function SmartBanner({ base, title }: { base: string; title: string }) {
-  const src = base + ".jpg";
+  const [src, setSrc] = React.useState(base + ".jpg");
+  const [failed, setFailed] = React.useState(false);
+
+  React.useEffect(() => {
+    setSrc(base + ".jpg");
+    setFailed(false);
+  }, [base]);
+
+  const tryNext = () => {
+    if (src.endsWith(".jpg")) { setSrc(base + ".png"); }
+    else if (src.endsWith(".png")) { setSrc(base + ".webp"); }
+    else { setFailed(true); }
+  };
+
+  if (failed) return null;
 
   return (
     <div
       style={{
         width: "100%",
         aspectRatio: "1920 / 480",
-        background: "#000",
+        background: "#0a0f1c",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -395,7 +412,13 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
         overflow: "hidden",
       }}
     >
-      <Image src={src} alt={title} fill style={{ objectFit: 'cover' }} priority />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={title}
+        onError={tryNext}
+        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+      />
     </div>
   );
 }
