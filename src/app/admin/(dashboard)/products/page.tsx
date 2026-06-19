@@ -505,11 +505,16 @@ export default function AdminProducts() {
                   <select id="p-styleId" value={form.styleId} onChange={handleInputChange}>
                     <option value="top">Top</option>
                     <option value="bottom">Bottom</option>
-                    <option value="set">Full Set</option>
+                    <option value="set">Full Set (Top + Bottom)</option>
+                    <option value="gown">Gown (Single Piece)</option>
+                    <option value="patient-dress">Patient Dress</option>
+                    <option value="maternity-gown">Maternity Gown</option>
                     <option value="tshirt">T-Shirt / Crew</option>
                     <option value="underscrub">Under Scrub</option>
                     <option value="cap">Cap / Accessory</option>
                     <option value="linen">Linen / Bedding</option>
+                    <option value="blanket">Blanket</option>
+                    <option value="other">Other / Single Piece</option>
                   </select>
                 </div>
                 <div className="fg">
