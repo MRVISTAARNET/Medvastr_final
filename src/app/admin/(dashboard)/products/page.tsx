@@ -39,10 +39,28 @@ export default function AdminProducts() {
     if (editingProduct) {
       setForm({
         ...editingProduct,
+        name: editingProduct.name || '',
+        type: editingProduct.type || 'scrubs',
+        price: editingProduct.price || '',
+        originalPrice: editingProduct.originalPrice || '',
+        badge: editingProduct.badge || '',
+        desc: editingProduct.description || editingProduct.desc || '',
+        gen: editingProduct.gender || editingProduct.gen || 'unisex',
+        fit: editingProduct.fit || '',
+        fab: editingProduct.fabric || editingProduct.fab || '',
+        fabD: editingProduct.fabricDetail || editingProduct.fabD || '',
+        stretch: editingProduct.stretchType || editingProduct.stretch || '',
+        pockets: editingProduct.pocketCount || editingProduct.pockets || '',
+        care: editingProduct.careInstructions || editingProduct.care || '',
+        weight: editingProduct.wt || editingProduct.weight || '',
+        emo: editingProduct.emoji || editingProduct.emo || '📦',
+        styleId: editingProduct.styleId || '',
+        sku: editingProduct.sku || '',
+        videoUrl: editingProduct.videoUrl || '',
         imgs: editingProduct.imgs || [],
         sizes: editingProduct.sizes?.join(', ') || '',
         clrs: editingProduct.clrNms?.join(', ') || editingProduct.clrs?.join(', ') || '',
-        catId: editingProduct.catId || ''
+        catId: editingProduct.categoryId || editingProduct.catId || ''
       });
     } else {
       setForm({
@@ -776,10 +794,6 @@ export default function AdminProducts() {
                   <label>SKU (Auto)</label>
                   <input type="text" id="p-sku" value={form.sku} onChange={handleInputChange} readOnly style={{ background: 'var(--bg)', color: 'var(--txt3)' }} />
                 </div>
-              </div>
-              <div className="fg">
-                <label>Barcode Value</label>
-                <input type="text" id="p-barcode" value={form.barcode} onChange={handleInputChange} />
               </div>
               <div className="fg-row">
                 <div className="fg">
