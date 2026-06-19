@@ -34,7 +34,7 @@ public class CategoryNavService {
         }
         for (StaticNavLink link : STATIC_LINKS) {
             items.add(NavItemDTO.builder()
-                    .id(-link.order)
+                    .id((long) -link.order)
                     .label(link.label)
                     .href(link.href)
                     .itemType(NavItem.ItemType.LINK)
