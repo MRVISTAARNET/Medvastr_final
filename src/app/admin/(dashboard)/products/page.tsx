@@ -270,7 +270,8 @@ export default function AdminProducts() {
           const pCode = getProductCode(form.name);
           const colCode = getColCode(colorInput);
           const sCode = size.replace(/\s+/g, '').toUpperCase();
-          const SKU = `${gCode}-${cCode}-${pCode}-${colCode}-${sCode}`;
+          const slugSuffix = (form.slug || 'prd').slice(-4).toUpperCase();
+          const SKU = `${gCode}-${cCode}-${pCode}-${colCode}-${sCode}-${slugSuffix}`;
           const BarcodeValue = SKU.replace(/-/g, '');
 
           return {
