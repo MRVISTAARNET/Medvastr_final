@@ -156,8 +156,12 @@ function ProductsContent() {
     bannerCat = 'scrub-suit';
   }
 
-  // Strip gender suffixes from bannerCat for cleaner S3 matching
-  bannerCat = bannerCat.replace(/-men$/, '').replace(/-women$/, '');
+  // Strip gender prefixes/suffixes from bannerCat for cleaner S3 matching
+  bannerCat = bannerCat
+    .replace(/^men-/, '')
+    .replace(/^women-/, '')
+    .replace(/-men$/, '')
+    .replace(/-women$/, '');
 
   // 100% DYNAMIC BANNER LOGIC (Ecommerce Priority System)
   const genName = genKey !== "all" ? genKey.charAt(0).toUpperCase() + genKey.slice(1) : "";
@@ -341,19 +345,19 @@ function ProductsContent() {
                   {(sizes.length ? sizes : [{ sizeValue: "XS" }, { sizeValue: "S" }, { sizeValue: "M" }, { sizeValue: "L" }, { sizeValue: "XL" }, { sizeValue: "2XL" }]).map((s: any) => {
                     const val = s.sizeValue || s.name;
                     return (
-                    <button
-                      key={val}
-                      onClick={() => { setSizeFilter((prev: string) => prev === val ? '' : val); setPg(1); }}
-                      style={{
-                        padding: '6px 14px', borderRadius: 8, fontSize: 13, fontWeight: 700,
-                        border: sizeFilter === val ? '2px solid #008080' : '1.5px solid #e2e8f0',
-                        background: sizeFilter === val ? '#008080' : 'white',
-                        color: sizeFilter === val ? 'white' : '#475569',
-                        cursor: 'pointer', transition: 'all 0.15s',
-                      }}
-                    >
-                      {val}
-                    </button>
+                      <button
+                        key={val}
+                        onClick={() => { setSizeFilter((prev: string) => prev === val ? '' : val); setPg(1); }}
+                        style={{
+                          padding: '6px 14px', borderRadius: 8, fontSize: 13, fontWeight: 700,
+                          border: sizeFilter === val ? '2px solid #008080' : '1.5px solid #e2e8f0',
+                          background: sizeFilter === val ? '#008080' : 'white',
+                          color: sizeFilter === val ? 'white' : '#475569',
+                          cursor: 'pointer', transition: 'all 0.15s',
+                        }}
+                      >
+                        {val}
+                      </button>
                     );
                   })}
                 </div>
@@ -649,8 +653,11 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
 
 
 export default function ProductsPage() {
+  const searchParams = useSearchParams();
+  const key = `${searchParams.get("cat")}-${searchParams.get("gender")}`;
+
   return (
-    <Suspense fallback={<div>Loading products...</div>}>
+    <Suspense key={key} fallback={<div>Loading products...</div>}>
       <ProductsContent />
     </Suspense>
   );
