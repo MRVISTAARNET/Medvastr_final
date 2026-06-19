@@ -42,6 +42,7 @@ export interface Product {
   variants?: any[];
   emo: string;
   bg: string;
+  categoryIds?: string;
   desc: string;
   fabD: string;
   stretch: string;

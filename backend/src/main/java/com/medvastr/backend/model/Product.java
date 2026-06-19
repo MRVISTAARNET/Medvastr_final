@@ -93,6 +93,9 @@ public class Product {
     private String fit;
     private String videoUrl;
 
+    @Column(columnDefinition = "TEXT")
+    private String categoryIds; // Comma-separated list of category IDs for multi-tick support
+
     @Column(precision = 3, scale = 2)
     @Builder.Default
     private BigDecimal rating = BigDecimal.valueOf(4.50);

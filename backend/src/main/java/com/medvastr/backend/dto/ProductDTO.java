@@ -55,5 +55,6 @@ public class ProductDTO {
     private List<ProductImageDTO> images;
     private List<String> imageUrls;
     private List<String> sizes;
+    private String categoryIds;
     private LocalDateTime createdAt;
 }

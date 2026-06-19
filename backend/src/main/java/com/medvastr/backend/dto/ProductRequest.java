@@ -36,7 +36,6 @@ public class ProductRequest {
     @DecimalMin("0.01")
     private BigDecimal price;
 
-
     @JsonAlias("desc")
     private String description;
 
@@ -48,9 +47,6 @@ public class ProductRequest {
 
     @JsonAlias("fab")
     private String fabric;
-
-
-
 
     private String badge;
     private String brand;
@@ -95,4 +91,6 @@ public class ProductRequest {
     private List<String> imageUrls;
 
     private String videoUrl;
+
+    private String categoryIds;
 }

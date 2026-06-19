@@ -89,6 +89,12 @@ export function productMatchesCategory(
   if (!cat) return false;
   const ids = new Set(collectDescendantIds(cat));
   const productIds = [product.catId, product.subcategoryId, product.childCategoryId].filter(Boolean);
+
+  if (product.categoryIds) {
+    const extraIds = product.categoryIds.split(',').map(s => Number(s.trim())).filter(n => !isNaN(n));
+    productIds.push(...extraIds);
+  }
+
   return productIds.some((id) => ids.has(Number(id)));
 }
 

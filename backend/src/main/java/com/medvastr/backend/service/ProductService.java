@@ -9,9 +9,7 @@ import com.medvastr.backend.dto.ReviewRequest;
 import com.medvastr.backend.dto.VariantDTO;
 import com.medvastr.backend.model.Category;
 import com.medvastr.backend.model.Product;
-import com.medvastr.backend.model.ProductColor;
 import com.medvastr.backend.model.ProductImage;
-import com.medvastr.backend.model.ProductSize;
 import com.medvastr.backend.model.ProductVariant;
 import com.medvastr.backend.repository.CategoryRepository;
 import com.medvastr.backend.repository.ProductColorRepository;
@@ -134,6 +132,7 @@ public class ProductService {
                 .weight(r.getWeight())
                 .fit(r.getFit())
                 .videoUrl(r.getVideoUrl())
+                .categoryIds(r.getCategoryIds())
                 .shortDescription(r.getShortDescription())
                 .material(r.getMaterial())
                 .tags(r.getTags())
@@ -177,6 +176,7 @@ public class ProductService {
         p.setWeight(r.getWeight());
         p.setFit(r.getFit());
         p.setVideoUrl(r.getVideoUrl());
+        p.setCategoryIds(r.getCategoryIds());
         if (r.getShortDescription() != null)
             p.setShortDescription(r.getShortDescription());
         if (r.getMaterial() != null)
@@ -324,6 +324,7 @@ public class ProductService {
                 .sku(p.getSku())
                 .emoji(p.getEmoji())
                 .bgColor(p.getBgColor())
+                .categoryIds(p.getCategoryIds())
                 .fabricDetail(p.getFabricDetail())
                 .stretchType(p.getStretchType())
                 .pocketCount(p.getPocketCount())

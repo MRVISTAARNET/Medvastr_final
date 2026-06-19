@@ -30,7 +30,8 @@ export default function AdminProducts() {
     gen: 'unisex', fab: '', fit: '', catId: '', imgs: '', emo: '📦',
     sku: '', styleId: '', brand: 'Medvastr', sizes: 'XS, S, M, L, XL', clrs: '', barcode: '',
     weight: '', care: '', stretch: '', fabD: '', pockets: '', videoUrl: '',
-    seoTitle: '', seoDescription: '', shortDescription: '', material: '', tags: ''
+    seoTitle: '', seoDescription: '', shortDescription: '', material: '', tags: '',
+    categoryIds: ''
   });
 
   const labelRef = useRef<HTMLDivElement>(null);
@@ -57,6 +58,7 @@ export default function AdminProducts() {
         styleId: editingProduct.styleId || '',
         sku: editingProduct.sku || '',
         videoUrl: editingProduct.videoUrl || '',
+        categoryIds: editingProduct.categoryIds || '',
         imgs: editingProduct.imgs || [],
         sizes: editingProduct.sizes?.join(', ') || '',
         clrs: editingProduct.clrNms?.join(', ') || editingProduct.clrs?.join(', ') || '',
@@ -67,10 +69,23 @@ export default function AdminProducts() {
         name: '', type: 'scrubs', price: '', originalPrice: '', badge: '', desc: '',
         gen: 'unisex', fab: '', fit: '', catId: '', imgs: [], emo: '📦',
         sku: '', styleId: '', brand: 'Medvastr', sizes: 'XS, S, M, L, XL', clrs: '', barcode: '',
-        weight: '', care: '', stretch: '', fabD: '', pockets: '', videoUrl: ''
+        weight: '', care: '', stretch: '', fabD: '', pockets: '', videoUrl: '',
+        categoryIds: ''
       });
     }
   }, [editingProduct, isModalOpen]);
+
+  const toggleExtraCategory = (catId: number) => {
+    const ids = form.categoryIds ? String(form.categoryIds).split(',').filter(Boolean) : [];
+    const sId = String(catId);
+    let next;
+    if (ids.includes(sId)) {
+      next = ids.filter(x => x !== sId);
+    } else {
+      next = [...ids, sId];
+    }
+    setForm((prev: any) => ({ ...prev, categoryIds: next.join(',') }));
+  };
 
   // Auto-generate SKU and Barcode
   useEffect(() => {
@@ -470,12 +485,61 @@ export default function AdminProducts() {
               </div>
               <div className="fg-row">
                 <div className="fg">
-                  <label>Category</label>
+                  <label>Primary Category</label>
                   <select id="p-catId" value={form.catId} onChange={handleInputChange}>
                     <option value="">Select Category</option>
                     {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
+              </div>
+
+              {/* Extra Categories Multi-Tick */}
+              <div className="fg" style={{ marginTop: '0px', marginBottom: '20px' }}>
+                <label style={{ color: '#0f172a', fontWeight: 700, display: 'block', marginBottom: '12px' }}>
+                  Also Show in these Pages (Multi-Tick)
+                </label>
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+                  gap: '10px',
+                  background: '#f8fafc',
+                  padding: '15px',
+                  borderRadius: '16px',
+                  border: '1.5px solid #e2e8f0',
+                  maxHeight: '260px',
+                  overflowY: 'auto'
+                }}>
+                  {categories.map((c: any) => {
+                    const isChecked = form.categoryIds ? String(form.categoryIds).split(',').includes(String(c.id)) : false;
+                    return (
+                      <label key={c.id} style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        fontSize: '13px',
+                        cursor: 'pointer',
+                        padding: '8px 12px',
+                        borderRadius: '10px',
+                        background: isChecked ? '#fff' : 'transparent',
+                        border: '1.5px solid ' + (isChecked ? '#008080' : 'transparent'),
+                        transition: 'all 0.2s'
+                      }}>
+                        <input
+                          type="checkbox"
+                          checked={isChecked}
+                          onChange={() => toggleExtraCategory(c.id)}
+                          style={{ accentColor: '#008080', width: '18px', height: '18px' }}
+                        />
+                        <span style={{ color: isChecked ? '#008080' : '#475569', fontWeight: isChecked ? 700 : 500 }}>
+                          {c.name}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="fg-row">
                 <div className="fg">
                   <label>Type Key (Tabs)</label>
                   <select id="p-type" value={form.type} onChange={handleInputChange}>
