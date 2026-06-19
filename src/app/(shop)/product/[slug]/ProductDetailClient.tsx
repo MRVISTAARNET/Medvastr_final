@@ -302,6 +302,36 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                   {isOutOfStock ? 'SOLD OUT' : `Add to Bag — ${fmt(p.price * qty)}`}
                 </button>
 
+                {/* Complete the Set Callout */}
+                {p.styleId && (p.styleId.toLowerCase() === 'top' || p.styleId.toLowerCase() === 'bottom') && (
+                  <div
+                    onClick={() => {
+                      const baseName = p.name.replace(/\b(Top|Bottom|top|bottom)\b/gi, '').trim();
+                      router.push(`/products?search=${encodeURIComponent(baseName)}`);
+                    }}
+                    style={{
+                      marginTop: 8,
+                      padding: '16px',
+                      background: 'radial-gradient(circle at top right, #fff1f2, #ffe4e6)',
+                      borderRadius: 12,
+                      border: '1.5px solid #fda4af',
+                      cursor: 'pointer',
+                      transition: 'transform 0.2s, box-shadow 0.2s',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 12
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(225, 29, 72, 0.15)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
+                  >
+                    <div style={{ fontSize: 28 }}>✨</div>
+                    <div>
+                      <div style={{ fontSize: 13.5, fontWeight: 900, color: '#e11d48', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>Complete Your Set & Save!</div>
+                      <div style={{ fontSize: 12.5, color: '#be123c', fontWeight: 600 }}>Upgrade to the Full Scrub Suit for just ₹599 more!</div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Bulk Order Callout */}
                 <div
                   onClick={() => router.push('/bulk-orders')}

@@ -540,7 +540,7 @@ export default function AdminProducts() {
                 <div className="fg" style={{ gridColumn: 'span 2' }}>
                   <label>Badges (Select Multiple)</label>
                   <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', padding: '12px', background: '#f8fafc', borderRadius: '12px', border: '1.5px solid #e2e8f0' }}>
-                    {["Bestseller", "New", "New Launch", "Premium", "10% Off", "Limited Edition"].map(tag => (
+                    {["Bestseller", "New", "New Launch", "Premium", "10% Off", "Limited Edition", "Buy Set & Save", "Bundle Deal"].map(tag => (
                       <label key={tag} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}>
                         <input
                           type="checkbox"
