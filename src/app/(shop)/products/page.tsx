@@ -601,27 +601,46 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
   if (failed) return null;
 
   return (
-    <div
-      className="cat-banner"
-      style={{
-        width: '100%',
-        marginBottom: 30,
-        borderRadius: 24,
-        overflow: 'hidden',
-        aspectRatio: '1600 / 600',
-        position: 'relative',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-        background: '#f1f5f9',
-      }}
-    >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={src}
-        alt={title}
-        onError={tryNext}
-        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-      />
-    </div>
+    <>
+      <div className="cat-banner">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={src}
+          alt={title}
+          onError={tryNext}
+          className="cat-banner-img"
+        />
+      </div>
+      <style jsx>{`
+        .cat-banner {
+          width: 100%;
+          margin-bottom: 30px;
+          border-radius: 20px;
+          overflow: hidden;
+          position: relative;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+          background: #f1f5f9;
+          aspect-ratio: 1600 / 500;
+        }
+        .cat-banner-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+        @media (max-width: 768px) {
+          .cat-banner {
+            aspect-ratio: 1600 / 800; /* Makes it significantly taller on mobile */
+            border-radius: 12px;
+          }
+        }
+        @media (max-width: 480px) {
+          .cat-banner {
+            aspect-ratio: 1600 / 1000; /* Even taller for very small phones */
+          }
+        }
+      `}</style>
+    </>
   );
 }
 
