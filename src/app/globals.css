@@ -2096,12 +2096,16 @@ textarea {
 }
 
 .pc-badge {
+  position: relative;
+  top: auto;
+  left: auto;
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.5px;
   text-transform: uppercase;
+  width: max-content;
 }
 
 .badge-bestseller {
