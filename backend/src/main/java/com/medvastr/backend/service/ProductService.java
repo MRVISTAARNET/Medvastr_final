@@ -194,10 +194,12 @@ public class ProductService {
 
         if (r.getImageUrls() != null) {
             p.getImages().clear();
+            productRepo.saveAndFlush(p); // Force clear old images
             replaceImages(p, r.getImageUrls());
         }
 
         p.getVariants().clear();
+        productRepo.saveAndFlush(p); // Force clear old variants
         p.getVariants().addAll(buildVariants(r, p));
 
         return toDTO(productRepo.save(p));
