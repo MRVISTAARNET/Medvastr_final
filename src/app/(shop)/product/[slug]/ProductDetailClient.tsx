@@ -302,12 +302,17 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                   {isOutOfStock ? 'SOLD OUT' : `Add to Bag — ${fmt(p.price * qty)}`}
                 </button>
 
-                {/* Complete the Set Callout */}
-                {p.styleId && (p.styleId.toLowerCase() === 'top' || p.styleId.toLowerCase() === 'bottom') && (
+                {/* Complete the Set Callout — shows when product name contains 'Top' or 'Bottom' */}
+                {/\b(top|bottom)\b/i.test(p.name) && (
                   <div
                     onClick={() => {
-                      const baseName = p.name.replace(/\b(Top|Bottom|top|bottom)\b/gi, '').trim();
-                      router.push(`/products?search=${encodeURIComponent(baseName)}`);
+                      if (p.catId) {
+                        router.push(`/products?cat=${p.catId}`);
+                      } else if (p.type) {
+                        router.push(`/products?type=${p.type}`);
+                      } else {
+                        router.push('/products');
+                      }
                     }}
                     style={{
                       marginTop: 8,
@@ -327,7 +332,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                     <div style={{ fontSize: 28 }}>✨</div>
                     <div>
                       <div style={{ fontSize: 13.5, fontWeight: 900, color: '#e11d48', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>Complete Your Set & Save!</div>
-                      <div style={{ fontSize: 12.5, color: '#be123c', fontWeight: 600 }}>Upgrade to the Full Scrub Suit for just ₹599 more!</div>
+                      <div style={{ fontSize: 12.5, color: '#be123c', fontWeight: 600 }}>Buy the Full Set and save more — click to shop the complete collection!</div>
                     </div>
                   </div>
                 )}
