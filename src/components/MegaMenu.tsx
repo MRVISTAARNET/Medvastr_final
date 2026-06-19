@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useApp } from "@/context/AppContext";
 import { fmt } from "@/lib/data";
+import { buildCategoryPath } from "@/lib/categoryUtils";
 
 interface MegaMenuProps {
   gender?: "men" | "women";
@@ -22,13 +23,6 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
   const genKey = gender || "";
   const queryGen = gender ? `gender=${gender}` : "";
 
-  // Filter products by gender
-  const genProducts = products.filter((p) => {
-    if (!gender) return true;
-    return !p.gen || p.gen.toLowerCase() === genKey || p.gen.toLowerCase() === "unisex";
-  });
-
-  // Find parent category
   const parentCat = categoryTree.find((c: any) =>
     (parentSlug && c.slug === parentSlug) ||
     (gender && c.slug === genKey) ||
@@ -37,14 +31,24 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
   );
   const subcats: any[] = parentCat?.children || [];
 
+  const genProducts = products.filter((p) => {
+    if (!gender) return true;
+    return !p.gen || p.gen.toLowerCase() === genKey || p.gen.toLowerCase() === "unisex";
+  });
+
+  const matchesCategory = (p: any, catNode: any) =>
+    String(p.catId) === String(catNode.id)
+    || String(p.subcategoryId) === String(catNode.id)
+    || String(p.childCategoryId) === String(catNode.id);
+
   // Featured product: first product in this section
   const featuredProduct = genProducts.find((p) =>
-    subcats.some((c) => String(p.catId) === String(c.id))
+    subcats.some((c) => matchesCategory(p, c))
   ) || genProducts[0];
 
   // All products under this menu's subcategories (for col 2)
   const allMenuProducts = genProducts
-    .filter((p) => subcats.some((c) => String(p.catId) === String(c.id)))
+    .filter((p) => subcats.some((c) => matchesCategory(p, c)))
     .slice(0, 6);
 
   const colours = colors.length > 0
@@ -75,7 +79,9 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
           <div className="mcol-hd">{catLabel}</div>
           <ul className="m-deep-list">
             {subcats.length > 0 ? subcats.map((cat: any) => {
-              const baseHref = isClothing ? `/products?cat=${cat.slug}${queryGen ? `&${queryGen}` : ""}` : `/bulk-orders/${cat.slug}`;
+              const baseHref = isClothing
+                ? `${buildCategoryPath(cat, categoryTree)}${queryGen ? `?${queryGen}` : ""}`
+                : `/bulk-orders/${cat.slug}`;
               return (
                 <li key={cat.id} className="m-parent-li">
                   <Link href={baseHref} className="m-p-link">
@@ -86,7 +92,7 @@ export default function MegaMenu({ gender, parentSlug, label }: MegaMenuProps) {
                     <ul className="m-sub-list">
                       {cat.children.map((sub: any) => (
                         <li key={sub.id}>
-                          <Link href={isClothing ? `/products?cat=${sub.slug}${queryGen ? `&${queryGen}` : ""}` : `/bulk-orders/${sub.slug}`}>
+                          <Link href={isClothing ? `${buildCategoryPath(sub, categoryTree)}${queryGen ? `?${queryGen}` : ""}` : `/bulk-orders/${sub.slug}`}>
                             {sub.navLabel || sub.name}
                           </Link>
                         </li>

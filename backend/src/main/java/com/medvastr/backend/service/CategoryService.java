@@ -35,6 +35,24 @@ public class CategoryService {
         return toTreeDTO(c);
     }
 
+    public List<Long> getCategoryAndDescendantIds(Long categoryId) {
+        List<Long> ids = new java.util.ArrayList<>();
+        collectDescendantIds(categoryId, ids);
+        return ids;
+    }
+
+    public List<Long> getCategoryAndDescendantIdsBySlug(String slug) {
+        Category c = catRepo.findBySlugAndActiveTrue(slug)
+                .orElseThrow(() -> new RuntimeException("Not found: " + slug));
+        return getCategoryAndDescendantIds(c.getId());
+    }
+
+    private void collectDescendantIds(Long categoryId, List<Long> ids) {
+        ids.add(categoryId);
+        catRepo.findByParentIdAndActiveTrueOrderByDisplayOrderAsc(categoryId)
+                .forEach(child -> collectDescendantIds(child.getId(), ids));
+    }
+
     @Transactional
     public CategoryDTO create(CategoryRequest r) {
         Category c = Category.builder()

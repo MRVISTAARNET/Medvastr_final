@@ -32,9 +32,16 @@ function buildClrImgs(api: any, normalizedImgs: string[]): Record<string, string
   const clrImgs: Record<string, string[]> = {};
   if (colors.length === 0) return clrImgs;
 
+  const imageMeta = api.images || [];
+
   colors.forEach((c, i) => {
-    // 1. First priority: Check for explicit tagging (?clr=#hex)
-    const tagged = normalizedImgs.filter(u => u.toLowerCase().includes(`?clr=${c.hex.toLowerCase()}`));
+    const taggedFromMeta = imageMeta
+      .filter((img: any) => (img.colorHex || img.colorCode || "").toLowerCase() === c.hex.toLowerCase())
+      .map((img: any) => normalizeMediaUrl(img.imageUrl));
+
+    const tagged = taggedFromMeta.length
+      ? taggedFromMeta
+      : normalizedImgs.filter((u) => u.toLowerCase().includes(`?clr=${c.hex.toLowerCase()}`));
 
     // 2. Second priority: Variant Hero Image
     const variantImg = (api.variants || []).find(
@@ -96,6 +103,8 @@ export function mapApiProduct(p: any): Product {
     fit: p.fit || "",
     imgs: normalizedImgs,
     catId: p.categoryId,
+    subcategoryId: p.subcategoryId,
+    childCategoryId: p.childCategoryId,
     sku: p.sku || `MV-${p.id}`,
     styleId: p.styleId || "",
     brand: p.brand || "Medvastr",

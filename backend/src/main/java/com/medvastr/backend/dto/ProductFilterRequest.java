@@ -18,5 +18,6 @@ public class ProductFilterRequest {
     private Double minPrice;
     private Double maxPrice;
     private Long categoryId;
+    private String categorySlug;
 }
 

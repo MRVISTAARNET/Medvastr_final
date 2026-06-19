@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { buildCategoryPath } from "@/lib/categoryUtils";
 import MegaMenu from "./MegaMenu";
 
 export interface NavItem {
@@ -69,7 +70,9 @@ export default function DynamicNav({
         <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
           {subs.map((sub: any) => {
             const isBulk = item.label.toUpperCase().includes("BULK") || item.categorySlug === "bulk-orders";
-            const href = isBulk ? `/bulk-orders/${sub.slug}` : `/products?cat=${sub.slug}`;
+            const href = isBulk
+              ? `/bulk-orders/${sub.slug}`
+              : buildCategoryPath(sub, categoryTree);
             return (
               <li key={sub.id} style={{ padding: "8px 0", borderBottom: "1px solid #f1f5f9" }}>
                 <Link href={href} onClick={close} style={{ textDecoration: "none", color: "#374151", fontWeight: 600, fontSize: "14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>

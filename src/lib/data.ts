@@ -51,6 +51,8 @@ export interface Product {
   fit: string;
   imgs: string[];
   catId?: number;
+  subcategoryId?: number;
+  childCategoryId?: number;
   sku?: string;
   styleId?: string;
   brand?: string;

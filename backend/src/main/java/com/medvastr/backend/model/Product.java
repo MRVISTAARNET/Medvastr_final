@@ -114,6 +114,10 @@ public class Product {
     @JoinColumn(name = "subcategory_id")
     private Category subcategory;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "child_category_id")
+    private Category childCategory;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     @BatchSize(size = 20)

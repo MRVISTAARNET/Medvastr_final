@@ -5,8 +5,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
-import { COLS, fmt } from "@/lib/data";
+import { fmt } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
+import { findCategoryBySlug, flattenCategoryTree, productMatchesCategory } from "@/lib/categoryUtils";
 
 function ProductsContent() {
   const searchParams = useSearchParams();
@@ -14,7 +15,7 @@ function ProductsContent() {
   const initColor = searchParams.get("color") || "";
   const initGen = searchParams.get("gender")?.toLowerCase() || "all";
   const initSize = searchParams.get("size") || "";
-  const { products, banners } = useApp();
+  const { products, banners, categoryTree, colors, sizes } = useApp();
 
   const [cat, setCat] = useState(initCat);
   const [gen, setGen] = useState(initGen);
@@ -37,7 +38,7 @@ function ProductsContent() {
   const PER = 9;
 
   let f = products.filter((p) => {
-    if (cat !== "all" && p.type !== cat) return false;
+    if (cat !== "all" && !productMatchesCategory(p, cat, categoryTree)) return false;
     // Case-insensitive gender comparison — fixes men/women redirect bug
     const pGen = (p.gen || "").toLowerCase();
     if (gen !== "all" && pGen !== "unisex" && pGen !== gen.toLowerCase()) return false;
@@ -116,25 +117,24 @@ function ProductsContent() {
     }
   };
 
-  const uniqueTypes = Array.from(new Set(products.map((p) => p.type)));
-
-  const allBaseTypes = Object.keys(typeConfigs);
-  const extraTypes = uniqueTypes.filter(t => !typeConfigs[t]);
-  const allTypesToRender = [...allBaseTypes, ...extraTypes];
-
-  const dynamicCats = allTypesToRender.map((t: string) => ({
-    id: t,
-    ico: typeConfigs[t]?.ico || '🏷️',
-    l: typeConfigs[t]?.l || t.charAt(0).toUpperCase() + t.slice(1),
-    n: products.filter(p => p.type === t).length
-  }));
+  const flatCats = flattenCategoryTree(categoryTree);
+  const dynamicCats = flatCats
+    .filter((c) => c.depth > 0 || ["men", "women", "surgical-wear", "bulk-orders"].includes(c.slug))
+    .map((c) => ({
+      id: c.slug,
+      ico: "🏷️",
+      l: c.navLabel || c.name,
+      n: products.filter((p) => productMatchesCategory(p, c.slug, categoryTree)).length,
+      depth: c.depth,
+    }))
+    .filter((c) => c.n > 0);
 
   const cats = [
-    { id: "all", ico: "🏷️", l: "Complete Collection", n: products.length },
-    ...dynamicCats
-  ].filter(c => c.n > 0);
+    { id: "all", ico: "🏷️", l: "Complete Collection", n: products.length, depth: 0 },
+    ...dynamicCats,
+  ];
 
-  let rawCatLabel = cat !== 'all' ? cat.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : null;
+  let rawCatLabel = cat !== 'all' ? (findCategoryBySlug(categoryTree, cat)?.name || cat.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')) : null;
   let activeCatLabel = cats.find((c: any) => c.id === cat)?.l || rawCatLabel || (gen !== 'all' ? (gen.charAt(0).toUpperCase() + gen.slice(1) + " Collection") : "All Products");
 
   let staticBannerBase: string | null = null;
@@ -318,15 +318,15 @@ function ProductsContent() {
               <div className="sb3-section">
                 <div className="sb3-sec-hd">COLOURS</div>
                 <div className="sb3-color-grid">
-                  {COLS.map((c) => (
+                  {(colors.length ? colors : []).map((c: any) => (
                     <div
-                      key={c.n}
-                      className={`sb3-color-item${colorFilter === c.n ? " active" : ""}`}
-                      onClick={() => { setColorFilter((prev: string) => prev === c.n ? '' : c.n); setPg(1); }}
+                      key={c.name}
+                      className={`sb3-color-item${colorFilter === c.name ? " active" : ""}`}
+                      onClick={() => { setColorFilter((prev: string) => prev === c.name ? '' : c.name); setPg(1); }}
                     >
-                      <div className="sb3-color-dot" style={{ background: c.h }} />
-                      <span className="sb3-color-name">{c.n}</span>
-                      {colorFilter === c.n && (
+                      <div className="sb3-color-dot" style={{ background: c.hexCode }} />
+                      <span className="sb3-color-name">{c.name}</span>
+                      {colorFilter === c.name && (
                         <span style={{ marginLeft: 'auto', color: '#008080', fontWeight: 900, fontSize: 15 }}>✓</span>
                       )}
                     </div>
@@ -338,21 +338,24 @@ function ProductsContent() {
               <div className="sb3-section">
                 <div className="sb3-sec-hd">SIZE</div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 6 }}>
-                  {["XS", "S", "M", "L", "XL", "2XL"].map((s) => (
+                  {(sizes.length ? sizes : [{ sizeValue: "XS" }, { sizeValue: "S" }, { sizeValue: "M" }, { sizeValue: "L" }, { sizeValue: "XL" }, { sizeValue: "2XL" }]).map((s: any) => {
+                    const val = s.sizeValue || s.name;
+                    return (
                     <button
-                      key={s}
-                      onClick={() => { setSizeFilter((prev: string) => prev === s ? '' : s); setPg(1); }}
+                      key={val}
+                      onClick={() => { setSizeFilter((prev: string) => prev === val ? '' : val); setPg(1); }}
                       style={{
                         padding: '6px 14px', borderRadius: 8, fontSize: 13, fontWeight: 700,
-                        border: sizeFilter === s ? '2px solid #008080' : '1.5px solid #e2e8f0',
-                        background: sizeFilter === s ? '#008080' : 'white',
-                        color: sizeFilter === s ? 'white' : '#475569',
+                        border: sizeFilter === val ? '2px solid #008080' : '1.5px solid #e2e8f0',
+                        background: sizeFilter === val ? '#008080' : 'white',
+                        color: sizeFilter === val ? 'white' : '#475569',
                         cursor: 'pointer', transition: 'all 0.15s',
                       }}
                     >
-                      {s}
+                      {val}
                     </button>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 

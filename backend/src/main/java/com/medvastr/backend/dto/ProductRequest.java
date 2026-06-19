@@ -83,8 +83,10 @@ public class ProductRequest {
     private Integer pocketCount;
 
     @JsonAlias("catId")
-    @NotNull
     private Long categoryId;
+
+    private Long subcategoryId;
+    private Long childCategoryId;
 
     @NotEmpty
     private List<VariantDTO> variants;

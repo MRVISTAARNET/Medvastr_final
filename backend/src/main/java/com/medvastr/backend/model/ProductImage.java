@@ -36,6 +36,9 @@ public class ProductImage {
 
     private String altText;
 
+    @Column(name = "color_code", length = 20)
+    private String colorCode;
+
     @Builder.Default
     private Integer displayOrder = 0;
 

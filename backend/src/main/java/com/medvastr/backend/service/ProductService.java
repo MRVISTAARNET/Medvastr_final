@@ -2,15 +2,22 @@ package com.medvastr.backend.service;
 
 import com.medvastr.backend.dto.ProductDTO;
 import com.medvastr.backend.dto.ProductFilterRequest;
+import com.medvastr.backend.dto.ProductImageDTO;
 import com.medvastr.backend.dto.ProductRequest;
 import com.medvastr.backend.dto.ReviewDTO;
 import com.medvastr.backend.dto.ReviewRequest;
 import com.medvastr.backend.dto.VariantDTO;
+import com.medvastr.backend.model.Category;
 import com.medvastr.backend.model.Product;
+import com.medvastr.backend.model.ProductColor;
 import com.medvastr.backend.model.ProductImage;
+import com.medvastr.backend.model.ProductSize;
 import com.medvastr.backend.model.ProductVariant;
 import com.medvastr.backend.repository.CategoryRepository;
+import com.medvastr.backend.repository.ProductColorRepository;
 import com.medvastr.backend.repository.ProductRepository;
+import com.medvastr.backend.repository.ProductSizeRepository;
+import com.medvastr.backend.repository.ProductVariantRepository;
 import com.medvastr.backend.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +41,24 @@ import java.util.Set;
 public class ProductService {
     private final ProductRepository productRepo;
     private final CategoryRepository catRepo;
+    private final CategoryService categoryService;
     private final ReviewRepository reviewRepo;
+    private final ProductColorRepository colorRepo;
+    private final ProductSizeRepository sizeRepo;
+    private final ProductVariantRepository variantRepo;
 
     public Page<ProductDTO> getAll(ProductFilterRequest f, Pageable p) {
+        List<Long> categoryIds = null;
+        if (f.getCategoryId() != null) {
+            categoryIds = categoryService.getCategoryAndDescendantIds(f.getCategoryId());
+        } else if (f.getCategorySlug() != null && !f.getCategorySlug().isBlank()) {
+            try {
+                categoryIds = categoryService.getCategoryAndDescendantIdsBySlug(f.getCategorySlug());
+            } catch (RuntimeException ex) {
+                categoryIds = List.of(-1L);
+            }
+        }
+
         return productRepo
                 .filter(
                         f.getType(),
@@ -46,6 +68,7 @@ public class ProductService {
                         f.getMinPrice() != null ? BigDecimal.valueOf(f.getMinPrice()) : null,
                         f.getMaxPrice() != null ? BigDecimal.valueOf(f.getMaxPrice()) : null,
                         f.getSearch(),
+                        categoryIds,
                         p)
                 .map(this::toDTO);
     }
@@ -121,15 +144,10 @@ public class ProductService {
 
         if (r.getCategoryId() != null)
             catRepo.findById(r.getCategoryId()).ifPresent(p::setCategory);
-
-        // Handle Images
-        if (r.getImageUrls() != null) {
-            p.setImages(r.getImageUrls().stream()
-                    .map(url -> ProductImage.builder().imageUrl(url).product(p).build())
-                    .collect(Collectors.toCollection(LinkedHashSet::new)));
-        }
+        assignSubAndChildCategories(p, r);
 
         p.setVariants(buildVariants(r, p));
+        replaceImages(p, r.getImageUrls());
 
         return toDTO(productRepo.save(p));
     }
@@ -172,12 +190,11 @@ public class ProductService {
 
         if (r.getCategoryId() != null)
             catRepo.findById(r.getCategoryId()).ifPresent(p::setCategory);
+        assignSubAndChildCategories(p, r);
 
         if (r.getImageUrls() != null) {
             p.getImages().clear();
-            p.getImages().addAll(r.getImageUrls().stream()
-                    .map(url -> ProductImage.builder().imageUrl(url).product(p).build())
-                    .collect(Collectors.toCollection(LinkedHashSet::new)));
+            replaceImages(p, r.getImageUrls());
         }
 
         p.getVariants().clear();
@@ -319,6 +336,10 @@ public class ProductService {
                 .featured(p.isFeatured())
                 .categoryName(p.getCategory() != null ? p.getCategory().getName() : null)
                 .categoryId(p.getCategory() != null ? p.getCategory().getId() : null)
+                .subcategoryId(p.getSubcategory() != null ? p.getSubcategory().getId() : null)
+                .subcategoryName(p.getSubcategory() != null ? p.getSubcategory().getName() : null)
+                .childCategoryId(p.getChildCategory() != null ? p.getChildCategory().getId() : null)
+                .childCategoryName(p.getChildCategory() != null ? p.getChildCategory().getName() : null)
                 .variants(
                         p.getVariants().stream()
                                 .map(v -> VariantDTO.builder()
@@ -328,6 +349,9 @@ public class ProductService {
                                         .colorHex(v.getColorHex())
                                         .stockQuantity(v.getStockQuantity())
                                         .sku(v.getSku())
+                                        .barcode(v.getBarcode())
+                                        .variantPrice(v.getVariantPrice())
+                                        .variantOriginalPrice(v.getVariantOriginalPrice())
                                         .imageUrl(v.getImageUrl())
                                         .active(v.getActive())
                                         .build())
@@ -341,26 +365,122 @@ public class ProductService {
                                 .sorted(Comparator.comparingInt(this::sizeOrder))
                                 .collect(Collectors.toList()))
                 .imageUrls(p.getImages().stream().map(ProductImage::getImageUrl).collect(Collectors.toList()))
+                .images(p.getImages().stream()
+                        .map(img -> ProductImageDTO.builder()
+                                .id(img.getId())
+                                .imageUrl(img.getImageUrl())
+                                .colorCode(img.getColorCode())
+                                .colorHex(img.getColorCode())
+                                .displayOrder(img.getDisplayOrder())
+                                .primary(img.isPrimary())
+                                .build())
+                        .collect(Collectors.toList()))
                 .createdAt(p.getCreatedAt())
                 .build();
     }
 
     private Set<ProductVariant> buildVariants(ProductRequest r, Product p) {
-        if (r.getVariants() != null && !r.getVariants().isEmpty()) {
-            return r.getVariants().stream()
-                    .map(v -> ProductVariant.builder()
+        if (r.getVariants() == null || r.getVariants().isEmpty()) {
+            return new LinkedHashSet<>();
+        }
+
+        return r.getVariants().stream()
+                .map(v -> {
+                    validateVariantUniqueness(v, p.getId());
+                    ProductVariant variant = ProductVariant.builder()
                             .product(p)
                             .size(v.getSize())
                             .colorName(v.getColorName())
                             .colorHex(v.getColorHex())
                             .stockQuantity(v.getStockQuantity() != null ? v.getStockQuantity() : 0)
                             .sku(v.getSku())
+                            .barcode(v.getBarcode() != null ? v.getBarcode() : v.getSku())
+                            .variantPrice(v.getVariantPrice())
+                            .variantOriginalPrice(v.getVariantOriginalPrice())
                             .imageUrl(v.getImageUrl())
-                            .build())
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
-        }
+                            .active(v.getActive() == null || v.getActive())
+                            .build();
 
-        return new LinkedHashSet<>();
+                    if (v.getColorName() != null) {
+                        colorRepo.findByName(v.getColorName()).ifPresent(variant::setColor);
+                    }
+                    if (v.getSize() != null) {
+                        sizeRepo.findBySizeValue(v.getSize()).ifPresent(variant::setSizeMaster);
+                    }
+                    return variant;
+                })
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    private void validateVariantUniqueness(VariantDTO v, Long productId) {
+        if (v.getSku() != null) {
+            variantRepo.findBySku(v.getSku()).ifPresent(existing -> {
+                if (productId == null || existing.getProduct() == null
+                        || !productId.equals(existing.getProduct().getId())) {
+                    throw new RuntimeException("Duplicate SKU: " + v.getSku());
+                }
+            });
+        }
+        if (v.getBarcode() != null) {
+            variantRepo.findByBarcode(v.getBarcode()).ifPresent(existing -> {
+                if (productId == null || existing.getProduct() == null
+                        || !productId.equals(existing.getProduct().getId())) {
+                    throw new RuntimeException("Duplicate barcode: " + v.getBarcode());
+                }
+            });
+        }
+    }
+
+    private void assignSubAndChildCategories(Product p, ProductRequest r) {
+        if (r.getSubcategoryId() != null) {
+            Category sub = catRepo.findById(r.getSubcategoryId())
+                    .orElseThrow(() -> new RuntimeException("Subcategory not found"));
+            p.setSubcategory(sub);
+        } else {
+            p.setSubcategory(null);
+        }
+        if (r.getChildCategoryId() != null) {
+            Category child = catRepo.findById(r.getChildCategoryId())
+                    .orElseThrow(() -> new RuntimeException("Child category not found"));
+            p.setChildCategory(child);
+        } else {
+            p.setChildCategory(null);
+        }
+    }
+
+    private void replaceImages(Product p, List<String> imageUrls) {
+        if (imageUrls == null) {
+            return;
+        }
+        int order = 0;
+        for (String rawUrl : imageUrls) {
+            String colorCode = extractColorCode(rawUrl);
+            String cleanUrl = stripColorQuery(rawUrl);
+            ProductImage image = ProductImage.builder()
+                    .product(p)
+                    .imageUrl(cleanUrl)
+                    .colorCode(colorCode)
+                    .displayOrder(order)
+                    .isPrimary(order == 0)
+                    .build();
+            p.getImages().add(image);
+            order++;
+        }
+    }
+
+    private String extractColorCode(String url) {
+        if (url == null || !url.contains("?clr=")) {
+            return null;
+        }
+        int idx = url.toLowerCase().indexOf("?clr=");
+        return url.substring(idx + 5).split("&")[0];
+    }
+
+    private String stripColorQuery(String url) {
+        if (url == null || !url.contains("?clr=")) {
+            return url;
+        }
+        return url.substring(0, url.toLowerCase().indexOf("?clr="));
     }
 
     private String slug(String n) {

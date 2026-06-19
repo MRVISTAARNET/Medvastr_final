@@ -32,7 +32,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                         "AND (:badge IS NULL OR p.badge=:badge) " +
                         "AND (:minP IS NULL OR p.price>=:minP) " +
                         "AND (:maxP IS NULL OR p.price<=:maxP) " +
-                        "AND (:q IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(p.description) LIKE LOWER(CONCAT('%',:q,'%')))")
+                        "AND (:q IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(p.description) LIKE LOWER(CONCAT('%',:q,'%'))) " +
+                        "AND (:categoryIds IS NULL OR p.category.id IN :categoryIds OR p.subcategory.id IN :categoryIds OR p.childCategory.id IN :categoryIds)")
         Page<Product> filter(
                         @Param("type") String type,
                         @Param("gender") String gender,
@@ -41,6 +42,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                         @Param("minP") BigDecimal minP,
                         @Param("maxP") BigDecimal maxP,
                         @Param("q") String q,
+                        @Param("categoryIds") List<Long> categoryIds,
                         Pageable p);
 
         @Query("SELECT p FROM Product p WHERE p.active=true AND (LOWER(p.name) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(p.description) LIKE LOWER(CONCAT('%',:q,'%')))")

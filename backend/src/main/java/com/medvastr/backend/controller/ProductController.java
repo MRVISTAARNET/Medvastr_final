@@ -34,7 +34,9 @@ public class ProductController {
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortDir,
-            @RequestParam(required = false) String search) {
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String cat,
+            @RequestParam(required = false) Long categoryId) {
         var f = ProductFilterRequest.builder()
                 .type(type)
                 .gender(gender)
@@ -43,6 +45,8 @@ public class ProductController {
                 .minPrice(minPrice)
                 .maxPrice(maxPrice)
                 .search(search)
+                .categorySlug(cat)
+                .categoryId(categoryId)
                 .build();
         Sort sort = sortDir.equals("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         return ResponseEntity.ok(ApiResponse.ok("Products", s.getAll(f, PageRequest.of(page, size, sort))));

@@ -5,16 +5,7 @@ import Link from "next/link";
 import { useApp } from "@/context/AppContext";
 import { fmt } from "@/lib/data";
 import DynamicNav, { NavItem } from "./DynamicNav";
-
-const FALLBACK_NAV: NavItem[] = [
-  { id: 1, label: "Men", href: "/products?gender=men", itemType: "MEGA_MENU", gender: "men", categorySlug: "men" },
-  { id: 2, label: "Women", href: "/products?gender=women", itemType: "MEGA_MENU", gender: "women", categorySlug: "women" },
-  { id: 3, label: "Surgical Wear", href: "/products?cat=surgical-wear", itemType: "MEGA_MENU", categorySlug: "surgical-wear" },
-  { id: 4, label: "Bulk Order", href: "/bulk-orders", itemType: "LINK" },
-  { id: 5, label: "About Us", href: "/about", itemType: "LINK" },
-  { id: 6, label: "Blogs", href: "/blog", itemType: "LINK" },
-  { id: 7, label: "Contact Us", href: "/contact", itemType: "LINK" },
-];
+import { buildNavFromCategories } from "@/lib/categoryUtils";
 
 interface HeaderProps {
   onCart: () => void;
@@ -35,6 +26,15 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
     ? products.filter((p) => p.name.toLowerCase().includes(q.toLowerCase())).slice(0, 6)
     : [];
 
+  const staticLinks: NavItem[] = [
+    { id: 9001, label: "About Us", href: "/about", itemType: "LINK" },
+    { id: 9002, label: "Blogs", href: "/blog", itemType: "LINK" },
+    { id: 9003, label: "Contact Us", href: "/contact", itemType: "LINK" },
+  ];
+  const categoryNav = buildNavFromCategories(categoryTree || []);
+  const resolvedNav = navItems?.length
+    ? navItems
+    : [...categoryNav, ...staticLinks];
   const cc = cart.reduce((s, i) => s + i.qty, 0);
   const wc = wishlist.length;
 
@@ -134,7 +134,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
           <button className="mn-close" onClick={() => setMn(false)}>✕</button>
         </div>
         <DynamicNav
-          items={navItems && navItems.length > 0 ? navItems : FALLBACK_NAV}
+          items={resolvedNav}
           categoryTree={categoryTree}
           mobileOpen={mn}
           onNavigate={() => setMn(false)}

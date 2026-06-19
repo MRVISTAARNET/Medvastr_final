@@ -6,7 +6,7 @@ import { API_BASE, authHeaders } from "@/lib/api";
 import { useApp } from "@/context/AppContext";
 
 export default function AdminCategories() {
-  const { refreshCategories } = useApp();
+  const { refreshCategories, refreshNav } = useApp();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cats, setCats] = useState<any[]>([]);
   const [tree, setTree] = useState<any[]>([]);
@@ -57,6 +57,7 @@ export default function AdminCategories() {
     if (data.success) {
       fetchCats();
       refreshCategories();
+      refreshNav();
       setIsModalOpen(false);
     } else {
       alert(data.message || "Failed to save");
@@ -75,7 +76,7 @@ export default function AdminCategories() {
           <button className="act-btn del" onClick={() => {
             if (!confirm("Delete this category?")) return;
             fetch(`${API_BASE}/categories/${c.id}`, { method: "DELETE", headers: authHeaders(localStorage.getItem("token")) })
-              .then(() => { fetchCats(); refreshCategories(); });
+              .then(() => { fetchCats(); refreshCategories(); refreshNav(); });
           }}>🗑️</button>
         </td>
       </tr>,
