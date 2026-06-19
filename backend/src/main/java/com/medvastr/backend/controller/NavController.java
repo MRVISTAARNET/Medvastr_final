@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping({"/api/nav", "/nav"})
+@RequestMapping({ "/api/nav", "/nav" })
 @RequiredArgsConstructor
 public class NavController {
 
@@ -22,10 +22,10 @@ public class NavController {
 
     @GetMapping
     public ResponseEntity<List<NavItemDTO>> getNavigation(
-            @RequestParam(defaultValue = "categories") String source) {
-        if ("legacy".equalsIgnoreCase(source)) {
-            return ResponseEntity.ok(navItemService.getActiveTree());
+            @RequestParam(defaultValue = "database") String source) {
+        if ("categories".equalsIgnoreCase(source)) {
+            return ResponseEntity.ok(categoryNavService.buildNavigation());
         }
-        return ResponseEntity.ok(categoryNavService.buildNavigation());
+        return ResponseEntity.ok(navItemService.getActiveTree());
     }
 }
