@@ -3,14 +3,12 @@ package com.medvastr.backend.controller;
 import com.medvastr.backend.dto.*;
 import com.medvastr.backend.repository.UserRepository;
 import com.medvastr.backend.service.AuthService;
-import com.medvastr.backend.service.EmailService;
 import com.medvastr.backend.service.OtpService;
 import java.util.UUID;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,7 +20,6 @@ public class AuthController {
 
     private final AuthService s;
     private final OtpService otpService;
-    private final EmailService emailService;
     private final UserRepository userRepository;
 
     // ── Register ─────────────────────────────────────────────────────────────

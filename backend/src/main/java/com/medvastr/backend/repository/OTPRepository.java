@@ -1,4 +1,5 @@
 package com.medvastr.backend.repository;
+
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.List;
 
 @Repository
 public interface OTPRepository extends JpaRepository<OTP, Long> {
