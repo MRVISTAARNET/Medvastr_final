@@ -74,7 +74,11 @@ export default function Footer() {
               ["Under Scrubs", "full-sleeve-compression-under-scrub", false],
               ["Surgeon Gowns", "surgeon-gown", false],
               ["Surgeon Caps", "surgeon-cap", false],
-              ["Linen & Bedding", "linen-and-bedding", true]
+              ["Linen & Bedding", "linen-and-bedding", true],
+              ["Brown Blanket", "brown-blankets", true],
+              ["Maternity Gown", "maternity-gown", true],
+              ["Patient Dress", "patient-dress", true],
+              ["Scrub Suit (Bulk)", "scrub-suit", true]
             ].map(([l, cat, isBulk]) => (
               <li key={l as string}>
                 <Link href={isBulk ? `/bulk-orders/${cat}` : `/products?cat=${cat}`}>{l as string}</Link>
