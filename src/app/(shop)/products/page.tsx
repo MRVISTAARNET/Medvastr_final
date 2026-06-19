@@ -652,13 +652,16 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
 }
 
 
-export default function ProductsPage() {
+function SearchParamsKeyWrapper() {
   const searchParams = useSearchParams();
   const key = `${searchParams.get("cat")}-${searchParams.get("gender")}`;
+  return <ProductsContent key={key} />;
+}
 
+export default function ProductsPage() {
   return (
-    <Suspense key={key} fallback={<div>Loading products...</div>}>
-      <ProductsContent />
+    <Suspense fallback={<div>Loading products...</div>}>
+      <SearchParamsKeyWrapper />
     </Suspense>
   );
 }
