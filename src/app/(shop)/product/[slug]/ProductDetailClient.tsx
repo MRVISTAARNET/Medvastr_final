@@ -163,7 +163,6 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                 <span>★</span> {avgRating}
               </div>
               <span className="pdp-review-count">({reviews.length} Verified Reviews)</span>
-              <span className="pdp-sku-txt">SKU: {p.sku || 'MVS-ELITE'}</span>
             </div>
 
             <div className="pdp-price-wrap">
@@ -184,7 +183,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               <div className="pdp-select-group">
                 <div className="pdp-select-hd">
                   <label className="pdp-select-label">Select Color</label>
-                  <span className="pdp-select-val">{p.clrNms?.[ci] || cn(p.clrs[ci])}</span>
+                  <span className="pdp-select-val">Selected Color: <strong style={{ color: 'var(--ink)' }}>{p.clrNms?.[ci] || cn(p.clrs[ci])}</strong></span>
                 </div>
                 <div className="pdp-color-grid">
                   {p.clrs.map((c, i) => (
@@ -234,7 +233,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
           {/* ACCORDIONS */}
           <div className="pdp-details-wrap">
             <DetailAccordion title="Performance & Fabric" defaultOpen={true}>
-              <p className="mb-6">{p.desc}</p>
+              <p style={{ color: 'var(--lt)', lineHeight: 1.8, marginBottom: '24px', fontSize: '14.5px' }}>{p.desc}</p>
               <div className="pdp-specs-grid">
                 {[
                   ['Material', p.fabD || p.fab],
@@ -252,26 +251,66 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             </DetailAccordion>
 
             <DetailAccordion title="Shipping & Returns">
-              <div className="space-y-4">
-                <div className="flex gap-4">
-                  <span className="text-xl">🚚</span>
-                  <div>
-                    <strong className="block text-ink text-sm">Domestic Express</strong>
-                    <p className="text-xs">Ships in 24-48 hours. Transit time 3-5 days.</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {[['🚚', 'Domestic Express Delivery', 'Ships in 24-48 hours. Transit time 3-5 business days across India.'],
+                ['🔁', '7-Day Fit Guarantee', 'Easy size exchange for optimal fit. No questions asked.'],
+                ['📦', 'Secure Packaging', 'Orders are carefully packed to ensure your garment arrives in perfect condition.']
+                ].map(([ico, title, desc]) => (
+                  <div key={title} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+                    <span style={{ fontSize: '22px', flexShrink: 0 }}>{ico}</span>
+                    <div>
+                      <strong style={{ display: 'block', fontSize: '14px', fontWeight: 700, color: 'var(--ink)', marginBottom: '4px' }}>{title}</strong>
+                      <p style={{ fontSize: '13px', color: 'var(--lt)', lineHeight: 1.7, margin: 0 }}>{desc}</p>
+                    </div>
                   </div>
-                </div>
-                <div className="flex gap-4">
-                  <span className="text-xl">🔁</span>
-                  <div>
-                    <strong className="block text-ink text-sm">7-Day Fit Guarantee</strong>
-                    <p className="text-xs">Easy exchanges for size optimizations.</p>
-                  </div>
-                </div>
+                ))}
               </div>
             </DetailAccordion>
           </div>
+
+          {/* TRUST STRIP */}
+          <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', paddingTop: '24px', borderTop: '1px solid var(--bdr2)' }}>
+            {[['🔒', 'Secure Payment'], ['↩️', 'Easy Returns'], ['✅', 'Genuine Product'], ['🚚', 'Free Shipping ₹999+']].map(([ico, label]) => (
+              <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '12px', color: 'var(--lt)', fontWeight: 600 }}>
+                <span style={{ fontSize: '16px' }}>{ico}</span> {label}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+
+      {/* REVIEWS SECTION */}
+      <section className="pdp-reviews-sec">
+        <div className="pdp-reviews-hd">
+          <h2 className="pdp-reviews-title">Customer Reviews</h2>
+          <div className="pdp-reviews-avg">
+            <div className="pdp-reviews-score">{avgRating}</div>
+            <div>
+              <div className="pdp-reviews-stars">{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ color: s <= Math.round(Number(avgRating)) ? '#f59e0b' : '#e2e8f0' }}>★</span>)}</div>
+              <div className="pdp-reviews-count">Based on {reviews.length} reviews</div>
+            </div>
+          </div>
+        </div>
+
+        {reviews.length > 0 ? (
+          <div className="pdp-review-cards">
+            {reviews.slice(0, 6).map((rv, i) => (
+              <div key={i} className="pdp-review-card">
+                <div className="pdp-rv-top">
+                  <div className="pdp-rv-avatar">{(rv.userName || rv.userEmail || 'A').charAt(0).toUpperCase()}</div>
+                  <div>
+                    <div className="pdp-rv-name">{rv.userName || rv.userEmail?.split('@')[0] || 'Verified Customer'}</div>
+                    <div className="pdp-rv-stars">{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ color: s <= (rv.rating || 5) ? '#f59e0b' : '#e2e8f0' }}>★</span>)}</div>
+                  </div>
+                </div>
+                <p className="pdp-rv-body">{rv.review || rv.comment || rv.body || '—'}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="pdp-no-reviews">Be the first to share your experience with this product!</p>
+        )}
+      </section>
 
       {/* RELATED */}
       {related.length > 0 && (

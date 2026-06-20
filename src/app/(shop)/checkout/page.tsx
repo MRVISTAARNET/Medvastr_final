@@ -252,9 +252,15 @@ export default function CheckoutPage() {
           <div className="co-form-group">
             <h3 className="co-section-title"><span className="step-n">1</span> Delivery Details</h3>
             {!user && (
-              <div className="p-6 bg-emerald-50 rounded-xl mb-8 flex justify-between items-center border border-emerald-100">
-                <p className="text-sm font-bold text-emerald-900">Sign in to sync your saved addresses.</p>
-                <button onClick={() => setIsAuthOpen(true)} className="text-sm font-black text-emerald-600 underline uppercase tracking-widest">Sign In</button>
+              <div className="co-signin-banner">
+                <div className="co-signin-text">
+                  <span style={{ fontSize: '20px' }}>⚡</span>
+                  <div>
+                    <strong>Faster checkout</strong>
+                    <p>Sign in to auto-fill your saved address</p>
+                  </div>
+                </div>
+                <button onClick={() => setIsAuthOpen(true)} className="co-signin-btn">Sign In</button>
               </div>
             )}
             <div className="co-input-row">
@@ -262,7 +268,7 @@ export default function CheckoutPage() {
               <input name="lastName" className="co-input-field" placeholder="Last Name" value={form.lastName} onChange={handleInputChange} />
             </div>
             <input name="address" className="co-input-field mb-5" placeholder="Full Address / Street / Floor" value={form.address} onChange={handleInputChange} />
-            <div className="co-input-row">
+            <div className="co-input-row-3">
               <input name="city" className="co-input-field" placeholder="City" value={form.city} onChange={handleInputChange} />
               <input name="state" className="co-input-field" placeholder="State" value={form.state} onChange={handleInputChange} />
               <input name="pincode" className="co-input-field" placeholder="Pincode" value={form.pincode} onChange={handleInputChange} />
@@ -302,8 +308,16 @@ export default function CheckoutPage() {
           </div>
 
           <button onClick={placeOrder} disabled={submitting} className="pdp-buy-btn mt-4">
-            {submitting ? "Processing..." : `Complete Purchase — ${fmt(tot)}`}
+            {submitting ? 'Processing...' : `Complete Purchase — ${fmt(tot)}`}
           </button>
+
+          {/* TRUST STRIP */}
+          <div className="co-checkout-trust">
+            <div className="co-trust-badge">🔒 SSL Encrypted</div>
+            <div className="co-trust-badge">🛡️ Razorpay Secured</div>
+            <div className="co-trust-badge">↩️ Easy Returns</div>
+            <div className="co-trust-badge">📦 Free Shipping ₹999+</div>
+          </div>
         </div>
 
         {/* SUMMARY */}
@@ -341,13 +355,29 @@ export default function CheckoutPage() {
             {promoDiscount > 0 && (
               <div className="co-total-row">
                 <span>Promotional Saving</span>
-                <span className="text-emerald-600">-{fmt(promoDiscount)}</span>
+                <span style={{ color: '#16a34a' }}>-{fmt(promoDiscount)}</span>
               </div>
             )}
             <div className="co-total-row grand">
               <span>Grand Total</span>
               <span>{fmt(tot)}</span>
             </div>
+          </div>
+
+          {/* SIDEBAR TRUST INFO */}
+          <div className="co-sidebar-trust">
+            {[['🚚', 'Free Delivery', `Orders above ₹999 ship free. Others at ₹${ship}.`],
+            ['↩️', 'Easy Returns', '7-day hassle-free returns on all orders.'],
+            ['💬', 'Support', 'Need help? Chat with us or call Mon–Sat 10am–6pm.']
+            ].map(([ico, title, desc]) => (
+              <div key={title} className="co-sidebar-policy">
+                <span className="co-sidebar-policy-icon">{ico}</span>
+                <div>
+                  <strong>{title}</strong>
+                  <p>{desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </aside>
       </div>
