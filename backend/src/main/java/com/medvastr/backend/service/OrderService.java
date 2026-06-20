@@ -380,7 +380,7 @@ public class OrderService {
                         .imageUrl(i.getVariant() != null && i.getVariant().getImageUrl() != null
                                 ? i.getVariant().getImageUrl()
                                 : (i.getProduct() != null && !i.getProduct().getImages().isEmpty()
-                                        ? i.getProduct().getImages().iterator().next().getUrl()
+                                        ? i.getProduct().getImages().iterator().next().getImageUrl()
                                         : null))
                         .quantity(i.getQuantity())
                         .unitPrice(i.getUnitPrice())
