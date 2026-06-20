@@ -169,26 +169,14 @@ export default function CheckoutPage() {
 
   const placeOrder = async () => {
     if (submitting) return;
-
     if (!user) {
       setIsAuthOpen(true);
       return toast("Please sign in to place order", "bad");
     }
-
     if (!form.address || !form.phone || !form.firstName || !form.pincode) {
       return toast("Missing shipping details", "bad");
     }
-
-    if (!/^\d{6}$/.test(form.pincode.trim())) {
-      return toast("Enter a valid 6-digit pincode", "bad");
-    }
-
-    if (!/^\d{10}$/.test(form.phone.replace(/\D/g, "").slice(-10))) {
-      return toast("Enter a valid 10-digit mobile number", "bad");
-    }
-
     setSubmitting(true);
-
     const orderRequest = {
       ...form,
       items: cart.map((i) => ({
@@ -200,13 +188,11 @@ export default function CheckoutPage() {
         quantity: i.qty,
       })),
     };
-
     try {
       const data = await apiJson<any>("/orders", {
         method: "POST",
         body: JSON.stringify(orderRequest),
       });
-
       if (data.success) {
         if (form.paymentMethod === "ONLINE") {
           handleOnlinePayment(data.data);
@@ -225,35 +211,20 @@ export default function CheckoutPage() {
     }
   };
 
-  if (!isHydrated) return <div className="page sec">Loading...</div>;
+  if (!isHydrated) return <div className="min-h-screen flex items-center justify-center">Loading Experience...</div>;
 
   if (orderNum) {
     return (
-      <div className="page" style={{ padding: "80px 0" }}>
-        <div className="sec checkout-success" style={{ textAlign: "center" }}>
-          <div style={{ fontSize: "70px", marginBottom: "15px" }} aria-hidden="true">
-            🎉
-          </div>
-          <h2 style={{ fontSize: "32px", marginBottom: "10px" }}>Order Placed!</h2>
-          <p style={{ color: "#666", fontSize: "18px", marginBottom: "30px" }}>
-            Your order <strong>{orderNum}</strong> is confirmed.
+      <div className="co-container page">
+        <div className="co-success-card">
+          <div className="co-success-icon">🎉</div>
+          <h2 className="co-success-h">Order Confirmed!</h2>
+          <p className="co-success-p">
+            Thank you for choosing Medvastr. Your order <strong>{orderNum}</strong> has been placed and is being prepared for shipment.
           </p>
-          <div style={{ display: "flex", gap: "15px", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/" className="btn-p">
-              Keep Shopping
-            </Link>
-            <Link
-              href={`/track?order=${encodeURIComponent(orderNum)}`}
-              style={{
-                padding: "12px 25px",
-                borderRadius: "10px",
-                border: "1.5px solid #008080",
-                color: "#008080",
-                fontWeight: 600,
-              }}
-            >
-              Track Status
-            </Link>
+          <div className="co-success-btns">
+            <Link href="/" className="pdp-buy-btn flex items-center justify-center" style={{ height: '60px' }}>Continue Shopping</Link>
+            <Link href={`/track?order=${encodeURIComponent(orderNum)}`} className="pdp-heart-btn" style={{ height: '60px' }}>Track Order</Link>
           </div>
         </div>
       </div>
@@ -262,258 +233,123 @@ export default function CheckoutPage() {
 
   if (cart.length === 0) {
     return (
-      <div className="page sec" style={{ textAlign: "center", padding: "100px 0" }}>
-        <div style={{ fontSize: "50px", marginBottom: "20px" }} aria-hidden="true">
-          🛒
-        </div>
-        <h2>Your bag is empty</h2>
-        <p style={{ color: "#888", marginTop: "10px" }}>Add some premium scrubs to get started.</p>
-        <Link href="/products" className="btn-p" style={{ marginTop: "25px", display: "inline-block" }}>
-          Visit Products
-        </Link>
+      <div className="co-container page text-center">
+        <div className="co-success-icon">🛒</div>
+        <h2 className="co-success-h">Your bag is empty</h2>
+        <p className="co-success-p">Add some of our premium medical essentials before checking out.</p>
+        <Link href="/products" className="pdp-buy-btn inline-flex items-center justify-center" style={{ maxWidth: '300px', height: '60px' }}>Shop Collection</Link>
       </div>
     );
   }
 
   return (
-    <div className="page">
-      <div className="sec">
-        <h1 className="checkout-h" style={{ marginBottom: "35px", fontFamily: "var(--serif)" }}>
-          Checkout
-        </h1>
+    <div className="co-container page">
+      <h1 className="co-title">Secure Checkout</h1>
 
-        <div className="checkout-grid">
-          <div className="checkout-main">
-            <div
-              style={{
-                background: "#fff",
-                border: "1px solid #eee",
-                borderRadius: "20px",
-                padding: "35px",
-                boxShadow: "0 5px 15px rgba(0,0,0,0.02)",
-              }}
-            >
-              {!user && (
-                <div
-                  style={{
-                    background: "#f0f9f9",
-                    padding: "20px",
-                    borderRadius: "12px",
-                    marginBottom: "30px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    border: "1px dashed #008080",
-                    flexWrap: "wrap",
-                    gap: 12,
-                  }}
-                >
-                  <div style={{ fontSize: "14px", color: "#006060", fontWeight: 600 }}>
-                    Already a member? Sign in for faster checkout.
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setIsAuthOpen(true)}
-                    style={{
-                      background: "#008080",
-                      color: "#fff",
-                      padding: "8px 20px",
-                      borderRadius: "8px",
-                      border: "none",
-                      fontWeight: 700,
-                      cursor: "pointer",
-                      fontSize: "13px",
-                    }}
-                  >
-                    Sign In
-                  </button>
-                </div>
-              )}
-
-              <h3 style={{ marginBottom: "25px", fontSize: "20px", fontWeight: 700 }}>Shipping Address</h3>
-              <div className="checkout-name-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "15px" }}>
-                <input
-                  name="firstName"
-                  className="price-inp"
-                  placeholder="First Name"
-                  value={form.firstName}
-                  onChange={handleInputChange}
-                  required
-                  autoComplete="given-name"
-                  style={{ width: "100%", padding: "14px", borderRadius: "10px", border: "1.2px solid #ddd" }}
-                />
-                <input
-                  name="lastName"
-                  className="price-inp"
-                  placeholder="Last Name"
-                  value={form.lastName}
-                  onChange={handleInputChange}
-                  autoComplete="family-name"
-                  style={{ width: "100%", padding: "14px", borderRadius: "10px", border: "1.2px solid #ddd" }}
-                />
+      <div className="co-grid-premium">
+        <div className="co-card-premium">
+          {/* STEP 1: SHIPPING */}
+          <div className="co-form-group">
+            <h3 className="co-section-title"><span className="step-n">1</span> Delivery Details</h3>
+            {!user && (
+              <div className="p-6 bg-emerald-50 rounded-xl mb-8 flex justify-between items-center border border-emerald-100">
+                <p className="text-sm font-bold text-emerald-900">Sign in to sync your saved addresses.</p>
+                <button onClick={() => setIsAuthOpen(true)} className="text-sm font-black text-emerald-600 underline uppercase tracking-widest">Sign In</button>
               </div>
-              <input
-                name="address"
-                className="price-inp"
-                placeholder="Full Home Address, Street, Floor"
-                value={form.address}
-                onChange={handleInputChange}
-                required
-                autoComplete="street-address"
-                style={{ width: "100%", padding: "14px", borderRadius: "10px", border: "1.2px solid #ddd", marginBottom: "15px" }}
-              />
-              <div className="checkout-city-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "15px", marginBottom: "15px" }}>
-                <input name="city" className="price-inp" placeholder="City" value={form.city} onChange={handleInputChange} required autoComplete="address-level2" style={{ width: "100%", padding: "14px", borderRadius: "10px", border: "1.2px solid #ddd" }} />
-                <input name="state" className="price-inp" placeholder="State" value={form.state} onChange={handleInputChange} required autoComplete="address-level1" style={{ width: "100%", padding: "14px", borderRadius: "10px", border: "1.2px solid #ddd" }} />
-                <input name="pincode" className="price-inp" placeholder="Pincode" value={form.pincode} onChange={handleInputChange} required inputMode="numeric" pattern="\d{6}" autoComplete="postal-code" style={{ width: "100%", padding: "14px", borderRadius: "10px", border: "1.2px solid #ddd" }} />
-              </div>
-              <input
-                name="phone"
-                className="price-inp"
-                placeholder="Mobile Number"
-                value={form.phone}
-                onChange={handleInputChange}
-                required
-                type="tel"
-                inputMode="tel"
-                autoComplete="tel"
-                style={{ width: "100%", padding: "14px", borderRadius: "10px", border: "1.2px solid #ddd", marginBottom: "40px" }}
-              />
+            )}
+            <div className="co-input-row">
+              <input name="firstName" className="co-input-field" placeholder="First Name" value={form.firstName} onChange={handleInputChange} />
+              <input name="lastName" className="co-input-field" placeholder="Last Name" value={form.lastName} onChange={handleInputChange} />
+            </div>
+            <input name="address" className="co-input-field mb-5" placeholder="Full Address / Street / Floor" value={form.address} onChange={handleInputChange} />
+            <div className="co-input-row">
+              <input name="city" className="co-input-field" placeholder="City" value={form.city} onChange={handleInputChange} />
+              <input name="state" className="co-input-field" placeholder="State" value={form.state} onChange={handleInputChange} />
+              <input name="pincode" className="co-input-field" placeholder="Pincode" value={form.pincode} onChange={handleInputChange} />
+            </div>
+            <input name="phone" className="co-input-field" placeholder="Mobile Number" value={form.phone} onChange={handleInputChange} />
+          </div>
 
-              <h3 style={{ marginBottom: "15px", fontSize: "20px", fontWeight: 700 }}>Promo Code</h3>
-              <div style={{ display: "flex", gap: 10, marginBottom: 30 }}>
-                <input
-                  className="price-inp"
-                  placeholder="e.g. MEDVASTR10"
-                  value={promoInput}
-                  onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
-                  style={{ flex: 1, padding: "14px", borderRadius: 10, border: "1.2px solid #ddd" }}
-                />
-                <button type="button" className="btn-t" onClick={applyPromo}>Apply</button>
-              </div>
-              {promoMsg && <p style={{ fontSize: 13, color: promoDiscount > 0 ? "#008080" : "#c00", marginBottom: 24 }}>{promoMsg}</p>}
+          {/* PROMO */}
+          <div className="co-form-group">
+            <h3 className="co-section-title"><span className="step-n">2</span> Reward Codes</h3>
+            <div className="flex gap-4">
+              <input className="co-input-field" placeholder="Enter Promo Code" value={promoInput} onChange={e => setPromoInput(e.target.value.toUpperCase())} />
+              <button onClick={applyPromo} className="pdp-buy-btn" style={{ width: '140px', height: '60px' }}>APPLY</button>
+            </div>
+            {promoMsg && <p className={`mt-3 text-xs font-bold ${promoDiscount > 0 ? 'text-emerald-600' : 'text-red-500'}`}>{promoMsg}</p>}
+          </div>
 
-              <h3 style={{ marginBottom: "25px", fontSize: "20px", fontWeight: 700 }}>Payment Method</h3>
-              <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "40px" }}>
-                {[
-                  { id: "ONLINE", t: "Online Payment", s: "UPI, Credit/Debit Cards, Netbanking" },
-                  { id: "COD", t: "Cash on Delivery", s: "Pay in cash when you receive the order" },
-                ].map((m) => (
-                  <button
-                    key={m.id}
-                    type="button"
-                    onClick={() => setForm((f) => ({ ...f, paymentMethod: m.id as "ONLINE" | "COD" }))}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "15px",
-                      padding: "20px",
-                      borderRadius: "15px",
-                      border: "1.5px solid",
-                      cursor: "pointer",
-                      borderColor: form.paymentMethod === m.id ? "#008080" : "#eee",
-                      background: form.paymentMethod === m.id ? "#f6fbfb" : "#fff",
-                      textAlign: "left",
-                      width: "100%",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "18px",
-                        height: "18px",
-                        borderRadius: "50%",
-                        border: "2px solid #ddd",
-                        background: form.paymentMethod === m.id ? "#008080" : "#fff",
-                        boxShadow: form.paymentMethod === m.id ? "inset 0 0 0 3px #fff" : "none",
-                        flexShrink: 0,
-                      }}
-                    />
-                    <div>
-                      <div style={{ fontWeight: 700, fontSize: "15px" }}>{m.t}</div>
-                      <div style={{ fontSize: "13px", color: "#777" }}>{m.s}</div>
-                    </div>
-                  </button>
-                ))}
+          {/* STEP 2: PAYMENT */}
+          <div className="co-form-group">
+            <h3 className="co-section-title"><span className="step-n">3</span> Payment Selection</h3>
+            <div onClick={() => setForm(f => ({ ...f, paymentMethod: 'ONLINE' }))} className={`co-pay-method ${form.paymentMethod === 'ONLINE' ? 'active' : ''}`}>
+              <div className="co-radio-circle" />
+              <div className="co-pay-info">
+                <span className="co-pay-name">Instant Online Payment</span>
+                <span className="co-pay-desc">UPI, Cards, Netbanking — Secured by Razorpay</span>
               </div>
-
-              <button
-                type="button"
-                onClick={placeOrder}
-                disabled={submitting}
-                className="co-cta"
-                style={{
-                  width: "100%",
-                  padding: "20px",
-                  borderRadius: "15px",
-                  background: "#008080",
-                  color: "#fff",
-                  fontSize: "18px",
-                  fontWeight: 800,
-                  border: "none",
-                  cursor: submitting ? "not-allowed" : "pointer",
-                  opacity: submitting ? 0.7 : 1,
-                }}
-              >
-                {submitting ? "Processing..." : `Place Order • ${fmt(tot)}`}
-              </button>
+              <span className="text-2xl">💳</span>
+            </div>
+            <div onClick={() => setForm(f => ({ ...f, paymentMethod: 'COD' }))} className={`co-pay-method ${form.paymentMethod === 'COD' ? 'active' : ''}`}>
+              <div className="co-radio-circle" />
+              <div className="co-pay-info">
+                <span className="co-pay-name">Cash on Delivery</span>
+                <span className="co-pay-desc">Pay upon receiving your package at your doorstep</span>
+              </div>
+              <span className="text-2xl">🚚</span>
             </div>
           </div>
 
-          <div className="checkout-side">
-            <div style={{ background: "#fdfdfd", border: "1px solid #eee", padding: "30px", borderRadius: "20px", position: "sticky", top: "100px" }}>
-              <h3 style={{ marginBottom: "20px", fontSize: "18px", fontWeight: 700 }}>Order Summary</h3>
-              <div style={{ display: "flex", flexDirection: "column", gap: "18px", marginBottom: "25px" }}>
-                {cart.map((i) => {
-                  const colorIdx = i.clrs?.indexOf(i.col) ?? 0;
-                  const images = getImagesForColor(i, colorIdx !== -1 ? colorIdx : 0);
-                  const thumb = images[0] || i.imgs?.[0];
-
-                  return (
-                    <div key={i.k} style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                      <div style={{ width: "45px", height: "45px", borderRadius: "10px", background: i.bg, display: "flex", alignItems: "center", justifyContent: "center", overflow: 'hidden' }} aria-hidden="true">
-                        {thumb ? (
-                          <img src={thumb} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        ) : (
-                          <span style={{ fontSize: '20px' }}>{i.emo}</span>
-                        )}
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontWeight: 700, fontSize: "14px", marginBottom: "2px" }}>{i.short || i.name}</div>
-                        <div style={{ fontSize: "12px", color: "#888" }}>
-                          {i.qty} × {i.size} • {i.colNm}
-                        </div>
-                      </div>
-                      <div style={{ fontWeight: 700 }}>{fmt(i.price * i.qty)}</div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div style={{ borderTop: "1.5px dashed #eee", paddingTop: "20px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px", fontSize: "15px" }}>
-                  <span style={{ color: "#777" }}>Subtotal</span>
-                  <span style={{ fontWeight: 600 }}>{fmt(sub)}</span>
-                </div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px", fontSize: "15px" }}>
-                  <span style={{ color: "#777" }}>Shipping</span>
-                  <span style={{ fontWeight: 600, color: ship === 0 ? "#008080" : "inherit" }}>
-                    {ship === 0 ? "FREE" : fmt(ship)}
-                  </span>
-                </div>
-                {promoDiscount > 0 && (
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px", fontSize: "15px" }}>
-                    <span style={{ color: "#777" }}>Discount ({form.promoCode})</span>
-                    <span style={{ fontWeight: 600, color: "#008080" }}>-{fmt(promoDiscount)}</span>
-                  </div>
-                )}
-                <div style={{ display: "flex", justifyContent: "space-between", marginTop: "15px", paddingTop: "15px", borderTop: "1.5px solid #eee" }}>
-                  <span style={{ fontWeight: 700, fontSize: "18px" }}>Total Amount</span>
-                  <span style={{ fontWeight: 900, fontSize: "22px", color: "#008080" }}>{fmt(tot)}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <button onClick={placeOrder} disabled={submitting} className="pdp-buy-btn mt-4">
+            {submitting ? "Processing..." : `Complete Purchase — ${fmt(tot)}`}
+          </button>
         </div>
+
+        {/* SUMMARY */}
+        <aside className="co-sticky-sidebar">
+          <h2 className="co-summary-hd">Order Overview</h2>
+          <div className="co-item-list">
+            {cart.map(i => {
+              const colorIdx = i.clrs?.indexOf(i.col) ?? 0;
+              const images = getImagesForColor(i, colorIdx !== -1 ? colorIdx : 0);
+              const thumb = images[0] || i.imgs?.[0];
+              return (
+                <div key={i.k} className="co-item-box">
+                  <div className="co-item-thumb">
+                    {thumb ? <img src={thumb} alt="" /> : <span className="text-2xl">{i.emo}</span>}
+                  </div>
+                  <div className="co-item-details">
+                    <span className="co-item-name">{i.short || i.name}</span>
+                    <span className="co-item-variant">{i.qty} × {i.size} / {i.colNm}</span>
+                  </div>
+                  <span className="co-item-price">{fmt(i.price * i.qty)}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="co-totals-wrap">
+            <div className="co-total-row">
+              <span>Subtotal</span>
+              <span className="co-val-ink">{fmt(sub)}</span>
+            </div>
+            <div className="co-total-row">
+              <span>Shipping Cost</span>
+              <span className={ship === 0 ? 'co-val-free' : 'co-val-ink'}>{ship === 0 ? 'COMPLIMENTARY' : fmt(ship)}</span>
+            </div>
+            {promoDiscount > 0 && (
+              <div className="co-total-row">
+                <span>Promotional Saving</span>
+                <span className="text-emerald-600">-{fmt(promoDiscount)}</span>
+              </div>
+            )}
+            <div className="co-total-row grand">
+              <span>Grand Total</span>
+              <span>{fmt(tot)}</span>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   );

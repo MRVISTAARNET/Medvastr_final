@@ -57,7 +57,7 @@ interface AppContextType {
   isAuthOpen: boolean;
   setIsAuthOpen: (open: boolean) => void;
   isHydrated: boolean;
-  addToCart: (p: Product, ci?: number, sz?: string) => void;
+  addToCart: (p: Product, ci?: number, sz?: string, qty?: number) => void;
   updateCartQty: (index: number, delta: number) => void;
   removeFromCart: (index: number) => void;
   clearCart: () => void;
@@ -82,11 +82,11 @@ function cartReducer(state: CartItem[], action: any): CartItem[] {
     case "SET":
       return action.data;
     case "ADD": {
-      const { p, ci, sz } = action;
+      const { p, ci, sz, qty = 1 } = action;
       const k = `${p.id}-${ci}-${sz}`;
       const existing = state.find((i) => i.k === k);
       if (existing) {
-        return state.map((i) => (i.k === k ? { ...i, qty: i.qty + 1 } : i));
+        return state.map((i) => (i.k === k ? { ...i, qty: i.qty + qty } : i));
       }
       const col = p.clrs?.[ci] || p.clrs?.[0] || "#000";
       return [
@@ -97,7 +97,7 @@ function cartReducer(state: CartItem[], action: any): CartItem[] {
           col,
           colNm: p.clrNms?.[ci] || cn(col),
           size: sz,
-          qty: 1,
+          qty,
           variantId: resolveVariantId(p, sz, col),
         },
       ];
@@ -403,8 +403,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     toast("Logged out successfully");
   };
 
-  const addToCart = useCallback((p: Product, ci = 0, sz = "M") => {
-    dispatch({ type: "ADD", p, ci, sz });
+  const addToCart = useCallback((p: Product, ci = 0, sz = "M", qty = 1) => {
+    dispatch({ type: "ADD", p, ci, sz, qty });
     toast("Added to bag!", "ok");
   }, [toast]);
 

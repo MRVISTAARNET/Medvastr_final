@@ -5,25 +5,18 @@ import { useParams, useRouter } from "next/navigation";
 import { fmt, cn, Product } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
 import ProductCard from "@/components/ProductCard";
-import { API_BASE, authHeaders } from "@/lib/api";
+import { API_BASE } from "@/lib/api";
 import { mapApiProduct, getImagesForColor, getSizesForColor } from "@/lib/productUtils";
 
-function Accordion({ title, children, defaultOpen = false }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
+function DetailAccordion({ title, children, defaultOpen = false }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border-t border-slate-200">
-      <button
-        onClick={() => setOpen(o => !o)}
-        className="w-full flex justify-between items-center py-4 bg-none border-none cursor-pointer text-sm font-bold text-slate-900 text-left hover:text-emerald-600 transition"
-      >
+    <div className={`pdp-acc-item ${open ? 'on' : ''}`}>
+      <button onClick={() => setOpen(o => !o)} className="pdp-acc-trigger">
         {title}
-        <span className={`text-lg font-normal text-slate-600 transition-transform ${open ? 'rotate-180' : ''}`}>›</span>
+        <span>{open ? '−' : '+'}</span>
       </button>
-      {open && (
-        <div className="pb-4 text-sm text-slate-600 leading-relaxed">
-          {children}
-        </div>
-      )}
+      {open && <div className="pdp-acc-content">{children}</div>}
     </div>
   );
 }
@@ -31,7 +24,7 @@ function Accordion({ title, children, defaultOpen = false }: { title: string; ch
 export default function ProductDetailClient({ initialProduct }: { initialProduct?: any }) {
   const { slug } = useParams();
   const router = useRouter();
-  const { products, addToCart, wishlist, toggleWishlist, toast, user } = useApp();
+  const { products, addToCart, wishlist, toggleWishlist } = useApp();
 
   const idOrSlug = String(slug || "");
   const numericId = Number(idOrSlug);
@@ -49,10 +42,6 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const [mainImg, setMainImg] = useState(0);
   const [brokenImages, setBrokenImages] = useState<Record<number, boolean>>({});
   const [reviews, setReviews] = useState<any[]>([]);
-  const [revLoading, setRevLoading] = useState(true);
-  const [rating, setRating] = useState(5);
-  const [revBody, setRevBody] = useState("");
-  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (fromList || fetched || !idOrSlug) return;
@@ -75,15 +64,14 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
     fetch(`${API_BASE}/products/${p.id}/reviews?size=50`)
       .then((r) => r.json())
       .then((d) => { if (d.success) setReviews(d.data?.content || []); })
-      .catch(() => { })
-      .finally(() => setRevLoading(false));
+      .catch(() => { });
   }, [p?.id]);
 
   useEffect(() => {
     if (productSizes.length > 0) {
       setSz((prev) => (productSizes.includes(prev) ? prev : productSizes[0]));
     }
-  }, [p?.id, ci, productSizes.join(",")]);
+  }, [p?.id, ci, productSizes]);
 
   useEffect(() => { setBrokenImages({}); setMainImg(0); }, [p?.id, ci]);
 
@@ -102,9 +90,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
   const wished = wishlist.includes(p.id);
   const relatedPool = products.filter((x) => x.id !== p.id && x.active !== false);
-  const typedRelated = relatedPool.filter((x) => x.type === p.type);
-  const otherRelated = relatedPool.filter((x) => x.type !== p.type);
-  const related = [...typedRelated, ...otherRelated].slice(0, 4);
+  const related = relatedPool.slice(0, 4);
 
   const visibleImageIndexes = colorImages.map((_, i) => i).filter((i) => !brokenImages[i]);
   const isVideo = (url: string) => /\.(mp4|webm|ogg|mov)$/i.test(url);
@@ -123,113 +109,100 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const discount = p.origPrice ? Math.round(((p.origPrice - p.price) / p.origPrice) * 100) : 0;
 
   return (
-    <div className="pdp-container">
-      {/* ZOOM MODAL */}
+    <div className="pdp-container page">
+      {/* ZOOM LIGHTBOX */}
       {zoom && !isVideoActive && (
         <div className="zoom-modal" onClick={() => setZoom(false)}>
-          <button className="zoom-close">×</button>
-          <button className="zoom-nav zoom-prev" onClick={(e) => {
-            e.stopPropagation();
-            const cur = visibleImageIndexes.indexOf(mainImg);
-            const prev = visibleImageIndexes[(cur - 1 + visibleImageIndexes.length) % visibleImageIndexes.length];
-            setMainImg(prev);
-          }}>‹</button>
-          <img src={mainMediaSrc} alt={p.name} className="zoom-content" onClick={(e) => e.stopPropagation()} />
-          <button className="zoom-nav zoom-next" onClick={(e) => {
-            e.stopPropagation();
-            const cur = visibleImageIndexes.indexOf(mainImg);
-            const next = visibleImageIndexes[(cur + 1) % visibleImageIndexes.length];
-            setMainImg(next);
-          }}>›</button>
+          <button className="zoom-close">✕</button>
+          <img src={mainMediaSrc} alt={p.name} className="zoom-content" onClick={e => e.stopPropagation()} />
         </div>
       )}
 
       {/* BREADCRUMB */}
-      <div className="flex items-center gap-2 text-[10px] text-slate-400 mb-10 uppercase tracking-widest">
+      <nav className="pdp-bc">
         <button onClick={() => router.push('/')}>Home</button>
         <span>/</span>
         <button onClick={() => router.push('/products')}>{p.type || 'Shop'}</button>
         <span>/</span>
-        <span className="text-slate-900 font-bold">{p.name}</span>
-      </div>
+        <strong>{p.name}</strong>
+      </nav>
 
       <div className="pdp-grid">
-        {/* LEFT: GALLERY */}
-        <div className="pdp-gallery">
-          <div className="pdp-thumbs">
+        {/* GALLERY */}
+        <div className="pdp-gallery-wrap">
+          <div className="pdp-thumbnails">
             {p.videoUrl && (
-              <div onClick={() => setMainImg(-1)} className={`pdp-thumb ${mainImg === -1 ? 'active' : ''} flex items-center justify-center bg-slate-900 text-white`}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+              <div onClick={() => setMainImg(-1)} className={`pdp-thumbnail ${mainImg === -1 ? 'on' : ''} flex items-center justify-center`}>
+                <span style={{ fontSize: '24px' }}>▶</span>
               </div>
             )}
             {visibleImageIndexes.map(i => (
-              <div key={i} onClick={() => setMainImg(i)} className={`pdp-thumb ${mainImg === i ? 'active' : ''}`}>
+              <div key={i} onClick={() => setMainImg(i)} className={`pdp-thumbnail ${mainImg === i ? 'on' : ''}`}>
                 <img src={colorImages[i]} alt="" />
               </div>
             ))}
           </div>
 
-          <div className="pdp-main-stage" onClick={() => !isVideoActive && setZoom(true)}>
+          <div className="pdp-stage" onClick={() => !isVideoActive && setZoom(true)}>
             {isVideoActive ? (
               <video src={mainMediaSrc} autoPlay loop muted playsInline controls />
             ) : (
               <img src={mainMediaSrc} alt={p.name} onError={() => activeImageIndex >= 0 && setBrokenImages(v => ({ ...v, [activeImageIndex]: true }))} />
             )}
-            {p.badge && (
-              <div className="absolute top-6 left-6 px-4 py-1.5 bg-white/95 backdrop-blur shadow-sm rounded-md text-[10px] font-black uppercase tracking-widest text-slate-900 border border-slate-100 italic">
-                {p.badge}
-              </div>
-            )}
           </div>
         </div>
 
-        {/* RIGHT: INFO */}
-        <div className="pdp-info">
-          <div className="pdp-header">
-            <span className="pdp-brand">Medvastr Elite</span>
-            <h1 className="pdp-title">{p.name}</h1>
-            <div className="flex items-center justify-between">
-              <div className="pdp-rating">
-                <span>★</span> {avgRating} <span className="text-slate-300 font-normal">({reviews.length})</span>
+        {/* INFO */}
+        <div className="pdp-info-sec">
+          <div>
+            <span className="pdp-badge-premium">Premium Medical Wear</span>
+            <h1 className="pdp-title-premium">{p.name}</h1>
+
+            <div className="pdp-rating-row">
+              <div className="pdp-rating-stars">
+                <span>★</span> {avgRating}
               </div>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">SKU: {p.sku || 'MVS-P-001'}</span>
+              <span className="pdp-review-count">({reviews.length} Verified Reviews)</span>
+              <span className="pdp-sku-txt">SKU: {p.sku || 'MVS-ELITE'}</span>
             </div>
-            <div className="pdp-price-box">
-              <span className="pdp-price">{fmt(p.price)}</span>
+
+            <div className="pdp-price-wrap">
+              <span className="pdp-price-now">{fmt(p.price)}</span>
               {p.origPrice && (
                 <>
-                  <span className="pdp-orig-price">{fmt(p.origPrice)}</span>
-                  <span className="text-emerald-600 text-xs font-black">SAVE {discount}%</span>
+                  <span className="pdp-price-was">{fmt(p.origPrice)}</span>
+                  <div className="pdp-discount-tag">-{discount}%</div>
                 </>
               )}
             </div>
+            <span className="pdp-tax-msg">Includes all applicable taxes and handling</span>
           </div>
 
           {/* OPTIONS */}
-          <div className="space-y-8">
+          <div className="space-y-10">
             {p.clrs && p.clrs.length > 0 && (
-              <div className="pdp-opt-group">
-                <div className="flex justify-between">
-                  <label className="pdp-opt-label">Color</label>
-                  <span className="text-[11px] font-bold text-slate-900">{p.clrNms?.[ci] || cn(p.clrs[ci])}</span>
+              <div className="pdp-select-group">
+                <div className="pdp-select-hd">
+                  <label className="pdp-select-label">Select Color</label>
+                  <span className="pdp-select-val">{p.clrNms?.[ci] || cn(p.clrs[ci])}</span>
                 </div>
-                <div className="pdp-clr-grid">
+                <div className="pdp-color-grid">
                   {p.clrs.map((c, i) => (
-                    <button key={i} onClick={() => handleColorChange(i)} className={`pdp-clr-btn ${ci === i ? 'active' : ''}`} style={{ background: c }} />
+                    <div key={i} onClick={() => handleColorChange(i)} className={`pdp-color-dot ${ci === i ? 'on' : ''}`} style={{ background: c }} />
                   ))}
                 </div>
               </div>
             )}
 
             {productSizes.length > 0 && (
-              <div className="pdp-opt-group">
-                <div className="flex justify-between">
-                  <label className="pdp-opt-label">Size</label>
-                  <button className="text-[10px] font-bold text-emerald-600 underline uppercase tracking-widest">Size Guide</button>
+              <div className="pdp-select-group">
+                <div className="pdp-select-hd">
+                  <label className="pdp-select-label">Select Size</label>
+                  <button className="pdp-sg">Size Guide</button>
                 </div>
-                <div className="pdp-sz-grid">
+                <div className="pdp-size-btn-grid">
                   {productSizes.map(s => (
-                    <button key={s} onClick={() => setSz(s)} className={`pdp-sz-btn ${sz === s ? 'active' : ''}`}>{s}</button>
+                    <button key={s} onClick={() => setSz(s)} className={`pdp-size-pill ${sz === s ? 'on' : ''}`}>{s}</button>
                   ))}
                 </div>
               </div>
@@ -237,71 +210,81 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
           </div>
 
           {/* ACTIONS */}
-          <div className="pdp-actions">
-            <div className="pdp-qty-wish">
-              <div className="pdp-qty-box">
-                <button className="pdp-qty-btn" onClick={() => setQty(q => Math.max(1, q - 1))}>-</button>
-                <div className="pdp-qty-val">{qty}</div>
-                <button className="pdp-qty-btn" onClick={() => setQty(q => q + 1)}>+</button>
+          <div className="pdp-main-actions">
+            <div className="pdp-qty-wish-row">
+              <div className="pdp-qty-stepper">
+                <button className="pdp-step-btn" onClick={() => setQty(q => Math.max(1, q - 1))}>−</button>
+                <div className="pdp-qty-display">{qty}</div>
+                <button className="pdp-step-btn" onClick={() => setQty(q => q + 1)}>+</button>
               </div>
-              <button onClick={() => toggleWishlist(p.id)} className="pdp-wish-btn">
-                {wished ? '❤️ In Wishlist' : '🤍 Add to Wishlist'}
+              <button onClick={() => toggleWishlist(p.id)} className={`pdp-heart-btn ${wished ? 'on' : ''}`}>
+                {wished ? '❤️ WISHLISTED' : '♡ WISHLIST'}
               </button>
             </div>
             <button
-              onClick={() => addToCart(p, ci, sz || productSizes[0] || 'M')}
+              onClick={() => addToCart(p, ci, sz || productSizes[0] || 'M', qty)}
               disabled={isOutOfStock}
-              className="pdp-add-btn"
+              className="pdp-buy-btn"
             >
-              {isOutOfStock ? 'Sold Out' : `Add to Bag — ${fmt(p.price * qty)}`}
+              {isOutOfStock ? 'Currently Out of Stock' : `Add to Bag • ${fmt(p.price * qty)}`}
             </button>
-            <p className="text-[10px] text-center text-slate-400 font-bold uppercase tracking-widest mt-2">Zero-stress delivery & returns included</p>
+            <div className="pdp-delivery-msg">Standard delivery in 3-5 business days</div>
           </div>
 
           {/* ACCORDIONS */}
-          <div className="pdp-details">
-            <Accordion title="TECHNICAL SPECIFICATIONS" defaultOpen={true}>
+          <div className="pdp-details-wrap">
+            <DetailAccordion title="Performance & Fabric" defaultOpen={true}>
+              <p className="mb-6">{p.desc}</p>
+              <div className="pdp-specs-grid">
+                {[
+                  ['Material', p.fabD || p.fab],
+                  ['Silhouette', p.fit],
+                  ['Features', p.pockets ? `${p.pockets} Reinforced Pockets` : null],
+                  ['Weight', p.wt],
+                  ['Maintenance', p.care]
+                ].map(([k, v]) => v && (
+                  <div key={k} className="pdp-spec-box">
+                    <span className="pdp-spec-key">{k}</span>
+                    <span className="pdp-spec-val">{v}</span>
+                  </div>
+                ))}
+              </div>
+            </DetailAccordion>
+
+            <DetailAccordion title="Shipping & Returns">
               <div className="space-y-4">
-                <p className="font-medium italic border-l-2 border-emerald-500 pl-4">{p.desc}</p>
-                <div className="grid grid-cols-1 gap-2 mt-6">
-                  {([['Fabric', p.fabD || p.fab], ['Fit Profile', p.fit], p.pockets ? ['Security', `${p.pockets} Reinforced Pockets`] : null, ['Weight', p.wt], ['Care', p.care]] as Array<[string, string] | null>)
-                    .filter((x): x is [string, string] => !!x && !!x[1])
-                    .map(([l, v]) => (
-                      <div key={l} className="flex justify-between py-3 border-b border-slate-50">
-                        <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{l}</span>
-                        <span className="text-xs font-black text-slate-800">{v}</span>
-                      </div>
-                    ))}
+                <div className="flex gap-4">
+                  <span className="text-xl">🚚</span>
+                  <div>
+                    <strong className="block text-ink text-sm">Domestic Express</strong>
+                    <p className="text-xs">Ships in 24-48 hours. Transit time 3-5 days.</p>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <span className="text-xl">🔁</span>
+                  <div>
+                    <strong className="block text-ink text-sm">7-Day Fit Guarantee</strong>
+                    <p className="text-xs">Easy exchanges for size optimizations.</p>
+                  </div>
                 </div>
               </div>
-            </Accordion>
-            <Accordion title="SHIPPING & LOGISTICS">
-              <div className="space-y-3 italic opacity-80">
-                <p>📦 Ships within 24-48 hours from our central warehouse.</p>
-                <p>🚛 Standard transit time: 3-5 business days across India.</p>
-                <p>🔁 Hassle-free 7 day replacement window for size optimizations.</p>
-              </div>
-            </Accordion>
+            </DetailAccordion>
           </div>
         </div>
       </div>
 
       {/* RELATED */}
       {related.length > 0 && (
-        <div className="mt-40 pt-20 border-t border-slate-100">
-          <div className="flex justify-between items-end mb-12">
-            <div>
-              <div className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em] mb-2 text-center md:text-left">Curated for you</div>
-              <h2 className="text-3xl font-black text-slate-900">You May Also Like</h2>
-            </div>
-            <button onClick={() => router.push('/products')} className="px-8 py-3 bg-slate-900 text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-emerald-600 transition-all hidden md:block">Explore More</button>
+        <section className="pdp-related-sec">
+          <div className="pdp-related-hd">
+            <span className="pdp-related-tag">Curated Selection</span>
+            <h2 className="pdp-related-h">Pairs Well With</h2>
           </div>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10">
+          <div className="pg-5">
             {related.map(rel => <ProductCard key={rel.id} p={rel} />)}
           </div>
-        </div>
+        </section>
       )}
     </div>
   );
 }
-
