@@ -43,6 +43,11 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const [brokenImages, setBrokenImages] = useState<Record<number, boolean>>({});
   const [reviews, setReviews] = useState<any[]>([]);
 
+  // Review Form State
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviewForm, setReviewForm] = useState({ rating: 5, comment: "" });
+  const [submittingReview, setSubmittingReview] = useState(false);
+
   useEffect(() => {
     if (fromList || fetched || !idOrSlug) return;
     setFetching(true);
@@ -77,6 +82,23 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
   const handleColorChange = (index: number) => {
     setCi(index); setMainImg(0); setBrokenImages({});
+  };
+
+  const submitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!reviewForm.comment.trim()) return;
+    setSubmittingReview(true);
+    try {
+      // Simulate API call or call real API
+      setTimeout(() => {
+        setReviews([{ rating: reviewForm.rating, comment: reviewForm.comment, review: reviewForm.comment, userName: 'You' }, ...reviews]);
+        setShowReviewForm(false);
+        setReviewForm({ rating: 5, comment: "" });
+        setSubmittingReview(false);
+      }, 800);
+    } catch {
+      setSubmittingReview(false);
+    }
   };
 
   const [zoom, setZoom] = useState(false);
@@ -143,12 +165,17 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             ))}
           </div>
 
-          <div className="pdp-stage" onClick={() => !isVideoActive && setZoom(true)}>
-            {isVideoActive ? (
-              <video src={mainMediaSrc} autoPlay loop muted playsInline controls />
-            ) : (
-              <img src={mainMediaSrc} alt={p.name} onError={() => activeImageIndex >= 0 && setBrokenImages(v => ({ ...v, [activeImageIndex]: true }))} />
+          <div className="pdp-main-images">
+            {p.videoUrl && (
+              <div className="pdp-main-image-item">
+                <video src={p.videoUrl} autoPlay loop muted playsInline controls />
+              </div>
             )}
+            {visibleImageIndexes.map((i) => (
+              <div key={i} className="pdp-main-image-item" onClick={() => { setMainImg(i); setZoom(true); }}>
+                <img src={colorImages[i]} alt={`${p.name} - View ${i + 1}`} onError={() => setBrokenImages(v => ({ ...v, [i]: true }))} />
+              </div>
+            ))}
           </div>
         </div>
 
@@ -233,7 +260,9 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
           {/* ACCORDIONS */}
           <div className="pdp-details-wrap">
             <DetailAccordion title="Performance & Fabric" defaultOpen={true}>
-              <p style={{ color: 'var(--lt)', lineHeight: 1.8, marginBottom: '24px', fontSize: '14.5px' }}>{p.desc}</p>
+              <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '12px', marginBottom: '24px', border: '1px solid #e2e8f0' }}>
+                <p style={{ color: '#334155', lineHeight: 1.8, fontSize: '15px', fontWeight: 500 }}>{p.desc}</p>
+              </div>
               <div className="pdp-specs-grid">
                 {[
                   ['Material', p.fabD || p.fab],
@@ -289,8 +318,38 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               <div className="pdp-reviews-stars">{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ color: s <= Math.round(Number(avgRating)) ? '#f59e0b' : '#e2e8f0' }}>★</span>)}</div>
               <div className="pdp-reviews-count">Based on {reviews.length} reviews</div>
             </div>
+            <button onClick={() => setShowReviewForm(!showReviewForm)} className="pdp-buy-btn" style={{ height: '44px', width: 'auto', padding: '0 24px', marginLeft: '24px', fontSize: '13px', letterSpacing: '1px' }}>
+              {showReviewForm ? 'Cancel' : 'Write a Review'}
+            </button>
           </div>
         </div>
+
+        {showReviewForm && (
+          <form onSubmit={submitReview} style={{ background: '#f8fafc', padding: '32px', borderRadius: '16px', marginBottom: '40px', border: '1px solid #e2e8f0' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--ink)', marginBottom: '16px' }}>Share your thoughts</h3>
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, marginBottom: '8px', color: 'var(--lt)' }}>Rating</label>
+              <div style={{ display: 'flex', gap: '8px', fontSize: '24px', cursor: 'pointer' }}>
+                {[1, 2, 3, 4, 5].map(s => (
+                  <span key={s} onClick={() => setReviewForm(f => ({ ...f, rating: s }))} style={{ color: s <= reviewForm.rating ? '#f59e0b' : '#cbd5e1' }}>★</span>
+                ))}
+              </div>
+            </div>
+            <div style={{ marginBottom: '24px' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, marginBottom: '8px', color: 'var(--lt)' }}>Your Review</label>
+              <textarea
+                value={reviewForm.comment}
+                onChange={e => setReviewForm(f => ({ ...f, comment: e.target.value }))}
+                placeholder="What did you like or dislike?"
+                rows={4}
+                style={{ width: '100%', padding: '16px', border: '1.5px solid #cbd5e1', borderRadius: '12px', fontSize: '15px', resize: 'none', outline: 'none' }}
+              />
+            </div>
+            <button type="submit" disabled={submittingReview} className="pdp-buy-btn" style={{ height: '48px', width: '200px' }}>
+              {submittingReview ? 'Submitting...' : 'Submit Review'}
+            </button>
+          </form>
+        )}
 
         {reviews.length > 0 ? (
           <div className="pdp-review-cards">
