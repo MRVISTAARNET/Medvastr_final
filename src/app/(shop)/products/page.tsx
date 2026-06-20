@@ -39,9 +39,11 @@ function ProductsContent() {
 
   let f = products.filter((p) => {
     if (cat !== "all" && !productMatchesCategory(p, cat, categoryTree)) return false;
-    // Case-insensitive gender comparison — fixes men/women redirect bug
-    const pGen = (p.gen || "").toLowerCase();
-    if (gen !== "all" && pGen !== "unisex" && pGen !== gen.toLowerCase()) return false;
+
+    // Support for Multi-select Gender: match if product supports the selected gender
+    const pGens = (p.gen || "men").toLowerCase().split(',').map((s: string) => s.trim());
+    if (gen !== "all" && !pGens.includes(gen.toLowerCase())) return false;
+
     if (minP && p.price < parseInt(minP)) return false;
     if (maxP && p.price > parseInt(maxP)) return false;
     if (colorFilter) {
@@ -137,9 +139,6 @@ function ProductsContent() {
   let rawCatLabel = cat !== 'all' ? (findCategoryBySlug(categoryTree, cat)?.name || cat.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')) : null;
   let activeCatLabel = cats.find((c: any) => c.id === cat)?.l || rawCatLabel || (gen !== 'all' ? (gen.charAt(0).toUpperCase() + gen.slice(1) + " Collection") : "All Products");
 
-  let staticBannerBase: string | null = null;
-  let staticBannerTitle = "";
-
   const S3 = "https://d2tnzshqdaedbc.cloudfront.net";
   const catKey = cat.toLowerCase();
   const genKey = gen.toLowerCase();
@@ -169,6 +168,9 @@ function ProductsContent() {
 
   // Prevent double naming (e.g. "Men's Scrub Suit Men")
   const safeTitle = (activeCatLabel.includes(genName) && genName !== "") ? activeCatLabel : `${titlePrefix}${activeCatLabel}`;
+
+  let staticBannerBase: string | null = null;
+  let staticBannerTitle = "";
 
   if (isSurgical) {
     staticBannerBase = `${S3}/surgical-wear-banner`;
@@ -202,6 +204,7 @@ function ProductsContent() {
   };
 
   const activeDesc = typeConfigs[cat]?.d || descMap[staticBannerTitle] || genericDesc;
+
   return (
     <div className="page" style={{ background: '#ffffff' }}>
       {staticBannerBase && (
@@ -212,6 +215,7 @@ function ProductsContent() {
         />
       )}
       <div className="sec" style={{ paddingBottom: 60 }}>
+        {/* Breadcrumb ... (rest of JSX) */}
         {/* Breadcrumb */}
         <div className="breadcrumb" style={{ marginBottom: 35 }}>
           <Link href="/">Home</Link>
@@ -559,8 +563,7 @@ function ProductsContent() {
         .sb3-select { width: 100%; border: 1px solid #e2e8f0; padding: 12px 15px; border-radius: 4px; font-size: 14px; font-weight: 600; color: #334155; appearance: none; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 15px center; background-size: 16px; cursor: pointer; transition: border 0.3s; }
         .sb3-select:focus { border-color: #008080; }
 
-        /* SQUARE PRODUCT CARDS */
-        .prod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px; }
+        /* SQUARE PRODUCT CARDS — Using Global Grid Classes */
         .p-card { background: white; display: flex; flex-direction: column; overflow: hidden; position: relative; transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); border: 1.5px solid #f8fafc; }
         .p-card:hover { transform: translateY(-8px); border-color: #f1f5f9; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
         .p-img-box { position: relative; width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #f9fafb; }

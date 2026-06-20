@@ -54,6 +54,13 @@ public class AuthService {
                 .password(encoder.encode(r.getPassword()))
                 .build();
         userRepo.save(u);
+
+        try {
+            emailService.sendWelcomeEmail(u.getEmail(), u.getFirstName());
+        } catch (Exception ex) {
+            log.error("Failed to send welcome email during registration for {}", u.getEmail(), ex);
+        }
+
         return buildResponse(u);
     }
 

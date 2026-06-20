@@ -76,15 +76,32 @@ export default function AdminProducts() {
   }, [editingProduct, isModalOpen]);
 
   const toggleExtraCategory = (catId: number) => {
-    const ids = form.categoryIds ? String(form.categoryIds).split(',').filter(Boolean) : [];
-    const sId = String(catId);
-    let next;
-    if (ids.includes(sId)) {
-      next = ids.filter(x => x !== sId);
+    const ids = form.categoryIds ? String(form.categoryIds).split(',').map(s => s.trim()).filter(Boolean) : [];
+    const sid = String(catId);
+    if (ids.includes(sid)) {
+      setForm((prev: any) => ({ ...prev, categoryIds: ids.filter(i => i !== sid).join(',') }));
     } else {
-      next = [...ids, sId];
+      setForm((prev: any) => ({ ...prev, categoryIds: [...ids, sid].join(',') }));
     }
-    setForm((prev: any) => ({ ...prev, categoryIds: next.join(',') }));
+  };
+
+  const toggleGender = (g: string) => {
+    const gens = form.gen ? String(form.gen).split(',').map(s => s.trim()).filter(Boolean) : [];
+    if (gens.includes(g)) {
+      setForm((prev: any) => ({ ...prev, gen: gens.filter(i => i !== g).join(',') }));
+    } else {
+      setForm((prev: any) => ({ ...prev, gen: [...gens, g].join(',') }));
+    }
+  };
+
+  const moveImage = (index: number, direction: 'up' | 'down') => {
+    const imgs = Array.isArray(form.imgs) ? [...form.imgs] : [];
+    if (direction === 'up' && index > 0) {
+      [imgs[index], imgs[index - 1]] = [imgs[index - 1], imgs[index]];
+    } else if (direction === 'down' && index < imgs.length - 1) {
+      [imgs[index], imgs[index + 1]] = [imgs[index + 1], imgs[index]];
+    }
+    setForm((prev: any) => ({ ...prev, imgs: imgs }));
   };
 
   // Auto-generate SKU and Barcode
@@ -265,7 +282,9 @@ export default function AdminProducts() {
       const imgList = Array.isArray(form.imgs) ? form.imgs : form.imgs ? [form.imgs] : [];
       const variants = sizeInputs.flatMap((size: string) =>
         colorInputs.map((colorInput: string) => {
-          const gCode = GENDER_CODES[form.gen] || 'MEN';
+          // Use the first gender listed as the base for SKU if multi-selected
+          const firstGen = (form.gen || 'men').split(',')[0];
+          const gCode = GENDER_CODES[firstGen] || 'MEN';
           const cCode = CAT_CODES[form.styleId] || 'TOP';
           const pCode = getProductCode(form.name);
           const colCode = getColCode(colorInput);
@@ -557,13 +576,19 @@ export default function AdminProducts() {
                   <label>Brand</label>
                   <input type="text" id="p-brand" value={form.brand} onChange={handleInputChange} placeholder="Brand Name" />
                 </div>
-                <div className="fg">
-                  <label>Gender</label>
-                  <select id="p-gen" value={form.gen} onChange={handleInputChange}>
-                    <option value="men">Men</option>
-                    <option value="women">Women</option>
-                    <option value="unisex">Unisex (Shows in both Men & Women)</option>
-                  </select>
+                <div className="fg" style={{ gridColumn: '1 / -1' }}>
+                  <label style={{ display: 'block', marginBottom: '8px' }}>Gender Support (Multi-Select)</label>
+                  <div style={{ display: 'flex', gap: '15px', background: '#f8fafc', padding: '12px 16px', borderRadius: '12px', border: '1.5px solid #e2e8f0' }}>
+                    {['men', 'women'].map(g => {
+                      const isChecked = form.gen ? form.gen.split(',').includes(g) : false;
+                      return (
+                        <label key={g} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: isChecked ? 700 : 500, color: isChecked ? '#008080' : '#64748b' }}>
+                          <input type="checkbox" checked={isChecked} onChange={() => toggleGender(g)} style={{ accentColor: '#008080' }} />
+                          {g.charAt(0).toUpperCase() + g.slice(1)}
+                        </label>
+                      );
+                    })}
+                  </div>
                 </div>
                 <div className="fg">
                   <label>Style / Fit Group</label>
@@ -695,15 +720,12 @@ export default function AdminProducts() {
                                     )}
                                   </div>
 
-                                  {/* Delete */}
-                                  <div
-                                    style={{ position: 'absolute', top: -5, right: -5, width: '20px', height: '20px', background: '#ef4444', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', cursor: 'pointer', fontWeight: 900, boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
-                                    onClick={() => {
-                                      const next = [...form.imgs];
-                                      next.splice(originalIdx, 1);
-                                      setForm((prev: any) => ({ ...prev, imgs: next }));
-                                    }}
-                                  >✕</div>
+                                  {/* Image Controls */}
+                                  <div style={{ position: 'absolute', top: -5, right: -5, display: 'flex', gap: 4, zIndex: 10 }}>
+                                    <button type="button" onClick={() => moveImage(originalIdx, 'up')} style={{ width: 22, height: 22, background: 'rgba(255,255,255,0.9)', borderRadius: '50%', fontSize: 12, border: '1px solid #e2e8f0' }}>←</button>
+                                    <button type="button" onClick={() => moveImage(originalIdx, 'down')} style={{ width: 22, height: 22, background: 'rgba(255,255,255,0.9)', borderRadius: '50%', fontSize: 12, border: '1px solid #e2e8f0' }}>→</button>
+                                    <button type="button" onClick={() => setForm((prev: any) => ({ ...prev, imgs: prev.imgs.filter((_: any, idx: number) => idx !== originalIdx) }))} style={{ width: 22, height: 22, background: '#ef4444', color: 'white', borderRadius: '50%', fontSize: 10, border: 'none' }}>✕</button>
+                                  </div>
 
                                   {/* Color Cycler / Move */}
                                   <select

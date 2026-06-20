@@ -74,7 +74,7 @@ public class Product {
     @Column(nullable = false, length = 60)
     private String type;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 100)
     private String gender;
 
     private String badge;

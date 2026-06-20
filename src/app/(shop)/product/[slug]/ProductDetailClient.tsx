@@ -154,102 +154,133 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
   const isOutOfStock = selectedVariant ? selectedVariant.stockQuantity <= 0 : false;
 
-  return (
-    <div className="page static" style={{ minHeight: '100vh', background: '#f8fafc' }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '32px 24px' }}>
+  const discount = p.origPrice ? Math.round(((p.origPrice - p.price) / p.origPrice) * 100) : 0;
 
-        {/* Breadcrumb */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#64748b', marginBottom: 32, paddingBottom: 20, borderBottom: '1px solid #e2e8f0' }}>
-          <button onClick={() => router.push('/')} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 13 }}>Home</button>
-          <span style={{ color: '#cbd5e1' }}>›</span>
-          <button onClick={() => router.push('/products')} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 13 }}>{p.type}</button>
-          <span style={{ color: '#cbd5e1' }}>›</span>
-          <span style={{ fontWeight: 700, color: '#0f172a' }}>{p.name}</span>
+  return (
+    <div className="page static" style={{ minHeight: '100vh', background: '#ffffff' }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '24px' }}>
+
+        {/* Breadcrumb - Cleaner */}
+        <div className="flex items-center gap-2 text-xs text-slate-400 mb-8 uppercase tracking-widest">
+          <button onClick={() => router.push('/')} className="hover:text-emerald-600 transition">Home</button>
+          <span className="opacity-50">/</span>
+          <button onClick={() => router.push('/products')} className="hover:text-emerald-600 transition">{p.type || 'Shop'}</button>
+          <span className="opacity-50">/</span>
+          <span className="text-slate-900 font-bold">{p.name}</span>
         </div>
 
         {/* MAIN 2-COLUMN LAYOUT */}
-        <div className="pdp-grid">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
 
-          {/* LEFT: Image Gallery */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div style={{ aspectRatio: '1/1', background: isVideoActive ? '#000' : (renderedImageSrc ? '#f8f8f8' : (p.bg || '#f1f5f9')), borderRadius: 20, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-              {isVideoActive ? (
-                <video src={renderedVideoSrc} autoPlay loop muted playsInline controls style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#000' }} />
-              ) : renderedImageSrc ? (
-                <img src={renderedImageSrc} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  onError={() => { if (activeImageIndex >= 0) setBrokenImages(prev => ({ ...prev, [activeImageIndex]: true })); }} />
-              ) : (
-                <span style={{ fontSize: 80 }}>{p.emo}</span>
+          {/* LEFT: Image Gallery (Lg: 7 cols) */}
+          <div className="lg:col-span-7 flex flex-col md:flex-row gap-4">
+
+            {/* Desktop Thumbnails (Side) */}
+            <div className="hidden md:flex flex-col gap-3 w-20 flex-shrink-0">
+              {p.videoUrl && (
+                <div
+                  onClick={() => setMainImg(-1)}
+                  className={`aspect-square rounded-lg overflow-hidden cursor-pointer border-2 transition-all flex items-center justify-center bg-slate-900 text-white ${mainImg === -1 ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-transparent'}`}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
+                </div>
               )}
-              {p.badge && <div style={{ position: 'absolute', top: 16, left: 16, background: '#10b981', color: 'white', padding: '4px 12px', borderRadius: 20, fontSize: 12, fontWeight: 700 }}>{p.badge}</div>}
+              {visibleImageIndexes.map((i) => (
+                <div
+                  key={i}
+                  onClick={() => setMainImg(i)}
+                  className={`aspect-square rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${mainImg === i ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-transparent'}`}
+                >
+                  <img src={colorImages[i]} alt="" className="w-full h-full object-cover" />
+                </div>
+              ))}
             </div>
 
-            {(visibleImageIndexes.length > 1 || p.videoUrl) && (
-              <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(visibleImageIndexes.length + (p.videoUrl ? 1 : 0), 5)}, 1fr)`, gap: 10 }}>
-                {p.videoUrl && (
-                  <div onClick={() => setMainImg(-1)}
-                    style={{ aspectRatio: '1/1', borderRadius: 12, overflow: 'hidden', cursor: 'pointer', border: mainImg === -1 ? '2px solid #008080' : '2px solid #e2e8f0', transition: 'border 0.2s', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
+            {/* Main Stage */}
+            <div className="flex-grow">
+              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-slate-50 group">
+                {isVideoActive ? (
+                  <video src={renderedVideoSrc} autoPlay loop muted playsInline controls className="w-full h-full object-contain bg-black" />
+                ) : renderedImageSrc ? (
+                  <div className="w-full h-full cursor-zoom-in overflow-hidden">
+                    <img
+                      src={renderedImageSrc}
+                      alt={p.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      onError={() => { if (activeImageIndex >= 0) setBrokenImages(prev => ({ ...prev, [activeImageIndex]: true })); }}
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-6xl opacity-20">{p.emo || '👔'}</div>
+                )}
+
+                {/* Mobile Thumbs (Bottom scroll) */}
+                <div className="md:hidden absolute bottom-4 left-0 right-0 p-4">
+                  <div className="flex justify-center gap-2">
+                    {(p.videoUrl ? [-1, ...visibleImageIndexes] : visibleImageIndexes).map((idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => setMainImg(idx)}
+                        className={`w-2 h-2 rounded-full transition-all ${mainImg === idx ? 'bg-emerald-500 w-6' : 'bg-white/50'}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {p.badge && (
+                  <div className="absolute top-6 left-6 px-4 py-1.5 bg-white/90 backdrop-blur shadow-sm rounded-full text-[10px] font-black uppercase tracking-widest text-slate-900 border border-slate-100 italic">
+                    {p.badge}
                   </div>
                 )}
-                {visibleImageIndexes.map((i) => (
-                  <div key={i} onClick={() => setMainImg(i)}
-                    style={{ aspectRatio: '1/1', borderRadius: 12, overflow: 'hidden', cursor: 'pointer', border: mainImg === i ? '2px solid #008080' : '2px solid #e2e8f0', transition: 'border 0.2s' }}>
-                    <img src={colorImages[i]} alt={`view ${i + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} onError={() => setBrokenImages(prev => ({ ...prev, [i]: true }))} />
-                  </div>
-                ))}
               </div>
-            )}
+            </div>
           </div>
 
-          {/* RIGHT: Product Info */}
-          <div style={{ position: 'sticky', top: 100 }}>
-            <div style={{ background: 'white', borderRadius: 20, boxShadow: '0 4px 30px rgba(0,0,0,0.06)', padding: 40, display: 'flex', flexDirection: 'column', gap: 24 }}>
+          {/* RIGHT: Product Info (Lg: 5 cols) */}
+          <div className="lg:col-span-5 h-fit lg:sticky lg:top-28">
+            <div className="flex flex-col gap-8">
 
-              {/* Collection Tag */}
-              <div style={{ display: 'inline-block', background: '#ecfdf5', color: '#059669', padding: '6px 16px', borderRadius: 20, fontSize: 13, fontWeight: 700, width: 'fit-content' }}>
-                {p.fab || 'Premium'} Collection
-              </div>
-
-              {/* Title */}
-              <h1 style={{ fontSize: 30, fontWeight: 900, color: '#0f172a', margin: 0, lineHeight: 1.2 }}>{p.name}</h1>
-
-              {/* Rating */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingBottom: 20, borderBottom: '1px solid #f1f5f9' }}>
-                <span style={{ color: '#fbbf24', fontSize: 18 }}>{'★'.repeat(Math.floor(Number(avgRating)))}</span>
-                <span style={{ fontWeight: 700, color: '#0f172a' }}>{avgRating}</span>
-                <span style={{ fontSize: 13, color: '#64748b' }}>{reviews.length} Verified Reviews</span>
-                <span style={{
-                  marginLeft: 'auto', fontSize: 13, fontWeight: 700,
-                  color: isOutOfStock ? '#ef4444' : '#10b981'
-                }}>
-                  {isOutOfStock ? '✕ Out of Stock' : '✓ In Stock'}
-                </span>
-              </div>
-
-              {/* Price */}
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ fontSize: 32, fontWeight: 900, color: '#0f172a' }}>{fmt(p.price)}</span>
-                  {p.origPrice && <span style={{ fontSize: 18, color: '#94a3b8', textDecoration: 'line-through' }}>{fmt(p.origPrice)}</span>}
-                  {p.origPrice && <span style={{ background: '#fef2f2', color: '#ef4444', fontSize: 12, fontWeight: 800, padding: '2px 8px', borderRadius: 6 }}>{Math.round(((p.origPrice - p.price) / p.origPrice) * 100)}% OFF</span>}
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="px-3 py-1 bg-emerald-50 text-emerald-700 text-[10px] font-black uppercase tracking-widest rounded-full">{p.fab || 'Medvastr'} Elite</div>
+                  <div className="flex items-center gap-1 text-amber-500 font-bold text-sm">
+                    <span>★</span>
+                    <span className="text-slate-900">{avgRating}</span>
+                    <span className="text-slate-400 font-normal">({reviews.length})</span>
+                  </div>
                 </div>
-                <p style={{ fontSize: 12, color: '#94a3b8', margin: '4px 0 0' }}>Inclusive of all taxes</p>
+
+                <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">{p.name}</h1>
+
+                <div className="flex items-baseline gap-4">
+                  <span className="text-3xl font-black text-emerald-600">{fmt(p.price)}</span>
+                  {p.origPrice && (
+                    <>
+                      <span className="text-xl text-slate-300 line-through font-bold">{fmt(p.origPrice)}</span>
+                      <span className="bg-rose-50 text-rose-600 px-3 py-1 rounded-lg text-xs font-black">-{discount}% OFF</span>
+                    </>
+                  )}
+                </div>
+                <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Zero-stress delivery & returns included</p>
               </div>
+
+              <div className="h-px bg-slate-100" />
 
               {/* Color Selector */}
               {p.clrs && p.clrs.length > 0 && (
-                <div>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#0f172a', marginBottom: 10 }}>
-                    Colour: <span style={{ color: '#008080' }}>{p.clrNms?.[ci] || cn(p.clrs[ci])}</span>
-                  </label>
-                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-end">
+                    <label className="text-xs font-black text-slate-900 uppercase tracking-widest">Select Color</label>
+                    <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest">{p.clrNms?.[ci] || cn(p.clrs[ci])}</span>
+                  </div>
+                  <div className="flex gap-3 flex-wrap">
                     {p.clrs.map((c, i) => (
-                      <button key={i} onClick={() => handleColorChange(i)}
-                        style={{ width: 44, height: 44, borderRadius: 10, border: ci === i ? '3px solid #0f172a' : '2px solid #e2e8f0', backgroundColor: c, cursor: 'pointer', outline: ci === i ? '2px solid #fff' : 'none', outlineOffset: -4 }}
-                        title={p.clrNms?.[i] || c} />
+                      <button
+                        key={i}
+                        onClick={() => handleColorChange(i)}
+                        className={`w-10 h-10 rounded-xl transition-all duration-300 transform ${ci === i ? 'scale-110 ring-2 ring-slate-900 ring-offset-2' : 'hover:scale-105'}`}
+                        style={{ backgroundColor: c }}
+                      />
                     ))}
                   </div>
                 </div>
@@ -257,14 +288,18 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
               {/* Size Selector */}
               {productSizes.length > 0 && (
-                <div>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#0f172a', marginBottom: 10 }}>
-                    Size: <span style={{ color: '#008080' }}>{sz}</span>
-                  </label>
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-end">
+                    <label className="text-xs font-black text-slate-900 uppercase tracking-widest">Select Size</label>
+                    <button className="text-[10px] font-bold text-slate-400 underline uppercase tracking-widest hover:text-emerald-600">Size Guide</button>
+                  </div>
+                  <div className="flex gap-2 flex-wrap">
                     {productSizes.map((s) => (
-                      <button key={s} onClick={() => setSz(s)}
-                        style={{ padding: '8px 18px', borderRadius: 8, fontWeight: 700, fontSize: 13, border: sz === s ? '2px solid #008080' : '1.5px solid #e2e8f0', background: sz === s ? '#008080' : 'white', color: sz === s ? 'white' : '#475569', cursor: 'pointer', transition: 'all 0.2s' }}>
+                      <button
+                        key={s}
+                        onClick={() => setSz(s)}
+                        className={`min-w-[64px] h-12 rounded-xl text-sm font-black transition-all ${sz === s ? 'bg-slate-900 text-white shadow-xl shadow-slate-900/10' : 'bg-slate-50 text-slate-600 hover:bg-slate-100'}`}
+                      >
                         {s}
                       </button>
                     ))}
@@ -272,199 +307,128 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                 </div>
               )}
 
-              {/* Qty + Add to Bag */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, border: '1.5px solid #e2e8f0', borderRadius: 10, padding: '8px 16px', opacity: isOutOfStock ? 0.5 : 1 }}>
-                    <button onClick={() => setQty(q => Math.max(1, q - 1))} disabled={isOutOfStock} style={{ background: 'none', border: 'none', fontSize: 18, cursor: isOutOfStock ? 'not-allowed' : 'pointer', color: '#0f172a', width: 28, height: 28 }}>-</button>
-                    <span style={{ fontWeight: 700, minWidth: 24, textAlign: 'center' }}>{qty}</span>
-                    <button onClick={() => setQty(q => q + 1)} disabled={isOutOfStock} style={{ background: 'none', border: 'none', fontSize: 18, cursor: isOutOfStock ? 'not-allowed' : 'pointer', color: '#0f172a', width: 28, height: 28 }}>+</button>
+              {/* Actions */}
+              <div className="flex flex-col gap-4">
+                <div className="flex gap-4">
+                  <div className="flex items-center bg-slate-50 rounded-2xl p-1 h-14 w-32 border border-slate-100">
+                    <button onClick={() => setQty(q => Math.max(1, q - 1))} className="flex-1 font-bold text-slate-400 hover:text-slate-900 transition">-</button>
+                    <span className="w-8 text-center font-black text-slate-900">{qty}</span>
+                    <button onClick={() => setQty(q => q + 1)} className="flex-1 font-bold text-slate-400 hover:text-slate-900 transition">+</button>
                   </div>
-                  <button onClick={() => toggleWishlist(p.id)} style={{ background: 'none', border: 'none', fontSize: 26, cursor: 'pointer' }}>{wished ? '❤️' : '🤍'}</button>
+                  <button
+                    onClick={() => toggleWishlist(p.id)}
+                    className={`flex-grow h-14 rounded-2xl flex items-center justify-center gap-3 font-bold transition-all border ${wished ? 'bg-rose-50 border-rose-100 text-rose-500' : 'bg-slate-50 border-slate-100 text-slate-400 hover:bg-slate-100'}`}
+                  >
+                    <span>{wished ? '❤️' : '🤍'}</span>
+                    <span className="text-sm uppercase tracking-widest">{wished ? 'In Wishlist' : 'Add to Wishlist'}</span>
+                  </button>
                 </div>
+
                 <button
                   onClick={() => addToCart(p, ci, sz || productSizes[0] || 'M')}
                   disabled={isOutOfStock}
-                  style={{
-                    width: '100%',
-                    background: isOutOfStock ? '#cbd5e1' : '#0f172a',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: 12,
-                    padding: '16px 24px',
-                    fontWeight: 800,
-                    fontSize: 15,
-                    cursor: isOutOfStock ? 'not-allowed' : 'pointer',
-                    transition: 'background 0.2s',
-                    letterSpacing: 0.3
-                  }}
+                  className={`h-16 rounded-2xl flex items-center justify-center gap-3 font-black text-sm uppercase tracking-[0.2em] transition-all transform active:scale-95 ${isOutOfStock ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-emerald-600 text-white shadow-2xl shadow-emerald-600/20 hover:bg-emerald-700 hover:shadow-emerald-600/30'}`}
                 >
-                  {isOutOfStock ? 'SOLD OUT' : `Add to Bag — ${fmt(p.price * qty)}`}
+                  {isOutOfStock ? 'Sold Out' : (
+                    <>
+                      <span>Add to Shopping Bag</span>
+                      <span className="opacity-40">•</span>
+                      <span>{fmt(p.price * qty)}</span>
+                    </>
+                  )}
                 </button>
-
-                {/* Complete the Set Callout — shows when product name contains 'Top' or 'Bottom' */}
-                {/\b(top|bottom)\b/i.test(p.name) && (
-                  <div
-                    onClick={() => {
-                      if (p.catId) {
-                        router.push(`/products?cat=${p.catId}`);
-                      } else if (p.type) {
-                        router.push(`/products?type=${p.type}`);
-                      } else {
-                        router.push('/products');
-                      }
-                    }}
-                    style={{
-                      marginTop: 8,
-                      padding: '16px',
-                      background: 'radial-gradient(circle at top right, #fff1f2, #ffe4e6)',
-                      borderRadius: 12,
-                      border: '1.5px solid #fda4af',
-                      cursor: 'pointer',
-                      transition: 'transform 0.2s, box-shadow 0.2s',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 12
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(225, 29, 72, 0.15)'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none'; }}
-                  >
-                    <div style={{ fontSize: 28 }}>✨</div>
-                    <div>
-                      <div style={{ fontSize: 13.5, fontWeight: 900, color: '#e11d48', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 }}>Complete Your Set & Save!</div>
-                      <div style={{ fontSize: 12.5, color: '#be123c', fontWeight: 600 }}>Buy the Full Set and save more — click to shop the complete collection!</div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Bulk Order Callout */}
-                <div
-                  onClick={() => router.push('/bulk-orders')}
-                  style={{
-                    marginTop: 8,
-                    padding: '16px',
-                    background: '#f0fdf4',
-                    borderRadius: 12,
-                    border: '1px dashed #22c55e',
-                    cursor: 'pointer',
-                    transition: 'transform 0.2s'
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.02)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-                >
-                  <div style={{ fontSize: 13, fontWeight: 800, color: '#166534', marginBottom: 4 }}>🏢 Institutional / Bulk Orders</div>
-                  <div style={{ fontSize: 12, color: '#16a34a', fontWeight: 600 }}>
-                    Min 50 pcs needed • Sizes as per requirement
-                  </div>
-                  <div style={{ fontSize: 11, color: '#15803d', marginTop: 8, textDecoration: 'underline', fontWeight: 700 }}>
-                    View Bulk Pricing & Savings →
-                  </div>
-                </div>
               </div>
 
-              {/* Trust Badges */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 16, paddingTop: 20, borderTop: '1px solid #f1f5f9' }}>
-                {[['🚚', 'Free Delivery', '₹999+'], ['🔄', 'Easy Returns', '7 Days'], ['✅', 'Quality', 'Guaranteed']].map(([icon, label, detail]) => (
-                  <div key={label} style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: 22, marginBottom: 4 }}>{icon}</div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: '#0f172a' }}>{label}</div>
-                    <div style={{ fontSize: 11, color: '#94a3b8' }}>{detail}</div>
+              {/* Bundle Callout */}
+              {/\b(top|bottom)\b/i.test(p.name) && (
+                <div
+                  onClick={() => router.push(`/products?cat=${p.catId || 'all'}`)}
+                  className="p-6 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100 rounded-2xl cursor-pointer group hover:-translate-y-1 transition-all"
+                >
+                  <div className="flex gap-4 items-start">
+                    <div className="text-3xl">🧩</div>
+                    <div>
+                      <div className="text-[10px] font-black uppercase tracking-widest text-orange-600 mb-1 italic">Bundle Opportunity</div>
+                      <h4 className="text-slate-900 font-black text-sm mb-2 group-hover:text-emerald-600 transition">Complete the Set & Save 15%</h4>
+                      <p className="text-xs text-slate-500 font-medium leading-relaxed">Match this with our professional bottoms to create the perfect clinical ensemble.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Value Props */}
+              <div className="grid grid-cols-2 gap-4 pb-12">
+                {[
+                  { i: '🔬', t: 'Verified Quality', d: 'Clinical grade fabric' },
+                  { i: '🧼', t: 'Easy Care', d: 'Machine wash safe' }
+                ].map(v => (
+                  <div key={v.t} className="flex gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <span className="text-xl">{v.i}</span>
+                    <div>
+                      <div className="text-[10px] font-black uppercase text-slate-900">{v.t}</div>
+                      <div className="text-[10px] font-bold text-slate-400">{v.d}</div>
+                    </div>
                   </div>
                 ))}
               </div>
 
-              {/* Accordions */}
-              <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: 20 }}>
-                <Accordion title="📋 Product Details" defaultOpen={true}>
-                  <div style={{ marginBottom: 16, color: '#475569', lineHeight: 1.7 }}>{p.desc}</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    {([[' Fabric', p.fabD || p.fab], ['Fit', p.fit], p.pockets ? ['Pockets', `${p.pockets} Functional Pockets`] : null, ['Weight', p.wt], ['Care', p.care]] as Array<[string, string] | null>)
-                      .filter((x): x is [string, string] => !!x && !!x[1])
-                      .map(([lbl, val]) => (
-                        <div key={lbl} style={{ display: 'flex', gap: 16, paddingBottom: 8, borderBottom: '1px solid #f8fafc' }}>
-                          <strong style={{ color: '#0f172a', minWidth: 80, fontSize: 13 }}>{lbl}</strong>
-                          <span style={{ color: '#64748b', fontSize: 13 }}>{val}</span>
-                        </div>
-                      ))}
-                  </div>
-                </Accordion>
-                <Accordion title="🚚 Shipping & Returns">
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6, fontSize: 13, color: '#64748b' }}>
-                    <p>• Free shipping on orders above ₹999</p>
-                    <p>• Standard delivery: 3–7 business days</p>
-                    <p>• Easy 7-day returns on unworn items</p>
-                    <p>• Track your order from your dashboard</p>
-                  </div>
-                </Accordion>
-              </div>
-            </div>
-          </div>
-        </div>
+              <div className="h-px bg-slate-100" />
 
-        {/* REVIEWS */}
-        <div style={{ borderTop: '2px solid #f1f5f9', paddingTop: 60 }}>
-          <h2 style={{ fontSize: 28, fontWeight: 900, color: '#0f172a', marginBottom: 8 }}>Customer Reviews</h2>
-          <p style={{ color: '#94a3b8', marginBottom: 32, fontSize: 14 }}>{reviews.length} Verified Reviews</p>
-
-          {revLoading ? (
-            <div style={{ padding: '40px 0', textAlign: 'center', color: '#94a3b8' }}>Loading reviews...</div>
-          ) : reviews.length > 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 40 }}>
-              {reviews.map((r, i) => (
-                <div key={r.id || i} style={{ background: 'white', borderRadius: 16, padding: 24, border: '1px solid #f1f5f9', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg,#008080,#0f766e)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 14 }}>{(r.userName || 'U')[0].toUpperCase()}</div>
-                    <div>
-                      <div style={{ fontWeight: 700, color: '#0f172a', fontSize: 14 }}>{r.userName || 'Verified Customer'}</div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#94a3b8' }}>
-                        <span>{r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-IN') : ''}</span>
-                        <span style={{ color: '#fbbf24' }}>{'★'.repeat(r.rating || 5)}</span>
-                      </div>
+              {/* Details & Reviews Section */}
+              <div className="space-y-4">
+                <Accordion title="TECHNICAL SPECIFICATIONS" defaultOpen={true}>
+                  <div className="space-y-6">
+                    <p className="text-slate-500 leading-relaxed text-sm font-medium">{p.desc}</p>
+                    <div className="grid grid-cols-1 gap-2">
+                      {([['Fabric Origin', p.fabD || p.fab], ['Fit Profile', p.fit], p.pockets ? ['Security', `${p.pockets} Reinforced Pockets`] : null, ['GSM Weight', p.wt], ['Sterilization', p.care]] as Array<[string, string] | null>)
+                        .filter((x): x is [string, string] => !!x && !!x[1])
+                        .map(([lbl, val]) => (
+                          <div key={lbl} className="flex justify-between items-center py-3 border-b border-slate-50">
+                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{lbl}</span>
+                            <span className="text-xs font-black text-slate-900">{val}</span>
+                          </div>
+                        ))}
                     </div>
                   </div>
-                  <p style={{ color: '#475569', fontSize: 14, lineHeight: 1.6, margin: 0 }}>{r.body}</p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div style={{ padding: '40px 0', textAlign: 'center', color: '#94a3b8', background: '#f8fafc', borderRadius: 16, marginBottom: 32 }}>
-              No reviews yet. Be the first to share your experience!
-            </div>
-          )}
-
-          {/* Review Form */}
-          <div style={{ background: 'white', borderRadius: 20, padding: 40, border: '1px solid #f1f5f9', boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
-            <h3 style={{ fontSize: 20, fontWeight: 800, color: '#0f172a', marginBottom: 24 }}>Share Your Feedback</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              <div>
-                <label style={{ display: 'block', fontSize: 13, fontWeight: 700, color: '#0f172a', marginBottom: 10 }}>Rating</label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <button key={n} onClick={() => setRating(n)}
-                      style={{ width: 40, height: 40, borderRadius: 8, fontWeight: 700, fontSize: 18, border: 'none', background: rating >= n ? '#fbbf24' : '#f1f5f9', color: rating >= n ? 'white' : '#94a3b8', cursor: 'pointer', transition: 'all 0.2s' }}>★</button>
-                  ))}
-                  <span style={{ marginLeft: 10, fontSize: 13, color: '#64748b', fontWeight: 600 }}>{['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'][rating]}</span>
-                </div>
+                </Accordion>
+                <Accordion title="SHIPPING & LOGISTICS">
+                  <div className="space-y-4 text-xs font-bold text-slate-500 leading-relaxed italic">
+                    <p>📦 Ships within 24-48 hours from our central warehouse.</p>
+                    <p>🚛 Standard transit time: 3-5 business days across India.</p>
+                    <p>🔁 Hassle-free 7 day replacement window for size optimizations.</p>
+                  </div>
+                </Accordion>
+                <Accordion title={`VERIFIED REVIEWS (${reviews.length})`}>
+                  <div className="space-y-6">
+                    {reviews.length > 0 ? (
+                      reviews.slice(0, 3).map((r, i) => (
+                        <div key={i} className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <div className="flex gap-0.5 text-[8px] text-amber-500">{'★'.repeat(r.rating || 5)}</div>
+                            <span className="text-[10px] font-black text-slate-900 uppercase tracking-widest">{r.userName}</span>
+                          </div>
+                          <p className="text-xs text-slate-500">{r.body}</p>
+                        </div>
+                      ))
+                    ) : <p className="text-xs text-slate-400 italic">No reviews yet for this color.</p>}
+                  </div>
+                </Accordion>
               </div>
-              <textarea value={revBody} onChange={(e) => setRevBody(e.target.value)}
-                placeholder="Share your honest experience with this product..."
-                style={{ width: '100%', height: 100, padding: 16, border: '1.5px solid #e2e8f0', borderRadius: 12, fontSize: 14, fontFamily: 'inherit', resize: 'none', outline: 'none', boxSizing: 'border-box' }} />
-              <button onClick={handleSubmitReview} disabled={submitting || !revBody.trim()}
-                style={{ background: '#008080', color: 'white', border: 'none', borderRadius: 10, padding: '14px 32px', fontWeight: 800, fontSize: 14, cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting || !revBody.trim() ? 0.5 : 1, width: 'fit-content', transition: 'all 0.2s' }}>
-                {submitting ? 'Submitting...' : 'Submit Review'}
-              </button>
             </div>
           </div>
         </div>
 
-        {/* YOU MAY ALSO LIKE */}
+        {/* RELATED PRODUCTS */}
         {related.length > 0 && (
-          <div style={{ marginTop: 80, paddingTop: 60, borderTop: '2px solid #f1f5f9' }}>
-            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 40 }}>
-              <h2 style={{ fontSize: 28, fontWeight: 900, color: '#0f172a', margin: 0 }}>You May Also Like</h2>
-              <button onClick={() => router.push('/products')} style={{ background: 'none', border: '1.5px solid #e2e8f0', borderRadius: 8, padding: '8px 20px', fontSize: 13, fontWeight: 700, color: '#64748b', cursor: 'pointer' }}>View All →</button>
+          <div className="mt-32 pt-20 border-t border-slate-100">
+            <div className="flex justify-between items-end mb-12">
+              <div className="space-y-2">
+                <div className="text-[10px] font-black text-emerald-600 uppercase tracking-[0.3em]">Curated for you</div>
+                <h2 className="text-3xl font-black text-slate-900">You May Also Like</h2>
+              </div>
+              <button onClick={() => router.push('/products')} className="px-8 py-3 bg-slate-900 text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-emerald-600 transition-all">Explore More</button>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24 }}>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
               {related.map((rel) => (
                 <ProductCard key={rel.id} p={rel} />
               ))}
