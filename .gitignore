@@ -15,17 +15,21 @@ out/
 build
 dist
 
-# backend
+# backend build artifacts (large files - never track these)
 backend/target/
 backend/deploy/
 backend/eb-bundle/
 backend/*.zip
+backend/*.jar
 **/*.jar
 !backend/mvnw
 **/*.class
-**/*.jar
 **/*.war
 **/*.log
+
+# root-level zip and jar artifacts
+/*.zip
+/*.jar
 
 # IDEs
 .idea/
