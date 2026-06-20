@@ -89,8 +89,12 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
                         setMn(false);
                       }}
                     >
-                      <div className="s-thumb" style={{ background: p.bg }}>
-                        {p.emo}
+                      <div className="s-thumb" style={{ background: p.bg, overflow: 'hidden' }}>
+                        {p.imgs && p.imgs[0] ? (
+                          <img src={p.imgs[0]} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          p.emo
+                        )}
                       </div>
                       <div>
                         <div className="s-nm">{p.name}</div>

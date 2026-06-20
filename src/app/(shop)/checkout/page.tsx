@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useApp } from "@/context/AppContext";
 import { fmt } from "@/lib/data";
 import { apiJson, API_BASE, RAZORPAY_KEY } from "@/lib/api";
+import { getImagesForColor } from "@/lib/productUtils";
 
 declare global {
   interface Window {
@@ -462,20 +463,30 @@ export default function CheckoutPage() {
             <div style={{ background: "#fdfdfd", border: "1px solid #eee", padding: "30px", borderRadius: "20px", position: "sticky", top: "100px" }}>
               <h3 style={{ marginBottom: "20px", fontSize: "18px", fontWeight: 700 }}>Order Summary</h3>
               <div style={{ display: "flex", flexDirection: "column", gap: "18px", marginBottom: "25px" }}>
-                {cart.map((i) => (
-                  <div key={i.k} style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                    <div style={{ width: "45px", height: "45px", borderRadius: "10px", background: i.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "22px" }} aria-hidden="true">
-                      {i.emo}
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 700, fontSize: "14px", marginBottom: "2px" }}>{i.short}</div>
-                      <div style={{ fontSize: "12px", color: "#888" }}>
-                        {i.qty} × {i.size} • {i.colNm}
+                {cart.map((i) => {
+                  const colorIdx = i.clrs?.indexOf(i.col) ?? 0;
+                  const images = getImagesForColor(i, colorIdx !== -1 ? colorIdx : 0);
+                  const thumb = images[0] || i.imgs?.[0];
+
+                  return (
+                    <div key={i.k} style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+                      <div style={{ width: "45px", height: "45px", borderRadius: "10px", background: i.bg, display: "flex", alignItems: "center", justifyContent: "center", overflow: 'hidden' }} aria-hidden="true">
+                        {thumb ? (
+                          <img src={thumb} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <span style={{ fontSize: '20px' }}>{i.emo}</span>
+                        )}
                       </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 700, fontSize: "14px", marginBottom: "2px" }}>{i.short || i.name}</div>
+                        <div style={{ fontSize: "12px", color: "#888" }}>
+                          {i.qty} × {i.size} • {i.colNm}
+                        </div>
+                      </div>
+                      <div style={{ fontWeight: 700 }}>{fmt(i.price * i.qty)}</div>
                     </div>
-                    <div style={{ fontWeight: 700 }}>{fmt(i.price * i.qty)}</div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <div style={{ borderTop: "1.5px dashed #eee", paddingTop: "20px" }}>

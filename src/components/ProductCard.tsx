@@ -96,12 +96,11 @@ export default function ProductCard({ p }: PCardProps) {
           {wished ? "❤️" : "🤍"}
         </button>
 
-        {/* Quick Labels (Badges) */}
+        {/* Quick Labels (Badges) - Simple & Clean */}
         <div className="pc-badges">
           {p.badge && p.badge.split(',').map((b, i) => (
-            <div key={i} className={`pc-badge badge-${b.trim().toLowerCase().replace(/\s/g, "")}`}>{b.trim()}</div>
+            <div key={i} className={`pc-badge badge-simple`}>{b.trim()}</div>
           ))}
-          {discount > 0 && <div className="pc-badge badge-sale">-{discount}%</div>}
         </div>
       </div>
 

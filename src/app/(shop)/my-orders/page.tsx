@@ -155,9 +155,31 @@ export default function MyOrdersPage() {
                           borderRadius: 12,
                         }}
                       >
-                        <div style={{ fontWeight: 700 }}>{item.quantity} ×</div>
-                        <div>
-                          <div style={{ fontWeight: 700, fontSize: 14 }}>{item.productName}</div>
+                        <div style={{
+                          width: '50px',
+                          height: '65px',
+                          borderRadius: '8px',
+                          overflow: 'hidden',
+                          background: '#f1f5f9',
+                          flexShrink: 0
+                        }}>
+                          {item.imageUrl ? (
+                            <img
+                              src={item.imageUrl}
+                              alt=""
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
+                          ) : (
+                            <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
+                              📦
+                            </div>
+                          )}
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontWeight: 700, fontSize: 14 }}>
+                            <span style={{ color: '#008080', marginRight: 4 }}>{item.quantity} ×</span>
+                            {item.productName}
+                          </div>
                           <div style={{ fontSize: 12, color: "#888" }}>
                             Size: {item.size} | {item.colorName}
                           </div>
