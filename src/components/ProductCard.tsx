@@ -51,7 +51,6 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
   const discount = p.origPrice ? Math.round(((p.origPrice - p.price) / p.origPrice) * 100) : 0;
 
   // Handle color change - reset image index
-  // Handle color change - reset image index
   const handleColorChange = (e: React.MouseEvent, index: number) => {
     e.stopPropagation();
     e.preventDefault();
@@ -59,15 +58,14 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
     setIi(0);
   };
 
+  // Handle image navigation
   const nextImg = (e: React.MouseEvent) => {
     e.stopPropagation();
-    e.preventDefault();
     setIi((prev) => (prev + 1) % colorImages.length);
   };
 
   const prevImg = (e: React.MouseEvent) => {
     e.stopPropagation();
-    e.preventDefault();
     setIi((prev) => (prev - 1 + colorImages.length) % colorImages.length);
   };
 
@@ -90,11 +88,12 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
                 src={displayImg}
                 alt={p.name}
                 fill
-                className={`pc-img-main transition-opacity duration-500 ${hover && colorImages[1] ? 'opacity-0' : 'opacity-100'}`}
+                className={`pc-img-main transition-opacity duration-500 opacity-100`}
                 sizes="(max-width: 768px) 50vw, 300px"
                 priority={false}
               />
-              {colorImages[1] && (
+              {/* Only show hover flip if we are at the first image and have a second one */}
+              {ii === 0 && colorImages[1] && (
                 <Image
                   src={colorImages[1]}
                   alt={p.name}
