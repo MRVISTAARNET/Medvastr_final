@@ -15,7 +15,7 @@ interface HeaderProps {
 }
 
 export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
-  const { cart, wishlist, products, navItems, categoryTree } = useApp();
+  const { cart, wishlist, products } = useApp();
   const [q, setQ] = useState("");
   const [sd, setSd] = useState(false);
   const [mn, setMn] = useState(false); // Mobile Nav

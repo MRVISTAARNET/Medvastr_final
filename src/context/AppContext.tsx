@@ -221,13 +221,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const fetchNav = useCallback(async () => {
-    try {
-      const res = await fetch(`${API_BASE}/nav`);
-      const data = await res.json();
-      if (Array.isArray(data)) setNavItems(data);
-    } catch {
-      /* non-blocking */
-    }
+    // Dynamic nav removed - using hardcoded NAV_DATA
   }, []);
 
   const fetchColors = useCallback(async () => {
@@ -296,13 +290,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     fetchProducts();
     fetchCategories();
-    fetchNav();
     fetchColors();
     fetchSizes();
     fetchBanners();
     fetchCollections();
     fetchBulkOrderTiers();
-  }, [fetchProducts, fetchCategories, fetchNav, fetchColors, fetchSizes, fetchBanners, fetchCollections, fetchBulkOrderTiers]);
+  }, [fetchProducts, fetchCategories, fetchColors, fetchSizes, fetchBanners, fetchCollections, fetchBulkOrderTiers]);
 
   useEffect(() => {
     if (isHydrated) {
