@@ -60,7 +60,8 @@ function ProductsContent() {
           variantId: `${p.id}-${idx}`,
           displayColorHex: colorHex,
           displayColorName: p.clrNms?.[idx] || "",
-          displayImage: (p as any).imgsByColor?.[colorHex]?.[0] || p.imgs?.[0]
+          displayImage: (p as any).imgsByColor?.[colorHex]?.[0] || p.imgs?.[0],
+          allColors: p.clrs // Keep this so they can still switch inside the PDP
         });
       });
     } else {
@@ -503,7 +504,7 @@ function ProductsContent() {
             ) : (
               <div className="pg-3">
                 {paged.map((p) => (
-                  <ProductCard key={p.variantId} p={p} />
+                  <ProductCard key={p.variantId} p={p} forceColor={p.displayColorHex} />
                 ))}
               </div>
             )}

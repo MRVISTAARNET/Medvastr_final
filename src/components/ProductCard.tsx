@@ -10,18 +10,23 @@ import { getImagesForColor, getSizesForColor } from "@/lib/productUtils";
 
 interface PCardProps {
   p: Product;
+  forceColor?: string;
 }
 
-export default function ProductCard({ p }: PCardProps) {
+export default function ProductCard({ p, forceColor }: PCardProps) {
   const { addToCart, wishlist, toggleWishlist } = useApp();
   const router = useRouter();
   const initialCi = useMemo(() => {
+    if (forceColor && p.clrs) {
+      const idx = p.clrs.indexOf(forceColor);
+      return idx !== -1 ? idx : 0;
+    }
     if ((p as any).displayColorHex && p.clrs) {
       const idx = p.clrs.indexOf((p as any).displayColorHex);
       return idx !== -1 ? idx : 0;
     }
     return 0;
-  }, [p]);
+  }, [p, forceColor]);
 
   const [ci, setCi] = useState(initialCi); // Color Index
   const [ii, setIi] = useState(0); // Image Index within color
@@ -64,13 +69,39 @@ export default function ProductCard({ p }: PCardProps) {
     setIi((prev) => (prev - 1 + colorImages.length) % colorImages.length);
   };
 
+  const [hover, setHover] = useState(false);
+
   return (
-    <div className="pc-modern h-full flex flex-col" onClick={() => router.push(productPath)} style={{ cursor: "pointer" }}>
+    <div
+      className="pc-modern h-full flex flex-col"
+      onClick={() => router.push(productPath)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{ cursor: "pointer" }}
+    >
       {/* Image Container */}
       <div className="pc-image-wrapper group">
-        <div className="pc-img-link w-full h-full block">
+        <div className="pc-img-link w-full h-full block relative">
           {displayImg ? (
-            <Image src={displayImg} alt={p.name} fill className="pc-img-main" sizes="(max-width: 768px) 50vw, 300px" priority={false} />
+            <>
+              <Image
+                src={displayImg}
+                alt={p.name}
+                fill
+                className={`pc-img-main transition-opacity duration-500 ${hover && colorImages[1] ? 'opacity-0' : 'opacity-100'}`}
+                sizes="(max-width: 768px) 50vw, 300px"
+                priority={false}
+              />
+              {colorImages[1] && (
+                <Image
+                  src={colorImages[1]}
+                  alt={p.name}
+                  fill
+                  className={`pc-img-main absolute inset-0 transition-opacity duration-500 ${hover ? 'opacity-100' : 'opacity-0'}`}
+                  sizes="(max-width: 768px) 50vw, 300px"
+                />
+              )}
+            </>
           ) : (
             <div className="pc-emo-placeholder w-full h-full flex items-center justify-center bg-slate-50">
               <span className="text-slate-300 text-xs font-bold tracking-widest text-center px-4 uppercase">Medvastr</span>
@@ -160,7 +191,7 @@ export default function ProductCard({ p }: PCardProps) {
 
         <div className="pc-foot-actions">
           <button className="pc-quick-add" onClick={(e) => { e.stopPropagation(); addToCart(p, ci, defaultSize); }}>
-            + Quick Add
+            Quick Add
           </button>
         </div>
       </div>

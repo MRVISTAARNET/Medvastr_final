@@ -50,6 +50,7 @@ export default function AdminProducts() {
     sizes: 'S, M, L, XL',
     clrs: '',
     imgs: [],
+    imgsByColor: {}, // { '#hex': ['url1', 'url2'] }
     videoUrl: '',
     active: true,
   });
@@ -131,13 +132,14 @@ export default function AdminProducts() {
     const sizeList = (form.sizes || '').split(',').map((s: string) => s.trim()).filter(Boolean);
 
     const variants = sizeList.flatMap((s: string) => clrsList.map((c: string) => {
+      const hex = getColHex(c);
       const bPrefix = (BRAND_PREFIX as any)[form.brand] || 'OTH';
       const gPrefix = (GENDER_PREFIX as any)[form.gender] || 'U';
       const cPrefix = c.slice(0, 2).toUpperCase();
       const sPrefix = s.toUpperCase();
       const pPrefix = form.name.slice(0, 3).toUpperCase();
       const sku = `${bPrefix}-${gPrefix}-${pPrefix}-${cPrefix}-${sPrefix}`;
-      return { sku, barcode: sku, size: s, colorName: c, colorHex: getColHex(c), stockQuantity: 100, imageUrl: form.imgs?.[0] || '' };
+      return { sku, barcode: sku, size: s, colorName: c, colorHex: hex, stockQuantity: 100, imageUrl: form.imgsByColor?.[hex]?.[0] || form.imgs?.[0] || '' };
     }));
 
     const body = { ...form, slug, variants, categoryIds: [Number(form.parentId), Number(form.subCategoryId)].filter(Boolean) };
@@ -257,13 +259,41 @@ export default function AdminProducts() {
               {activeTab === 'media' && (
                 <div style={{ display: 'grid', gap: '20px' }}>
                   <div className="fg">
-                    <label>Product Images</label>
-                    <input type="file" multiple onChange={e => handleFileUpload(e, 'imgs', true)} />
-                    <div style={{ display: 'flex', gap: '10px', marginTop: '10px', flexWrap: 'wrap' }}>
-                      {(form.imgs || []).map((url: string, i: number) => (
-                        <div key={i} style={{ width: '80px', height: '100px', border: '1px solid #ddd', borderRadius: '5px', overflow: 'hidden' }}><img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /></div>
-                      ))}
-                    </div>
+                    <label>Color-Specific Images (Nike Style)</label>
+                    <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '15px' }}>Upload images for each color to enable the premium gallery-swap feature.</p>
+
+                    {(form.clrs || '').split(',').map((c: string) => c.trim()).filter(Boolean).map((color: string) => {
+                      const hex = getColHex(color);
+                      return (
+                        <div key={color} style={{ marginBottom: '25px', padding: '15px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                            <div style={{ width: '15px', height: '15px', borderRadius: '50%', background: hex }} />
+                            <strong style={{ fontSize: '13px' }}>{color} Photos</strong>
+                          </div>
+                          <input type="file" multiple onChange={async (e) => {
+                            const files = e.target.files;
+                            if (!files) return;
+                            const token = getToken() || "";
+                            const urls: string[] = [];
+                            for (let i = 0; i < files.length; i++) {
+                              const formData = new FormData(); formData.append("file", files[i]);
+                              const res = await fetch(`${API_BASE}/upload`, { method: "POST", headers: { "Authorization": `Bearer ${token}` }, body: formData });
+                              const d = await res.json(); if (d.success) urls.push(d.data);
+                            }
+                            setForm((prev: any) => ({
+                              ...prev,
+                              imgsByColor: { ...prev.imgsByColor, [hex]: [...(prev.imgsByColor?.[hex] || []), ...urls] },
+                              imgs: [...prev.imgs, ...urls]
+                            }));
+                          }} />
+                          <div style={{ display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap' }}>
+                            {(form.imgsByColor?.[hex] || []).map((url: string, i: number) => (
+                              <img key={i} src={url} alt="" style={{ width: '50px', height: '60px', objectFit: 'cover', borderRadius: '4px' }} />
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                   <div className="fg"><label>Video URL</label><input id="p-videoUrl" value={form.videoUrl} onChange={handleInputChange} placeholder="S3 URL" /></div>
                 </div>

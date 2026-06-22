@@ -5151,6 +5151,125 @@ html {
     display: none;
   }
 
+  /* ============================================================
+   STICKY PDP LAYOUT — Nike/Apple Style
+   ============================================================ */
+  .pdp-grid {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 48px;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: start;
+  }
+
+  .pdp-gallery-wrap {
+    width: 100%;
+  }
+
+  .vertical-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .pdp-main-image-item {
+    width: 100%;
+    background: #f9fafb;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: zoom-in;
+  }
+
+  .pdp-info-sec {
+    position: sticky;
+    top: 120px;
+    padding-bottom: 40px;
+  }
+
+  /* LIGHTBOX MODAL */
+  .zoom-modal {
+    position: fixed;
+    inset: 0;
+    background: white;
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .zoom-modal-nav-wrap {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    flex-grow: 1;
+    padding: 40px;
+  }
+
+  .zoom-canvas {
+    flex-grow: 1;
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .zoom-img-main {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .zoom-nav-btn {
+    background: #f1f5f9;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+  }
+
+  .zoom-modal-thumbnails {
+    display: flex;
+    gap: 12px;
+    padding: 20px;
+    border-top: 1px solid #f1f5f9;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .zoom-thumb-item {
+    width: 60px;
+    height: 80px;
+    border: 2px solid transparent;
+    cursor: pointer;
+  }
+
+  .zoom-thumb-item.on {
+    border-color: #008080;
+  }
+
+  .zoom-thumb-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 1024px) {
+    .pdp-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .pdp-info-sec {
+      position: static;
+    }
+  }
+
   .trust-in::after,
   .cat-g::after,
   .clr-row::after,

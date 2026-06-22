@@ -104,6 +104,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   };
 
   const [zoom, setZoom] = useState(false);
+  const [zoomIndex, setZoomIndex] = useState(0);
   const imageRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
   const scrollToImage = (index: number) => {
@@ -112,6 +113,11 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
     if (target) {
       target.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+  };
+
+  const openLightbox = (index: number) => {
+    setZoomIndex(index);
+    setZoom(true);
   };
 
   if ((fetching || (products.length === 0 && !fetched)) && !p) {
@@ -144,11 +150,36 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
   return (
     <div className="pdp-container page">
-      {/* ZOOM LIGHTBOX */}
-      {zoom && !isVideoActive && (
+      {/* PRO LIGHTBOX MODAL */}
+      {zoom && (
         <div className="zoom-modal" onClick={() => setZoom(false)}>
-          <button className="zoom-close">✕</button>
-          <img src={mainMediaSrc} alt={p.name} className="zoom-content" onClick={e => e.stopPropagation()} />
+          <button className="zoom-close" onClick={() => setZoom(false)}>✕</button>
+
+          <div className="zoom-modal-nav-wrap" onClick={e => e.stopPropagation()}>
+            <button className="zoom-nav-btn prev" onClick={() => setZoomIndex(prev => (prev - 1 + visibleImageIndexes.length) % visibleImageIndexes.length)}>‹</button>
+
+            <div className="zoom-canvas">
+              <img
+                src={colorImages[visibleImageIndexes[zoomIndex]]}
+                alt="Product Fullscreen"
+                className="zoom-img-main"
+              />
+            </div>
+
+            <button className="zoom-nav-btn next" onClick={() => setZoomIndex(prev => (prev + 1) % visibleImageIndexes.length)}>›</button>
+          </div>
+
+          <div className="zoom-modal-thumbnails" onClick={e => e.stopPropagation()}>
+            {visibleImageIndexes.map((vIdx, i) => (
+              <div
+                key={i}
+                className={`zoom-thumb-item ${zoomIndex === i ? 'on' : ''}`}
+                onClick={() => setZoomIndex(i)}
+              >
+                <img src={colorImages[vIdx]} alt="" />
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
@@ -162,30 +193,21 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
       </nav>
 
       <div className="pdp-grid">
-        {/* GALLERY */}
+        {/* GALLERY - Vertical Stack Logic */}
         <div className="pdp-gallery-wrap">
-          <div className="pdp-thumbnails">
+          <div className="pdp-main-images vertical-stack">
             {p.videoUrl && (
-              <div onClick={() => setMainImg(-1)} className={`pdp-thumbnail ${mainImg === -1 ? 'on' : ''} flex items-center justify-center`}>
-                <span style={{ fontSize: '24px' }}>▶</span>
-              </div>
-            )}
-            {visibleImageIndexes.map(i => (
-              <div key={i} onClick={() => scrollToImage(i)} className={`pdp-thumbnail ${mainImg === i ? 'on' : ''}`}>
-                <img src={colorImages[i]} alt="" />
-              </div>
-            ))}
-          </div>
-
-          <div className="pdp-main-images">
-            {p.videoUrl && (
-              <div className="pdp-main-image-item">
+              <div className="pdp-main-image-item video-item">
                 <video src={p.videoUrl} autoPlay loop muted playsInline controls />
               </div>
             )}
             {visibleImageIndexes.map((i) => (
-              <div key={i} ref={el => { imageRefs.current[i] = el; }} className="pdp-main-image-item">
-                <ProductImageZoom src={colorImages[i]} alt={`${p.name} - View ${i + 1}`} />
+              <div
+                key={i}
+                className="pdp-main-image-item"
+                onClick={() => openLightbox(visibleImageIndexes.indexOf(i))}
+              >
+                <ProductImageZoom src={colorImages[i]} alt={`${p.name} - Detail ${i + 1}`} />
               </div>
             ))}
           </div>
