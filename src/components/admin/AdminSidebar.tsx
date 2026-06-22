@@ -21,11 +21,8 @@ const AdminSidebar = () => {
       section: 'Store', items: [
         { name: 'Orders', icon: '📦', href: '/admin/orders' },
         { name: 'Products', icon: '🥼', href: '/admin/products' },
-        { name: 'Categories', icon: '🏷️', href: '/admin/categories' },
         { name: 'Colors', icon: '🎨', href: '/admin/colors' },
         { name: 'Sizes', icon: '📐', href: '/admin/sizes' },
-        { name: 'Attributes', icon: '🏷️', href: '/admin/attributes' },
-        { name: 'Navigation', icon: '🧭', href: '/admin/navigation' },
         { name: 'Inventory', icon: '📋', href: '/admin/inventory' },
       ]
     },

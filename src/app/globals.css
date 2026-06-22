@@ -5409,10 +5409,6 @@ html {
   .pdp-info-sec {
     position: sticky;
     top: 120px;
-    height: calc(100vh - 140px);
-    overflow-y: auto;
-    scrollbar-width: none;
-    /* Hide scrollbar for info but keep scrolling if content too long */
     padding-right: 10px;
   }
 

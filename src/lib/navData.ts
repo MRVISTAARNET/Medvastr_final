@@ -22,11 +22,19 @@ export const NAV_DATA: NavItem[] = [
                 ]
             },
             {
-                title: 'TOPS & UNDER SCRUBS',
+                title: 'UNDER SCRUBS & TOPS',
                 items: [
-                    { label: 'Cotton Crew T-Shirt', href: '/products?cat=men-cotton-crew-tshirt&gender=men' },
-                    { label: 'Under Scrub', href: '/products?cat=men-under-scrub&gender=men' },
+                    { label: 'Under Scrubs (All)', href: '/products?cat=men-under-scrub&gender=men' },
                     { label: 'Full Sleeve Compression', href: '/products?cat=full-sleeve-compression-under-scrub&gender=men' },
+                    { label: 'Cotton Crew T-Shirt', href: '/products?cat=men-cotton-crew-tshirt&gender=men' },
+                ]
+            },
+            {
+                title: 'SURGICAL & LAB',
+                items: [
+                    { label: 'Surgical Gowns', href: '/products?cat=surgical-gown&gender=men' },
+                    { label: 'Surgical Caps', href: '/products?cat=surgical-cap&gender=men' },
+                    { label: 'Lab Coats', href: '/products?cat=lab-coats&gender=men' },
                 ]
             }
         ]
@@ -44,11 +52,19 @@ export const NAV_DATA: NavItem[] = [
                 ]
             },
             {
-                title: 'TOPS & ESSENTIALS',
+                title: 'UNDER SCRUBS & TOPS',
                 items: [
-                    { label: 'Cotton Crew T-Shirt', href: '/products?cat=women-cotton-crew-tshirt&gender=women' },
-                    { label: 'Under Scrub', href: '/products?cat=women-under-scrub&gender=women' },
+                    { label: 'Under Scrubs (All)', href: '/products?cat=women-under-scrub&gender=women' },
                     { label: 'Full Sleeve Compression', href: '/products?cat=women-full-sleeve-compression-under-scrub&gender=women' },
+                    { label: 'Cotton Crew T-Shirt', href: '/products?cat=women-cotton-crew-tshirt&gender=women' },
+                ]
+            },
+            {
+                title: 'SURGICAL & LAB',
+                items: [
+                    { label: 'Surgical Gowns', href: '/products?cat=women-surgical-gown&gender=women' },
+                    { label: 'Surgical Caps', href: '/products?cat=women-surgical-cap&gender=women' },
+                    { label: 'Lab Coats', href: '/products?cat=women-lab-coats&gender=women' },
                 ]
             }
         ]
@@ -73,13 +89,13 @@ export const NAV_DATA: NavItem[] = [
         type: 'MEGA_MENU',
         children: [
             {
-                title: 'INSTITUTIONAL',
+                title: 'INSTITUTIONAL SERVICES',
                 items: [
-                    { label: 'Scrub Suits', href: '/products?cat=scrub-suit' },
-                    { label: 'Linen & Bedding', href: '/products?cat=linen-and-bedding' },
-                    { label: 'Maternity Gown', href: '/products?cat=maternity-gown' },
-                    { label: 'Patient Dress', href: '/products?cat=patient-dress' },
-                    { label: 'Brown Blanket', href: '/products?cat=brown-blankets' },
+                    { label: 'Scrub Suits', href: '/bulk-orders/scrub-suit' },
+                    { label: 'Linen & Bedding', href: '/bulk-orders/linen-and-bedding' },
+                    { label: 'Maternity Gown', href: '/bulk-orders/maternity-gown' },
+                    { label: 'Patient Dress', href: '/bulk-orders/patient-dress' },
+                    { label: 'Brown Blanket', href: '/bulk-orders/brown-blankets' },
                 ]
             }
         ]

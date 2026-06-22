@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { fmt } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
 
 interface MegaMenuProps {
@@ -13,16 +12,19 @@ interface MegaMenuProps {
   onNavigate?: () => void;
 }
 
+const NAVY = "#0f2044";
+const WINE = "#721c24";
+const MAROON = "#800020";
+const LIGHT_BLUE = "#add8e6";
+
+const MENU_COLORS = [
+  { name: "Navy Blue", hex: NAVY },
+  { name: "Wine", hex: WINE },
+  { name: "Maroon", hex: MAROON },
+  { name: "Light Blue", hex: LIGHT_BLUE },
+];
+
 export default function MegaMenu({ items, label, onNavigate }: MegaMenuProps) {
-  const { products } = useApp();
-
-  // Find a featured product related to this menu for the 4th column
-  const featuredProduct = products.find(p =>
-    p.name.toLowerCase().includes(label.toLowerCase()) ||
-    (label === "MEN" && p.gen?.toLowerCase().includes("men")) ||
-    (label === "WOMEN" && p.gen?.toLowerCase().includes("women"))
-  ) || products[0];
-
   return (
     <div className="mega">
       <div className="mega-in" style={{ gridTemplateColumns: `repeat(${items.length + 1}, 1fr)` }}>
@@ -41,19 +43,48 @@ export default function MegaMenu({ items, label, onNavigate }: MegaMenuProps) {
           </div>
         ))}
 
-        {/* Featured Column */}
+        {/* Dynamic 4th Column */}
         <div className="mcol" style={{ borderRight: "none" }}>
-          <div className="mcol-hd">FEATURED</div>
-          {featuredProduct && (
-            <Link href={`/product/${featuredProduct.slug || featuredProduct.id}`} onClick={onNavigate} className="m-feat-card">
-              <div className="m-feat-img">
-                {featuredProduct.imgs?.[0] && <img src={featuredProduct.imgs[0]} alt={featuredProduct.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+          {(label === "MEN" || label === "WOMEN") ? (
+            <>
+              <div className="mcol-hd">SHOP BY COLOUR</div>
+              <div className="m-clr-grid">
+                {MENU_COLORS.map((c) => (
+                  <Link
+                    key={c.name}
+                    href={`/products?color=${encodeURIComponent(c.name)}&gender=${label.toLowerCase()}`}
+                    className="m-clr-card"
+                    onClick={onNavigate}
+                  >
+                    <div className="m-clr-dot" style={{ background: c.hex }} />
+                    <span className="m-clr-nm">{c.name}</span>
+                  </Link>
+                ))}
               </div>
-              <div className="m-feat-info">
-                <span className="m-feat-name">{featuredProduct.name}</span>
-                <span className="m-feat-price">{fmt(featuredProduct.price)}</span>
+            </>
+          ) : label === "BULK ORDERS" ? (
+            <>
+              <div className="mcol-hd">BULK SERVICES</div>
+              <div className="m-desc-box">
+                <p>Medvastr provides high-quality institutional uniforms and linen for hospitals, clinics, and medical colleges across India.</p>
+                <p style={{ marginTop: '10px', fontSize: '12px', opacity: 0.8 }}>Contact us for customized volume discounts and branding options.</p>
+                <Link href="/contact" className="m-contact-btn" onClick={onNavigate}>
+                  Get a Quote →
+                </Link>
               </div>
-            </Link>
+            </>
+          ) : (
+            <>
+              <div className="mcol-hd">OUR PROMISE</div>
+              <div className="m-desc-box">
+                <p>Designed for professionals who demand excellence. Our surgical and lab wear combines maximum protection with all-day comfort.</p>
+                <div style={{ marginTop: '15px', color: '#008080', fontWeight: 'bold', fontSize: '13px' }}>
+                  ✓ Fluid Resistant<br />
+                  ✓ Breathable Fabric<br />
+                  ✓ Durable & Long-lasting
+                </div>
+              </div>
+            </>
           )}
         </div>
       </div>
@@ -64,12 +95,15 @@ export default function MegaMenu({ items, label, onNavigate }: MegaMenuProps) {
         .m-sub-a { font-size: 14px !important; color: #64748b !important; font-weight: 600 !important; transition: all 0.2s; text-decoration: none; display: block; }
         .m-sub-a:hover { color: #008080 !important; padding-left: 5px; }
         
-        .m-feat-card { display: block; background: #fff; border: 1px solid #f1f5f9; border-radius: 12px; overflow: hidden; text-decoration: none; transition: transform 0.3s; margin-top: 5px; }
-        .m-feat-card:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(0,0,0,0.05); }
-        .m-feat-img { height: 160px; background: #f8fafc; overflow: hidden; }
-        .m-feat-info { padding: 12px; display: flex; flexDirection: column; gap: 4px; }
-        .m-feat-name { font-size: 13px; font-weight: 700; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
-        .m-feat-price { font-size: 14px; font-weight: 900; color: #008080; }
+        .m-clr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .m-clr-card { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px; border: 1px solid #f1f5f9; border-radius: 8px; text-decoration: none; transition: background 0.2s; }
+        .m-clr-card:hover { background: #f8fafc; border-color: #e2e8f0; }
+        .m-clr-dot { width: 30px; height: 30px; border-radius: 50%; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+        .m-clr-nm { font-size: 11px; font-weight: 700; color: #1e293b; text-align: center; }
+
+        .m-desc-box { font-size: 13px; line-height: 1.6; color: #64748b; margin-top: 5px; }
+        .m-contact-btn { display: inline-block; margin-top: 20px; padding: 10px 18px; background: #008080; color: white !important; border-radius: 30px; font-weight: 700; font-size: 12px; text-decoration: none; transition: opacity 0.2s; }
+        .m-contact-btn:hover { opacity: 0.9; }
       `}</style>
     </div>
   );
