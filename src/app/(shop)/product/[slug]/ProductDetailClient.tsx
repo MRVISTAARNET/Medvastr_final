@@ -193,17 +193,31 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
       </nav>
 
       <div className="pdp-grid">
+        {/* SIDEBAR THUMBS (Desktop only) */}
+        <div className="pdp-sidebar-thumbs mob-hide">
+          {visibleImageIndexes.map((i) => (
+            <div
+              key={i}
+              className={`pdp-side-thumb ${mainImg === i ? 'active' : ''}`}
+              onClick={() => scrollToImage(i)}
+            >
+              <img src={colorImages[i]} alt="" />
+            </div>
+          ))}
+        </div>
+
         {/* GALLERY - Vertical Stack Logic */}
         <div className="pdp-gallery-wrap">
           <div className="pdp-main-images vertical-stack">
             {p.videoUrl && (
-              <div className="pdp-main-image-item video-item">
+              <div className="pdp-main-image-item video-item" ref={el => { (imageRefs.current as any)[-1] = el }}>
                 <video src={p.videoUrl} autoPlay loop muted playsInline controls />
               </div>
             )}
             {visibleImageIndexes.map((i) => (
               <div
                 key={i}
+                ref={el => { (imageRefs.current as any)[i] = el }}
                 className="pdp-main-image-item"
                 onClick={() => openLightbox(visibleImageIndexes.indexOf(i))}
               >
