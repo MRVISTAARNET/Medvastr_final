@@ -15,10 +15,25 @@ interface PCardProps {
 export default function ProductCard({ p }: PCardProps) {
   const { addToCart, wishlist, toggleWishlist } = useApp();
   const router = useRouter();
-  const [ci, setCi] = useState(0); // Color Index
+  const initialCi = useMemo(() => {
+    if ((p as any).displayColorHex && p.clrs) {
+      const idx = p.clrs.indexOf((p as any).displayColorHex);
+      return idx !== -1 ? idx : 0;
+    }
+    return 0;
+  }, [p]);
+
+  const [ci, setCi] = useState(initialCi); // Color Index
   const [ii, setIi] = useState(0); // Image Index within color
   const wished = wishlist.includes(p.id);
-  const productPath = `/product/${p.slug || p.id}`;
+
+  const productPath = useMemo(() => {
+    const base = `/product/${p.slug || p.id}`;
+    if (p.clrNms && p.clrNms[ci]) {
+      return `${base}?color=${encodeURIComponent(p.clrNms[ci])}`;
+    }
+    return base;
+  }, [p, ci]);
 
   const colorImages = useMemo(() => getImagesForColor(p, ci), [p, ci]);
   const displayImg = colorImages[ii] || colorImages[0] || "";

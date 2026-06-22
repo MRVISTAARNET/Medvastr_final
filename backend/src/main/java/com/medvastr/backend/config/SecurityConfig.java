@@ -37,9 +37,11 @@ public class SecurityConfig {
                 .cors(c -> c.configurationSource(corsConfigurationSource))
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .headers(headers -> headers
-                        .contentTypeOptions(c -> {})
+                        .contentTypeOptions(c -> {
+                        })
                         .frameOptions(f -> f.deny())
-                        .referrerPolicy(r -> r.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
+                        .referrerPolicy(r -> r
+                                .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
                         .permissionsPolicy(p -> p.policy("geolocation=(), microphone=(), camera=()")))
                 .authorizeHttpRequests(a -> {
                     a.requestMatchers("/api/auth/**", "/auth/**").permitAll()
@@ -60,6 +62,7 @@ public class SecurityConfig {
                             .permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/orders/track/**", "/orders/track/**").permitAll()
                             .requestMatchers("/api/payments/webhook", "/payments/webhook").permitAll()
+                            .requestMatchers("/api/v1/tracking/updates", "/v1/tracking/updates").permitAll()
                             .requestMatchers("/api/newsletter/**", "/newsletter/**").permitAll()
                             .requestMatchers(HttpMethod.POST, "/api/inquiries", "/inquiries").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/media/**").permitAll()

@@ -4,8 +4,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useApp } from "@/context/AppContext";
 import { fmt } from "@/lib/data";
-import DynamicNav, { NavItem } from "./DynamicNav";
-import { buildNavFromCategories } from "@/lib/categoryUtils";
+import { NAV_DATA } from "@/lib/navData";
+import DynamicNav from "./DynamicNav";
 
 interface HeaderProps {
   onCart: () => void;
@@ -26,15 +26,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
     ? products.filter((p) => p.name.toLowerCase().includes(q.toLowerCase())).slice(0, 6)
     : [];
 
-  const staticLinks: NavItem[] = [
-    { id: 9001, label: "About Us", href: "/about", itemType: "LINK" },
-    { id: 9002, label: "Blogs", href: "/blog", itemType: "LINK" },
-    { id: 9003, label: "Contact Us", href: "/contact", itemType: "LINK" },
-  ];
-  const categoryNav = buildNavFromCategories(categoryTree || []);
-  const resolvedNav = navItems?.length
-    ? navItems
-    : [...categoryNav, ...staticLinks];
+  const resolvedNav = NAV_DATA;
   const cc = cart.reduce((s, i) => s + i.qty, 0);
   const wc = wishlist.length;
 
@@ -139,7 +131,6 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
         </div>
         <DynamicNav
           items={resolvedNav}
-          categoryTree={categoryTree}
           mobileOpen={mn}
           onNavigate={() => setMn(false)}
           mobileGroup={mo}

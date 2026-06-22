@@ -2,9 +2,11 @@ package com.medvastr.backend.service;
 
 import com.medvastr.backend.model.Order;
 import com.medvastr.backend.model.OrderItem;
+import com.medvastr.backend.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.annotation.PostConstruct;
+import org.springframework.transaction.annotation.Transactional;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 @Slf4j
 public class ShiprocketService {
+    private final OrderRepository orderRepository;
 
     @Value("${shiprocket.enabled:false}")
     private boolean enabled;
@@ -283,6 +286,55 @@ public class ShiprocketService {
         } catch (Exception e) {
             log.error("[Shiprocket] Error fetching locations: {}", e.getMessage());
             return "Error: " + e.getMessage();
+        }
+    }
+
+    @Transactional
+    public void handleWebhook(String payload) {
+        JSONObject json = new JSONObject(payload);
+        String orderId = json.optString("order_id");
+        String status = json.optString("status");
+        String awb = json.optString("awb");
+        String courier = json.optString("courier_name");
+
+        if (orderId == null || orderId.isEmpty()) {
+            log.warn("[Shiprocket Webhook] Missing order_id in payload");
+            return;
+        }
+
+        orderRepository.findByOrderNumber(orderId).ifPresent(order -> {
+            log.info("[Shiprocket Webhook] Updating order {} to status: {}", orderId, status);
+
+            if (awb != null && !awb.isEmpty()) {
+                order.setTrackingNumber(awb);
+            }
+            if (courier != null && !courier.isEmpty()) {
+                order.setCourierName(courier);
+            }
+
+            // Map Shiprocket status to internal status
+            updateOrderStatusMapping(order, status);
+
+            orderRepository.save(order);
+        });
+    }
+
+    private void updateOrderStatusMapping(Order order, String shiprocketStatus) {
+        if (shiprocketStatus == null)
+            return;
+
+        String s = shiprocketStatus.toLowerCase();
+        if (s.contains("shipped")) {
+            order.setStatus(Order.OrderStatus.SHIPPED);
+        } else if (s.contains("delivered")) {
+            order.setStatus(Order.OrderStatus.DELIVERED);
+            order.setDeliveredAt(java.time.LocalDateTime.now());
+        } else if (s.contains("cancelled")) {
+            order.setStatus(Order.OrderStatus.CANCELLED);
+        } else if (s.contains("out for delivery")) {
+            order.setStatus(Order.OrderStatus.OUT_FOR_DELIVERY);
+        } else if (s.contains("return")) {
+            order.setStatus(Order.OrderStatus.RETURNED);
         }
     }
 }

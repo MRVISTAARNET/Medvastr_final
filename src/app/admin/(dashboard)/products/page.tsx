@@ -20,6 +20,7 @@ export default function AdminProducts() {
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState<'basic' | 'media' | 'inventory' | 'seo'>('basic');
 
   const { products, addProduct, updateProduct, deleteProduct } = useApp();
 
@@ -400,6 +401,7 @@ export default function AdminProducts() {
 
   const openAddModal = () => {
     setEditingProduct(null);
+    setActiveTab('basic');
     setIsModalOpen(true);
   };
 
@@ -495,14 +497,183 @@ export default function AdminProducts() {
               <div className="modal-title">{editingProduct ? 'Edit Product Details' : 'Add New Product'}</div>
               <button type="button" className="modal-x" onClick={() => setIsModalOpen(false)}>✕</button>
             </div>
-            <form onSubmit={(e) => { e.preventDefault(); handleSave(); }} style={{ flex: 1, overflowY: 'auto', padding: '24px 26px' }}>
-              {/* Basic Details */}
-              <div className="fg-row">
-                <div className="fg" style={{ gridColumn: '1 / -1' }}>
-                  <label>Product Name *</label>
-                  <input type="text" id="p-name" value={form.name} onChange={handleInputChange} placeholder="Men's Classic V-Neck Scrub" required />
+            <div className="modal-tabs" style={{ display: 'flex', gap: '30px', padding: '0 26px', borderBottom: '1px solid #f1f5f9', background: '#fff' }}>
+              {['basic', 'media', 'inventory', 'seo'].map((t) => (
+                <div
+                  key={t}
+                  onClick={() => setActiveTab(t as any)}
+                  style={{
+                    padding: '16px 4px',
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    color: activeTab === t ? '#008080' : '#94a3b8',
+                    borderBottom: `3px solid ${activeTab === t ? '#008080' : 'transparent'}`,
+                    cursor: 'pointer',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px'
+                  }}
+                >
+                  {t}
                 </div>
-              </div>
+              ))}
+            </div>
+
+            <form onSubmit={(e) => { e.preventDefault(); handleSave(); }} style={{ flex: 1, overflowY: 'auto', padding: '24px 26px' }}>
+              {activeTab === 'basic' && (
+                <div className="tab-content">
+                  {/* Basic Details */}
+                  <div className="fg-row">
+                    <div className="fg" style={{ gridColumn: '1 / -1' }}>
+                      <label>Product Name *</label>
+                      <input type="text" id="p-name" value={form.name} onChange={handleInputChange} placeholder="Men's Classic V-Neck Scrub" required />
+                    </div>
+                  </div>
+                  <div className="fg-row">
+                    <div className="fg">
+                      <label>Primary Category</label>
+                      <select id="p-catId" value={form.catId} onChange={handleInputChange}>
+                        <option value="">Select Category</option>
+                        {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                      </select>
+                    </div>
+                    <div className="fg">
+                      <label>Type Key (Tabs)</label>
+                      <select id="p-type" value={form.type} onChange={handleInputChange}>
+                        <option value="scrubs">Uniforms & Scrubs</option>
+                        <option value="linen">Linen & Bedding</option>
+                        <option value="surgical">Surgical Wear</option>
+                        <option value="diagnostic">Diagnostic & Caps</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="fg">
+                    <label style={{ color: '#0f172a', fontWeight: 700, display: 'block', marginBottom: '12px' }}>
+                      Also Show in Sections (Multi-Select)
+                    </label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '10px', background: '#f8fafc', padding: '15px', borderRadius: '16px', border: '1.5px solid #e2e8f0' }}>
+                      {categories.map((c: any) => (
+                        <label key={c.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px', cursor: 'pointer' }}>
+                          <input
+                            type="checkbox"
+                            checked={form.categoryIds ? String(form.categoryIds).split(',').includes(String(c.id)) : false}
+                            onChange={() => toggleExtraCategory(c.id)}
+                            style={{ accentColor: '#008080' }}
+                          />
+                          {c.name}
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="fg-row" style={{ marginTop: '20px' }}>
+                    <div className="fg">
+                      <label>Price (₹) *</label>
+                      <input type="number" id="p-price" value={form.price} onChange={handleInputChange} placeholder="1099" required />
+                    </div>
+                    <div className="fg">
+                      <label>Original Price (₹)</label>
+                      <input type="number" id="p-originalPrice" value={form.originalPrice} onChange={handleInputChange} placeholder="Strikethrough price" />
+                    </div>
+                  </div>
+
+                  <div className="fg" style={{ marginTop: '10px' }}>
+                    <label>Short Description</label>
+                    <textarea id="p-desc" value={form.desc} onChange={handleInputChange} placeholder="Quick summary..." rows={2} />
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'media' && (
+                <div className="tab-content">
+                  {/* Media Upload */}
+                  <div className="media-section" style={{ background: '#f8fafc', padding: '24px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ marginBottom: '20px' }}>
+                      <h3 style={{ fontSize: '16px', fontWeight: 800 }}>Media Pairings</h3>
+                      <p style={{ fontSize: '12px', color: '#64748b' }}>Upload images and associate them with colors.</p>
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*,video/*"
+                      multiple
+                      onChange={(e) => handleFileUpload(e, 'imgs', true)}
+                      style={{ padding: '12px', background: '#fff', borderRadius: '12px', border: '2px dashed #cbd5e1', width: '100%', marginBottom: '20px' }}
+                    />
+
+                    {/* Rendering Logic already handled in previous turn - keeping it clean */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                      <p style={{ fontSize: '13px', fontWeight: 700 }}>Instructions:</p>
+                      <ul style={{ fontSize: '12px', color: '#64748b', paddingLeft: '20px' }}>
+                        <li>Upload images as a batch.</li>
+                        <li>Use the dropdown on each image to assign it to a color.</li>
+                        <li>The first image in a color group will be the primary shot.</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'inventory' && (
+                <div className="tab-content">
+                  <div className="fg-row">
+                    <div className="fg">
+                      <label>Brand</label>
+                      <input type="text" id="p-brand" value={form.brand} onChange={handleInputChange} />
+                    </div>
+                    <div className="fg">
+                      <label>Style Group</label>
+                      <select id="p-styleId" value={form.styleId} onChange={handleInputChange}>
+                        <option value="top">Top</option>
+                        <option value="bottom">Bottom</option>
+                        <option value="set">Set</option>
+                        <option value="cap">Accessory</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="fg-row">
+                    <div className="fg">
+                      <label>Sizes (XS, S, M...)</label>
+                      <input type="text" id="p-sizes" value={form.sizes} onChange={handleInputChange} />
+                    </div>
+                    <div className="fg">
+                      <label>Colors (Navy, Maroon...)</label>
+                      <input type="text" id="p-clrs" value={form.clrs} onChange={handleInputChange} />
+                    </div>
+                  </div>
+                  <div className="fg" style={{ marginTop: '20px' }}>
+                    <label>Barcodes & SKU Management</label>
+                    <div style={{ padding: '20px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                      <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '15px' }}>SKUs are auto-generated based on Brand, Style, and Color.</p>
+                      {editingProduct && (
+                        <button type="button" className="btn-primary" onClick={downloadAllBarcodes}>Download All Labels</button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'seo' && (
+                <div className="tab-content">
+                  <div className="fg">
+                    <label>Meta Title</label>
+                    <input type="text" id="p-seoTitle" value={form.seoTitle} onChange={handleInputChange} placeholder="SEO optimized title" />
+                  </div>
+                  <div className="fg" style={{ marginTop: '15px' }}>
+                    <label>Meta Description</label>
+                    <textarea id="p-seoDescription" value={form.seoDescription} onChange={handleInputChange} rows={3} placeholder="SEO description for Google..." />
+                  </div>
+                  <div className="fg-row" style={{ marginTop: '15px' }}>
+                    <div className="fg">
+                      <label>Fabric / Material</label>
+                      <input type="text" id="p-material" value={form.material} onChange={handleInputChange} />
+                    </div>
+                    <div className="fg">
+                      <label>Tags</label>
+                      <input type="text" id="p-tags" value={form.tags} onChange={handleInputChange} placeholder="scrubs, medical, premium" />
+                    </div>
+                  </div>
+                </div>
+              )}
               <div className="fg-row">
                 <div className="fg">
                   <label>Primary Category</label>

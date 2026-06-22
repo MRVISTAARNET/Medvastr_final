@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import { fmt } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
@@ -20,48 +20,82 @@ function ProductsContent() {
   const [cat, setCat] = useState(initCat);
   const [gen, setGen] = useState(initGen);
   const [sort, setSort] = useState("default");
-  const [minP, setMinP] = useState("");
-  const [maxP, setMaxP] = useState("");
+  const [minP, setMinP] = useState(searchParams.get("minP") || "");
+  const [maxP, setMaxP] = useState(searchParams.get("maxP") || "");
   const [colorFilter, setColorFilter] = useState(initColor);
   const [sizeFilter, setSizeFilter] = useState(initSize);
   const [pg, setPg] = useState(1);
   const [mobF, setMobF] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     setCat(initCat);
     setColorFilter(initColor);
     setSizeFilter(initSize);
     setGen(initGen);
+    setMinP(searchParams.get("minP") || "");
+    setMaxP(searchParams.get("maxP") || "");
     setPg(1);
-  }, [initCat, initColor, initSize, initGen]);
+  }, [initCat, initColor, initSize, initGen, searchParams]);
+
+  const updateURL = (params: Record<string, string | null>) => {
+    const newParams = new URLSearchParams(searchParams.toString());
+    Object.entries(params).forEach(([key, val]) => {
+      if (val === null || val === "" || val === "all") newParams.delete(key);
+      else newParams.set(key, val);
+    });
+    router.push(`/products?${newParams.toString()}`, { scroll: false });
+  };
 
   const PER = 9;
 
-  let f = products.filter((p) => {
-    if (cat !== "all" && !productMatchesCategory(p, cat, categoryTree)) return false;
+  // 1. COLLECT ALL INDIVIDUAL VARIANT ENTRIES
+  let flattened: any[] = [];
+  products.forEach(p => {
+    if (p.clrs && p.clrs.length > 0) {
+      p.clrs.forEach((colorHex, idx) => {
+        flattened.push({
+          ...p,
+          variantId: `${p.id}-${idx}`,
+          displayColorHex: colorHex,
+          displayColorName: p.clrNms?.[idx] || "",
+          displayImage: (p as any).imgsByColor?.[colorHex]?.[0] || p.imgs?.[0]
+        });
+      });
+    } else {
+      flattened.push({ ...p, variantId: p.id });
+    }
+  });
 
-    // Support for Multi-select Gender: match if product supports the selected gender
+  // 2. APPLY FILTERS TO FLATTENED LIST
+  let f = flattened.filter((p) => {
+    // Gender Filter
     const pGens = (p.gen || "men").toLowerCase().split(',').map((s: string) => s.trim());
     if (gen !== "all" && !pGens.includes(gen.toLowerCase())) return false;
 
+    // Category Filter
+    if (cat !== "all" && !productMatchesCategory(p, cat, categoryTree)) return false;
+
+    // Price Filter
     if (minP && p.price < parseInt(minP)) return false;
     if (maxP && p.price > parseInt(maxP)) return false;
+
+    // Color Filter (Matches specific variant color)
     if (colorFilter) {
-      const colorMatch = (p as any).clrNms?.some((nm: string) =>
-        nm.toLowerCase().includes(colorFilter.toLowerCase())
-      ) || (p as any).clrs?.some((hex: string) =>
-        hex.toLowerCase() === colorFilter.toLowerCase()
-      );
-      if (!colorMatch) return false;
+      if (p.displayColorName.toLowerCase() !== colorFilter.toLowerCase() &&
+        p.displayColorHex.toLowerCase() !== colorFilter.toLowerCase()) {
+        return false;
+      }
     }
+
+    // Size Filter
     if (sizeFilter) {
-      const sizeMatch = (p as any).sizes?.some((s: string) =>
-        s.toUpperCase() === sizeFilter.toUpperCase()
-      ) || (p as any).variants?.some((v: any) =>
-        v.size?.toUpperCase() === sizeFilter.toUpperCase()
-      );
+      const sizeMatch = (p as any).sizes?.some((s: string) => s.toUpperCase() === sizeFilter.toUpperCase()) ||
+        (p as any).variants?.some((v: any) => v.size?.toUpperCase() === sizeFilter.toUpperCase());
       if (!sizeMatch) return false;
     }
+
     return true;
   });
 
@@ -268,7 +302,7 @@ function ProductsContent() {
                     <div
                       key={c.id}
                       className={`sb3-item${cat === c.id ? " active" : ""}`}
-                      onClick={() => { setCat(c.id); setPg(1); if (mobF) setMobF(false); }}
+                      onClick={() => { updateURL({ cat: c.id, pg: "1" }); if (mobF) setMobF(false); }}
                     >
                       <div className="sb3-check-box" />
                       <span className="sb3-label">{c.l}</span>
@@ -285,13 +319,12 @@ function ProductsContent() {
                   {[
                     ["all", "All"],
                     ["men", "Men"],
-                    ["women", "Women"],
-                    ["unisex", "Unisex"],
+                    ["women", "Women"]
                   ].map(([v, l]) => (
                     <div
                       key={v}
                       className={`sb3-item${gen === v ? " active" : ""}`}
-                      onClick={() => { setGen(v); setPg(1); if (mobF) setMobF(false); }}
+                      onClick={() => { updateURL({ gender: v, pg: "1" }); if (mobF) setMobF(false); }}
                     >
                       <div className="sb3-check-box" />
                       <span className="sb3-label">{l}</span>
@@ -313,7 +346,7 @@ function ProductsContent() {
                     <div
                       key={l}
                       className={`sb3-item${minP === mn && maxP === mx ? " active" : ""}`}
-                      onClick={() => { setMinP(mn); setMaxP(mx); setPg(1); if (mobF) setMobF(false); }}
+                      onClick={() => { updateURL({ minP: mn, maxP: mx, pg: "1" }); if (mobF) setMobF(false); }}
                     >
                       <div className="sb3-check-box" />
                       <span className="sb3-label">{l}</span>
@@ -330,7 +363,7 @@ function ProductsContent() {
                     <div
                       key={c.name}
                       className={`sb3-color-item${colorFilter === c.name ? " active" : ""}`}
-                      onClick={() => { setColorFilter((prev: string) => prev === c.name ? '' : c.name); setPg(1); }}
+                      onClick={() => { updateURL({ color: colorFilter === c.name ? "" : c.name, pg: "1" }); }}
                     >
                       <div className="sb3-color-dot" style={{ background: c.hexCode }} />
                       <span className="sb3-color-name">{c.name}</span>
@@ -470,7 +503,7 @@ function ProductsContent() {
             ) : (
               <div className="pg-3">
                 {paged.map((p) => (
-                  <ProductCard key={p.id} p={p} />
+                  <ProductCard key={p.variantId} p={p} />
                 ))}
               </div>
             )}
@@ -530,7 +563,7 @@ function ProductsContent() {
 
         .products-layout { display: grid; grid-template-columns: 280px 1fr; gap: 40px; align-items: start; }
         .products-right { min-width: 0; }
-        .pg-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 24px; }
+/* pg-3 now handled by global responsive logic */
         
         /* MODERN SIDEBAR V3 */
         .sidebar-v3 { background: white; position: sticky; top: 120px; }

@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { fmt, cn, Product } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
 import ProductCard from "@/components/ProductCard";
 import { API_BASE } from "@/lib/api";
 import { mapApiProduct, getImagesForColor, getSizesForColor } from "@/lib/productUtils";
+import ProductImageZoom from "@/components/ProductImageZoom";
 
 function DetailAccordion({ title, children, defaultOpen = false }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -102,6 +103,15 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   };
 
   const [zoom, setZoom] = useState(false);
+  const imageRefs = useRef<Record<number, HTMLDivElement | null>>({});
+
+  const scrollToImage = (index: number) => {
+    setMainImg(index);
+    const target = imageRefs.current[index];
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
 
   if ((fetching || (products.length === 0 && !fetched)) && !p) {
     return <div className="min-h-screen flex items-center justify-center bg-slate-50"><div className="text-center text-slate-600">Loading product...</div></div>;
@@ -159,7 +169,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               </div>
             )}
             {visibleImageIndexes.map(i => (
-              <div key={i} onClick={() => setMainImg(i)} className={`pdp-thumbnail ${mainImg === i ? 'on' : ''}`}>
+              <div key={i} onClick={() => scrollToImage(i)} className={`pdp-thumbnail ${mainImg === i ? 'on' : ''}`}>
                 <img src={colorImages[i]} alt="" />
               </div>
             ))}
@@ -172,8 +182,8 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               </div>
             )}
             {visibleImageIndexes.map((i) => (
-              <div key={i} className="pdp-main-image-item" onClick={() => { setMainImg(i); setZoom(true); }}>
-                <img src={colorImages[i]} alt={`${p.name} - View ${i + 1}`} onError={() => setBrokenImages(v => ({ ...v, [i]: true }))} />
+              <div key={i} ref={el => { imageRefs.current[i] = el; }} className="pdp-main-image-item">
+                <ProductImageZoom src={colorImages[i]} alt={`${p.name} - View ${i + 1}`} />
               </div>
             ))}
           </div>
@@ -263,17 +273,20 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '12px', marginBottom: '24px', border: '1px solid #e2e8f0' }}>
                 <p style={{ color: '#334155', lineHeight: 1.8, fontSize: '15px', fontWeight: 500 }}>{p.desc}</p>
               </div>
-              <div className="pdp-specs-grid">
+              <div className="pdp-specs-grid-premium">
                 {[
-                  ['Material', p.fabD || p.fab],
-                  ['Silhouette', p.fit],
-                  ['Features', p.pockets ? `${p.pockets} Reinforced Pockets` : null],
-                  ['Weight', p.wt],
-                  ['Maintenance', p.care]
-                ].map(([k, v]) => v && (
-                  <div key={k} className="pdp-spec-box">
-                    <span className="pdp-spec-key">{k}</span>
-                    <span className="pdp-spec-val">{v}</span>
+                  { k: 'Material', v: p.fabD || p.fab, i: '🧵' },
+                  { k: 'Silhouette', v: p.fit, i: '👕' },
+                  { k: 'Features', v: p.pockets ? `${p.pockets} Reinforced Pockets` : null, i: '📦' },
+                  { k: 'Weight', v: p.wt, i: '⚖️' },
+                  { k: 'Maintenance', v: p.care, i: '🧼' }
+                ].map(({ k, v, i }) => v && (
+                  <div key={k} className="pdp-spec-card-premium">
+                    <div className="pdp-spec-icon-bg">{i}</div>
+                    <div>
+                      <span className="pdp-spec-key">{k}</span>
+                      <span className="pdp-spec-val">{v}</span>
+                    </div>
                   </div>
                 ))}
               </div>

@@ -33,10 +33,10 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-    @Value("${spring.mail.properties.mail.smtp.ssl.enable}")
+    @Value("${spring.mail.properties.mail.smtps.ssl.enable:true}")
     private String sslEnabled;
 
-    @Value("${spring.mail.properties.mail.smtp.starttls.enable}")
+    @Value("${spring.mail.properties.mail.smtp.starttls.enable:false}")
     private String starttlsEnabled;
 
     @Value("${app.frontend.url:https://medvastr.com}")
