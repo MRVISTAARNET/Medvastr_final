@@ -24,7 +24,7 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'UNDER SCRUBS & TOPS',
                 items: [
-                    { label: 'Under Scrubs (All)', href: '/products?cat=men-under-scrub&gender=men' },
+                    { label: 'All Under Scrubs', href: '/products?cat=men-under-scrub&gender=men' },
                     { label: 'Full Sleeve Compression', href: '/products?cat=full-sleeve-compression-under-scrub&gender=men' },
                     { label: 'Cotton Crew T-Shirt', href: '/products?cat=men-cotton-crew-tshirt&gender=men' },
                 ]
@@ -34,7 +34,6 @@ export const NAV_DATA: NavItem[] = [
                 items: [
                     { label: 'Surgical Gowns', href: '/products?cat=surgical-gown&gender=men' },
                     { label: 'Surgical Caps', href: '/products?cat=surgical-cap&gender=men' },
-                    { label: 'Lab Coats', href: '/products?cat=lab-coats&gender=men' },
                 ]
             }
         ]
@@ -54,7 +53,7 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'UNDER SCRUBS & TOPS',
                 items: [
-                    { label: 'Under Scrubs (All)', href: '/products?cat=women-under-scrub&gender=women' },
+                    { label: 'All Under Scrubs', href: '/products?cat=women-under-scrub&gender=women' },
                     { label: 'Full Sleeve Compression', href: '/products?cat=women-full-sleeve-compression-under-scrub&gender=women' },
                     { label: 'Cotton Crew T-Shirt', href: '/products?cat=women-cotton-crew-tshirt&gender=women' },
                 ]
@@ -64,7 +63,6 @@ export const NAV_DATA: NavItem[] = [
                 items: [
                     { label: 'Surgical Gowns', href: '/products?cat=women-surgical-gown&gender=women' },
                     { label: 'Surgical Caps', href: '/products?cat=women-surgical-cap&gender=women' },
-                    { label: 'Lab Coats', href: '/products?cat=women-lab-coats&gender=women' },
                 ]
             }
         ]

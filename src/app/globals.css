@@ -2054,8 +2054,7 @@ textarea {
    ============================================================ */
 /* RESPONSIVE PRODUCT GRIDS - Systematic Peek Logic (4.5 Laptop, 2.2 Mobile) */
 .prod-grid,
-.pg-5,
-.pg-3 {
+.pg-5 {
   display: flex !important;
   overflow-x: auto;
   gap: 20px;
@@ -2065,47 +2064,69 @@ textarea {
   padding: 10px 0;
 }
 
+/* Collection Grid (pg-3) specifically for wrapping rows */
+.pg-3 {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 20px;
+  width: 100%;
+  padding: 10px 0;
+}
+
 .prod-grid::-webkit-scrollbar,
 .pg-5::-webkit-scrollbar,
 .pg-3::-webkit-scrollbar {
   display: none;
 }
 
-/* Base: Mobile (2.2 cards) */
+/* Base: Mobile (2.2 cards for sliders, 2 cards for grid) */
 .prod-grid>*,
-.pg-5>*,
-.pg-3>* {
+.pg-5>* {
   flex: 0 0 calc(100% / 2.2 - 20px) !important;
   min-width: 150px;
 }
 
-/* Tablet (3.5 cards) */
+.pg-3>* {
+  flex: 0 0 calc(100% / 2 - 20px) !important;
+  min-width: 150px;
+}
+
+/* Tablet (3.5 cards for slider, 3 for grid) */
 @media (min-width: 768px) {
 
   .prod-grid>*,
-  .pg-5>*,
-  .pg-3>* {
+  .pg-5>* {
     flex: 0 0 calc(100% / 3.5 - 20px) !important;
+  }
+
+  .pg-3>* {
+    flex: 0 0 calc(100% / 3 - 20px) !important;
   }
 }
 
-/* Laptop (4.5 cards) */
+/* Laptop (4.5 cards for slider, 4 for grid) */
 @media (min-width: 1024px) {
 
   .prod-grid>*,
-  .pg-5>*,
-  .pg-3>* {
+  .pg-5>* {
     flex: 0 0 calc(100% / 4.5 - 20px) !important;
+  }
+
+  .pg-3>* {
+    flex: 0 0 calc(100% / 4 - 15px) !important;
   }
 }
 
-/* Mac / Wide Screen (5.5 cards) */
+/* Mac / Wide Screen (5.5 cards for slider, 4 for grid) */
 @media (min-width: 1440px) {
 
   .prod-grid>*,
-  .pg-5>*,
-  .pg-3>* {
+  .pg-5>* {
     flex: 0 0 calc(100% / 5.5 - 20px) !important;
+  }
+
+  .pg-3>* {
+    flex: 0 0 calc(100% / 4 - 15px) !important;
   }
 }
 
