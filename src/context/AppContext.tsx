@@ -12,6 +12,7 @@ import {
   getToken,
 } from "@/lib/api";
 import { mapApiProduct, toApiProductRequest, resolveVariantId } from "@/lib/productUtils";
+import { NAV_DATA, HARDCODED_CATEGORIES, type CategoryNode } from "@/lib/navData";
 
 interface CartItem extends Product {
   k: string;
@@ -208,13 +209,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [fetchMe]);
 
   const fetchCategories = useCallback(async () => {
+    // Tree used for Admin/Filters is now hardcoded for absolute stability
+    setCategoryTree(HARDCODED_CATEGORIES);
+
     try {
-      const [flat, tree] = await Promise.all([
-        apiJson<any[]>("/categories", { skipAuth: true }),
-        apiJson<any[]>("/categories?view=tree", { skipAuth: true }),
-      ]);
-      if (flat.success && flat.data) setCategories(flat.data);
-      if (tree.success && tree.data) setCategoryTree(tree.data);
+      const res = await fetch(`${API_BASE}/categories/public`);
+      const d = await res.json();
+      if (d.success) setCategories(d.data);
     } catch {
       /* non-blocking */
     }
