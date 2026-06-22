@@ -53,7 +53,12 @@ export default function AdminProducts() {
     imgsByColor: {}, // { '#hex': ['url1', 'url2'] }
     videoUrl: '',
     active: true,
-    badge: 'None', // None, Bestseller, New Arrival, Trending
+    badge: 'None',
+    fit: 'Classic Fit',
+    pocketCount: 0,
+    weight: '180 GSM',
+    careInstructions: 'Machine Wash Cold',
+    shortDescription: '',
   });
 
   const labelRef = useRef<HTMLDivElement>(null);
@@ -73,7 +78,7 @@ export default function AdminProducts() {
         name: '', brand: 'Medvastr', gender: 'Men', style: 'Standard', parentId: '', subCategoryId: '',
         price: 0, origPrice: 0, description: '', fabric: '',
         sizes: 'S, M, L, XL', clrs: '', imgs: [], videoUrl: '', active: true, imgsByColor: {},
-        badge: 'None'
+        badge: 'None', fit: 'Classic Fit', pocketCount: 0, weight: '180 GSM', careInstructions: 'Machine Wash Cold', shortDescription: ''
       });
     }
   }, [editingProduct, isModalOpen]);
@@ -222,13 +227,20 @@ export default function AdminProducts() {
               {activeTab === 'basic' && (
                 <div style={{ display: 'grid', gap: '20px' }}>
                   <div className="fg"><label>Product Name</label><input id="p-name" value={form.name} onChange={handleInputChange} placeholder="e.g. Flexi Fit V Scrub" /></div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                    <div className="fg"><label>Brand</label><select id="p-brand" value={form.brand} onChange={handleInputChange}><option>Medvastr</option><option>Fabscrubs</option><option>Others</option></select></div>
-                    <div className="fg"><label>Gender</label><select id="p-gender" value={form.gender} onChange={handleInputChange}><option>Men</option><option>Women</option><option>Unisex</option></select></div>
-                    <div className="fg"><label>Product Style</label><select id="p-style" value={form.style} onChange={handleInputChange}><option>Standard</option><option>Top</option><option>Bottom</option><option>Set</option></select></div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
+                    <div className="fg"><label>Brand</label><select id="p-brand" value={form.brand} onChange={handleInputChange}><option>Medvastr</option><option>Fabscrubs</option><option>Standard</option></select></div>
+                    <div className="fg"><label>Gender</label><select id="p-gender" value={form.gender} onChange={handleInputChange}><option>Men</option><option>Women</option></select></div>
+                    <div className="fg"><label>Style</label><select id="p-style" value={form.style} onChange={handleInputChange}><option>Standard</option><option>Top</option><option>Bottom</option><option>Set</option></select></div>
                   </div>
-                  <div className="fg"><label>Description</label><textarea id="p-description" value={form.description} onChange={handleInputChange} rows={3} /></div>
+                  <div className="fg"><label>Product Hook (Short Summary)</label><input id="p-shortDescription" value={form.shortDescription} onChange={handleInputChange} placeholder="e.g. Classic comfort and durability for peak performance" /></div>
+                  <div className="fg"><label>Silhouette (Fit)</label><input id="p-fit" value={form.fit} onChange={handleInputChange} placeholder="e.g. Modern Slim Fit" /></div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                    <div className="fg"><label>Pocket Count</label><input type="number" id="p-pocketCount" value={form.pocketCount} onChange={handleInputChange} /></div>
+                    <div className="fg"><label>Fabric Weight</label><input id="p-weight" value={form.weight} onChange={handleInputChange} placeholder="e.g. 240 GSM" /></div>
+                  </div>
+                  <div className="fg"><label>Care Instructions</label><input id="p-careInstructions" value={form.careInstructions} onChange={handleInputChange} placeholder="e.g. Machine Wash Cold, Tumble Dry Low" /></div>
                   <div className="fg"><label>Fabric Composition</label><input id="p-fabric" value={form.fabric} onChange={handleInputChange} placeholder="e.g. 72% Polyester, 21% Rayon, 7% Spandex" /></div>
+                  <div className="fg"><label>Performance Description</label><textarea id="p-description" value={form.description} onChange={handleInputChange} rows={3} placeholder="Full technical description..." /></div>
                   <div className="fg"><label>Featured Badge</label><select id="p-badge" value={form.badge} onChange={handleInputChange}><option value="None">No Badge</option><option value="Bestseller">Bestseller (Show on Home)</option><option value="New Arrival">New Arrival (Show on Home)</option><option value="Trending">Trending</option></select></div>
                 </div>
               )}
