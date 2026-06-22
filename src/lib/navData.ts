@@ -17,23 +17,22 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'SCRUB SUITS',
                 items: [
-                    { label: 'All Scrub Suits', href: '/products?cat=men-scrub-suit&gender=men' },
-                    { label: 'Flexi Fit V Scrub', href: '/products?cat=flexi-fit-v-scrub&gender=men' },
+                    { label: 'All Scrub Suits', href: '/products?cat=scrubs&gender=men' },
+                    { label: 'Classic V-Neck', href: '/products?cat=scrubs&gender=men' },
                 ]
             },
             {
                 title: 'UNDER SCRUBS & TOPS',
                 items: [
-                    { label: 'All Under Scrubs', href: '/products?cat=men-under-scrub&gender=men' },
-                    { label: 'Full Sleeve Compression', href: '/products?cat=full-sleeve-compression-under-scrub&gender=men' },
-                    { label: 'Cotton Crew T-Shirt', href: '/products?cat=men-cotton-crew-tshirt&gender=men' },
+                    { label: 'All Under Scrubs', href: '/products?cat=underscrubs&gender=men' },
+                    { label: 'T-Shirts', href: '/products?cat=tshirts&gender=men' },
                 ]
             },
             {
                 title: 'SURGICAL & LAB',
                 items: [
-                    { label: 'Surgical Gowns', href: '/products?cat=surgical-gown&gender=men' },
-                    { label: 'Surgical Caps', href: '/products?cat=surgical-cap&gender=men' },
+                    { label: 'Lab Coats', href: '/products?cat=lab-coats&gender=men' },
+                    { label: 'Surgical Gowns', href: '/products?cat=lab-coats&gender=men' },
                 ]
             }
         ]
@@ -46,37 +45,36 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'SCRUB SUITS',
                 items: [
-                    { label: 'All Scrub Suits', href: '/products?cat=women-scrub-suit&gender=women' },
-                    { label: 'Flexi Fit V Scrub', href: '/products?cat=women-flexi-fit-v-scrub&gender=women' },
+                    { label: 'All Scrub Suits', href: '/products?cat=scrubs&gender=women' },
+                    { label: 'Flexi fit V-Neck', href: '/products?cat=scrubs&gender=women' },
                 ]
             },
             {
                 title: 'UNDER SCRUBS & TOPS',
                 items: [
-                    { label: 'All Under Scrubs', href: '/products?cat=women-under-scrub&gender=women' },
-                    { label: 'Full Sleeve Compression', href: '/products?cat=women-full-sleeve-compression-under-scrub&gender=women' },
-                    { label: 'Cotton Crew T-Shirt', href: '/products?cat=women-cotton-crew-tshirt&gender=women' },
+                    { label: 'All Under Scrubs', href: '/products?cat=underscrubs&gender=women' },
+                    { label: 'Cotton T-Shirts', href: '/products?cat=tshirts&gender=women' },
                 ]
             },
             {
                 title: 'SURGICAL & LAB',
                 items: [
-                    { label: 'Surgical Gowns', href: '/products?cat=women-surgical-gown&gender=women' },
-                    { label: 'Surgical Caps', href: '/products?cat=women-surgical-cap&gender=women' },
+                    { label: 'Lab Coats', href: '/products?cat=lab-coats&gender=women' },
+                    { label: 'Surgical Gowns', href: '/products?cat=lab-coats&gender=women' },
                 ]
             }
         ]
     },
     {
         label: 'SURGICAL WEAR',
-        href: '/products?cat=surgical-wear',
+        href: '/products?cat=lab-coats',
         type: 'MEGA_MENU',
         children: [
             {
                 title: 'OPERATING ROOM',
                 items: [
-                    { label: 'Surgical Gowns', href: '/products?cat=surgical-gown' },
-                    { label: 'Surgical Caps', href: '/products?cat=surgical-cap' },
+                    { label: 'All Surgical Wear', href: '/products?cat=lab-coats' },
+                    { label: 'Surgical Caps', href: '/products?cat=accessories' },
                 ]
             }
         ]
@@ -89,7 +87,7 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'INSTITUTIONAL SERVICES',
                 items: [
-                    { label: 'Scrub Suits', href: '/bulk-orders/scrub-suit' },
+                    { label: 'Scrub Suits', href: '/bulk-orders/scrubs' },
                     { label: 'Linen & Bedding', href: '/bulk-orders/linen-and-bedding' },
                     { label: 'Maternity Gown', href: '/bulk-orders/maternity-gown' },
                     { label: 'Patient Dress', href: '/bulk-orders/patient-dress' },

@@ -53,6 +53,7 @@ export default function AdminProducts() {
     imgsByColor: {}, // { '#hex': ['url1', 'url2'] }
     videoUrl: '',
     active: true,
+    badge: 'None', // None, Bestseller, New Arrival, Trending
   });
 
   const labelRef = useRef<HTMLDivElement>(null);
@@ -71,7 +72,8 @@ export default function AdminProducts() {
       setForm({
         name: '', brand: 'Medvastr', gender: 'Men', style: 'Standard', parentId: '', subCategoryId: '',
         price: 0, origPrice: 0, description: '', fabric: '',
-        sizes: 'S, M, L, XL', clrs: '', imgs: [], videoUrl: '', active: true,
+        sizes: 'S, M, L, XL', clrs: '', imgs: [], videoUrl: '', active: true, imgsByColor: {},
+        badge: 'None'
       });
     }
   }, [editingProduct, isModalOpen]);
@@ -226,7 +228,8 @@ export default function AdminProducts() {
                     <div className="fg"><label>Product Style</label><select id="p-style" value={form.style} onChange={handleInputChange}><option>Standard</option><option>Top</option><option>Bottom</option><option>Set</option></select></div>
                   </div>
                   <div className="fg"><label>Description</label><textarea id="p-description" value={form.description} onChange={handleInputChange} rows={3} /></div>
-                  <div className="fg"><label>Fabric Details</label><input id="p-fabric" value={form.fabric} onChange={handleInputChange} placeholder="e.g. 72% Polyester, 21% Rayon, 7% Spandex" /></div>
+                  <div className="fg"><label>Fabric Composition</label><input id="p-fabric" value={form.fabric} onChange={handleInputChange} placeholder="e.g. 72% Polyester, 21% Rayon, 7% Spandex" /></div>
+                  <div className="fg"><label>Featured Badge</label><select id="p-badge" value={form.badge} onChange={handleInputChange}><option value="None">No Badge</option><option value="Bestseller">Bestseller (Show on Home)</option><option value="New Arrival">New Arrival (Show on Home)</option><option value="Trending">Trending</option></select></div>
                 </div>
               )}
 

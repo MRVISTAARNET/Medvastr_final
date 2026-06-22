@@ -94,11 +94,11 @@ export default function Home() {
         </div>
         <div className="cat-g">
           {[
-            { nm: "Scrub Suit", href: "/products?cat=scrub-suit", img: "cat-scrub-suit.jpg" },
-            { nm: "Cotton Crew T-Shirt", href: "/products?cat=cotton-crew-tshirt", img: "cat-tshirt.jpg" },
-            { nm: "Full Sleeve Under Scrub", href: "/products?cat=full-sleeve-compression-under-scrub", img: "cat-under-scrub.jpg" },
-            { nm: "Surgeon Gown", href: "/products?cat=surgeon-gown", img: "cat-gown.jpg" },
-            { nm: "Surgeon Cap", href: "/products?cat=surgeon-cap", img: "cat-cap.jpg" },
+            { nm: "Scrub Suit", href: "/products?cat=scrubs", img: "cat-scrub-suit.jpg" },
+            { nm: "Cotton Crew T-Shirt", href: "/products?cat=tshirts", img: "cat-tshirt.jpg" },
+            { nm: "Full Sleeve Under Scrub", href: "/products?cat=underscrubs", img: "cat-under-scrub.jpg" },
+            { nm: "Surgeon Gown", href: "/products?cat=lab-coats", img: "cat-gown.jpg" },
+            { nm: "Surgeon Cap", href: "/products?cat=accessories", img: "cat-cap.jpg" },
             { nm: "Bulk Orders", href: "/bulk-orders", img: "cat-bulk.jpg" },
           ].map(c => (
             <Link href={c.href} className="cat-c" key={c.nm}>
@@ -138,7 +138,7 @@ export default function Home() {
             <div className="sec-t">Shop Flexi-Fit V Scrub</div>
             <div className="sec-s">Classic comfort and durability for peak performance</div>
           </div>
-          <Link href="/products?cat=scrub-suit" className="va">
+          <Link href="/products?cat=scrubs" className="va">
             Shop All Scrubs →
           </Link>
         </div>
@@ -167,7 +167,7 @@ export default function Home() {
             <div className="sec-t">Shop Cotton Crew T-Shirt</div>
             <div className="sec-s">Premium essentials for your everyday routine</div>
           </div>
-          <Link href="/products?cat=cotton-crew-tshirt" className="va">
+          <Link href="/products?cat=tshirts" className="va">
             Shop All T-Shirts →
           </Link>
         </div>
