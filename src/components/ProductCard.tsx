@@ -51,6 +51,7 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
   const discount = p.origPrice ? Math.round(((p.origPrice - p.price) / p.origPrice) * 100) : 0;
 
   // Handle color change - reset image index
+  // Handle color change - reset image index
   const handleColorChange = (e: React.MouseEvent, index: number) => {
     e.stopPropagation();
     e.preventDefault();
@@ -58,14 +59,15 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
     setIi(0);
   };
 
-  // Handle image navigation
   const nextImg = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     setIi((prev) => (prev + 1) % colorImages.length);
   };
 
   const prevImg = (e: React.MouseEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     setIi((prev) => (prev - 1 + colorImages.length) % colorImages.length);
   };
 
