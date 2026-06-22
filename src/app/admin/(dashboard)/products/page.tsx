@@ -33,12 +33,14 @@ export default function AdminProducts() {
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'basic' | 'pricing' | 'inventory' | 'media'>('basic');
 
-  const { products, fetchProducts, categoryTree } = useApp();
+  const { products, categoryTree } = useApp();
+  const fetchProducts = (useApp() as any).fetchProducts;
 
   const [form, setForm] = useState<any>({
     name: '',
     brand: 'Medvastr',
     gender: 'Men',
+    style: 'Standard', // Standard, Top, Bottom, Set
     parentId: '',
     subCategoryId: '',
     price: 0,
@@ -60,12 +62,13 @@ export default function AdminProducts() {
         ...editingProduct,
         parentId: editingProduct.categoryIds?.[0] || '',
         subCategoryId: editingProduct.categoryIds?.[1] || '',
+        style: editingProduct.style || 'Top',
         sizes: editingProduct.sizes?.join(', ') || 'S, M, L, XL',
         clrs: editingProduct.clrNms?.join(', ') || ''
       });
     } else {
       setForm({
-        name: '', brand: 'Medvastr', gender: 'Men', parentId: '', subCategoryId: '',
+        name: '', brand: 'Medvastr', gender: 'Men', style: 'Standard', parentId: '', subCategoryId: '',
         price: 0, origPrice: 0, description: '', fabric: '',
         sizes: 'S, M, L, XL', clrs: '', imgs: [], videoUrl: '', active: true,
       });
@@ -127,7 +130,7 @@ export default function AdminProducts() {
     const clrsList = (form.clrs || '').split(',').map((c: string) => c.trim()).filter(Boolean);
     const sizeList = (form.sizes || '').split(',').map((s: string) => s.trim()).filter(Boolean);
 
-    const variants = sizeList.flatMap(s => clrsList.map(c => {
+    const variants = sizeList.flatMap((s: string) => clrsList.map((c: string) => {
       const bPrefix = (BRAND_PREFIX as any)[form.brand] || 'OTH';
       const gPrefix = (GENDER_PREFIX as any)[form.gender] || 'U';
       const cPrefix = c.slice(0, 2).toUpperCase();
@@ -218,6 +221,7 @@ export default function AdminProducts() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                     <div className="fg"><label>Brand</label><select id="p-brand" value={form.brand} onChange={handleInputChange}><option>Medvastr</option><option>Fabscrubs</option><option>Others</option></select></div>
                     <div className="fg"><label>Gender</label><select id="p-gender" value={form.gender} onChange={handleInputChange}><option>Men</option><option>Women</option><option>Unisex</option></select></div>
+                    <div className="fg"><label>Product Style</label><select id="p-style" value={form.style} onChange={handleInputChange}><option>Standard</option><option>Top</option><option>Bottom</option><option>Set</option></select></div>
                   </div>
                   <div className="fg"><label>Description</label><textarea id="p-description" value={form.description} onChange={handleInputChange} rows={3} /></div>
                   <div className="fg"><label>Fabric Details</label><input id="p-fabric" value={form.fabric} onChange={handleInputChange} placeholder="e.g. 72% Polyester, 21% Rayon, 7% Spandex" /></div>

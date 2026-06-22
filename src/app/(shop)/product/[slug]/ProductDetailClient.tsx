@@ -39,6 +39,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
   const [ci, setCi] = useState(0);
   const [sz, setSz] = useState("");
+  const [btmSz, setBtmSz] = useState(""); // Second size for sets
   const [qty, setQty] = useState(1);
   const [mainImg, setMainImg] = useState(0);
   const [brokenImages, setBrokenImages] = useState<Record<number, boolean>>({});
@@ -136,6 +137,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
     ? (reviews.reduce((s, r) => s + (r.rating || 5), 0) / reviews.length).toFixed(1)
     : p.rating;
 
+  const isSet = (p as any).style?.toLowerCase() === "set";
   const selectedVariant = p.variants?.find((v: any) => v.size === sz && v.colorHex === p.clrs?.[ci]);
   const isOutOfStock = selectedVariant ? selectedVariant.stockQuantity <= 0 : false;
   const discount = p.origPrice ? Math.round(((p.origPrice - p.price) / p.origPrice) * 100) : 0;
@@ -230,15 +232,29 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               </div>
             )}
 
+            {/* SIZE SELECTOR(S) */}
             {productSizes.length > 0 && (
               <div className="pdp-select-group">
                 <div className="pdp-select-hd">
-                  <label className="pdp-select-label">Select Size</label>
+                  <label className="pdp-select-label">{isSet ? "Select Top Size" : "Select Size"}</label>
                   <button className="pdp-sg">Size Guide</button>
                 </div>
                 <div className="pdp-size-btn-grid">
                   {productSizes.map(s => (
                     <button key={s} onClick={() => setSz(s)} className={`pdp-size-pill ${sz === s ? 'on' : ''}`}>{s}</button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {isSet && productSizes.length > 0 && (
+              <div className="pdp-select-group" style={{ marginTop: '20px' }}>
+                <div className="pdp-select-hd">
+                  <label className="pdp-select-label">Select Bottom Size</label>
+                </div>
+                <div className="pdp-size-btn-grid">
+                  {productSizes.map(s => (
+                    <button key={s} onClick={() => setBtmSz(s)} className={`pdp-size-pill ${btmSz === s ? 'on' : ''}`}>{s}</button>
                   ))}
                 </div>
               </div>
@@ -258,7 +274,10 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               </button>
             </div>
             <button
-              onClick={() => addToCart(p, ci, sz || productSizes[0] || 'M', qty)}
+              onClick={() => {
+                const finalSize = isSet ? `Top: ${sz} / Bot: ${btmSz || sz}` : sz;
+                addToCart(p, ci, finalSize || productSizes[0] || 'M', qty);
+              }}
               disabled={isOutOfStock}
               className="pdp-buy-btn"
             >
