@@ -209,6 +209,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [fetchMe]);
 
   const fetchCategories = useCallback(async () => {
+    // Tree used for Admin/Filters is now hardcoded for absolute stability
+    setCategoryTree(HARDCODED_CATEGORIES);
+
     try {
       const res = await fetch(`${API_BASE}/categories`);
       const d = await res.json();
@@ -216,30 +219,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     } catch {
       /* non-blocking */
     }
-
-    try {
-      const res = await fetch(`${API_BASE}/categories?view=tree`);
-      const d = await res.json();
-      if (d.success && Array.isArray(d.data)) {
-        setCategoryTree(d.data);
-      } else {
-        setCategoryTree(HARDCODED_CATEGORIES);
-      }
-    } catch {
-      setCategoryTree(HARDCODED_CATEGORIES);
-    }
   }, []);
 
   const fetchNav = useCallback(async () => {
-    try {
-      const res = await fetch(`${API_BASE}/nav?source=categories`);
-      const d = await res.json();
-      if (Array.isArray(d)) {
-        setNavItems(d);
-      }
-    } catch {
-      /* non-blocking */
-    }
+    // Dynamic nav removed - using hardcoded NAV_DATA
   }, []);
 
   const fetchColors = useCallback(async () => {
@@ -313,8 +296,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     fetchBanners();
     fetchCollections();
     fetchBulkOrderTiers();
-    fetchNav();
-  }, [fetchProducts, fetchCategories, fetchColors, fetchSizes, fetchBanners, fetchCollections, fetchBulkOrderTiers, fetchNav]);
+  }, [fetchProducts, fetchCategories, fetchColors, fetchSizes, fetchBanners, fetchCollections, fetchBulkOrderTiers]);
 
   useEffect(() => {
     if (isHydrated) {
