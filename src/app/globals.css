@@ -2864,14 +2864,8 @@ textarea {
 
 .pg-3 {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-}
-
-@media (max-width: 1280px) {
-  .pg-3 {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
 }
 
 @media (max-width: 1024px) {
@@ -7089,7 +7083,25 @@ body {
   }
 }
 
-/* Hide header when lightbox zoom is active */
-body.zoom-open #hdr {
+/* Hide header, footer, popups, and back-to-top when lightbox zoom is active */
+body.zoom-open #hdr,
+body.zoom-open #ft,
+body.zoom-open .popups-container,
+body.zoom-open .btt {
   display: none !important;
+}
+
+/* Avoid sticky breaks on PDP by using transform-less fade-in animation on container */
+.pdp-container {
+  animation: pdpFadeIn 0.3s ease both !important;
+}
+@keyframes pdpFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Ensure document scrolling works correctly for sticky containers */
+html, body {
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
 }
