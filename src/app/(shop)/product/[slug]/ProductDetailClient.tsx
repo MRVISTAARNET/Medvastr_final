@@ -23,6 +23,91 @@ function DetailAccordion({ title, children, defaultOpen = false }: { title: stri
   );
 }
 
+function LightboxZoomImage({ src, onError }: { src: string; onError?: () => void }) {
+  const [hovered, setHovered] = useState(false);
+  const [pos, setPos] = useState({ x: 50, y: 50 });
+  const ref = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!ref.current) return;
+    const { left, top, width, height } = ref.current.getBoundingClientRect();
+    const x = ((e.clientX - left) / width) * 100;
+    const y = ((e.clientY - top) / height) * 100;
+    setPos({ x, y });
+  };
+
+  return (
+    <div
+      ref={ref}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onMouseMove={handleMouseMove}
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        cursor: hovered ? 'crosshair' : 'zoom-in',
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      {/* Base image — always visible */}
+      <img
+        src={src}
+        alt="Product Fullscreen"
+        onError={onError}
+        style={{
+          maxWidth: '100%',
+          maxHeight: '100%',
+          objectFit: 'contain',
+          display: 'block',
+          userSelect: 'none',
+          transition: 'opacity 0.15s ease',
+          opacity: hovered ? 0.15 : 1,
+        }}
+      />
+
+      {/* Zoom overlay — follows cursor */}
+      {hovered && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundImage: `url(${src})`,
+            backgroundRepeat: 'no-repeat',
+            backgroundSize: '300%',
+            backgroundPosition: `${pos.x}% ${pos.y}%`,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
+
+      {/* Hint label */}
+      {!hovered && (
+        <div style={{
+          position: 'absolute',
+          bottom: 16,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'rgba(0,0,0,0.5)',
+          color: 'white',
+          fontSize: 12,
+          fontWeight: 600,
+          padding: '6px 14px',
+          borderRadius: 20,
+          letterSpacing: '0.05em',
+          pointerEvents: 'none',
+          whiteSpace: 'nowrap',
+        }}>
+          🔍 Hover to zoom
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function ProductDetailClient({ initialProduct }: { initialProduct?: any }) {
   const { slug } = useParams();
   const router = useRouter();
@@ -192,12 +277,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             <button className="zoom-nav-btn prev" onClick={() => setZoomIndex(prev => (prev - 1 + visibleImageIndexes.length) % visibleImageIndexes.length)}>‹</button>
 
             <div className="zoom-canvas">
-              <img
-                src={colorImages[visibleImageIndexes[zoomIndex]]}
-                alt="Product Fullscreen"
-                className="zoom-img-main"
-                onError={() => setBrokenImages(prev => ({ ...prev, [visibleImageIndexes[zoomIndex]]: true }))}
-              />
+              <LightboxZoomImage src={colorImages[visibleImageIndexes[zoomIndex]]} onError={() => setBrokenImages(prev => ({ ...prev, [visibleImageIndexes[zoomIndex]]: true }))} />
             </div>
 
             <button className="zoom-nav-btn next" onClick={() => setZoomIndex(prev => (prev + 1) % visibleImageIndexes.length)}>›</button>
