@@ -28,23 +28,44 @@ export default function ProductImageZoom({ src, alt, className, onError }: Produ
     return (
         <div
             ref={containerRef}
-            className={`relative overflow-hidden cursor-zoom-in ${className || ""}`}
+            className={className}
             onMouseEnter={() => setZoom(true)}
             onMouseLeave={() => setZoom(false)}
             onMouseMove={handleMouseMove}
-            style={{ isolation: 'isolate' }}
+            style={{
+                position: 'relative',
+                overflow: 'hidden',
+                cursor: 'zoom-in',
+                width: '100%',
+                height: '100%',
+                isolation: 'isolate'
+            }}
         >
             <img
                 src={src}
                 alt={alt || "Product Image"}
-                className={`w-full h-full object-cover transition-opacity duration-300 ${zoom ? "opacity-0" : "opacity-100"}`}
                 onError={onError}
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    transition: 'opacity 0.3s ease',
+                    opacity: zoom ? 0 : 1
+                }}
             />
 
             {zoom && (
                 <div
-                    className="absolute inset-0 z-10 w-full h-full pointer-events-none transition-transform duration-100"
                     style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        zIndex: 10,
+                        width: '100%',
+                        height: '100%',
+                        pointerEvents: 'none',
                         backgroundImage: `url(${src})`,
                         backgroundPosition: `${position.x}% ${position.y}%`,
                         backgroundRepeat: "no-repeat",

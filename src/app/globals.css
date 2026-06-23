@@ -2066,9 +2066,9 @@ textarea {
 
 /* Collection Grid (pg-3) specifically for wrapping rows */
 .pg-3 {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 20px;
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 20px !important;
   width: 100%;
   padding: 10px 0;
 }
@@ -2087,8 +2087,10 @@ textarea {
 }
 
 .pg-3>* {
-  flex: 0 0 calc(100% / 2 - 20px) !important;
-  min-width: 150px;
+  flex: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
 }
 
 /* Tablet (3.5 cards for slider, 3 for grid) */
@@ -2097,10 +2099,6 @@ textarea {
   .prod-grid>*,
   .pg-5>* {
     flex: 0 0 calc(100% / 3.5 - 20px) !important;
-  }
-
-  .pg-3>* {
-    flex: 0 0 calc(100% / 3 - 14px) !important;
   }
 }
 
@@ -2111,10 +2109,6 @@ textarea {
   .pg-5>* {
     flex: 0 0 calc(100% / 4.5 - 20px) !important;
   }
-
-  .pg-3>* {
-    flex: 0 0 calc(100% / 3 - 14px) !important;
-  }
 }
 
 /* Mac / Wide Screen (5.5 cards for slider, 4 for grid) */
@@ -2124,9 +2118,12 @@ textarea {
   .pg-5>* {
     flex: 0 0 calc(100% / 5.5 - 20px) !important;
   }
+}
 
-  .pg-3>* {
-    flex: 0 0 calc(100% / 3 - 14px) !important;
+@media (max-width: 768px) {
+  .pg-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
   }
 }
 
@@ -6725,6 +6722,8 @@ body.zoom-open {
   z-index: 9999999 !important;
   display: flex;
   flex-direction: column;
+  height: 100vh !important;
+  overflow: hidden !important;
 }
 
 .zoom-modal-nav-wrap {
@@ -6734,6 +6733,7 @@ body.zoom-open {
   justify-content: center;
   width: 100%;
   flex-grow: 1;
+  min-height: 0;
   padding: 0;
   margin: 0 auto;
 }
@@ -6744,12 +6744,13 @@ body.zoom-open {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 0;
   padding: 20px;
 }
 
 .zoom-img-main {
   max-width: 100%;
-  max-height: 80vh;
+  max-height: 100%;
   object-fit: contain;
 }
 
@@ -6955,17 +6956,59 @@ body.zoom-open {
   padding-bottom: 40px;
 }
 
-/* Parent Reset for Sticky Support */
-.pdp-container,
-.pdp-container *,
-main,
-.page {
-  overflow: visible !important;
-}
-
 body {
   overflow-x: hidden !important;
   overflow-y: visible !important;
+}
+
+@media (min-width: 1024px) {
+  /* Contained details layout: fits viewport below header */
+  .pdp-container {
+    height: calc(100vh - 80px) !important;
+    padding: 24px 44px !important;
+    overflow: hidden !important;
+  }
+
+  .pdp-grid {
+    height: 100% !important;
+    grid-template-columns: 80px 1.5fr 1fr !important;
+    gap: 40px !important;
+    align-items: stretch !important;
+    overflow: hidden !important;
+  }
+
+  /* Independent scrollable columns */
+  .pdp-sidebar-thumbs {
+    height: 100% !important;
+    overflow-y: auto !important;
+    scrollbar-width: none !important;
+    position: static !important;
+    align-self: auto !important;
+  }
+  .pdp-sidebar-thumbs::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .pdp-gallery-wrap {
+    height: 100% !important;
+    overflow-y: auto !important;
+    scrollbar-width: none !important;
+  }
+  .pdp-gallery-wrap::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .pdp-info-sec {
+    height: 100% !important;
+    overflow-y: auto !important;
+    scrollbar-width: none !important;
+    position: static !important;
+    align-self: auto !important;
+    padding-bottom: 80px !important;
+  }
+  .pdp-info-sec::-webkit-scrollbar {
+    display: none !important;
+  }
 }
 
 @media (max-width: 1200px) {
@@ -6976,9 +7019,17 @@ body {
 }
 
 @media (max-width: 1024px) {
+  .pdp-container {
+    height: auto !important;
+    overflow: visible !important;
+    padding: 20px 16px !important;
+  }
+
   .pdp-grid {
     grid-template-columns: 1fr !important;
-    padding: 0 20px;
+    padding: 0;
+    height: auto !important;
+    overflow: visible !important;
   }
 
   .pdp-sidebar-thumbs {
@@ -6987,6 +7038,8 @@ body {
 
   .pdp-info-sec {
     position: static !important;
+    height: auto !important;
+    overflow: visible !important;
   }
 }
 
