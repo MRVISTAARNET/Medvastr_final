@@ -182,10 +182,10 @@ function ProductsContent() {
 
   // Normalize cat for banner filenames
   let bannerCat = catKey;
-  if (catKey.includes('t-shirt')) {
-    bannerCat = catKey.replace('t-shirt', 'tshirt');
-  } else if (catKey.includes('under-scrub')) {
-    bannerCat = 'full-sleeve-compression-under-scrub';
+  if (catKey === "tshirts" || catKey === "tshirt" || catKey.includes("t-shirt") || catKey.includes("tshirt")) {
+    bannerCat = "cotton-crew-tshirt";
+  } else if (catKey === "underscrubs" || catKey === "underscrub" || catKey.includes("under-scrub") || catKey.includes("underscrub")) {
+    bannerCat = "full-sleeve-compression-under-scrub";
   } else if (catKey.includes('scrub')) {
     bannerCat = 'scrub-suit';
   }
