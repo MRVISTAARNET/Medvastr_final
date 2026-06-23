@@ -123,6 +123,17 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const [zoomIndex, setZoomIndex] = useState(0);
   const imageRefs = useRef<Record<number, HTMLDivElement | null>>({});
 
+  useEffect(() => {
+    if (zoom) {
+      document.body.classList.add("zoom-open");
+    } else {
+      document.body.classList.remove("zoom-open");
+    }
+    return () => {
+      document.body.classList.remove("zoom-open");
+    };
+  }, [zoom]);
+
   const scrollToImage = (index: number) => {
     setMainImg(index);
     const target = imageRefs.current[index];
@@ -470,7 +481,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             <span className="pdp-related-tag">Curated Selection</span>
             <h2 className="pdp-related-h">Pairs Well With</h2>
           </div>
-          <div className="pg-5">
+          <div className="pg-4">
             {related.map(rel => <ProductCard key={rel.id} p={rel} />)}
           </div>
         </section>

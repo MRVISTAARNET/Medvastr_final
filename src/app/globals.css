@@ -7088,3 +7088,8 @@ body {
     position: static !important;
   }
 }
+
+/* Hide header when lightbox zoom is active */
+body.zoom-open #hdr {
+  display: none !important;
+}

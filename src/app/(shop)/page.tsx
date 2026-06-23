@@ -143,17 +143,17 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="pg-5">
+        <div className="pg-4">
           {products
             .filter(p => p.name.toLowerCase().includes("flexi fit v scrub"))
-            .slice(0, 5)
+            .slice(0, 4)
             .map((p) => (
               <ProductCard key={p.id} p={p} />
             ))
           }
           {/* Fallback if no specific products found: show top scrubs */}
           {products.filter(p => p.name.toLowerCase().includes("flexi fit v scrub")).length === 0 &&
-            products.filter(p => p.type === "scrubs").slice(0, 5).map(p => (
+            products.filter(p => p.type === "scrubs").slice(0, 4).map(p => (
               <ProductCard key={p.id} p={p} />
             ))
           }
@@ -172,17 +172,17 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="pg-5">
+        <div className="pg-4">
           {products
             .filter(p => p.name.toLowerCase().includes("cotton crew tshirt") || p.name.toLowerCase().includes("crew tshirt"))
-            .slice(0, 5)
+            .slice(0, 4)
             .map((p) => (
               <ProductCard key={p.id} p={p} />
             ))
           }
           {/* Fallback: show top tshirts */}
           {products.filter(p => p.name.toLowerCase().includes("cotton crew tshirt") || p.name.toLowerCase().includes("crew tshirt")).length === 0 &&
-            products.filter(p => p.type === "cotton-crew-tshirt").slice(0, 5).map(p => (
+            products.filter(p => p.type === "cotton-crew-tshirt").slice(0, 4).map(p => (
               <ProductCard key={p.id} p={p} />
             ))
           }
@@ -201,7 +201,7 @@ export default function Home() {
             View All New Arrivals →
           </Link>
         </div>
-        <div className="pg-5">
+        <div className="pg-4">
           {newArr.map((p) => (
             <ProductCard key={p.id} p={p} />
           ))}
