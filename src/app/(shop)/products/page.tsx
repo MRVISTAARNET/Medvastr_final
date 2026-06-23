@@ -147,9 +147,9 @@ function ProductsContent() {
       l: "Surgical Wear",
       d: "High-performance surgical gowns and apparel designed to meet the rigorous standards of the operating room environment."
     },
-    accessories: {
+    "surgical-cap": {
       ico: "🧢",
-      l: "Essential Accessories",
+      l: "Surgical Cap",
       d: "Complete your professional look with our range of high-quality caps, compression socks, and other healthcare essentials."
     }
   };
@@ -178,7 +178,7 @@ function ProductsContent() {
   const catKey = cat.toLowerCase();
   const genKey = gen.toLowerCase();
 
-  const isSurgical = ["surgical-wear", "lab-coats", "accessories"].includes(catKey);
+  const isSurgical = ["surgical-wear", "surgical-gown", "surgical-cap"].includes(catKey);
 
   // Normalize cat for banner filenames
   let bannerCat = catKey;

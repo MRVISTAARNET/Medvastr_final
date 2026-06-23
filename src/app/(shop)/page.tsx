@@ -97,8 +97,8 @@ export default function Home() {
             { nm: "Scrub Suit", href: "/products?cat=scrubs", img: "cat-scrub-suit.jpg" },
             { nm: "Cotton Crew T-Shirt", href: "/products?cat=tshirts", img: "cat-tshirt.jpg" },
             { nm: "Full Sleeve Under Scrub", href: "/products?cat=underscrubs", img: "cat-under-scrub.jpg" },
-            { nm: "Surgeon Gown", href: "/products?cat=lab-coats", img: "cat-gown.jpg" },
-            { nm: "Surgeon Cap", href: "/products?cat=accessories", img: "cat-cap.jpg" },
+            { nm: "Surgical Gown", href: "/products?cat=surgical-gown", img: "cat-gown.jpg" },
+            { nm: "Surgical Cap", href: "/products?cat=surgical-cap", img: "cat-cap.jpg" },
             { nm: "Bulk Orders", href: "/bulk-orders", img: "cat-bulk.jpg" },
           ].map(c => (
             <Link href={c.href} className="cat-c" key={c.nm}>

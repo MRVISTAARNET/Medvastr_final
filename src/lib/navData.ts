@@ -40,8 +40,8 @@ export const HARDCODED_CATEGORIES: CategoryNode[] = [
     {
         id: 4, name: "Surgical Wear", slug: "surgical-wear",
         children: [
-            { id: 401, name: "Surgeon Gown", slug: "lab-coats" },
-            { id: 402, name: "Surgeon Cap", slug: "accessories" }
+            { id: 401, name: "Surgical Gown", slug: "surgical-gown" },
+            { id: 402, name: "Surgical Cap", slug: "surgical-cap" }
         ]
     },
     {
@@ -78,8 +78,8 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'SURGICAL & LAB',
                 items: [
-                    { label: 'Surgical Gowns', href: '/products?cat=lab-coats&gender=men' },
-                    { label: 'Surgical Caps', href: '/products?cat=accessories&gender=men' },
+                    { label: 'Surgical Gown', href: '/products?cat=surgical-gown&gender=men' },
+                    { label: 'Surgical Cap', href: '/products?cat=surgical-cap&gender=men' },
                 ]
             }
         ]
@@ -107,8 +107,8 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'SURGICAL & LAB',
                 items: [
-                    { label: 'Surgical Gowns', href: '/products?cat=lab-coats&gender=women' },
-                    { label: 'Surgical Caps', href: '/products?cat=accessories&gender=women' },
+                    { label: 'Surgical Gown', href: '/products?cat=surgical-gown&gender=women' },
+                    { label: 'Surgical Cap', href: '/products?cat=surgical-cap&gender=women' },
                 ]
             }
         ]
@@ -121,8 +121,8 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'OPERATING ROOM',
                 items: [
-                    { label: 'Surgical Gowns', href: '/products?cat=lab-coats' },
-                    { label: 'Surgical Caps', href: '/products?cat=accessories' },
+                    { label: 'Surgical Gown', href: '/products?cat=surgical-gown' },
+                    { label: 'Surgical Cap', href: '/products?cat=surgical-cap' },
                 ]
             }
         ]
