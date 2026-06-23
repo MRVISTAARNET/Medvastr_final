@@ -41,6 +41,7 @@ export default function AdminProducts() {
     style: 'Standard', // Standard, Top, Bottom, Set
     parentId: '',
     subCategoryId: '',
+    childCategoryId: '',
     price: 0,
     origPrice: 0,
     tax: 0,
@@ -73,6 +74,7 @@ export default function AdminProducts() {
         ...editingProduct,
         parentId: editingProduct.categoryId || editingProduct.catId || (editingProduct.categoryIds ? editingProduct.categoryIds.split(',')[0] : '') || '',
         subCategoryId: editingProduct.subcategoryId || (editingProduct.categoryIds ? editingProduct.categoryIds.split(',')[1] : '') || '',
+        childCategoryId: editingProduct.childCategoryId || (editingProduct.categoryIds ? editingProduct.categoryIds.split(',')[2] : '') || '',
         style: editingProduct.styleId || editingProduct.style || 'Standard',
         origPrice: editingProduct.originalPrice || editingProduct.origPrice || 0,
         imgs: editingProduct.imageUrls || editingProduct.imgs || [],
@@ -86,7 +88,7 @@ export default function AdminProducts() {
       });
     } else {
       setForm({
-        name: '', brand: 'Medvastr', gender: 'Men', style: 'Standard', parentId: '', subCategoryId: '',
+        name: '', brand: 'Medvastr', gender: 'Men', style: 'Standard', parentId: '', subCategoryId: '', childCategoryId: '',
         price: 0, origPrice: 0, tax: 0, type: 'scrubs', description: '', fabric: '',
         sizes: 'S, M, L, XL', clrs: '', imgs: [], videoUrl: '', active: true, imgsByColor: {},
         badge: 'None', fit: 'Classic Fit', pocketCount: 0, weight: '180 GSM', careInstructions: 'Machine Wash Cold', shortDescription: '',
@@ -111,7 +113,16 @@ export default function AdminProducts() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
     const key = id.replace('p-', '');
-    setForm((prev: any) => ({ ...prev, [key]: value }));
+    setForm((prev: any) => {
+      const next = { ...prev, [key]: value };
+      if (key === 'parentId') {
+        next.subCategoryId = '';
+        next.childCategoryId = '';
+      } else if (key === 'subCategoryId') {
+        next.childCategoryId = '';
+      }
+      return next;
+    });
   };
 
   // Move image left/right in order list
@@ -225,7 +236,8 @@ export default function AdminProducts() {
       styleId: form.style || 'Standard',
       categoryId: Number(form.parentId) || undefined,
       subcategoryId: Number(form.subCategoryId) || undefined,
-      categoryIds: [Number(form.parentId), Number(form.subCategoryId)].filter(Boolean).join(','),
+      childCategoryId: Number(form.childCategoryId) || undefined,
+      categoryIds: [Number(form.parentId), Number(form.subCategoryId), Number(form.childCategoryId)].filter(Boolean).join(','),
       seoTitle,
       seoDescription,
       seoKeywords
@@ -342,11 +354,52 @@ export default function AdminProducts() {
 
               {activeTab === 'pricing' && (
                 <div style={{ display: 'grid', gap: '20px' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
-                    <div className="fg"><label>Parent Category <span style={{ color: 'red' }}>*</span></label><select id="p-parentId" value={form.parentId} onChange={handleInputChange}><option value="">Select Parent</option>{categoryTree.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
-                    <div className="fg"><label>Sub Category <span style={{ color: 'red' }}>*</span></label><select id="p-subCategoryId" value={form.subCategoryId} onChange={handleInputChange}><option value="">Select Sub</option>{categoryTree.find((c: any) => String(c.id) === String(form.parentId))?.children?.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></div>
-                    <div className="fg"><label>Product Type <span style={{ color: 'red' }}>*</span></label><select id="p-type" value={form.type} onChange={handleInputChange}><option value="scrubs">Scrubs</option><option value="tshirts">T-Shirts</option><option value="underscrub">Underscrub</option><option value="surgical">Surgical Wear</option><option value="bedding">Linen & Bedding</option><option value="blanket">Blanket</option><option value="dress">Patient Dress</option></select></div>
-                  </div>
+                  {(() => {
+                    const parentCategory = categoryTree.find((c: any) => String(c.id) === String(form.parentId));
+                    const subCategories = parentCategory?.children || [];
+                    const childCategories = subCategories.find((c: any) => String(c.id) === String(form.subCategoryId))?.children || [];
+                    const showChildSelector = childCategories.length > 0;
+
+                    return (
+                      <div style={{ display: 'grid', gridTemplateColumns: showChildSelector ? '1fr 1fr 1fr 1fr' : '1fr 1fr 1fr', gap: '20px' }}>
+                        <div className="fg">
+                          <label>Parent Category <span style={{ color: 'red' }}>*</span></label>
+                          <select id="p-parentId" value={form.parentId} onChange={handleInputChange}>
+                            <option value="">Select Parent</option>
+                            {categoryTree.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                          </select>
+                        </div>
+                        <div className="fg">
+                          <label>Sub Category <span style={{ color: 'red' }}>*</span></label>
+                          <select id="p-subCategoryId" value={form.subCategoryId} onChange={handleInputChange}>
+                            <option value="">Select Sub</option>
+                            {subCategories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                          </select>
+                        </div>
+                        {showChildSelector && (
+                          <div className="fg">
+                            <label>Child Category</label>
+                            <select id="p-childCategoryId" value={form.childCategoryId} onChange={handleInputChange}>
+                              <option value="">Select Child</option>
+                              {childCategories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                            </select>
+                          </div>
+                        )}
+                        <div className="fg">
+                          <label>Product Type <span style={{ color: 'red' }}>*</span></label>
+                          <select id="p-type" value={form.type} onChange={handleInputChange}>
+                            <option value="scrubs">Scrubs</option>
+                            <option value="tshirts">T-Shirts</option>
+                            <option value="underscrub">Underscrub</option>
+                            <option value="surgical">Surgical Wear</option>
+                            <option value="bedding">Linen & Bedding</option>
+                            <option value="blanket">Blanket</option>
+                            <option value="dress">Patient Dress</option>
+                          </select>
+                        </div>
+                      </div>
+                    );
+                  })()}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
                     <div className="fg"><label>Selling Price (₹) <span style={{ color: 'red' }}>*</span></label><input id="p-price" value={form.price} onChange={handleInputChange} type="number" /></div>
                     <div className="fg"><label>Original MRP (₹)</label><input id="p-origPrice" value={form.origPrice} onChange={handleInputChange} type="number" /></div>
