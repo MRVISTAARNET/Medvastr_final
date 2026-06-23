@@ -221,16 +221,23 @@ function ProductsContent() {
   let staticBannerTitle = "";
 
   if (isSurgical) {
-    // For specific sub-categories (surgeon-gown, surgeon-cap), use specific banner
-    // otherwise fall back to the parent surgical-wear banner
-    if (bannerCat === "surgeon-gown" || bannerCat === "surgeon-cap") {
-      if (genKey !== "all") {
-        // e.g. men-surgeon-gown-banner, women-surgeon-cap-banner
-        staticBannerBase = `${S3}/${genKey}-${bannerCat}-banner`;
-      } else {
-        // e.g. surgeon-gown-banner, surgeon-cap-banner
-        staticBannerBase = `${S3}/${bannerCat}-banner`;
-      }
+    // Exact filename lookup — matches what was uploaded to S3
+    // men-surgical-gown-banner.jpg, men-surgical-cap-banner.jpg
+    // women-surgeon-gown-banner.jpg, women-surgeon-cap-banner.jpg
+    // surgeon-gown-banner.jpg, surgeon-cap-banner.jpg
+    const surgicalBannerMap: Record<string, string> = {
+      "men-gown":   `${S3}/men-surgical-gown-banner`,
+      "men-cap":    `${S3}/men-surgical-cap-banner`,
+      "women-gown": `${S3}/women-surgeon-gown-banner`,
+      "women-cap":  `${S3}/women-surgeon-cap-banner`,
+      "all-gown":   `${S3}/surgeon-gown-banner`,
+      "all-cap":    `${S3}/surgeon-cap-banner`,
+    };
+    const isGown = bannerCat === "surgeon-gown";
+    const isCap  = bannerCat === "surgeon-cap";
+    if (isGown || isCap) {
+      const lookupKey = `${genKey !== "all" ? genKey : "all"}-${isGown ? "gown" : "cap"}`;
+      staticBannerBase = surgicalBannerMap[lookupKey] ?? `${S3}/surgical-wear-banner`;
     } else if (genKey === "women") {
       staticBannerBase = `${S3}/women-surgical-wear-banner`;
     } else {

@@ -535,8 +535,8 @@ INSERT IGNORE INTO categories (id, name, slug, description, display_order, activ
 (10, 'Scrub Suit', 'men-scrub-suit', 'Scrub suits for men', 1, TRUE, 1, TRUE),
 (11, 'Cotton T-Shirt', 'men-cotton-tshirt', 'Cotton t-shirts for men', 2, TRUE, 1, TRUE),
 (12, 'Under Scrub', 'men-underscrub', 'Under scrubs for men', 3, TRUE, 1, TRUE),
-(13, 'Surgeon Gown', 'men-surgeon-gown', 'Surgeon gowns for men', 4, TRUE, 1, TRUE),
-(14, 'Surgeon Cap', 'men-surgeon-cap', 'Surgeon caps for men', 5, TRUE, 1, TRUE);
+(13, 'Surgical Gown', 'men-surgeon-gown', 'Surgical gowns for men', 4, TRUE, 1, TRUE),
+(14, 'Surgical Cap', 'men-surgeon-cap', 'Surgical caps for men', 5, TRUE, 1, TRUE);
 
 -- Level 3 under Men > Scrub Suit (ID: 10)
 INSERT IGNORE INTO categories (id, name, slug, description, display_order, active, parent_id, show_in_nav) VALUES
@@ -551,8 +551,8 @@ INSERT IGNORE INTO categories (id, name, slug, description, display_order, activ
 (20, 'Scrub Suit', 'women-scrub-suit', 'Scrub suits for women', 1, TRUE, 2, TRUE),
 (21, 'Cotton T-Shirt', 'women-cotton-tshirt', 'Cotton t-shirts for women', 2, TRUE, 2, TRUE),
 (22, 'Under Scrub', 'women-underscrub', 'Under scrubs for women', 3, TRUE, 2, TRUE),
-(23, 'Surgeon Gown', 'women-surgeon-gown', 'Surgeon gowns for women', 4, TRUE, 2, TRUE),
-(24, 'Surgeon Cap', 'women-surgeon-cap', 'Surgeon caps for women', 5, TRUE, 2, TRUE);
+(23, 'Surgical Gown', 'women-surgeon-gown', 'Surgical gowns for women', 4, TRUE, 2, TRUE),
+(24, 'Surgical Cap', 'women-surgeon-cap', 'Surgical caps for women', 5, TRUE, 2, TRUE);
 
 -- Level 3 under Women > Scrub Suit (ID: 20)
 INSERT IGNORE INTO categories (id, name, slug, description, display_order, active, parent_id, show_in_nav) VALUES
@@ -564,8 +564,12 @@ INSERT IGNORE INTO categories (id, name, slug, description, display_order, activ
 
 -- Subcategories under Surgical Wear (ID: 3)
 INSERT IGNORE INTO categories (id, name, slug, description, display_order, active, parent_id, show_in_nav) VALUES
-(30, 'Surgeon Gown', 'surgical-surgeon-gown', 'Surgical surgeon gowns', 1, TRUE, 3, TRUE),
-(31, 'Surgeon Cap', 'surgical-surgeon-cap', 'Surgical surgeon caps', 2, TRUE, 3, TRUE);
+(30, 'Surgical Gown', 'surgical-surgeon-gown', 'Surgical gowns', 1, TRUE, 3, TRUE),
+(31, 'Surgical Cap', 'surgical-surgeon-cap', 'Surgical caps', 2, TRUE, 3, TRUE);
+
+-- Live UPDATE: rename already-seeded categories (run after fresh rebuild too)
+UPDATE categories SET name='Surgical Gown' WHERE slug IN ('men-surgeon-gown','women-surgeon-gown','surgical-surgeon-gown');
+UPDATE categories SET name='Surgical Cap'  WHERE slug IN ('men-surgeon-cap','women-surgeon-cap','surgical-surgeon-cap');
 
 -- Subcategories under Bulk Orders (ID: 4)
 INSERT IGNORE INTO categories (id, name, slug, description, display_order, active, parent_id, show_in_nav) VALUES

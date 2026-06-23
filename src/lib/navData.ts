@@ -33,8 +33,8 @@ export const HARDCODED_CATEGORIES: CategoryNode[] = [
                     { id: 121, name: "Full Sleeve Compression Underscrub", slug: "men-full-sleeve-compression-underscrub" }
                 ]
             },
-            { id: 13, name: "Surgeon Gown", slug: "men-surgeon-gown" },
-            { id: 14, name: "Surgeon Cap", slug: "men-surgeon-cap" }
+            { id: 13, name: "Surgical Gown", slug: "men-surgeon-gown" },
+            { id: 14, name: "Surgical Cap", slug: "men-surgeon-cap" }
         ]
     },
     {
@@ -53,15 +53,15 @@ export const HARDCODED_CATEGORIES: CategoryNode[] = [
                     { id: 221, name: "Full Sleeve Compression Underscrub", slug: "women-full-sleeve-compression-underscrub" }
                 ]
             },
-            { id: 23, name: "Surgeon Gown", slug: "women-surgeon-gown" },
-            { id: 24, name: "Surgeon Cap", slug: "women-surgeon-cap" }
+            { id: 23, name: "Surgical Gown", slug: "women-surgeon-gown" },
+            { id: 24, name: "Surgical Cap", slug: "women-surgeon-cap" }
         ]
     },
     {
         id: 3, name: "Surgical Wear", slug: "surgical-wear",
         children: [
-            { id: 30, name: "Surgeon Gown", slug: "surgical-surgeon-gown" },
-            { id: 31, name: "Surgeon Cap", slug: "surgical-surgeon-cap" }
+            { id: 30, name: "Surgical Gown", slug: "surgical-surgeon-gown" },
+            { id: 31, name: "Surgical Cap", slug: "surgical-surgeon-cap" }
         ]
     },
     {
@@ -100,8 +100,8 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'SURGICAL & LAB',
                 items: [
-                    { label: 'Surgeon Gown', href: '/products?cat=men-surgeon-gown&gender=men' },
-                    { label: 'Surgeon Cap', href: '/products?cat=men-surgeon-cap&gender=men' },
+                    { label: 'Surgical Gown', href: '/products?cat=men-surgeon-gown&gender=men' },
+                    { label: 'Surgical Cap', href: '/products?cat=men-surgeon-cap&gender=men' },
                 ]
             }
         ]
@@ -129,8 +129,8 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'SURGICAL & LAB',
                 items: [
-                    { label: 'Surgeon Gown', href: '/products?cat=women-surgeon-gown&gender=women' },
-                    { label: 'Surgeon Cap', href: '/products?cat=women-surgeon-cap&gender=women' },
+                    { label: 'Surgical Gown', href: '/products?cat=women-surgeon-gown&gender=women' },
+                    { label: 'Surgical Cap', href: '/products?cat=women-surgeon-cap&gender=women' },
                 ]
             }
         ]
@@ -143,8 +143,8 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'OPERATING ROOM',
                 items: [
-                    { label: 'Surgeon Gown', href: '/products?cat=surgical-surgeon-gown' },
-                    { label: 'Surgeon Cap', href: '/products?cat=surgical-surgeon-cap' },
+                    { label: 'Surgical Gown', href: '/products?cat=surgical-surgeon-gown' },
+                    { label: 'Surgical Cap', href: '/products?cat=surgical-surgeon-cap' },
                 ]
             }
         ]
