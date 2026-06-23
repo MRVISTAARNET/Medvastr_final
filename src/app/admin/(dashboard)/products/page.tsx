@@ -67,8 +67,8 @@ export default function AdminProducts() {
     if (editingProduct) {
       setForm({
         ...editingProduct,
-        parentId: editingProduct.categoryIds?.[0] || '',
-        subCategoryId: editingProduct.categoryIds?.[1] || '',
+        parentId: editingProduct.catId || (editingProduct.categoryIds ? editingProduct.categoryIds.split(',')[0] : '') || '',
+        subCategoryId: editingProduct.subcategoryId || (editingProduct.categoryIds ? editingProduct.categoryIds.split(',')[1] : '') || '',
         style: editingProduct.style || 'Top',
         sizes: editingProduct.sizes?.join(', ') || 'S, M, L, XL',
         clrs: editingProduct.clrNms?.join(', ') || ''

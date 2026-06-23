@@ -15,7 +15,7 @@ interface HeaderProps {
 }
 
 export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
-  const { cart, wishlist, products } = useApp();
+  const { cart, wishlist, products, navItems } = useApp();
   const [q, setQ] = useState("");
   const [sd, setSd] = useState(false);
   const [mn, setMn] = useState(false); // Mobile Nav
@@ -26,7 +26,48 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
     ? products.filter((p) => p.name.toLowerCase().includes(q.toLowerCase())).slice(0, 6)
     : [];
 
-  const resolvedNav = NAV_DATA;
+  const resolvedNav = React.useMemo(() => {
+    if (navItems && navItems.length > 0) {
+      return navItems.map((item: any) => {
+        const isMega = item.itemType === "MEGA_MENU";
+        let mappedChildren = undefined;
+        if (isMega && item.children && item.children.length > 0) {
+          mappedChildren = item.children.map((sub: any) => {
+            const subItems = [];
+            const getUrl = (catSlug: string) => {
+              const q = new URLSearchParams({ cat: catSlug });
+              if (item.gender) q.set("gender", item.gender);
+              return `/products?${q.toString()}`;
+            };
+            subItems.push({
+              label: `All ${sub.label}`,
+              href: sub.href || getUrl(sub.categorySlug)
+            });
+            if (sub.children && sub.children.length > 0) {
+              sub.children.forEach((grand: any) => {
+                subItems.push({
+                  label: grand.label,
+                  href: grand.href || getUrl(grand.categorySlug)
+                });
+              });
+            }
+            return {
+              title: sub.label.toUpperCase(),
+              items: subItems
+            };
+          });
+        }
+        return {
+          label: item.label.toUpperCase(),
+          href: item.href,
+          type: isMega ? "MEGA_MENU" as const : "LINK" as const,
+          children: mappedChildren
+        };
+      });
+    }
+    return NAV_DATA;
+  }, [navItems]);
+
   const cc = cart.reduce((s, i) => s + i.qty, 0);
   const wc = wishlist.length;
 

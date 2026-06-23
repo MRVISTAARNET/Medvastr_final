@@ -184,6 +184,8 @@ export function toApiProductRequest(p: any) {
     price: p.price ? Number(p.price) : 0,
     originalPrice: (p.originalPrice || p.origPrice) ? Number(p.originalPrice || p.origPrice) : undefined,
     categoryId: (p.catId || p.categoryId) ? Number(p.catId || p.categoryId) : undefined,
+    subcategoryId: p.subcategoryId ? Number(p.subcategoryId) : undefined,
+    childCategoryId: p.childCategoryId ? Number(p.childCategoryId) : undefined,
     imageUrls: imgs,
     videoUrl: p.videoUrl,
     categoryIds: p.categoryIds,
