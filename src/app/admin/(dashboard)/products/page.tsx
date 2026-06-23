@@ -30,6 +30,7 @@ export default function AdminProducts() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'basic' | 'pricing' | 'inventory' | 'media' | 'seo'>('basic');
+  const [uploadingState, setUploadingState] = useState<{ active: boolean; current: number; total: number; filename: string }>({ active: false, current: 0, total: 0, filename: '' });
 
   const { products, categoryTree } = useApp();
   const fetchProducts = (useApp() as any).fetchProducts;
@@ -432,19 +433,48 @@ export default function AdminProducts() {
                     <label>Product Gallery Images (Upload up to 10 photos total) <span style={{ color: 'red' }}>*</span></label>
                     <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '10px' }}>Drag or sort images. The first image will be set as primary.</p>
                     
-                    <input type="file" multiple disabled={form.imgs.length >= 10} onChange={async (e) => {
+                    <input type="file" multiple disabled={form.imgs.length >= 10 || uploadingState.active} onChange={async (e) => {
                       const files = e.target.files;
                       if (!files) return;
                       const token = getToken() || "";
-                      const urls: string[] = [];
                       const allowedCount = Math.max(0, 10 - form.imgs.length);
-                      for (let i = 0; i < Math.min(files.length, allowedCount); i++) {
+                      const filesToUpload = Math.min(files.length, allowedCount);
+                      if (filesToUpload === 0) return;
+
+                      setUploadingState({ active: true, current: 0, total: filesToUpload, filename: files[0].name });
+
+                      for (let i = 0; i < filesToUpload; i++) {
+                        setUploadingState(prev => ({ ...prev, current: i + 1, filename: files[i].name }));
                         const formData = new FormData(); formData.append("file", files[i]);
-                        const res = await fetch(`${API_BASE}/upload`, { method: "POST", headers: { "Authorization": `Bearer ${token}` }, body: formData });
-                        const d = await res.json(); if (d.success) urls.push(d.data);
+                        try {
+                          const res = await fetch(`${API_BASE}/upload`, { 
+                            method: "POST", 
+                            headers: { "Authorization": `Bearer ${token}` }, 
+                            body: formData 
+                          });
+                          const d = await res.json(); 
+                          if (d.success && d.data) {
+                            setForm((prev: any) => {
+                              if (prev.imgs.includes(d.data) || prev.imgs.length >= 10) return prev;
+                              return { ...prev, imgs: [...prev.imgs, d.data] };
+                            });
+                          } else {
+                            alert(`Upload failed for ${files[i].name}: ${d.message || "File too large or invalid format. Please check file size (<10MB)."}`);
+                          }
+                        } catch (err) {
+                          alert(`Upload failed for ${files[i].name}: Connection error`);
+                        }
                       }
-                      setForm((prev: any) => ({ ...prev, imgs: [...prev.imgs, ...urls].slice(0, 10) }));
+                      setUploadingState({ active: false, current: 0, total: 0, filename: '' });
+                      e.target.value = '';
                     }} />
+
+                    {uploadingState.active && (
+                      <div style={{ marginTop: '10px', padding: '10px', background: '#ecfdf5', border: '1px solid #a7f3d0', borderRadius: '8px', color: '#065f46', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#059669' }} />
+                        <span>Uploading <strong>{uploadingState.current} of {uploadingState.total}</strong>: {uploadingState.filename}...</span>
+                      </div>
+                    )}
 
                     <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                       {form.imgs.map((url: string, index: number) => (
@@ -469,7 +499,10 @@ export default function AdminProducts() {
 
                   <div className="fg">
                     <label>Color-Specific Photo Mapping</label>
-                    <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '15px' }}>Assign uploaded images to their respective colors to enable gallery swapping.</p>
+                    <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '8px' }}>Assign uploaded images to their respective colors to enable gallery swapping.</p>
+                    <p style={{ fontSize: '11px', color: '#0f766e', fontWeight: 600, background: '#f0fdf4', padding: '8px 12px', borderRadius: '6px', border: '1px solid #bbf7d0', marginBottom: '15px' }}>
+                      💡 <strong>Action Required:</strong> Click on the images under each color to map them. Unselected images will look faded. If you do not select any image for a color, that color will fallback to showing all gallery images.
+                    </p>
 
                     {(form.clrs || '').split(',').map((c: string) => c.trim()).filter(Boolean).map((color: string) => {
                       const hex = getColHex(color);
@@ -491,7 +524,16 @@ export default function AdminProducts() {
                                     ...prev,
                                     imgsByColor: { ...prev.imgsByColor, [hex]: newList }
                                   }));
-                                }} style={{ position: 'relative', cursor: 'pointer', border: isMapped ? '2px solid #008080' : '1px solid #cbd5e1', borderRadius: '6px', padding: '2px' }}>
+                                }} style={{ 
+                                  position: 'relative', 
+                                  cursor: 'pointer', 
+                                  border: isMapped ? '2px solid #008080' : '1px solid #cbd5e1', 
+                                  borderRadius: '6px', 
+                                  padding: '2px',
+                                  opacity: isMapped ? 1 : 0.45,
+                                  transition: 'opacity 0.2s ease, border-color 0.2s ease',
+                                  background: isMapped ? '#e0f2f1' : 'transparent',
+                                }}>
                                   <img src={url.split('?')[0]} alt="" style={{ width: '40px', height: '48px', objectFit: 'cover', borderRadius: '4px' }} />
                                   {isMapped && <div style={{ position: 'absolute', top: '-6px', right: '-6px', background: '#008080', color: 'white', borderRadius: '50%', width: '14px', height: '14px', display: 'flex', alignItems: 'center', justifyItems: 'center', fontSize: '9px', fontWeight: 900, justifyContent: 'center' }}>✓</div>}
                                 </div>
