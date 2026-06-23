@@ -178,7 +178,7 @@ function ProductsContent() {
   const catKey = cat.toLowerCase();
   const genKey = gen.toLowerCase();
 
-  const isSurgical = ["surgical", "gown", "cap"].some(word => catKey.includes(word));
+  const isSurgical = ["surgical-wear", "lab-coats", "accessories"].includes(catKey);
 
   // Normalize cat for banner filenames
   let bannerCat = catKey;
@@ -208,7 +208,11 @@ function ProductsContent() {
   let staticBannerTitle = "";
 
   if (isSurgical) {
-    staticBannerBase = `${S3}/surgical-wear-banner`;
+    if (genKey === "women") {
+      staticBannerBase = `${S3}/women-surgical-wear-banner`;
+    } else {
+      staticBannerBase = `${S3}/surgical-wear-banner`;
+    }
     staticBannerTitle = safeTitle;
   } else if (catKey !== "all" && genKey !== "all") {
     // Try Gender-Specific Category Banners
