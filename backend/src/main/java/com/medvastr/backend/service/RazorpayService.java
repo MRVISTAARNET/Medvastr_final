@@ -40,7 +40,7 @@ public class RazorpayService {
         return storeSettingRepo.findById("razorpay_secret").map(StoreSetting::getSettingValue).orElse(keySecret);
     }
 
-    private RazorpayClient getClient() throws RazorpayException {
+    public RazorpayClient getClient() throws RazorpayException {
         return new RazorpayClient(getDbKeyId(), getDbKeySecret());
     }
 
@@ -70,13 +70,18 @@ public class RazorpayService {
         }
     }
 
+    private String getDbWebhookSecret() {
+        return storeSettingRepo.findById("razorpay_webhook_secret").map(StoreSetting::getSettingValue).orElse(webhookSecret);
+    }
+
     public boolean verifyWebhookSignature(String payload, String signature) {
-        if (webhookSecret == null || webhookSecret.isBlank()) {
+        String secret = getDbWebhookSecret();
+        if (secret == null || secret.isBlank()) {
             log.warn("Razorpay webhook secret not configured — rejecting webhook");
             return false;
         }
         try {
-            return Utils.verifyWebhookSignature(payload, signature, webhookSecret);
+            return Utils.verifyWebhookSignature(payload, signature, secret);
         } catch (RazorpayException e) {
             log.error("Webhook signature verification failed");
             return false;

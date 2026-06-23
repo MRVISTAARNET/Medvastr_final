@@ -29,7 +29,7 @@ public class PaymentService {
 
     public Map<String, Object> createOrder(Map<String, Object> r) {
         try {
-            com.razorpay.RazorpayClient client = new com.razorpay.RazorpayClient(keyId, keySecret);
+            com.razorpay.RazorpayClient client = razorpayService.getClient();
             JSONObject options = new JSONObject();
             options.put("amount", (int) Double.parseDouble(r.get("amount").toString()));
             options.put("currency", "INR");
@@ -42,7 +42,7 @@ public class PaymentService {
                     "currency", order.get("currency"),
                     "amount", order.get("amount"),
                     "key", keyId);
-        } catch (com.razorpay.RazorpayException e) {
+        } catch (Exception e) {
             log.error("Razorpay order creation failed", e);
             throw new RuntimeException("Could not create Razorpay order");
         }

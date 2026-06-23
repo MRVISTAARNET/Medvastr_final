@@ -230,8 +230,9 @@ public class ShiprocketService {
         for (OrderItem oi : order.getItems()) {
             JSONObject item = new JSONObject();
             item.put("name", oi.getProductName());
-            item.put("sku", oi.getProduct() != null && oi.getProduct().getSku() != null ? oi.getProduct().getSku()
-                    : "SKU-" + order.getOrderNumber() + "-" + (items.length() + 1));
+            item.put("sku", oi.getVariant() != null && oi.getVariant().getSku() != null ? oi.getVariant().getSku()
+                    : (oi.getProduct() != null && oi.getProduct().getSku() != null ? oi.getProduct().getSku()
+                    : "SKU-" + order.getOrderNumber() + "-" + (items.length() + 1)));
             item.put("units", oi.getQuantity());
             item.put("selling_price", oi.getUnitPrice().toString());
             item.put("discount", "");
