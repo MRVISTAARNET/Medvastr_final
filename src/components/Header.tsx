@@ -127,7 +127,8 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
       <div className={`mob-drawer-ov${mn ? " on" : ""}`} onClick={() => setMn(false)} />
       <div id="nav" className={mn ? " mob-on" : ""}>
         <div className="mob-nav-hd mob-only">
-          <button className="mn-close" onClick={() => setMn(false)}>✕</button>
+          <span className="mob-nav-brand">medvastr</span>
+          <button type="button" className="mn-close" onClick={() => setMn(false)} style={{ touchAction: 'manipulation' }}>✕</button>
         </div>
         <DynamicNav
           items={resolvedNav}
@@ -142,46 +143,44 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
         @media (max-width: 1024px) {
           .mob-only { display: flex !important; }
           .mob-hide { display: none !important; }
-          
-          .mob-drawer-ov {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.5);
-            z-index: 9999;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.4s;
-          }
-          .mob-drawer-ov.on { opacity: 1; visibility: visible; }
 
           .mob-nav-hd {
             display: flex !important;
-            padding: 20px 24px;
-            justify-content: flex-end;
+            padding: 18px 20px;
+            justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--bdr);
-            background: var(--wh);
+            border-bottom: 2px solid #10b981;
+            background: #ffffff;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+          }
+          .mob-nav-brand {
+            font-size: 20px;
+            font-weight: 900;
+            color: #0f172a;
+            letter-spacing: -0.5px;
           }
           .mn-close {
             width: 40px;
             height: 40px;
-            background: var(--off);
+            background: #f1f5f9;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 18px;
-            color: var(--ink2);
+            color: #0f172a;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+            border: none;
           }
-          .nav-in {
-             flex-direction: column;
-             padding: 10px 0 !important;
+          .mn-close:active { background: #e2e8f0; }
+          .ha {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
           }
-          .nav-group { width: 100%; }
-          .nav-sub { display: none; background: var(--off); }
-          .nav-group.mob-open .nav-sub { display: block; }
-          .nav-arrow { transition: transform 0.3s; }
-          .nav-group.mob-open .nav-arrow { transform: rotate(180deg); }
         }
       `}</style>
     </div>
