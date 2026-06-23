@@ -155,7 +155,11 @@ function ProductsContent() {
   };
   const catKey = cat.toLowerCase();
   const genKey = gen.toLowerCase();
-  const isSurgical = ["surgical-wear", "surgical-gown", "surgical-cap"].includes(catKey);
+  // isSurgical: matches both old slugs AND actual DB slugs
+  const isSurgical = catKey === "surgical-wear" ||
+    catKey === "surgical-gown" || catKey === "surgical-cap" ||
+    catKey === "surgical-surgeon-gown" || catKey === "surgical-surgeon-cap" ||
+    catKey.startsWith("surgical-");
 
   let activeRootSlugs = ["men", "women", "surgical-wear", "bulk-orders"];
   if (isSurgical) activeRootSlugs = ["surgical-wear"];
@@ -190,6 +194,10 @@ function ProductsContent() {
     bannerCat = "cotton-crew-tshirt";
   } else if (catKey === "underscrubs" || catKey === "underscrub" || catKey.includes("under-scrub") || catKey.includes("underscrub")) {
     bannerCat = "full-sleeve-compression-under-scrub";
+  } else if (catKey.includes("surgeon-gown") || catKey.includes("surgical-gown")) {
+    bannerCat = "surgeon-gown";
+  } else if (catKey.includes("surgeon-cap") || catKey.includes("surgical-cap")) {
+    bannerCat = "surgeon-cap";
   } else if (catKey.includes('scrub')) {
     bannerCat = 'scrub-suit';
   }
@@ -199,7 +207,8 @@ function ProductsContent() {
     .replace(/^men-/, '')
     .replace(/^women-/, '')
     .replace(/-men$/, '')
-    .replace(/-women$/, '');
+    .replace(/-women$/, '')
+    .replace(/^surgical-/, '');
 
   // 100% DYNAMIC BANNER LOGIC (Ecommerce Priority System)
   const genName = genKey !== "all" ? genKey.charAt(0).toUpperCase() + genKey.slice(1) : "";
@@ -212,7 +221,17 @@ function ProductsContent() {
   let staticBannerTitle = "";
 
   if (isSurgical) {
-    if (genKey === "women") {
+    // For specific sub-categories (surgeon-gown, surgeon-cap), use specific banner
+    // otherwise fall back to the parent surgical-wear banner
+    if (bannerCat === "surgeon-gown" || bannerCat === "surgeon-cap") {
+      if (genKey !== "all") {
+        // e.g. men-surgeon-gown-banner, women-surgeon-cap-banner
+        staticBannerBase = `${S3}/${genKey}-${bannerCat}-banner`;
+      } else {
+        // e.g. surgeon-gown-banner, surgeon-cap-banner
+        staticBannerBase = `${S3}/${bannerCat}-banner`;
+      }
+    } else if (genKey === "women") {
       staticBannerBase = `${S3}/women-surgical-wear-banner`;
     } else {
       staticBannerBase = `${S3}/surgical-wear-banner`;
