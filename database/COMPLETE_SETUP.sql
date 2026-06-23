@@ -494,23 +494,10 @@ CREATE TABLE IF NOT EXISTS wishlist_items (
 
 -- Seed colors
 INSERT IGNORE INTO product_colors (name, hex_code, display_order, is_active) VALUES
-('Black', '#000000', 1, TRUE),
-('White', '#FFFFFF', 2, TRUE),
-('Navy', '#001F3F', 3, TRUE),
-('Red', '#FF4136', 4, TRUE),
-('Blue', '#0074D9', 5, TRUE),
-('Green', '#2ECC40', 6, TRUE),
-('Gray', '#AAAAAA', 7, TRUE),
-('Beige', '#F5DEB3', 8, TRUE),
-('Teal', '#00A7A7', 9, TRUE),
-('Gold', '#FFD700', 10, TRUE),
-('Dark Blue', '#1a2b4a', 11, TRUE),
-('Light Blue', '#add8e6', 12, TRUE),
-('Maroon', '#800000', 13, TRUE),
-('Wine', '#722f37', 14, TRUE),
-('Olive Green', '#556b2f', 15, TRUE),
-('Navy Blue', '#000080', 16, TRUE),
-('Bottle Green', '#006a4e', 17, TRUE);
+('Navy Blue', '#1a2b4a', 1, TRUE),
+('Wine', '#722f37', 2, TRUE),
+('Maroon', '#800000', 3, TRUE),
+('Light Blue', '#add8e6', 4, TRUE);
 
 -- Seed sizes
 INSERT IGNORE INTO product_sizes (name, size_value, category, display_order, is_active) VALUES
@@ -621,7 +608,7 @@ INSERT IGNORE INTO blog_categories (name, slug, description, display_order, is_a
 
 -- Create admin user (optional)
 INSERT IGNORE INTO users (first_name, last_name, email, password, phone, role, email_verified, active, loyalty_points)
-VALUES ('Admin', 'Medvastr', 'admin@medvastr.com', '$2a$10$abcdefghijklmnopqrstuvwxyz', '+919876543210', 'ADMIN', TRUE, TRUE, 0);
+VALUES ('Admin', 'Medvastr', 'admin@medvastr.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p72Le8bl87me.LSh0y.Y.u', '+919876543210', 'ADMIN', TRUE, TRUE, 0);
 
 -- ============================================================
 -- SECTION 3: OPTIMIZATION (Indices already created above)
