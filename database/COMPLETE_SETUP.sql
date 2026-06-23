@@ -18,6 +18,7 @@ DROP TABLE IF EXISTS blog_posts;
 DROP TABLE IF EXISTS blog_categories;
 DROP TABLE IF EXISTS inquiries;
 DROP TABLE IF EXISTS otp_tokens;
+DROP TABLE IF EXISTS password_reset_tokens;
 DROP TABLE IF EXISTS promo_codes;
 DROP TABLE IF EXISTS navbar_items;
 DROP TABLE IF EXISTS bulk_order_config;
@@ -407,7 +408,19 @@ CREATE TABLE IF NOT EXISTS otp_tokens (
   INDEX idx_expiry (expires_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- 22. INQUIRIES/CONTACT MESSAGES
+-- 22. PASSWORD RESET TOKENS
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  token VARCHAR(64) NOT NULL UNIQUE,
+  email VARCHAR(255) NOT NULL,
+  expires_at DATETIME NOT NULL,
+  used BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_email_reset (email),
+  INDEX idx_token (token)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 23. INQUIRIES/CONTACT MESSAGES
 CREATE TABLE IF NOT EXISTS inquiries (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
@@ -507,10 +520,7 @@ INSERT IGNORE INTO product_sizes (name, size_value, category, display_order, is_
 ('Large', 'L', 'APPAREL', 4, TRUE),
 ('Extra Large', 'XL', 'APPAREL', 5, TRUE),
 ('2XL', '2XL', 'APPAREL', 6, TRUE),
-('XXXL', 'XXXL', 'APPAREL', 7, TRUE),
-('4XL', '4XL', 'APPAREL', 8, TRUE),
-('5XL', '5XL', 'APPAREL', 9, TRUE),
-('One Size', 'One Size', 'ACCESSORIES', 10, TRUE);
+('One Size', 'One Size', 'ACCESSORIES', 7, TRUE);
 
 -- Seed categories (with hierarchy)
 -- Seed categories (with hierarchy and explicit IDs)
@@ -606,9 +616,10 @@ INSERT IGNORE INTO blog_categories (name, slug, description, display_order, is_a
 ('Tips & Tricks', 'tips-tricks', 'Helpful tips for medical professionals', 2, TRUE),
 ('Industry News', 'industry-news', 'Healthcare industry news', 3, TRUE);
 
--- Create admin user (optional)
+-- Create admin user
+-- Password: Medvastr@#123 (BCrypt strength 10, generated via Spring Security BCryptPasswordEncoder)
 INSERT IGNORE INTO users (first_name, last_name, email, password, phone, role, email_verified, active, loyalty_points)
-VALUES ('Admin', 'Medvastr', 'admin@medvastr.com', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p72Le8bl87me.LSh0y.Y.u', '+919876543210', 'ADMIN', TRUE, TRUE, 0);
+VALUES ('Admin', 'Medvastr', 'admin@medvastr.com', '$2a$10$Ejw/AFR28/MDv9nBaZYMEevtNRlhHKLCYeADyFvtcAkQSx5nrilPe', '+919876543210', 'ADMIN', TRUE, TRUE, 0);
 
 -- ============================================================
 -- SECTION 3: OPTIMIZATION (Indices already created above)
