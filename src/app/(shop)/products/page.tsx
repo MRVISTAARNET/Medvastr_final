@@ -187,17 +187,28 @@ function ProductsContent() {
 
   const S3 = "https://d2tnzshqdaedbc.cloudfront.net";
 
-  // Normalize cat for banner filenames
+  // Direct banner filename lookup for under scrub categories (short, uploadable names)
+  // Men Under Scrubs  → men-underscrub-banner.jpg
+  // Men Full Sleeve   → men-full-sleeve-underscrub-banner.jpg
+  // Women Under Scrubs → women-underscrub-banner.jpg
+  // Women Full Sleeve  → women-full-sleeve-underscrub-banner.jpg
+  const underscrubBannerMap: Record<string, string> = {
+    "men-underscrub":                              `${S3}/men-underscrub-banner`,
+    "men-full-sleeve-compression-underscrub":      `${S3}/men-full-sleeve-underscrub-banner`,
+    "women-underscrub":                            `${S3}/women-underscrub-banner`,
+    "women-full-sleeve-compression-underscrub":    `${S3}/women-full-sleeve-underscrub-banner`,
+  };
+  const isUnderscrubCat = catKey in underscrubBannerMap;
+
+  // Normalize cat for banner filenames (used for non-special categories)
   let bannerCat = catKey;
   if (catKey === "tshirts" || catKey === "tshirt" || catKey.includes("t-shirt") || catKey.includes("tshirt")) {
     bannerCat = "cotton-crew-tshirt";
-  } else if (catKey === "underscrubs" || catKey === "underscrub" || catKey.includes("under-scrub") || catKey.includes("underscrub")) {
-    bannerCat = "full-sleeve-compression-under-scrub";
   } else if (catKey.includes("surgeon-gown") || catKey.includes("surgical-gown")) {
     bannerCat = "surgeon-gown";
   } else if (catKey.includes("surgeon-cap") || catKey.includes("surgical-cap")) {
     bannerCat = "surgeon-cap";
-  } else if (catKey.includes('scrub')) {
+  } else if (catKey.includes('scrub') && !catKey.includes('underscrub')) {
     bannerCat = 'scrub-suit';
   }
 
@@ -242,8 +253,10 @@ function ProductsContent() {
     }
     staticBannerTitle = safeTitle;
   } else if (catKey !== "all" && genKey !== "all") {
-    // Gender + Category: check if it's a gown/cap category and use exact map
-    if (isGownCat || isCapCat) {
+    // Gender + Category: underscrub direct map, gown/cap map, then generic
+    if (isUnderscrubCat) {
+      staticBannerBase = underscrubBannerMap[catKey] ?? `${S3}/${genKey}-underscrub-banner`;
+    } else if (isGownCat || isCapCat) {
       const lookupKey = `${genKey}-${isGownCat ? "gown" : "cap"}`;
       staticBannerBase = surgicalBannerMap[lookupKey] ?? `${S3}/${genKey}-${bannerCat}-banner`;
     } else {
