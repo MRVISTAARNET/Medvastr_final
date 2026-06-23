@@ -240,6 +240,9 @@ function ProductsContent() {
   const isGownCat = bannerCat === "surgeon-gown";
   const isCapCat  = bannerCat === "surgeon-cap";
 
+  let staticBannerBase: string | null = null;
+  let staticBannerTitle = "";
+
   if (isSurgical) {
     if (isGownCat || isCapCat) {
       const lookupKey = `${genKey !== "all" ? genKey : "all"}-${isGownCat ? "gown" : "cap"}`;
