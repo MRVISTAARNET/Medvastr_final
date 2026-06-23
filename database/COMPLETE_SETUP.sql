@@ -6,6 +6,35 @@
 USE medvastr_db;
 SET FOREIGN_KEY_CHECKS=0;
 
+-- Drop all existing tables to allow a clean rebuild
+DROP TABLE IF EXISTS wishlist_items;
+DROP TABLE IF EXISTS cart_items;
+DROP TABLE IF EXISTS carts;
+DROP TABLE IF EXISTS addresses;
+DROP TABLE IF EXISTS order_items;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS reviews;
+DROP TABLE IF EXISTS blog_posts;
+DROP TABLE IF EXISTS blog_categories;
+DROP TABLE IF EXISTS inquiries;
+DROP TABLE IF EXISTS otp_tokens;
+DROP TABLE IF EXISTS promo_codes;
+DROP TABLE IF EXISTS navbar_items;
+DROP TABLE IF EXISTS bulk_order_config;
+DROP TABLE IF EXISTS collection_products;
+DROP TABLE IF EXISTS collections;
+DROP TABLE IF EXISTS banners;
+DROP TABLE IF EXISTS store_settings;
+DROP TABLE IF EXISTS product_variants;
+DROP TABLE IF EXISTS product_images;
+DROP TABLE IF EXISTS product_attribute_values;
+DROP TABLE IF EXISTS product_attributes;
+DROP TABLE IF EXISTS product_sizes;
+DROP TABLE IF EXISTS product_colors;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS categories;
+DROP TABLE IF EXISTS users;
+
 -- ============================================================
 -- SECTION 1: CORE TABLES (BASE SCHEMA)
 -- ============================================================
