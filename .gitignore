@@ -30,6 +30,7 @@ backend/*.jar
 # root-level zip and jar artifacts
 /*.zip
 /*.jar
+deploy_ready/
 
 # IDEs
 .idea/

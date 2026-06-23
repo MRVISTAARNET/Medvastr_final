@@ -178,6 +178,24 @@ export default function ContactPage() {
             )}
           </div>
         </div>
+
+        {/* Map Section */}
+        <div className="map-card">
+          <h3 style={{ fontSize: "2rem", color: "#0f172a", marginBottom: "24px", fontWeight: 800, display: "flex", alignItems: "center", gap: "12px" }}>
+            <span style={{ filter: "drop-shadow(0 4px 6px rgba(0,0,0,0.1))" }}>📍</span> Find Us Here
+          </h3>
+          <div className="map-iframe-container">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3769.308298715783!2d72.85501867595304!3d19.143542282071665!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7b71329c97b83%3A0x6b801a6104d538c2!2sExpress%20Zone!5e0!3m2!1sen!2sin!4v1719120000000!5m2!1sen!2sin"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen={true}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
+        </div>
       </div>
 
       <style jsx>{`
@@ -262,9 +280,27 @@ export default function ContactPage() {
           cursor: not-allowed;
         }
 
+        .map-card {
+          margin-top: 40px;
+          background: white;
+          padding: 44px;
+          border-radius: 32px;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+          border: 1px solid #f1f5f9;
+        }
+        .map-iframe-container {
+          width: 100%;
+          height: 450px;
+          border-radius: 20px;
+          overflow: hidden;
+          border: 1px solid #e2e8f0;
+        }
+
         @media (max-width: 768px) {
           .responsive-grid { grid-template-columns: 1fr !important; gap: 28px !important; }
           .contact-banner { height: 220px !important; min-height: auto !important; }
+          .map-card { padding: 32px 20px; margin-top: 32px; }
+          .map-iframe-container { height: 350px; }
         }
       `}</style>
     </div>
