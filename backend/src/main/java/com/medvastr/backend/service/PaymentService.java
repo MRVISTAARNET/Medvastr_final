@@ -41,7 +41,7 @@ public class PaymentService {
                     "id", order.get("id"),
                     "currency", order.get("currency"),
                     "amount", order.get("amount"),
-                    "key", keyId);
+                    "key", razorpayService.getKeyId());
         } catch (Exception e) {
             log.error("Razorpay order creation failed", e);
             throw new RuntimeException("Could not create Razorpay order");
@@ -85,8 +85,7 @@ public class PaymentService {
                 order.setPaymentId(paymentId);
                 Order saved = orderRepository.save(order);
                 preloadOrderRelations(saved);
-                emailService.sendOrderConfirmationEmail(saved);
-                shiprocketService.createOrder(saved);
+                triggerAsyncPostCommitActions(saved);
             });
         }
     }
@@ -97,10 +96,34 @@ public class PaymentService {
                 if (i.getProduct() != null) {
                     i.getProduct().getName();
                 }
+                if (i.getVariant() != null) {
+                    i.getVariant().getSku();
+                }
             });
         }
         if (order.getUser() != null) {
             order.getUser().getEmail();
+        }
+    }
+
+    private void triggerAsyncPostCommitActions(Order order) {
+        if (org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive()) {
+            org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
+                new org.springframework.transaction.support.TransactionSynchronization() {
+                    @Override
+                    public void afterCommit() {
+                        try {
+                            emailService.sendOrderConfirmationEmail(order);
+                            shiprocketService.createOrder(order);
+                        } catch (Exception e) {
+                            log.error("Failed to run async post-commit actions", e);
+                        }
+                    }
+                }
+            );
+        } else {
+            emailService.sendOrderConfirmationEmail(order);
+            shiprocketService.createOrder(order);
         }
     }
 }

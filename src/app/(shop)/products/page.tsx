@@ -60,7 +60,7 @@ function ProductsContent() {
           variantId: `${p.id}-${idx}`,
           displayColorHex: colorHex,
           displayColorName: p.clrNms?.[idx] || "",
-          displayImage: (p as any).imgsByColor?.[colorHex]?.[0] || p.imgs?.[0],
+          displayImage: p.clrImgs?.[colorHex]?.[0] || p.imgs?.[0],
           allColors: p.clrs // Keep this so they can still switch inside the PDP
         });
       });
@@ -153,10 +153,18 @@ function ProductsContent() {
       d: "Complete your professional look with our range of high-quality caps, compression socks, and other healthcare essentials."
     }
   };
+  const catKey = cat.toLowerCase();
+  const genKey = gen.toLowerCase();
+  const isSurgical = ["surgical-wear", "surgical-gown", "surgical-cap"].includes(catKey);
 
-  const flatCats = flattenCategoryTree(categoryTree);
+  let activeRootSlugs = ["men", "women", "surgical-wear", "bulk-orders"];
+  if (isSurgical) activeRootSlugs = ["surgical-wear"];
+  else if (genKey === "men") activeRootSlugs = ["men"];
+  else if (genKey === "women") activeRootSlugs = ["women"];
+
+  const filteredTree = categoryTree.filter((c) => activeRootSlugs.includes(c.slug));
+  const flatCats = flattenCategoryTree(filteredTree);
   const dynamicCats = flatCats
-    .filter((c) => c.depth > 0 || ["men", "women", "surgical-wear", "bulk-orders"].includes(c.slug))
     .map((c) => ({
       id: c.slug,
       ico: "🏷️",
@@ -175,10 +183,6 @@ function ProductsContent() {
   let activeCatLabel = cats.find((c: any) => c.id === cat)?.l || rawCatLabel || (gen !== 'all' ? (gen.charAt(0).toUpperCase() + gen.slice(1) + " Collection") : "All Products");
 
   const S3 = "https://d2tnzshqdaedbc.cloudfront.net";
-  const catKey = cat.toLowerCase();
-  const genKey = gen.toLowerCase();
-
-  const isSurgical = ["surgical-wear", "surgical-gown", "surgical-cap"].includes(catKey);
 
   // Normalize cat for banner filenames
   let bannerCat = catKey;
@@ -308,6 +312,7 @@ function ProductsContent() {
                       key={c.id}
                       className={`sb3-item${cat === c.id ? " active" : ""}`}
                       onClick={() => { updateURL({ cat: c.id, pg: "1" }); if (mobF) setMobF(false); }}
+                      style={{ paddingLeft: c.depth * 14 }}
                     >
                       <div className="sb3-check-box" />
                       <span className="sb3-label">{c.l}</span>

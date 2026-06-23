@@ -69,7 +69,8 @@ export default function AdminProducts() {
         ...editingProduct,
         parentId: editingProduct.catId || (editingProduct.categoryIds ? editingProduct.categoryIds.split(',')[0] : '') || '',
         subCategoryId: editingProduct.subcategoryId || (editingProduct.categoryIds ? editingProduct.categoryIds.split(',')[1] : '') || '',
-        style: editingProduct.style || 'Top',
+        style: editingProduct.styleId || editingProduct.style || 'Standard',
+        imgsByColor: editingProduct.clrImgs || {},
         sizes: editingProduct.sizes?.join(', ') || 'S, M, L, XL',
         clrs: editingProduct.clrNms?.join(', ') || ''
       });
@@ -149,7 +150,43 @@ export default function AdminProducts() {
       return { sku, barcode: sku, size: s, colorName: c, colorHex: hex, stockQuantity: 100, imageUrl: form.imgsByColor?.[hex]?.[0] || form.imgs?.[0] || '' };
     }));
 
-    const body = { ...form, slug, variants, categoryIds: [Number(form.parentId), Number(form.subCategoryId)].filter(Boolean) };
+    // Transform imgs to append ?clr=hex for color-specific photos
+    const finalImgs: string[] = [];
+    Object.entries(form.imgsByColor || {}).forEach(([hex, urls]: [string, any]) => {
+      if (Array.isArray(urls)) {
+        urls.forEach((url: string) => {
+          if (url.includes('?clr=')) {
+            finalImgs.push(url);
+          } else {
+            finalImgs.push(`${url}?clr=${hex}`);
+          }
+        });
+      }
+    });
+    // Add any general images that are not color-specific
+    const colorSpecificUrls = new Set(
+      Object.values(form.imgsByColor || {})
+        .flat()
+        .map((u: any) => u.split('?')[0])
+    );
+    (form.imgs || []).forEach((url: string) => {
+      const cleanUrl = url.split('?')[0];
+      if (!colorSpecificUrls.has(cleanUrl)) {
+        finalImgs.push(url);
+      }
+    });
+
+    const body = {
+      ...form,
+      slug,
+      variants,
+      imgs: finalImgs,
+      originalPrice: Number(form.origPrice) || undefined,
+      styleId: form.style || 'Standard',
+      categoryId: Number(form.parentId) || undefined,
+      subcategoryId: Number(form.subCategoryId) || undefined,
+      categoryIds: [Number(form.parentId), Number(form.subCategoryId)].filter(Boolean).join(',')
+    };
     const url = editingProduct ? `${API_BASE}/products/${editingProduct.id}` : `${API_BASE}/products`;
     const res = await fetch(url, { method: editingProduct ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json', ...authHeaders(token) }, body: JSON.stringify(body) });
     if ((await res.json()).success) { fetchProducts(); setIsModalOpen(false); }

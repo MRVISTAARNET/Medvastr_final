@@ -158,9 +158,7 @@ public class OrderService {
             orderRepo.save(finalSaved);
             decrementStock(finalSaved);
             preloadOrderRelations(finalSaved);
-            emailService.sendOrderConfirmationEmail(finalSaved);
-            emailService.sendAdminNotification(finalSaved);
-            shiprocketService.createOrder(finalSaved);
+            triggerAsyncPostCommitActions(finalSaved);
         }
 
         log.info("Order {} created", finalSaved.getOrderNumber());
@@ -190,9 +188,7 @@ public class OrderService {
             Order saved = orderRepo.save(o);
             decrementStock(saved);
             preloadOrderRelations(saved);
-            emailService.sendOrderConfirmationEmail(saved);
-            emailService.sendAdminNotification(saved);
-            shiprocketService.createOrder(saved);
+            triggerAsyncPostCommitActions(saved);
             return toDTO(saved);
         }
 
@@ -240,7 +236,7 @@ public class OrderService {
     public OrderDTO pushToShiprocket(Long id) {
         Order o = orderRepo.findById(id).orElseThrow();
         preloadOrderRelations(o);
-        shiprocketService.createOrder(o);
+        pushToShiprocketAfterCommit(o);
         return toDTO(o);
     }
 
@@ -282,10 +278,51 @@ public class OrderService {
                 if (i.getProduct() != null) {
                     i.getProduct().getName();
                 }
+                if (i.getVariant() != null) {
+                    i.getVariant().getSku();
+                }
             });
         }
         if (order.getUser() != null) {
             order.getUser().getEmail();
+        }
+    }
+
+    private void triggerAsyncPostCommitActions(Order order) {
+        if (org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive()) {
+            org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
+                new org.springframework.transaction.support.TransactionSynchronization() {
+                    @Override
+                    public void afterCommit() {
+                        try {
+                            emailService.sendOrderConfirmationEmail(order);
+                            emailService.sendAdminNotification(order);
+                            shiprocketService.createOrder(order);
+                        } catch (Exception e) {
+                            log.error("Failed to run async post-commit actions", e);
+                        }
+                    }
+                }
+            );
+        } else {
+            emailService.sendOrderConfirmationEmail(order);
+            emailService.sendAdminNotification(order);
+            shiprocketService.createOrder(order);
+        }
+    }
+
+    private void pushToShiprocketAfterCommit(Order order) {
+        if (org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive()) {
+            org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
+                new org.springframework.transaction.support.TransactionSynchronization() {
+                    @Override
+                    public void afterCommit() {
+                        shiprocketService.createOrder(order);
+                    }
+                }
+            );
+        } else {
+            shiprocketService.createOrder(order);
         }
     }
 
@@ -324,8 +361,15 @@ public class OrderService {
             return variantRepo.findByIdAndProductId(itemReq.getVariantId(), product.getId()).orElse(null);
         }
         if (itemReq.getSize() != null && itemReq.getColorHex() != null) {
+            String lookupSize = itemReq.getSize();
+            if (lookupSize.startsWith("Top: ")) {
+                String[] parts = lookupSize.split("/");
+                if (parts.length > 0) {
+                    lookupSize = parts[0].replace("Top:", "").trim();
+                }
+            }
             return variantRepo
-                    .findByProductIdAndSizeAndColorHex(product.getId(), itemReq.getSize(), itemReq.getColorHex())
+                    .findByProductIdAndSizeAndColorHex(product.getId(), lookupSize, itemReq.getColorHex())
                     .orElse(null);
         }
         return null;

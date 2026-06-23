@@ -81,7 +81,10 @@ public class ProductRequest {
     @JsonAlias("catId")
     private Long categoryId;
 
+    @JsonAlias("subCategoryId")
     private Long subcategoryId;
+
+    @JsonAlias("childCategoryId")
     private Long childCategoryId;
 
     @NotEmpty

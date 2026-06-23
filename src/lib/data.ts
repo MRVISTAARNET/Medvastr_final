@@ -56,6 +56,7 @@ export interface Product {
   childCategoryId?: number;
   sku?: string;
   styleId?: string;
+  style?: string;
   brand?: string;
   sizes?: string[];
   barcode?: string;

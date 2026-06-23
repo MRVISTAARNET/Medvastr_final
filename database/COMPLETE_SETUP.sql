@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS products (
 CREATE TABLE IF NOT EXISTS product_variants (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   product_id BIGINT NOT NULL,
-  sku VARCHAR(100),
+  sku VARCHAR(100) UNIQUE,
   size VARCHAR(50),
   color VARCHAR(100),
   stock_quantity INT DEFAULT 0,
@@ -401,6 +401,64 @@ CREATE TABLE IF NOT EXISTS store_settings (
   INDEX idx_key (setting_key)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- 24. ADDRESSES
+CREATE TABLE IF NOT EXISTS addresses (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT NOT NULL,
+  full_name VARCHAR(255),
+  phone VARCHAR(20),
+  address_line1 VARCHAR(255) NOT NULL,
+  address_line2 VARCHAR(255),
+  city VARCHAR(80) NOT NULL,
+  state VARCHAR(80) NOT NULL,
+  pincode VARCHAR(10) NOT NULL,
+  country VARCHAR(100) DEFAULT 'India',
+  type VARCHAR(30) DEFAULT 'HOME',
+  is_default BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_user_address (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 25. CARTS
+CREATE TABLE IF NOT EXISTS carts (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT NOT NULL UNIQUE,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 26. CART ITEMS
+CREATE TABLE IF NOT EXISTS cart_items (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  cart_id BIGINT NOT NULL,
+  product_id BIGINT NOT NULL,
+  variant_id BIGINT,
+  size VARCHAR(50),
+  color_hex VARCHAR(100),
+  color_name VARCHAR(100),
+  quantity INT NOT NULL DEFAULT 1,
+  unit_price DECIMAL(10,2) NOT NULL,
+  added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (cart_id) REFERENCES carts(id) ON DELETE CASCADE,
+  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+  FOREIGN KEY (variant_id) REFERENCES product_variants(id) ON DELETE SET NULL,
+  INDEX idx_cart (cart_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 27. WISHLIST ITEMS
+CREATE TABLE IF NOT EXISTS wishlist_items (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  user_id BIGINT NOT NULL,
+  product_id BIGINT NOT NULL,
+  added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_user_product (user_id, product_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+  INDEX idx_user_wishlist (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- ============================================================
 -- SECTION 2: SEED DATA
 -- ============================================================
@@ -439,92 +497,57 @@ INSERT IGNORE INTO product_sizes (name, size_value, category, display_order, is_
 ('One Size', 'One Size', 'ACCESSORIES', 10, TRUE);
 
 -- Seed categories (with hierarchy)
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav, nav_label) VALUES
-('Men', 'men', 'Men''s medical apparel', 1, TRUE, NULL, TRUE, 'Men'),
-('Women', 'women', 'Women''s medical apparel', 2, TRUE, NULL, TRUE, 'Women'),
-('Surgical Wear', 'surgical-wear', 'Surgical gowns and caps', 3, TRUE, NULL, TRUE, 'Surgical Wear'),
-('Bulk Orders', 'bulk-orders', 'Hospital linen and bulk supplies', 4, TRUE, NULL, TRUE, 'Bulk Orders');
+-- Seed categories (with hierarchy and explicit IDs)
+INSERT IGNORE INTO categories (id, name, slug, description, display_order, active, parent_id, show_in_nav, nav_label) VALUES
+(1, 'Men', 'men', 'Men''s medical apparel', 1, TRUE, NULL, TRUE, 'Men'),
+(2, 'Women', 'women', 'Women''s medical apparel', 2, TRUE, NULL, TRUE, 'Women'),
+(3, 'Surgical Wear', 'surgical-wear', 'Surgical gowns and caps', 3, TRUE, NULL, TRUE, 'Surgical Wear'),
+(4, 'Bulk Orders', 'bulk-orders', 'Hospital linen and bulk supplies', 4, TRUE, NULL, TRUE, 'Bulk Orders');
 
--- Subcategories under Men
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Scrub Suit', 'men-scrub-suit', 'Scrub suits for men', 1, TRUE, c.id, TRUE FROM categories c WHERE c.slug = 'men' LIMIT 1;
+-- Subcategories under Men (ID: 1)
+INSERT IGNORE INTO categories (id, name, slug, description, display_order, active, parent_id, show_in_nav) VALUES
+(10, 'Scrub Suit', 'men-scrub-suit', 'Scrub suits for men', 1, TRUE, 1, TRUE),
+(11, 'Cotton T-Shirt', 'men-cotton-tshirt', 'Cotton t-shirts for men', 2, TRUE, 1, TRUE),
+(12, 'Under Scrub', 'men-underscrub', 'Under scrubs for men', 3, TRUE, 1, TRUE),
+(13, 'Surgeon Gown', 'men-surgeon-gown', 'Surgeon gowns for men', 4, TRUE, 1, TRUE),
+(14, 'Surgeon Cap', 'men-surgeon-cap', 'Surgeon caps for men', 5, TRUE, 1, TRUE);
 
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Cotton Crew T-Shirt', 'men-cotton-crew-tshirt', 'Cotton crew neck t-shirts', 2, TRUE, c.id, TRUE FROM categories c WHERE c.slug = 'men' LIMIT 1;
+-- Level 3 under Men > Scrub Suit (ID: 10)
+INSERT IGNORE INTO categories (id, name, slug, description, display_order, active, parent_id, show_in_nav) VALUES
+(101, 'Flexi Fit V Scrub', 'men-flexi-fit-v-scrub', 'Flexi Fit V Scrub for men', 1, TRUE, 10, TRUE);
 
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Full Wear', 'men-full-wear', 'Full wear for men', 3, TRUE, c.id, TRUE FROM categories c WHERE c.slug = 'men' LIMIT 1;
+-- Level 3 under Men > Under Scrub (ID: 12)
+INSERT IGNORE INTO categories (id, name, slug, description, display_order, active, parent_id, show_in_nav) VALUES
+(121, 'Full Sleeve Compression Underscrub', 'men-full-sleeve-compression-underscrub', 'Full sleeve compression underscrub for men', 1, TRUE, 12, TRUE);
 
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Surgical Gown', 'men-surgical-gown', 'Surgical gowns for men', 4, TRUE, c.id, TRUE FROM categories c WHERE c.slug = 'men' LIMIT 1;
+-- Subcategories under Women (ID: 2)
+INSERT IGNORE INTO categories (id, name, slug, description, display_order, active, parent_id, show_in_nav) VALUES
+(20, 'Scrub Suit', 'women-scrub-suit', 'Scrub suits for women', 1, TRUE, 2, TRUE),
+(21, 'Cotton T-Shirt', 'women-cotton-tshirt', 'Cotton t-shirts for women', 2, TRUE, 2, TRUE),
+(22, 'Under Scrub', 'women-underscrub', 'Under scrubs for women', 3, TRUE, 2, TRUE),
+(23, 'Surgeon Gown', 'women-surgeon-gown', 'Surgeon gowns for women', 4, TRUE, 2, TRUE),
+(24, 'Surgeon Cap', 'women-surgeon-cap', 'Surgeon caps for women', 5, TRUE, 2, TRUE);
 
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Surgical Cap', 'men-surgical-cap', 'Surgical caps for men', 5, TRUE, c.id, TRUE FROM categories c WHERE c.slug = 'men' LIMIT 1;
+-- Level 3 under Women > Scrub Suit (ID: 20)
+INSERT IGNORE INTO categories (id, name, slug, description, display_order, active, parent_id, show_in_nav) VALUES
+(201, 'Flexi Fit V Scrub', 'women-flexi-fit-v-scrub', 'Flexi Fit V Scrub for women', 1, TRUE, 20, TRUE);
 
--- Level 3 under Men > Scrub Suit
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Flexi Fit V Scrub', 'men-scrub-suit-flexi-fit-v-scrub', 'Flexi Fit V Scrub for men', 1, TRUE, c.id, TRUE
-FROM categories c WHERE c.slug = 'men-scrub-suit' LIMIT 1;
+-- Level 3 under Women > Under Scrub (ID: 22)
+INSERT IGNORE INTO categories (id, name, slug, description, display_order, active, parent_id, show_in_nav) VALUES
+(221, 'Full Sleeve Compression Underscrub', 'women-full-sleeve-compression-underscrub', 'Full sleeve compression underscrub for women', 1, TRUE, 22, TRUE);
 
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Classic V Scrub', 'men-scrub-suit-classic-v-scrub', 'Classic V Scrub for men', 2, TRUE, c.id, TRUE
-FROM categories c WHERE c.slug = 'men-scrub-suit' LIMIT 1;
+-- Subcategories under Surgical Wear (ID: 3)
+INSERT IGNORE INTO categories (id, name, slug, description, display_order, active, parent_id, show_in_nav) VALUES
+(30, 'Surgeon Gown', 'surgical-surgeon-gown', 'Surgical surgeon gowns', 1, TRUE, 3, TRUE),
+(31, 'Surgeon Cap', 'surgical-surgeon-cap', 'Surgical surgeon caps', 2, TRUE, 3, TRUE);
 
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Premium Scrub', 'men-scrub-suit-premium-scrub', 'Premium Scrub for men', 3, TRUE, c.id, TRUE
-FROM categories c WHERE c.slug = 'men-scrub-suit' LIMIT 1;
-
--- Subcategories under Women (mirror Men)
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Scrub Suit', 'women-scrub-suit', 'Scrub suits for women', 1, TRUE, c.id, TRUE FROM categories c WHERE c.slug = 'women' LIMIT 1;
-
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Cotton Crew T-Shirt', 'women-cotton-crew-tshirt', 'Cotton crew neck t-shirts', 2, TRUE, c.id, TRUE FROM categories c WHERE c.slug = 'women' LIMIT 1;
-
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Full Wear', 'women-full-wear', 'Full wear for women', 3, TRUE, c.id, TRUE FROM categories c WHERE c.slug = 'women' LIMIT 1;
-
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Surgical Gown', 'women-surgical-gown', 'Surgical gowns for women', 4, TRUE, c.id, TRUE FROM categories c WHERE c.slug = 'women' LIMIT 1;
-
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Surgical Cap', 'women-surgical-cap', 'Surgical caps for women', 5, TRUE, c.id, TRUE FROM categories c WHERE c.slug = 'women' LIMIT 1;
-
--- Level 3 under Women > Scrub Suit
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Flexi Fit V Scrub', 'women-scrub-suit-flexi-fit-v-scrub', 'Flexi Fit V Scrub for women', 1, TRUE, c.id, TRUE
-FROM categories c WHERE c.slug = 'women-scrub-suit' LIMIT 1;
-
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Classic V Scrub', 'women-scrub-suit-classic-v-scrub', 'Classic V Scrub for women', 2, TRUE, c.id, TRUE
-FROM categories c WHERE c.slug = 'women-scrub-suit' LIMIT 1;
-
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Premium Scrub', 'women-scrub-suit-premium-scrub', 'Premium Scrub for women', 3, TRUE, c.id, TRUE
-FROM categories c WHERE c.slug = 'women-scrub-suit' LIMIT 1;
-
--- Subcategories under Surgical Wear
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Surgical Cap', 'surgical-surgical-cap', 'Surgical caps', 1, TRUE, c.id, TRUE FROM categories c WHERE c.slug = 'surgical-wear' LIMIT 1;
-
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Surgical Gown', 'surgical-surgical-gown', 'Surgical gowns', 2, TRUE, c.id, TRUE FROM categories c WHERE c.slug = 'surgical-wear' LIMIT 1;
-
--- Subcategories under Bulk Orders
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Linen & Bedding', 'bulk-linen-bedding', 'Hospital linen and bedding', 1, TRUE, c.id, TRUE FROM categories c WHERE c.slug = 'bulk-orders' LIMIT 1;
-
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Brown Blanket', 'bulk-brown-blanket', 'Brown blankets', 2, TRUE, c.id, TRUE FROM categories c WHERE c.slug = 'bulk-orders' LIMIT 1;
-
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Maternity Gown', 'bulk-maternity-gown', 'Maternity gowns', 3, TRUE, c.id, TRUE FROM categories c WHERE c.slug = 'bulk-orders' LIMIT 1;
-
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Patient Dress', 'bulk-patient-dress', 'Patient dresses', 4, TRUE, c.id, TRUE FROM categories c WHERE c.slug = 'bulk-orders' LIMIT 1;
-
-INSERT IGNORE INTO categories (name, slug, description, display_order, active, parent_id, show_in_nav)
-SELECT 'Scrub Suit', 'bulk-scrub-suit', 'Bulk scrub suits', 5, TRUE, c.id, TRUE FROM categories c WHERE c.slug = 'bulk-orders' LIMIT 1;
+-- Subcategories under Bulk Orders (ID: 4)
+INSERT IGNORE INTO categories (id, name, slug, description, display_order, active, parent_id, show_in_nav) VALUES
+(40, 'Linen & Bedding', 'linen-and-bedding', 'Hospital linen and bedding', 1, TRUE, 4, TRUE),
+(41, 'Brown Blanket', 'brown-blankets', 'Brown blankets', 2, TRUE, 4, TRUE),
+(42, 'Scrub Suit', 'scrub-suit', 'Bulk scrub suits', 3, TRUE, 4, TRUE),
+(43, 'Patient Dress', 'patient-dress', 'Patient dresses', 4, TRUE, 4, TRUE),
+(44, 'Maternity Gown', 'maternity-gown', 'Maternity gowns', 5, TRUE, 4, TRUE);
 
 -- Seed attributes
 INSERT IGNORE INTO product_attributes (name, slug, attribute_type, display_order, is_filterable) VALUES

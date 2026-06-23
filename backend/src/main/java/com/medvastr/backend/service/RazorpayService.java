@@ -32,7 +32,7 @@ public class RazorpayService {
         this.storeSettingRepo = storeSettingRepo;
     }
 
-    private String getDbKeyId() {
+    public String getKeyId() {
         return storeSettingRepo.findById("razorpay_key").map(StoreSetting::getSettingValue).orElse(keyId);
     }
 
@@ -41,7 +41,7 @@ public class RazorpayService {
     }
 
     public RazorpayClient getClient() throws RazorpayException {
-        return new RazorpayClient(getDbKeyId(), getDbKeySecret());
+        return new RazorpayClient(getKeyId(), getDbKeySecret());
     }
 
     public String createOrder(BigDecimal amount, String receipt) throws RazorpayException {

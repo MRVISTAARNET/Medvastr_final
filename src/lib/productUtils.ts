@@ -107,7 +107,8 @@ export function mapApiProduct(p: any): Product {
     subcategoryId: p.subcategoryId,
     childCategoryId: p.childCategoryId,
     sku: p.sku || `MV-${p.id}`,
-    styleId: p.styleId || "",
+    style: p.styleId || p.style || "Standard",
+    styleId: p.styleId || p.style || "Standard",
     brand: p.brand || "Medvastr",
     sizes:
       (p.sizes?.length ? p.sizes : variantSizes.length ? sortSizes(variantSizes) : undefined) ||
@@ -128,8 +129,15 @@ export function mapApiProduct(p: any): Product {
 /** Resolve variant ID from product variants by size + color hex */
 export function resolveVariantId(product: Product, size: string, colorHex: string): number | undefined {
   const variants = product.variants || [];
+  let lookupSize = size;
+  if (size && size.startsWith("Top: ")) {
+    const parts = size.split("/");
+    if (parts.length > 0) {
+      lookupSize = parts[0].replace("Top:", "").trim();
+    }
+  }
   const match = variants.find(
-    (v: any) => v.size === size && (v.colorHex === colorHex || !v.colorHex)
+    (v: any) => v.size === lookupSize && (v.colorHex === colorHex || !v.colorHex)
   );
   return match?.id;
 }

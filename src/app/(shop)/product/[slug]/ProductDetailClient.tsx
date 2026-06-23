@@ -76,7 +76,9 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
   useEffect(() => {
     if (productSizes.length > 0) {
-      setSz((prev) => (productSizes.includes(prev) ? prev : productSizes[0]));
+      const defaultSize = productSizes.includes(sz) ? sz : productSizes[0];
+      setSz(defaultSize);
+      setBtmSz((prev) => (productSizes.includes(prev) ? prev : defaultSize));
     }
   }, [p?.id, ci, productSizes]);
 

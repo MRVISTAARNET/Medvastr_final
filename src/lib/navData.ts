@@ -18,38 +18,60 @@ export interface CategoryNode {
 
 export const HARDCODED_CATEGORIES: CategoryNode[] = [
     {
-        id: 1, name: "Scrub Suit", slug: "scrubs",
+        id: 1, name: "Men", slug: "men",
         children: [
-            { id: 101, name: "Flexi Fit V Scrub", slug: "flexi-fit-v-scrub" },
-            { id: 102, name: "Classic Scrub", slug: "classic-scrub" }
+            {
+                id: 10, name: "Scrub Suit", slug: "men-scrub-suit",
+                children: [
+                    { id: 101, name: "Flexi Fit V Scrub", slug: "men-flexi-fit-v-scrub" }
+                ]
+            },
+            { id: 11, name: "Cotton T-Shirt", slug: "men-cotton-tshirt" },
+            {
+                id: 12, name: "Under Scrub", slug: "men-underscrub",
+                children: [
+                    { id: 121, name: "Full Sleeve Compression Underscrub", slug: "men-full-sleeve-compression-underscrub" }
+                ]
+            },
+            { id: 13, name: "Surgeon Gown", slug: "men-surgeon-gown" },
+            { id: 14, name: "Surgeon Cap", slug: "men-surgeon-cap" }
         ]
     },
     {
-        id: 2, name: "Cotton Crew T-Shirt", slug: "tshirts",
+        id: 2, name: "Women", slug: "women",
         children: [
-            { id: 201, name: "Men's Cotton Tee", slug: "men-tshirt" },
-            { id: 202, name: "Women's Cotton Tee", slug: "women-tshirt" }
+            {
+                id: 20, name: "Scrub Suit", slug: "women-scrub-suit",
+                children: [
+                    { id: 201, name: "Flexi Fit V Scrub", slug: "women-flexi-fit-v-scrub" }
+                ]
+            },
+            { id: 21, name: "Cotton T-Shirt", slug: "women-cotton-tshirt" },
+            {
+                id: 22, name: "Under Scrub", slug: "women-underscrub",
+                children: [
+                    { id: 221, name: "Full Sleeve Compression Underscrub", slug: "women-full-sleeve-compression-underscrub" }
+                ]
+            },
+            { id: 23, name: "Surgeon Gown", slug: "women-surgeon-gown" },
+            { id: 24, name: "Surgeon Cap", slug: "women-surgeon-cap" }
         ]
     },
     {
-        id: 3, name: "Full Sleeve Under Scrub", slug: "underscrubs",
+        id: 3, name: "Surgical Wear", slug: "surgical-wear",
         children: [
-            { id: 301, name: "Compression Under Scrub", slug: "compression-underscrub" }
+            { id: 30, name: "Surgeon Gown", slug: "surgical-surgeon-gown" },
+            { id: 31, name: "Surgeon Cap", slug: "surgical-surgeon-cap" }
         ]
     },
     {
-        id: 4, name: "Surgical Wear", slug: "surgical-wear",
+        id: 4, name: "Bulk Orders", slug: "bulk-orders",
         children: [
-            { id: 401, name: "Surgical Gown", slug: "surgical-gown" },
-            { id: 402, name: "Surgical Cap", slug: "surgical-cap" }
-        ]
-    },
-    {
-        id: 5, name: "Linen & Bedding", slug: "linen-and-bedding",
-        children: [
-            { id: 501, name: "Brown Blanket", slug: "brown-blankets" },
-            { id: 502, name: "Patient Dress", slug: "patient-dress" },
-            { id: 503, name: "Maternity Gown", slug: "maternity-gown" }
+            { id: 40, name: "Linen & Bedding", slug: "linen-and-bedding" },
+            { id: 41, name: "Brown Blanket", slug: "brown-blankets" },
+            { id: 42, name: "Scrub Suit", slug: "scrub-suit" },
+            { id: 43, name: "Patient Dress", slug: "patient-dress" },
+            { id: 44, name: "Maternity Gown", slug: "maternity-gown" }
         ]
     }
 ];
@@ -63,23 +85,23 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'SCRUB SUITS',
                 items: [
-                    { label: 'All Scrub Suits', href: '/products?cat=scrubs&gender=men' },
-                    { label: 'Flexi Fit V Scrub', href: '/products?cat=flexi-fit-v-scrub&gender=men' },
+                    { label: 'All Scrub Suits', href: '/products?cat=men-scrub-suit&gender=men' },
+                    { label: 'Flexi Fit V Scrub', href: '/products?cat=men-flexi-fit-v-scrub&gender=men' },
                 ]
             },
             {
                 title: 'UNDER SCRUBS & TOPS',
                 items: [
-                    { label: 'All Under Scrubs', href: '/products?cat=underscrubs&gender=men' },
-                    { label: 'Full Sleeve Compression', href: '/products?cat=underscrubs&gender=men' },
-                    { label: 'Cotton Crew T-Shirt', href: '/products?cat=tshirts&gender=men' },
+                    { label: 'All Under Scrubs', href: '/products?cat=men-underscrub&gender=men' },
+                    { label: 'Full Sleeve Compression', href: '/products?cat=men-full-sleeve-compression-underscrub&gender=men' },
+                    { label: 'Cotton T-Shirt', href: '/products?cat=men-cotton-tshirt&gender=men' },
                 ]
             },
             {
                 title: 'SURGICAL & LAB',
                 items: [
-                    { label: 'Surgical Gown', href: '/products?cat=surgical-gown&gender=men' },
-                    { label: 'Surgical Cap', href: '/products?cat=surgical-cap&gender=men' },
+                    { label: 'Surgeon Gown', href: '/products?cat=men-surgeon-gown&gender=men' },
+                    { label: 'Surgeon Cap', href: '/products?cat=men-surgeon-cap&gender=men' },
                 ]
             }
         ]
@@ -92,23 +114,23 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'SCRUB SUITS',
                 items: [
-                    { label: 'All Scrub Suits', href: '/products?cat=scrubs&gender=women' },
-                    { label: 'Flexi fit V-Neck', href: '/products?cat=scrubs&gender=women' },
+                    { label: 'All Scrub Suits', href: '/products?cat=women-scrub-suit&gender=women' },
+                    { label: 'Flexi Fit V Scrub', href: '/products?cat=women-flexi-fit-v-scrub&gender=women' },
                 ]
             },
             {
                 title: 'UNDER SCRUBS & TOPS',
                 items: [
-                    { label: 'All Under Scrubs', href: '/products?cat=underscrubs&gender=women' },
-                    { label: 'Full Sleeve Compression', href: '/products?cat=underscrubs&gender=women' },
-                    { label: 'Cotton Crew T-Shirt', href: '/products?cat=tshirts&gender=women' },
+                    { label: 'All Under Scrubs', href: '/products?cat=women-underscrub&gender=women' },
+                    { label: 'Full Sleeve Compression', href: '/products?cat=women-full-sleeve-compression-underscrub&gender=women' },
+                    { label: 'Cotton T-Shirt', href: '/products?cat=women-cotton-tshirt&gender=women' },
                 ]
             },
             {
                 title: 'SURGICAL & LAB',
                 items: [
-                    { label: 'Surgical Gown', href: '/products?cat=surgical-gown&gender=women' },
-                    { label: 'Surgical Cap', href: '/products?cat=surgical-cap&gender=women' },
+                    { label: 'Surgeon Gown', href: '/products?cat=women-surgeon-gown&gender=women' },
+                    { label: 'Surgeon Cap', href: '/products?cat=women-surgeon-cap&gender=women' },
                 ]
             }
         ]
@@ -121,8 +143,8 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'OPERATING ROOM',
                 items: [
-                    { label: 'Surgical Gown', href: '/products?cat=surgical-gown' },
-                    { label: 'Surgical Cap', href: '/products?cat=surgical-cap' },
+                    { label: 'Surgeon Gown', href: '/products?cat=surgical-surgeon-gown' },
+                    { label: 'Surgeon Cap', href: '/products?cat=surgical-surgeon-cap' },
                 ]
             }
         ]
@@ -135,7 +157,7 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'INSTITUTIONAL SERVICES',
                 items: [
-                    { label: 'Scrub Suits', href: '/bulk-orders/scrubs' },
+                    { label: 'Scrub Suits', href: '/bulk-orders/scrub-suit' },
                     { label: 'Linen & Bedding', href: '/bulk-orders/linen-and-bedding' },
                     { label: 'Maternity Gown', href: '/bulk-orders/maternity-gown' },
                     { label: 'Patient Dress', href: '/bulk-orders/patient-dress' },
