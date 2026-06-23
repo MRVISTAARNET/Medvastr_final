@@ -182,7 +182,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const discount = p.origPrice ? Math.round(((p.origPrice - p.price) / p.origPrice) * 100) : 0;
 
   return (
-    <div className="pdp-container page">
+    <div className="pdp-container">
       {/* PRO LIGHTBOX MODAL */}
       {zoom && mounted && typeof document !== "undefined" && createPortal(
         <div className="zoom-modal" onClick={() => setZoom(false)}>
