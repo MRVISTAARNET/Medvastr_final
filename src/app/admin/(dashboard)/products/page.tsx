@@ -170,7 +170,7 @@ export default function AdminProducts() {
     if (!form.sku?.trim()) return alert("Parent SKU is required");
     if (form.stock === undefined || form.stock < 0) return alert("Stock quantity is required and cannot be negative");
     if (!form.imgs || form.imgs.length === 0) return alert("At least one product image is required");
-    if (form.imgs.length > 10) return alert("Maximum 10 images allowed");
+    if (form.imgs.length > 30) return alert("Maximum 30 images allowed");
 
     const token = getToken();
     const slug = form.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -430,14 +430,14 @@ export default function AdminProducts() {
                 <div style={{ display: 'grid', gap: '20px' }}>
                   {/* General Images list */}
                   <div className="fg">
-                    <label>Product Gallery Images (Upload up to 10 photos total) <span style={{ color: 'red' }}>*</span></label>
+                    <label>Product Gallery Images (Upload up to 30 photos total) <span style={{ color: 'red' }}>*</span></label>
                     <p style={{ fontSize: '11px', color: '#64748b', marginBottom: '10px' }}>Drag or sort images. The first image will be set as primary.</p>
                     
-                    <input type="file" multiple disabled={form.imgs.length >= 10 || uploadingState.active} onChange={async (e) => {
+                    <input type="file" multiple disabled={form.imgs.length >= 30 || uploadingState.active} onChange={async (e) => {
                       const files = e.target.files;
                       if (!files) return;
                       const token = getToken() || "";
-                      const allowedCount = Math.max(0, 10 - form.imgs.length);
+                      const allowedCount = Math.max(0, 30 - form.imgs.length);
                       const filesToUpload = Math.min(files.length, allowedCount);
                       if (filesToUpload === 0) return;
 
@@ -455,7 +455,7 @@ export default function AdminProducts() {
                           const d = await res.json(); 
                           if (d.success && d.data) {
                             setForm((prev: any) => {
-                              if (prev.imgs.includes(d.data) || prev.imgs.length >= 10) return prev;
+                              if (prev.imgs.includes(d.data) || prev.imgs.length >= 30) return prev;
                               return { ...prev, imgs: [...prev.imgs, d.data] };
                             });
                           } else {
