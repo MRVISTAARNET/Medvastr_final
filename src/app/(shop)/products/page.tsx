@@ -155,11 +155,10 @@ function ProductsContent() {
   };
   const catKey = cat.toLowerCase();
   const genKey = gen.toLowerCase();
-  // isSurgical: matches both old slugs AND actual DB slugs
+  // isSurgical = only when browsing Surgical Wear parent tree
+  // men-surgeon-gown / women-surgeon-cap belong to Men/Women trees, NOT Surgical Wear
   const isSurgical = catKey === "surgical-wear" ||
-    catKey === "surgical-gown" || catKey === "surgical-cap" ||
-    catKey === "surgical-surgeon-gown" || catKey === "surgical-surgeon-cap" ||
-    catKey.startsWith("surgical-");
+    catKey === "surgical-surgeon-gown" || catKey === "surgical-surgeon-cap";
 
   let activeRootSlugs = ["men", "women", "surgical-wear", "bulk-orders"];
   if (isSurgical) activeRootSlugs = ["surgical-wear"];
@@ -217,26 +216,24 @@ function ProductsContent() {
   // Prevent double naming (e.g. "Men's Scrub Suit Men")
   const safeTitle = (activeCatLabel.includes(genName) && genName !== "") ? activeCatLabel : `${titlePrefix}${activeCatLabel}`;
 
-  let staticBannerBase: string | null = null;
-  let staticBannerTitle = "";
+  // Exact S3 filenames lookup for surgical gown/cap — matches what was uploaded
+  // men-surgical-gown-banner.jpg, men-surgical-cap-banner.jpg (men uses "surgical")
+  // women-surgeon-gown-banner.jpg, women-surgeon-cap-banner.jpg (women uses "surgeon")
+  // surgeon-gown-banner.jpg, surgeon-cap-banner.jpg (no gender)
+  const surgicalBannerMap: Record<string, string> = {
+    "men-gown":   `${S3}/men-surgical-gown-banner`,
+    "men-cap":    `${S3}/men-surgical-cap-banner`,
+    "women-gown": `${S3}/women-surgeon-gown-banner`,
+    "women-cap":  `${S3}/women-surgeon-cap-banner`,
+    "all-gown":   `${S3}/surgeon-gown-banner`,
+    "all-cap":    `${S3}/surgeon-cap-banner`,
+  };
+  const isGownCat = bannerCat === "surgeon-gown";
+  const isCapCat  = bannerCat === "surgeon-cap";
 
   if (isSurgical) {
-    // Exact filename lookup — matches what was uploaded to S3
-    // men-surgical-gown-banner.jpg, men-surgical-cap-banner.jpg
-    // women-surgeon-gown-banner.jpg, women-surgeon-cap-banner.jpg
-    // surgeon-gown-banner.jpg, surgeon-cap-banner.jpg
-    const surgicalBannerMap: Record<string, string> = {
-      "men-gown":   `${S3}/men-surgical-gown-banner`,
-      "men-cap":    `${S3}/men-surgical-cap-banner`,
-      "women-gown": `${S3}/women-surgeon-gown-banner`,
-      "women-cap":  `${S3}/women-surgeon-cap-banner`,
-      "all-gown":   `${S3}/surgeon-gown-banner`,
-      "all-cap":    `${S3}/surgeon-cap-banner`,
-    };
-    const isGown = bannerCat === "surgeon-gown";
-    const isCap  = bannerCat === "surgeon-cap";
-    if (isGown || isCap) {
-      const lookupKey = `${genKey !== "all" ? genKey : "all"}-${isGown ? "gown" : "cap"}`;
+    if (isGownCat || isCapCat) {
+      const lookupKey = `${genKey !== "all" ? genKey : "all"}-${isGownCat ? "gown" : "cap"}`;
       staticBannerBase = surgicalBannerMap[lookupKey] ?? `${S3}/surgical-wear-banner`;
     } else if (genKey === "women") {
       staticBannerBase = `${S3}/women-surgical-wear-banner`;
@@ -245,19 +242,27 @@ function ProductsContent() {
     }
     staticBannerTitle = safeTitle;
   } else if (catKey !== "all" && genKey !== "all") {
-    // Try Gender-Specific Category Banners
-    staticBannerBase = `${S3}/${genKey}-${bannerCat}-banner`;
+    // Gender + Category: check if it's a gown/cap category and use exact map
+    if (isGownCat || isCapCat) {
+      const lookupKey = `${genKey}-${isGownCat ? "gown" : "cap"}`;
+      staticBannerBase = surgicalBannerMap[lookupKey] ?? `${S3}/${genKey}-${bannerCat}-banner`;
+    } else {
+      staticBannerBase = `${S3}/${genKey}-${bannerCat}-banner`;
+    }
     staticBannerTitle = safeTitle;
   } else if (catKey !== "all") {
-    // General Category
-    staticBannerBase = `${S3}/${bannerCat}-banner`;
+    // General Category: check gown/cap map
+    if (isGownCat || isCapCat) {
+      const lookupKey = `all-${isGownCat ? "gown" : "cap"}`;
+      staticBannerBase = surgicalBannerMap[lookupKey] ?? `${S3}/${bannerCat}-banner`;
+    } else {
+      staticBannerBase = `${S3}/${bannerCat}-banner`;
+    }
     staticBannerTitle = activeCatLabel;
   } else if (genKey !== "all") {
-    // Gender Landing (Men's Collection)
     staticBannerBase = `${S3}/${genKey}-banner`;
     staticBannerTitle = `${genName}'s Collection`;
   } else {
-    // Main landing
     staticBannerBase = `${S3}/all-products-banner`;
     staticBannerTitle = "The Medvastr Collection";
   }
