@@ -6,9 +6,10 @@ interface ProductImageZoomProps {
     src: string;
     alt?: string;
     className?: string;
+    onError?: () => void;
 }
 
-export default function ProductImageZoom({ src, alt, className }: ProductImageZoomProps) {
+export default function ProductImageZoom({ src, alt, className, onError }: ProductImageZoomProps) {
     const [zoom, setZoom] = useState(false);
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const containerRef = useRef<HTMLDivElement>(null);
@@ -37,6 +38,7 @@ export default function ProductImageZoom({ src, alt, className }: ProductImageZo
                 src={src}
                 alt={alt || "Product Image"}
                 className={`w-full h-full object-cover transition-opacity duration-300 ${zoom ? "opacity-0" : "opacity-100"}`}
+                onError={onError}
             />
 
             {zoom && (

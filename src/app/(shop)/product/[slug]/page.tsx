@@ -15,9 +15,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = product.seoTitle || product.name;
   const description = product.seoDescription || product.description?.slice(0, 160) || "";
   const image = product.imageUrls?.[0];
+
+  const rawKeywords = product.seoKeywords || "";
+  let keywordsList: string[] = [];
+  if (rawKeywords) {
+    keywordsList = rawKeywords.split(",").map((k: string) => k.trim()).filter(Boolean);
+  } else {
+    const tags = Array.isArray(product.tags) ? product.tags : (product.tags ? String(product.tags).split(",") : []);
+    const category = product.categoryName || product.category?.name || "";
+    const subcategory = product.subcategoryName || product.subcategory?.name || "";
+    const brand = product.brand || "Medvastr";
+    const nameWords = product.name?.split(" ") || [];
+    const derived = [brand, category, subcategory, ...tags, ...nameWords]
+      .map((s: string) => s?.trim())
+      .filter((s: string) => s && s.length > 2);
+    keywordsList = Array.from(new Set(derived));
+  }
+
   return {
     title,
     description,
+    keywords: keywordsList,
     alternates: { canonical: `${SITE_URL}/product/${slug}` },
     openGraph: {
       title,

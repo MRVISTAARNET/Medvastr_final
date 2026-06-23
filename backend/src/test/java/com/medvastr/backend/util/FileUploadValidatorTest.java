@@ -24,7 +24,7 @@ class FileUploadValidatorTest {
 
     @Test
     void rejectsOversizedFile() {
-        byte[] large = new byte[6 * 1024 * 1024];
+        byte[] large = new byte[11 * 1024 * 1024];
         MockMultipartFile file = new MockMultipartFile(
                 "file", "big.jpg", "image/jpeg", large);
         assertThrows(IllegalArgumentException.class, () -> FileUploadValidator.validate(file));

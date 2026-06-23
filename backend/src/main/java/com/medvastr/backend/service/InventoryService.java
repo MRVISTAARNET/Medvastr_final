@@ -3,8 +3,11 @@ package com.medvastr.backend.service;
 import com.medvastr.backend.dto.BulkVariantStockRequest;
 import com.medvastr.backend.dto.VariantDTO;
 import com.medvastr.backend.dto.VariantStockRequest;
+import com.medvastr.backend.dto.InventoryLogDTO;
 import com.medvastr.backend.model.ProductVariant;
+import com.medvastr.backend.model.InventoryLog;
 import com.medvastr.backend.repository.ProductVariantRepository;
+import com.medvastr.backend.repository.InventoryLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +21,7 @@ import java.util.List;
 public class InventoryService {
 
     private final ProductVariantRepository variantRepo;
+    private final InventoryLogRepository inventoryLogRepo;
 
     public List<VariantDTO> getProductVariants(Long productId) {
         return variantRepo.findByProductIdOrderBySizeAsc(productId).stream()
@@ -32,8 +36,22 @@ public class InventoryService {
         if (stockQuantity < 0) {
             throw new RuntimeException("Stock cannot be negative");
         }
+        
+        int prevStock = variant.getStockQuantity();
         variant.setStockQuantity(stockQuantity);
-        return toDTO(variantRepo.save(variant));
+        ProductVariant saved = variantRepo.save(variant);
+
+        InventoryLog logEntry = InventoryLog.builder()
+                .variant(saved)
+                .changeQuantity(stockQuantity - prevStock)
+                .previousStock(prevStock)
+                .newStock(stockQuantity)
+                .actionType("ADMIN_UPDATE")
+                .notes("Manual stock adjustment by admin")
+                .build();
+        inventoryLogRepo.save(logEntry);
+
+        return toDTO(saved);
     }
 
     @Transactional
@@ -46,6 +64,22 @@ public class InventoryService {
             updated.add(updateStock(item.getVariantId(), item.getStockQuantity()));
         }
         return updated;
+    }
+
+    public List<InventoryLogDTO> getVariantLogs(Long variantId) {
+        return inventoryLogRepo.findByVariantIdOrderByCreatedAtDesc(variantId).stream()
+                .map(l -> InventoryLogDTO.builder()
+                        .id(l.getId())
+                        .variantId(l.getVariant().getId())
+                        .sku(l.getVariant().getSku())
+                        .changeQuantity(l.getChangeQuantity())
+                        .previousStock(l.getPreviousStock())
+                        .newStock(l.getNewStock())
+                        .actionType(l.getActionType())
+                        .notes(l.getNotes())
+                        .createdAt(l.getCreatedAt())
+                        .build())
+                .toList();
     }
 
     private VariantDTO toDTO(ProductVariant v) {

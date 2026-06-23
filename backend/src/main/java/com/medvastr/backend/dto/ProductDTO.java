@@ -23,6 +23,8 @@ public class ProductDTO {
     private String tags;
     private String seoTitle;
     private String seoDescription;
+    private String seoKeywords;
+    private BigDecimal tax;
     private String fabric;
     private String type;
     private String gender;

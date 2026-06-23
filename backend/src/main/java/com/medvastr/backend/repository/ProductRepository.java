@@ -17,6 +17,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         @org.springframework.data.jpa.repository.EntityGraph(attributePaths = { "images" })
         Optional<Product> findBySlugAndActiveTrue(String slug);
 
+        Optional<Product> findBySku(String sku);
+
         List<Product> findByFeaturedTrueAndActiveTrueOrderByRatingDesc();
 
         List<Product> findByBadgeContainingIgnoreCaseAndActiveTrueOrderByReviewCountDesc(String badge);
@@ -45,8 +47,21 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                         @Param("categoryIds") List<Long> categoryIds,
                         Pageable p);
 
-        @Query("SELECT p FROM Product p WHERE p.active=true AND (LOWER(p.name) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(p.description) LIKE LOWER(CONCAT('%',:q,'%')))")
+        @Query("SELECT DISTINCT p FROM Product p " +
+                        "LEFT JOIN p.variants v " +
+                        "LEFT JOIN p.category c " +
+                        "LEFT JOIN p.subcategory sc " +
+                        "WHERE p.active=true AND (" +
+                        "LOWER(p.name) LIKE LOWER(CONCAT('%',:q,'%')) " +
+                        "OR LOWER(p.description) LIKE LOWER(CONCAT('%',:q,'%')) " +
+                        "OR LOWER(p.sku) LIKE LOWER(CONCAT('%',:q,'%')) " +
+                        "OR LOWER(v.sku) LIKE LOWER(CONCAT('%',:q,'%')) " +
+                        "OR LOWER(v.colorName) LIKE LOWER(CONCAT('%',:q,'%')) " +
+                        "OR LOWER(c.name) LIKE LOWER(CONCAT('%',:q,'%')) " +
+                        "OR LOWER(sc.name) LIKE LOWER(CONCAT('%',:q,'%'))" +
+                        ")")
         Page<Product> search(@Param("q") String q, Pageable p);
+
 
         @Query("SELECT p.name FROM Product p WHERE p.active=true AND LOWER(p.name) LIKE LOWER(CONCAT('%',:q,'%'))")
         List<String> suggestNames(@Param("q") String q, Pageable p);

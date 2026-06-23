@@ -4,6 +4,7 @@ import com.medvastr.backend.dto.ApiResponse;
 import com.medvastr.backend.dto.BulkVariantStockRequest;
 import com.medvastr.backend.dto.VariantDTO;
 import com.medvastr.backend.dto.VariantStockRequest;
+import com.medvastr.backend.dto.InventoryLogDTO;
 import com.medvastr.backend.service.InventoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,5 +40,10 @@ public class AdminInventoryController {
     public ResponseEntity<ApiResponse<List<VariantDTO>>> bulkUpdate(
             @Valid @RequestBody BulkVariantStockRequest request) {
         return ResponseEntity.ok(ApiResponse.ok("Stock updated", inventoryService.bulkUpdateStock(request)));
+    }
+
+    @GetMapping("/variants/{variantId}/logs")
+    public ResponseEntity<ApiResponse<List<InventoryLogDTO>>> getLogs(@PathVariable Long variantId) {
+        return ResponseEntity.ok(ApiResponse.ok("Logs", inventoryService.getVariantLogs(variantId)));
     }
 }

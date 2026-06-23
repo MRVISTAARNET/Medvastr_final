@@ -18,6 +18,8 @@ import com.medvastr.backend.repository.OrderRepository;
 import com.medvastr.backend.repository.ProductRepository;
 import com.medvastr.backend.repository.ProductVariantRepository;
 import com.medvastr.backend.repository.UserRepository;
+import com.medvastr.backend.model.InventoryLog;
+import com.medvastr.backend.repository.InventoryLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -52,6 +54,7 @@ public class OrderService {
     private final RazorpayService razorpayService;
     private final EmailService emailService;
     private final ShiprocketService shiprocketService;
+    private final InventoryLogRepository inventoryLogRepo;
 
     private User me() {
         return userRepo.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow();
@@ -213,8 +216,13 @@ public class OrderService {
         if (o.getStatus() == Order.OrderStatus.DELIVERED) {
             throw new RuntimeException("Cannot cancel delivered order");
         }
+        if (o.getStatus() == Order.OrderStatus.CANCELLED) {
+            return toDTO(o);
+        }
         o.setStatus(Order.OrderStatus.CANCELLED);
-        return toDTO(orderRepo.save(o));
+        Order saved = orderRepo.save(o);
+        restoreStock(saved);
+        return toDTO(saved);
     }
 
     public Page<OrderDTO> getAll(String status, Pageable p) {
@@ -382,8 +390,48 @@ public class OrderService {
             if (item.getVariant() != null) {
                 ProductVariant v = variantRepo.findById(item.getVariant().getId()).orElse(null);
                 if (v != null) {
-                    v.setStockQuantity(Math.max(0, v.getStockQuantity() - item.getQuantity()));
+                    int prevStock = v.getStockQuantity();
+                    int qty = item.getQuantity();
+                    int newStock = Math.max(0, prevStock - qty);
+                    v.setStockQuantity(newStock);
                     variantRepo.save(v);
+
+                    InventoryLog logEntry = InventoryLog.builder()
+                            .variant(v)
+                            .changeQuantity(-qty)
+                            .previousStock(prevStock)
+                            .newStock(newStock)
+                            .actionType("PURCHASE")
+                            .notes("Stock deducted for purchase order: " + order.getOrderNumber())
+                            .build();
+                    inventoryLogRepo.save(logEntry);
+                }
+            }
+        }
+    }
+
+    private void restoreStock(Order order) {
+        if (order.getItems() == null)
+            return;
+        for (OrderItem item : order.getItems()) {
+            if (item.getVariant() != null) {
+                ProductVariant v = variantRepo.findById(item.getVariant().getId()).orElse(null);
+                if (v != null) {
+                    int prevStock = v.getStockQuantity();
+                    int qty = item.getQuantity();
+                    int newStock = prevStock + qty;
+                    v.setStockQuantity(newStock);
+                    variantRepo.save(v);
+
+                    InventoryLog logEntry = InventoryLog.builder()
+                            .variant(v)
+                            .changeQuantity(qty)
+                            .previousStock(prevStock)
+                            .newStock(newStock)
+                            .actionType("ORDER_CANCELLED")
+                            .notes("Stock restored on order cancellation: " + order.getOrderNumber())
+                            .build();
+                    inventoryLogRepo.save(logEntry);
                 }
             }
         }

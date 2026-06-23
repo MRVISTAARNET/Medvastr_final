@@ -120,6 +120,8 @@ export function mapApiProduct(p: any): Product {
     createdAt: p.createdAt || undefined,
     seoTitle: p.seoTitle,
     seoDescription: p.seoDescription,
+    seoKeywords: p.seoKeywords,
+    tax: p.tax ? Number(p.tax) : undefined,
     shortDescription: p.shortDescription,
     material: p.material,
     tags: p.tags,
@@ -203,5 +205,7 @@ export function toApiProductRequest(p: any) {
     tags: p.tags,
     seoTitle: p.seoTitle,
     seoDescription: p.seoDescription,
+    seoKeywords: p.seoKeywords,
+    tax: p.tax ? Number(p.tax) : undefined,
   };
 }

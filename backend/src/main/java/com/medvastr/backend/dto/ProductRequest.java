@@ -44,6 +44,8 @@ public class ProductRequest {
     private String tags;
     private String seoTitle;
     private String seoDescription;
+    private String seoKeywords;
+    private BigDecimal tax;
 
     @JsonAlias("fab")
     private String fabric;

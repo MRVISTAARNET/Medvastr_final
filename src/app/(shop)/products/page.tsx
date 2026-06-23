@@ -15,6 +15,8 @@ function ProductsContent() {
   const initColor = searchParams.get("color") || "";
   const initGen = searchParams.get("gender")?.toLowerCase() || "all";
   const initSize = searchParams.get("size") || "";
+  const initFabric = searchParams.get("fabric") || "";
+  const initFit = searchParams.get("fit") || "";
   const { products, banners, categoryTree, colors, sizes } = useApp();
 
   const [cat, setCat] = useState(initCat);
@@ -24,20 +26,39 @@ function ProductsContent() {
   const [maxP, setMaxP] = useState(searchParams.get("maxP") || "");
   const [colorFilter, setColorFilter] = useState(initColor);
   const [sizeFilter, setSizeFilter] = useState(initSize);
+  const [fabricFilter, setFabricFilter] = useState(initFabric);
+  const [fitFilter, setFitFilter] = useState(initFit);
   const [pg, setPg] = useState(1);
   const [mobF, setMobF] = useState(false);
 
   const router = useRouter();
 
+  // Extract unique fabrics and fits respecting gender boundaries
+  const genderFilteredProducts = products.filter(p => {
+    const pGens = (p.gen || "men").toLowerCase().split(',').map((s: string) => s.trim());
+    if (gen !== "all" && !pGens.includes(gen.toLowerCase())) return false;
+    return true;
+  });
+
+  const fabrics = Array.from(new Set(
+    genderFilteredProducts.map(p => p.fab).filter((f): f is string => !!f)
+  )).sort();
+
+  const fits = Array.from(new Set(
+    genderFilteredProducts.map(p => p.fit).filter(Boolean)
+  )).sort();
+
   useEffect(() => {
     setCat(initCat);
     setColorFilter(initColor);
     setSizeFilter(initSize);
+    setFabricFilter(initFabric);
+    setFitFilter(initFit);
     setGen(initGen);
     setMinP(searchParams.get("minP") || "");
     setMaxP(searchParams.get("maxP") || "");
     setPg(1);
-  }, [initCat, initColor, initSize, initGen, searchParams]);
+  }, [initCat, initColor, initSize, initFabric, initFit, initGen, searchParams]);
 
   const updateURL = (params: Record<string, string | null>) => {
     const newParams = new URLSearchParams(searchParams.toString());
@@ -97,6 +118,12 @@ function ProductsContent() {
       if (!sizeMatch) return false;
     }
 
+    // Fabric Filter
+    if (fabricFilter && p.fab?.toLowerCase() !== fabricFilter.toLowerCase()) return false;
+
+    // Fit Filter
+    if (fitFilter && p.fit?.toLowerCase() !== fitFilter.toLowerCase()) return false;
+
     return true;
   });
 
@@ -116,10 +143,13 @@ function ProductsContent() {
     setMaxP("");
     setColorFilter("");
     setSizeFilter("");
+    setFabricFilter("");
+    setFitFilter("");
     setPg(1);
+    router.push('/products', { scroll: false });
   };
 
-  const hasFilters = cat !== "all" || gen !== "all" || minP || maxP || colorFilter || sizeFilter;
+  const hasFilters = cat !== "all" || gen !== "all" || minP || maxP || colorFilter || sizeFilter || fabricFilter || fitFilter;
 
   const typeConfigs: Record<string, { ico: string; l: string; d: string }> = {
     scrubs: {
@@ -455,6 +485,50 @@ function ProductsContent() {
                 </div>
               </div>
 
+              {/* FABRIC */}
+              {fabrics.length > 0 && (
+                <div className="sb3-section">
+                  <div className="sb3-sec-hd">FABRIC</div>
+                  <div className="sb3-list">
+                    {fabrics.map((f: string) => (
+                      <div
+                        key={f}
+                        className={`sb3-item${fabricFilter.toLowerCase() === f.toLowerCase() ? " active" : ""}`}
+                        onClick={() => {
+                          updateURL({ fabric: fabricFilter.toLowerCase() === f.toLowerCase() ? "" : f, pg: "1" });
+                          if (mobF) setMobF(false);
+                        }}
+                      >
+                        <div className="sb3-check-box" />
+                        <span className="sb3-label">{f}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* FIT */}
+              {fits.length > 0 && (
+                <div className="sb3-section">
+                  <div className="sb3-sec-hd">FIT</div>
+                  <div className="sb3-list">
+                    {fits.map((f: string) => (
+                      <div
+                        key={f}
+                        className={`sb3-item${fitFilter.toLowerCase() === f.toLowerCase() ? " active" : ""}`}
+                        onClick={() => {
+                          updateURL({ fit: fitFilter.toLowerCase() === f.toLowerCase() ? "" : f, pg: "1" });
+                          if (mobF) setMobF(false);
+                        }}
+                      >
+                        <div className="sb3-check-box" />
+                        <span className="sb3-label">{f}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* SORT */}
               <div className="sb3-section">
                 <div className="sb3-sec-hd">SORT BY</div>
@@ -511,6 +585,32 @@ function ProductsContent() {
                       <span
                         className="af-x"
                         onClick={() => { setColorFilter(''); setPg(1); }}
+                      >
+                        ✕
+                      </span>
+                    </span>
+                  )}
+                  {fabricFilter && (
+                    <span className="af-tag">
+                      🧵 {fabricFilter}
+                      <span
+                        className="af-x"
+                        onClick={() => {
+                          updateURL({ fabric: "", pg: "1" });
+                        }}
+                      >
+                        ✕
+                      </span>
+                    </span>
+                  )}
+                  {fitFilter && (
+                    <span className="af-tag">
+                      👕 {fitFilter}
+                      <span
+                        className="af-x"
+                        onClick={() => {
+                          updateURL({ fit: "", pg: "1" });
+                        }}
                       >
                         ✕
                       </span>

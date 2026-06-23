@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -63,6 +64,12 @@ public class Product {
 
     @Column(length = 500)
     private String seoDescription;
+
+    @Column(length = 500)
+    private String seoKeywords;
+
+    @Column(precision = 5, scale = 2)
+    private BigDecimal tax;
 
     @Column(length = 20)
     @Builder.Default
@@ -128,6 +135,7 @@ public class Product {
     private Set<ProductVariant> variants = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OrderBy("displayOrder ASC")
     @Builder.Default
     @BatchSize(size = 20)
     @org.hibernate.annotations.Fetch(org.hibernate.annotations.FetchMode.SUBSELECT)

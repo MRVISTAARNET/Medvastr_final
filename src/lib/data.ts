@@ -68,6 +68,8 @@ export interface Product {
   createdAt?: string;
   seoTitle?: string;
   seoDescription?: string;
+  seoKeywords?: string;
+  tax?: number;
   shortDescription?: string;
   material?: string;
   tags?: string;

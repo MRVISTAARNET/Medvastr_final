@@ -17,6 +17,8 @@ import com.medvastr.backend.repository.ProductRepository;
 import com.medvastr.backend.repository.ProductSizeRepository;
 import com.medvastr.backend.repository.ProductVariantRepository;
 import com.medvastr.backend.repository.ReviewRepository;
+import com.medvastr.backend.model.InventoryLog;
+import com.medvastr.backend.repository.InventoryLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -44,6 +46,7 @@ public class ProductService {
     private final ProductColorRepository colorRepo;
     private final ProductSizeRepository sizeRepo;
     private final ProductVariantRepository variantRepo;
+    private final InventoryLogRepository inventoryLogRepo;
 
     public Page<ProductDTO> getAll(ProductFilterRequest f, Pageable p) {
         List<Long> categoryIds = null;
@@ -110,13 +113,38 @@ public class ProductService {
 
     @Transactional
     public ProductDTO create(ProductRequest r) {
+        if (r.getSku() != null && !r.getSku().isBlank()) {
+            productRepo.findBySku(r.getSku()).ifPresent(existing -> {
+                throw new RuntimeException("Duplicate product SKU: " + r.getSku());
+            });
+        }
+
+        String finalType = r.getType();
+        if (finalType == null || finalType.isBlank()) {
+            finalType = deduceTypeFromCategoryId(r.getCategoryId(), r.getSubcategoryId());
+        }
+
+        String seoTitle = r.getSeoTitle();
+        if (seoTitle == null || seoTitle.isBlank()) {
+            seoTitle = r.getName() + " | Buy Premium Medical Wear - Medvastr";
+        }
+        String seoDescription = r.getSeoDescription();
+        if (seoDescription == null || seoDescription.isBlank()) {
+            seoDescription = r.getShortDescription() != null ? r.getShortDescription() : 
+                (r.getDescription() != null ? r.getDescription().substring(0, Math.min(r.getDescription().length(), 150)) : "");
+        }
+        String seoKeywords = r.getSeoKeywords();
+        if (seoKeywords == null || seoKeywords.isBlank()) {
+            seoKeywords = r.getName().toLowerCase() + ", medvastr, medical scrubs, " + (r.getGender() != null ? r.getGender().toLowerCase() : "unisex") + " scrubs";
+        }
+
         Product p = Product.builder()
                 .name(r.getName())
                 .description(r.getDescription())
                 .price(r.getPrice())
                 .originalPrice(r.getOriginalPrice())
                 .fabric(r.getFabric())
-                .type(r.getType())
+                .type(finalType)
                 .gender(r.getGender())
                 .badge(r.getBadge())
                 .brand(r.getBrand())
@@ -136,9 +164,11 @@ public class ProductService {
                 .shortDescription(r.getShortDescription())
                 .material(r.getMaterial())
                 .tags(r.getTags())
-                .seoTitle(r.getSeoTitle())
-                .seoDescription(r.getSeoDescription())
-                .slug(slug(r.getName()))
+                .seoTitle(seoTitle)
+                .seoDescription(seoDescription)
+                .seoKeywords(seoKeywords)
+                .tax(r.getTax() != null ? r.getTax() : BigDecimal.ZERO)
+                .slug(generateUniqueSlug(r.getName()))
                 .build();
 
         if (r.getCategoryId() != null)
@@ -148,23 +178,56 @@ public class ProductService {
         p.setVariants(buildVariants(r, p));
         replaceImages(p, r.getImageUrls());
 
-        return toDTO(productRepo.save(p));
+        Product saved = productRepo.save(p);
+
+        if (saved.getVariants() != null) {
+            for (ProductVariant v : saved.getVariants()) {
+                InventoryLog logEntry = InventoryLog.builder()
+                        .variant(v)
+                        .changeQuantity(v.getStockQuantity())
+                        .previousStock(0)
+                        .newStock(v.getStockQuantity())
+                        .actionType("INITIAL_CREATION")
+                        .notes("Initial product variant creation")
+                        .build();
+                inventoryLogRepo.save(logEntry);
+            }
+        }
+
+        return toDTO(saved);
     }
 
     @Transactional
     public ProductDTO update(Long id, ProductRequest r) {
         Product p = productRepo.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
+        
+        if (r.getSku() != null && !r.getSku().isBlank()) {
+            productRepo.findBySku(r.getSku()).ifPresent(existing -> {
+                if (!existing.getId().equals(id)) {
+                    throw new RuntimeException("Duplicate product SKU: " + r.getSku());
+                }
+            });
+        }
+
         p.setName(r.getName());
         p.setDescription(r.getDescription());
         p.setPrice(r.getPrice());
         p.setOriginalPrice(r.getOriginalPrice());
         p.setFabric(r.getFabric());
-        p.setType(r.getType());
+
+        String finalType = r.getType();
+        if (finalType == null || finalType.isBlank()) {
+            finalType = deduceTypeFromCategoryId(r.getCategoryId(), r.getSubcategoryId());
+        }
+        p.setType(finalType);
         p.setGender(r.getGender());
         p.setBadge(r.getBadge());
         p.setBrand(r.getBrand());
         p.setStyleId(r.getStyleId());
-        p.setSlug(slug(r.getName()));
+
+        if (!p.getName().equalsIgnoreCase(r.getName())) {
+            p.setSlug(generateUniqueSlug(r.getName()));
+        }
         p.setBarcode(r.getBarcode());
         p.setSku(r.getSku());
         p.setEmoji(r.getEmoji());
@@ -183,10 +246,24 @@ public class ProductService {
             p.setMaterial(r.getMaterial());
         if (r.getTags() != null)
             p.setTags(r.getTags());
-        if (r.getSeoTitle() != null)
-            p.setSeoTitle(r.getSeoTitle());
-        if (r.getSeoDescription() != null)
-            p.setSeoDescription(r.getSeoDescription());
+
+        String seoTitle = r.getSeoTitle();
+        if (seoTitle == null || seoTitle.isBlank()) {
+            seoTitle = r.getName() + " | Buy Premium Medical Wear - Medvastr";
+        }
+        String seoDescription = r.getSeoDescription();
+        if (seoDescription == null || seoDescription.isBlank()) {
+            seoDescription = r.getShortDescription() != null ? r.getShortDescription() : 
+                (r.getDescription() != null ? r.getDescription().substring(0, Math.min(r.getDescription().length(), 150)) : "");
+        }
+        String seoKeywords = r.getSeoKeywords();
+        if (seoKeywords == null || seoKeywords.isBlank()) {
+            seoKeywords = r.getName().toLowerCase() + ", medvastr, medical scrubs, " + (r.getGender() != null ? r.getGender().toLowerCase() : "unisex") + " scrubs";
+        }
+        p.setSeoTitle(seoTitle);
+        p.setSeoDescription(seoDescription);
+        p.setSeoKeywords(seoKeywords);
+        p.setTax(r.getTax() != null ? r.getTax() : BigDecimal.ZERO);
 
         if (r.getCategoryId() != null)
             catRepo.findById(r.getCategoryId()).ifPresent(p::setCategory);
@@ -198,11 +275,38 @@ public class ProductService {
             replaceImages(p, r.getImageUrls());
         }
 
+        java.util.Map<String, Integer> previousStocks = p.getVariants().stream()
+                .filter(v -> v.getSku() != null)
+                .collect(Collectors.toMap(ProductVariant::getSku, ProductVariant::getStockQuantity, (a, b) -> a));
+
         p.getVariants().clear();
         productRepo.saveAndFlush(p); // Force clear old variants
-        p.getVariants().addAll(buildVariants(r, p));
+        
+        Set<ProductVariant> newVariants = buildVariants(r, p);
+        p.getVariants().addAll(newVariants);
 
-        return toDTO(productRepo.save(p));
+        Product saved = productRepo.save(p);
+
+        if (saved.getVariants() != null) {
+            for (ProductVariant v : saved.getVariants()) {
+                if (v.getSku() != null) {
+                    Integer prev = previousStocks.getOrDefault(v.getSku(), 0);
+                    if (!prev.equals(v.getStockQuantity())) {
+                        InventoryLog logEntry = InventoryLog.builder()
+                                .variant(v)
+                                .changeQuantity(v.getStockQuantity() - prev)
+                                .previousStock(prev)
+                                .newStock(v.getStockQuantity())
+                                .actionType(prev == 0 ? "INITIAL_CREATION" : "ADMIN_UPDATE")
+                                .notes("Product variant update")
+                                .build();
+                        inventoryLogRepo.save(logEntry);
+                    }
+                }
+            }
+        }
+
+        return toDTO(saved);
     }
 
     @Transactional
@@ -314,6 +418,8 @@ public class ProductService {
                 .tags(p.getTags())
                 .seoTitle(p.getSeoTitle())
                 .seoDescription(p.getSeoDescription())
+                .seoKeywords(p.getSeoKeywords())
+                .tax(p.getTax())
                 .price(p.getPrice())
                 .originalPrice(p.getOriginalPrice())
                 .fabric(p.getFabric())
@@ -367,8 +473,11 @@ public class ProductService {
                                 .stream()
                                 .sorted(Comparator.comparingInt(this::sizeOrder))
                                 .collect(Collectors.toList()))
-                .imageUrls(p.getImages().stream().map(ProductImage::getImageUrl).collect(Collectors.toList()))
+                .imageUrls(p.getImages().stream()
+                        .sorted(Comparator.comparingInt(ProductImage::getDisplayOrder))
+                        .map(ProductImage::getImageUrl).collect(Collectors.toList()))
                 .images(p.getImages().stream()
+                        .sorted(Comparator.comparingInt(ProductImage::getDisplayOrder))
                         .map(img -> ProductImageDTO.builder()
                                 .id(img.getId())
                                 .imageUrl(img.getImageUrl())
@@ -492,6 +601,39 @@ public class ProductService {
                 .replaceAll("\\s+", "-")
                 .replaceAll("-+", "-")
                 .replaceAll("^-|-$", "");
+    }
+
+    private String generateUniqueSlug(String name) {
+        String base = slug(name);
+        String current = base;
+        int count = 1;
+        while (productRepo.findBySlugAndActiveTrue(current).isPresent()) {
+            current = base + "-" + count;
+            count++;
+        }
+        return current;
+    }
+
+    private String deduceTypeFromCategoryId(Long categoryId, Long subcategoryId) {
+        if (subcategoryId != null) {
+            return catRepo.findById(subcategoryId).map(c -> {
+                String s = c.getSlug().toLowerCase();
+                if (s.contains("scrub-suit") || s.contains("scrubs")) return "scrubs";
+                if (s.contains("t-shirt") || s.contains("tshirt")) return "tshirts";
+                if (s.contains("underscrub")) return "underscrub";
+                if (s.contains("gown") || s.contains("cap")) return "surgical";
+                return "scrubs";
+            }).orElse("scrubs");
+        }
+        if (categoryId != null) {
+            return catRepo.findById(categoryId).map(c -> {
+                String s = c.getSlug().toLowerCase();
+                if (s.contains("surgical")) return "surgical";
+                if (s.contains("bulk")) return "bulk";
+                return "scrubs";
+            }).orElse("scrubs");
+        }
+        return "scrubs";
     }
 
     private int sizeOrder(String size) {

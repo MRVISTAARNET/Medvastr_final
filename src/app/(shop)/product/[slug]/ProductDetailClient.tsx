@@ -25,7 +25,7 @@ function DetailAccordion({ title, children, defaultOpen = false }: { title: stri
 export default function ProductDetailClient({ initialProduct }: { initialProduct?: any }) {
   const { slug } = useParams();
   const router = useRouter();
-  const { products, addToCart, wishlist, toggleWishlist } = useApp();
+  const { products, addToCart, wishlist, toggleWishlist, toast } = useApp();
 
   const idOrSlug = String(slug || "");
   const numericId = Number(idOrSlug);
@@ -49,6 +49,20 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [reviewForm, setReviewForm] = useState({ rating: 5, comment: "" });
   const [submittingReview, setSubmittingReview] = useState(false);
+  const [showSizeGuide, setShowSizeGuide] = useState(false);
+
+  const handleShare = () => {
+    if (typeof window !== "undefined") {
+      const url = window.location.href;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url)
+          .then(() => toast("Product link copied to clipboard!", "ok"))
+          .catch(() => toast("Failed to copy link.", "bad"));
+      } else {
+        toast("Clipboard sharing not supported on this browser.", "bad");
+      }
+    }
+  };
 
   useEffect(() => {
     if (fromList || fetched || !idOrSlug) return;
@@ -165,6 +179,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                 src={colorImages[visibleImageIndexes[zoomIndex]]}
                 alt="Product Fullscreen"
                 className="zoom-img-main"
+                onError={() => setBrokenImages(prev => ({ ...prev, [visibleImageIndexes[zoomIndex]]: true }))}
               />
             </div>
 
@@ -178,7 +193,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                 className={`zoom-thumb-item ${zoomIndex === i ? 'on' : ''}`}
                 onClick={() => setZoomIndex(i)}
               >
-                <img src={colorImages[vIdx]} alt="" />
+                <img src={colorImages[vIdx]} alt="" onError={() => setBrokenImages(prev => ({ ...prev, [vIdx]: true }))} />
               </div>
             ))}
           </div>
@@ -203,7 +218,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               className={`pdp-side-thumb ${mainImg === i ? 'active' : ''}`}
               onClick={() => scrollToImage(i)}
             >
-              <img src={colorImages[i]} alt="" />
+              <img src={colorImages[i]} alt="" onError={() => setBrokenImages(prev => ({ ...prev, [i]: true }))} />
             </div>
           ))}
         </div>
@@ -223,7 +238,11 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                 className="pdp-main-image-item"
                 onClick={() => openLightbox(visibleImageIndexes.indexOf(i))}
               >
-                <ProductImageZoom src={colorImages[i]} alt={`${p.name} - Detail ${i + 1}`} />
+                <ProductImageZoom 
+                  src={colorImages[i]} 
+                  alt={`${p.name} - Detail ${i + 1}`} 
+                  onError={() => setBrokenImages(prev => ({ ...prev, [i]: true }))}
+                />
               </div>
             ))}
           </div>
@@ -275,7 +294,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               <div className="pdp-select-group">
                 <div className="pdp-select-hd">
                   <label className="pdp-select-label">{isSet ? "Select Top Size" : "Select Size"}</label>
-                  <button className="pdp-sg">Size Guide</button>
+                  <button className="pdp-sg" onClick={() => setShowSizeGuide(true)}>Size Guide</button>
                 </div>
                 <div className="pdp-size-btn-grid">
                   {productSizes.map(s => (
@@ -301,14 +320,17 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
           {/* ACTIONS */}
           <div className="pdp-main-actions">
-            <div className="pdp-qty-wish-row">
+            <div className="pdp-qty-wish-row" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
               <div className="pdp-qty-stepper">
                 <button className="pdp-step-btn" onClick={() => setQty(q => Math.max(1, q - 1))}>−</button>
                 <div className="pdp-qty-display">{qty}</div>
                 <button className="pdp-step-btn" onClick={() => setQty(q => q + 1)}>+</button>
               </div>
-              <button onClick={() => toggleWishlist(p.id)} className={`pdp-heart-btn ${wished ? 'on' : ''}`}>
+              <button onClick={() => toggleWishlist(p.id)} className={`pdp-heart-btn ${wished ? 'on' : ''}`} style={{ flex: 1 }}>
                 {wished ? '❤️ WISHLISTED' : '♡ WISHLIST'}
+              </button>
+              <button onClick={handleShare} className="pdp-heart-btn" title="Share Product" style={{ minWidth: '44px', padding: '0 10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                🔗
               </button>
             </div>
             <button
@@ -453,6 +475,148 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
           </div>
         </section>
       )}
+
+      {/* SIZE GUIDE MODAL */}
+      {showSizeGuide && (
+        <div className="size-guide-backdrop" onClick={() => setShowSizeGuide(false)}>
+          <div className="size-guide-modal" onClick={e => e.stopPropagation()}>
+            <button className="size-guide-close" onClick={() => setShowSizeGuide(false)}>✕</button>
+            <h3 className="size-guide-title">Medvastr Size Specifications Guide</h3>
+            <p className="size-guide-subtitle">All measurements are in inches. Body measurements should be taken directly on your body.</p>
+            <div className="size-guide-table-container">
+              <table className="size-guide-table">
+                <thead>
+                  <tr>
+                    <th>Size</th>
+                    <th>Chest (in)</th>
+                    <th>Waist (in)</th>
+                    <th>Hip (in)</th>
+                    <th>Top Length (in)</th>
+                    <th>Pant Inseam (in)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { sz: "XS", chest: "32 - 34", waist: "26 - 28", hip: "33 - 35", len: "26.5", inseam: "29" },
+                    { sz: "S", chest: "35 - 37", waist: "29 - 31", hip: "36 - 38", len: "27.5", inseam: "30" },
+                    { sz: "M", chest: "38 - 40", waist: "32 - 34", hip: "39 - 41", len: "28.5", inseam: "30" },
+                    { sz: "L", chest: "41 - 43", waist: "35 - 37", hip: "42 - 44", len: "29.5", inseam: "31" },
+                    { sz: "XL", chest: "44 - 46", waist: "38 - 40", hip: "45 - 47", len: "30.5", inseam: "31" },
+                    { sz: "2XL", chest: "47 - 49", waist: "41 - 43", hip: "48 - 50", len: "31.5", inseam: "32" },
+                  ].map(row => (
+                    <tr key={row.sz}>
+                      <td><strong>{row.sz}</strong></td>
+                      <td>{row.chest}</td>
+                      <td>{row.waist}</td>
+                      <td>{row.hip}</td>
+                      <td>{row.len}</td>
+                      <td>{row.inseam}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style jsx>{`
+        .size-guide-backdrop {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(15, 23, 42, 0.6);
+          backdrop-filter: blur(8px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 99999;
+          padding: 20px;
+          animation: fadeIn 0.2s ease-out;
+        }
+        .size-guide-modal {
+          background: white;
+          border-radius: 20px;
+          padding: 40px;
+          max-width: 700px;
+          width: 100%;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          position: relative;
+          animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .size-guide-close {
+          position: absolute;
+          right: 25px;
+          top: 25px;
+          background: #f1f5f9;
+          border: none;
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 16px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .size-guide-close:hover {
+          background: #e2e8f0;
+          transform: rotate(90deg);
+        }
+        .size-guide-title {
+          font-family: var(--serif, inherit);
+          font-size: 24px;
+          font-weight: 800;
+          color: #0f172a;
+          margin-bottom: 10px;
+        }
+        .size-guide-subtitle {
+          font-size: 14px;
+          color: #64748b;
+          margin-bottom: 25px;
+          line-height: 1.6;
+        }
+        .size-guide-table-container {
+          overflow-x: auto;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+        }
+        .size-guide-table {
+          width: 100%;
+          border-collapse: collapse;
+          text-align: left;
+          font-size: 14px;
+        }
+        .size-guide-table th {
+          background: #f8fafc;
+          padding: 14px 18px;
+          font-weight: 700;
+          color: #334155;
+          border-bottom: 2px solid #e2e8f0;
+        }
+        .size-guide-table td {
+          padding: 14px 18px;
+          color: #475569;
+          border-bottom: 1px solid #f1f5f9;
+        }
+        .size-guide-table tr:last-child td {
+          border-bottom: none;
+        }
+        .size-guide-table tr:hover td {
+          background: #f8fafc;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slideUp {
+          from { transform: translateY(20px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+      `}</style>
     </div>
   );
 }

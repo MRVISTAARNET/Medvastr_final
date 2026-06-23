@@ -4,6 +4,7 @@ import com.medvastr.backend.dto.*;
 import com.medvastr.backend.service.ProductService;
 import com.medvastr.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
 import java.security.Principal;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -79,13 +80,13 @@ public class ProductController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<ProductDTO>> create(@RequestBody ProductRequest r) {
+    public ResponseEntity<ApiResponse<ProductDTO>> create(@Valid @RequestBody ProductRequest r) {
         return ResponseEntity.status(201).body(ApiResponse.ok("Created", s.create(r)));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<ProductDTO>> update(@PathVariable Long id, @RequestBody ProductRequest r) {
+    public ResponseEntity<ApiResponse<ProductDTO>> update(@PathVariable Long id, @Valid @RequestBody ProductRequest r) {
         return ResponseEntity.ok(ApiResponse.ok("Updated", s.update(id, r)));
     }
 

@@ -13,6 +13,11 @@ export default function AdminInventory() {
   const [variantStocks, setVariantStocks] = useState<Record<number, number>>({});
   const [saving, setSaving] = useState(false);
 
+  // Stock logs state
+  const [selectedVariantForLogs, setSelectedVariantForLogs] = useState<any>(null);
+  const [logsList, setLogsList] = useState<any[]>([]);
+  const [loadingLogs, setLoadingLogs] = useState(false);
+
   const fetchProducts = async () => {
     try {
       const res = await fetch(`${API_BASE}/products?size=200`);
@@ -33,6 +38,25 @@ export default function AdminInventory() {
       console.error("Failed to fetch products");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadVariantLogs = async (v: any) => {
+    setSelectedVariantForLogs(v);
+    setLoadingLogs(true);
+    const token = localStorage.getItem("token");
+    try {
+      const res = await fetch(`${API_BASE}/admin/inventory/variants/${v.id}/logs`, {
+        headers: { ...authHeaders(token) }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setLogsList(data.data || []);
+      }
+    } catch {
+      alert("Failed to fetch logs");
+    } finally {
+      setLoadingLogs(false);
     }
   };
 
@@ -146,7 +170,7 @@ export default function AdminInventory() {
 
       {isModalOpen && editingProduct && (
         <div className="modal-bg" onClick={(e) => { if (e.target === e.currentTarget) setIsModalOpen(false) }}>
-          <div className="modal" style={{ maxWidth: '560px' }}>
+          <div className="modal" style={{ maxWidth: '600px' }}>
             <div className="modal-hd">
               <div className="modal-title">Variant Stock — {editingProduct.name}</div>
               <button className="modal-x" onClick={() => setIsModalOpen(false)}>✕</button>
@@ -170,6 +194,9 @@ export default function AdminInventory() {
                       }))}
                     />
                   </div>
+                  <button type="button" className="btn-secondary" style={{ padding: '6px 10px', marginTop: '20px' }} onClick={() => loadVariantLogs(v)}>
+                    Logs 📋
+                  </button>
                 </div>
               ))}
             </div>
@@ -178,6 +205,49 @@ export default function AdminInventory() {
               <button className="btn-primary" disabled={saving} onClick={saveVariantStock}>
                 {saving ? 'Saving...' : 'Save Stock'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Stock Logs Modal */}
+      {selectedVariantForLogs && (
+        <div className="modal-bg" onClick={() => setSelectedVariantForLogs(null)} style={{ zIndex: 11000 }}>
+          <div className="modal" style={{ maxWidth: '500px' }} onClick={e => e.stopPropagation()}>
+            <div className="modal-hd">
+              <div className="modal-title">Inventory Logs — {selectedVariantForLogs.sku || `Variant #${selectedVariantForLogs.id}`}</div>
+              <button className="modal-x" onClick={() => setSelectedVariantForLogs(null)}>✕</button>
+            </div>
+            <div className="modal-body" style={{ maxHeight: 350, overflowY: 'auto' }}>
+              {loadingLogs ? (
+                <div style={{ padding: 20, textAlign: 'center' }}>Loading logs...</div>
+              ) : logsList.length === 0 ? (
+                <div style={{ padding: 20, textAlign: 'center', color: '#64748b' }}>No transaction history for this variant.</div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {logsList.map((log: any) => (
+                    <div key={log.id} style={{ padding: '12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '13px' }}>
+                      <div style={{ display: 'flex', justifyItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                        <strong style={{
+                          color: log.actionType === 'PURCHASE' ? '#991b1b' : 
+                                 log.actionType === 'INITIAL_CREATION' ? '#166534' : 
+                                 log.actionType === 'ORDER_CANCELLED' ? '#075985' : '#854d0e'
+                        }}>{log.actionType}</strong>
+                        <span style={{ color: '#64748b', fontSize: '11px' }}>{new Date(log.createdAt).toLocaleString()}</span>
+                      </div>
+                      <div style={{ display: 'flex', gap: '15px', color: '#334155' }}>
+                        <div>Qty Change: <strong style={{ color: log.changeQuantity >= 0 ? 'green' : 'red' }}>{log.changeQuantity >= 0 ? `+${log.changeQuantity}` : log.changeQuantity}</strong></div>
+                        <div>Prev: <strong>{log.previousStock}</strong></div>
+                        <div>New: <strong>{log.newStock}</strong></div>
+                      </div>
+                      {log.notes && <div style={{ marginTop: '6px', fontSize: '12px', color: '#64748b', fontStyle: 'italic' }}>Note: {log.notes}</div>}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="modal-foot">
+              <button className="btn-secondary" onClick={() => setSelectedVariantForLogs(null)}>Close</button>
             </div>
           </div>
         </div>

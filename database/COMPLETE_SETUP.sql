@@ -8,6 +8,7 @@ SET FOREIGN_KEY_CHECKS=0;
 
 -- Drop all existing tables to allow a clean rebuild
 DROP TABLE IF EXISTS wishlist_items;
+DROP TABLE IF EXISTS inventory_logs;
 DROP TABLE IF EXISTS cart_items;
 DROP TABLE IF EXISTS carts;
 DROP TABLE IF EXISTS addresses;
@@ -116,6 +117,8 @@ CREATE TABLE IF NOT EXISTS products (
   tags VARCHAR(500),
   seo_title VARCHAR(300),
   seo_description VARCHAR(500),
+  seo_keywords VARCHAR(500),
+  tax DECIMAL(5,2) DEFAULT 0.00,
   product_status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
   short_description TEXT,
   type VARCHAR(60) NOT NULL,
@@ -499,6 +502,19 @@ CREATE TABLE IF NOT EXISTS wishlist_items (
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
   INDEX idx_user_wishlist (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- 28. INVENTORY LOGS
+CREATE TABLE IF NOT EXISTS inventory_logs (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  variant_id BIGINT NOT NULL,
+  change_quantity INT NOT NULL,
+  previous_stock INT NOT NULL,
+  new_stock INT NOT NULL,
+  action_type VARCHAR(50) NOT NULL,
+  notes VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (variant_id) REFERENCES product_variants(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ============================================================
