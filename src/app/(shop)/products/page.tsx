@@ -187,16 +187,14 @@ function ProductsContent() {
 
   const S3 = "https://d2tnzshqdaedbc.cloudfront.net";
 
-  // Direct banner filename lookup for under scrub categories (short, uploadable names)
-  // Men Under Scrubs  → men-underscrub-banner.jpg
-  // Men Full Sleeve   → men-full-sleeve-underscrub-banner.jpg
-  // Women Under Scrubs → women-underscrub-banner.jpg
-  // Women Full Sleeve  → women-full-sleeve-underscrub-banner.jpg
+  // Direct banner filename lookup for under scrub categories — exact S3 uploaded filenames
+  // Men (All Under Scrubs + Full Sleeve)  → men-full-sleeve-compression-under-scrub-banner.jpg
+  // Women (All Under Scrubs + Full Sleeve) → women-full-sleeve-compression-under-scrub-banner.jpg
   const underscrubBannerMap: Record<string, string> = {
-    "men-underscrub":                              `${S3}/men-underscrub-banner`,
-    "men-full-sleeve-compression-underscrub":      `${S3}/men-full-sleeve-underscrub-banner`,
-    "women-underscrub":                            `${S3}/women-underscrub-banner`,
-    "women-full-sleeve-compression-underscrub":    `${S3}/women-full-sleeve-underscrub-banner`,
+    "men-underscrub":                           `${S3}/men-full-sleeve-compression-under-scrub-banner`,
+    "men-full-sleeve-compression-underscrub":   `${S3}/men-full-sleeve-compression-under-scrub-banner`,
+    "women-underscrub":                         `${S3}/women-full-sleeve-compression-under-scrub-banner`,
+    "women-full-sleeve-compression-underscrub": `${S3}/women-full-sleeve-compression-under-scrub-banner`,
   };
   const isUnderscrubCat = catKey in underscrubBannerMap;
 
