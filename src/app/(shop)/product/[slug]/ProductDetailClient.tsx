@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useParams, useRouter } from "next/navigation";
 import { fmt, cn, Product } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
@@ -36,6 +37,11 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const [fetched, setFetched] = useState<Product | null>(initialProduct ? mapApiProduct(initialProduct) : null);
   const [fetching, setFetching] = useState(false);
   const p = fromList || fetched;
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const [ci, setCi] = useState(0);
   const [sz, setSz] = useState("");
@@ -178,7 +184,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   return (
     <div className="pdp-container page">
       {/* PRO LIGHTBOX MODAL */}
-      {zoom && (
+      {zoom && mounted && typeof document !== "undefined" && createPortal(
         <div className="zoom-modal" onClick={() => setZoom(false)}>
           <button className="zoom-close" onClick={() => setZoom(false)}>✕</button>
 
@@ -208,7 +214,8 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               </div>
             ))}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* BREADCRUMB */}
