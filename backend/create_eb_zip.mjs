@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
-import archiver from 'archiver';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const archiver = require('archiver');
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
