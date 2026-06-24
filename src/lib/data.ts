@@ -54,6 +54,9 @@ export interface Product {
   catId?: number;
   subcategoryId?: number;
   childCategoryId?: number;
+  categoryName?: string;
+  subcategoryName?: string;
+  childCategoryName?: string;
   sku?: string;
   styleId?: string;
   style?: string;

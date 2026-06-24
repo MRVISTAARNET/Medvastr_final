@@ -128,7 +128,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
     setMounted(true);
   }, []);
 
-  const [ci, setCi] = useState(0);
+  const [ci, setCi] = useState<number | null>(null); // null = no color selected yet
   const [sz, setSz] = useState("");
   const [btmSz, setBtmSz] = useState(""); // Second size for sets
   const [qty, setQty] = useState(1);
@@ -169,8 +169,14 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
       .finally(() => setFetching(false));
   }, [idOrSlug, fromList, numericId]);
 
-  const colorImages = useMemo(() => (p ? getImagesForColor(p, ci) : []), [p, ci]);
-  const productSizes = useMemo(() => (p ? getSizesForColor(p, ci) : []), [p, ci]);
+  const colorImages = useMemo(() => (p ? getImagesForColor(p, ci ?? 0) : []), [p, ci]);
+  const productSizes = useMemo(() => (p ? getSizesForColor(p, ci ?? 0) : []), [p, ci]);
+
+  // DO NOT auto-preselect size — user must choose
+  useEffect(() => {
+    setSz("");
+    setBtmSz("");
+  }, [p?.id, ci]);
 
   useEffect(() => {
     if (!p) return;
@@ -188,14 +194,6 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
       })
       .catch(() => { });
   }, [p?.id]);
-
-  useEffect(() => {
-    if (productSizes.length > 0) {
-      const defaultSize = productSizes.includes(sz) ? sz : productSizes[0];
-      setSz(defaultSize);
-      setBtmSz((prev) => (productSizes.includes(prev) ? prev : defaultSize));
-    }
-  }, [p?.id, ci, productSizes]);
 
   useEffect(() => { setBrokenImages({}); setMainImg(0); }, [p?.id, ci]);
 
@@ -221,15 +219,15 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
         },
         body: JSON.stringify({
           rating: reviewForm.rating,
-          review: reviewForm.comment,
-          comment: reviewForm.comment,
+          title: 'Review',
+          body: reviewForm.comment,   // ← correct field name per ReviewRequest DTO
         }),
       });
       const data = await res.json();
       if (res.ok || data.success) {
-        // Add to top of local reviews immediately
         const newReview = {
           rating: reviewForm.rating,
+          body: reviewForm.comment,
           review: reviewForm.comment,
           comment: reviewForm.comment,
           userName: user.firstName || 'You',
@@ -303,7 +301,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
     : p.rating;
 
   const isSet = (p as any).style?.toLowerCase() === "set";
-  const selectedVariant = p.variants?.find((v: any) => v.size === sz && v.colorHex === p.clrs?.[ci]);
+  const selectedVariant = ci !== null ? p.variants?.find((v: any) => v.size === sz && v.colorHex === p.clrs?.[ci]) : undefined;
   const isOutOfStock = selectedVariant ? selectedVariant.stockQuantity <= 0 : false;
   const discount = p.origPrice ? Math.round(((p.origPrice - p.price) / p.origPrice) * 100) : 0;
 
@@ -418,7 +416,12 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               <div className="pdp-select-group">
                 <div className="pdp-select-hd">
                   <label className="pdp-select-label">Select Color</label>
-                  <span className="pdp-select-val">Selected Color: <strong style={{ color: 'var(--ink)' }}>{p.clrNms?.[ci] || cn(p.clrs[ci])}</strong></span>
+                  <span className="pdp-select-val">
+                    {ci !== null
+                      ? <><strong style={{ color: 'var(--ink)' }}>{p.clrNms?.[ci] || cn(p.clrs[ci])}</strong></>     
+                      : <span style={{ color: '#e11d48', fontWeight: 600 }}>Please select a color</span>
+                    }
+                  </span>
                 </div>
                 <div className="pdp-color-grid">
                   {p.clrs.map((c, i) => (
@@ -474,8 +477,23 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             </div>
             <button
               onClick={() => {
-                const finalSize = isSet ? `Top: ${sz} / Bot: ${btmSz || sz}` : sz;
-                addToCart(p, ci, finalSize || productSizes[0] || 'M', qty);
+                // Validate color selection
+                if (p.clrs && p.clrs.length > 0 && ci === null) {
+                  toast('Please select a color before adding to cart', 'bad');
+                  return;
+                }
+                // Validate top size
+                if (productSizes.length > 0 && !sz) {
+                  toast(isSet ? 'Please select a top size' : 'Please select a size', 'bad');
+                  return;
+                }
+                // For sets: validate bottom size too
+                if (isSet && productSizes.length > 0 && !btmSz) {
+                  toast('Please select a bottom size', 'bad');
+                  return;
+                }
+                const finalSize = isSet ? `Top: ${sz} / Bot: ${btmSz}` : sz;
+                addToCart(p, ci ?? 0, finalSize || 'M', qty);
               }}
               disabled={isOutOfStock}
               className="pdp-buy-btn"

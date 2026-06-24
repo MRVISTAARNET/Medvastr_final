@@ -43,3 +43,8 @@ with zipfile.ZipFile(zip_name, 'w', zipfile.ZIP_DEFLATED) as zipf:
             print(f"FAILED to find dir: {src_dir}")
 
 print(f"Successfully created {zip_name}")
+try:
+    shutil.copy2(zip_name, 'medvastr-prod-final.zip')
+    print("Copied zip to backend/medvastr-prod-final.zip")
+except Exception as e:
+    print(f"Non-blocking copy error: {e}")

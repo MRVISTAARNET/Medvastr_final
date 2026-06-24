@@ -144,6 +144,7 @@ function ProductsContent() {
   const reset = () => {
     setCat("all");
     setGen("all");
+    setTypeFilter("");
     setSort("default");
     setMinP("");
     setMaxP("");
@@ -155,7 +156,7 @@ function ProductsContent() {
     router.push('/products', { scroll: false });
   };
 
-  const hasFilters = cat !== "all" || gen !== "all" || minP || maxP || colorFilter || sizeFilter || fabricFilter || fitFilter;
+  const hasFilters = cat !== "all" || gen !== "all" || minP || maxP || colorFilter || sizeFilter || fabricFilter || fitFilter || !!typeFilter;
 
   const typeConfigs: Record<string, { ico: string; l: string; d: string }> = {
     scrubs: {
@@ -219,7 +220,18 @@ function ProductsContent() {
   ];
 
   let rawCatLabel = cat !== 'all' ? (findCategoryBySlug(categoryTree, cat)?.name || cat.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')) : null;
-  let activeCatLabel = cats.find((c: any) => c.id === cat)?.l || rawCatLabel || (gen !== 'all' ? (gen.charAt(0).toUpperCase() + gen.slice(1) + " Collection") : "All Products");
+
+  // Type-based label for home page category cards
+  const typeLabels: Record<string, string> = {
+    scrubs: 'All Scrub Suits',
+    tshirts: 'All Cotton T-Shirts',
+    underscrubs: 'All Under Scrubs',
+    'surgical-gown': 'All Surgical Gowns',
+    'surgical-cap': 'All Surgical Caps',
+  };
+  const typeLabelActive = typeFilter ? (typeLabels[typeFilter.toLowerCase()] || typeFilter) : null;
+
+  let activeCatLabel = typeLabelActive || cats.find((c: any) => c.id === cat)?.l || rawCatLabel || (gen !== 'all' ? (gen.charAt(0).toUpperCase() + gen.slice(1) + " Collection") : "All Products");
 
   const S3 = "https://d2tnzshqdaedbc.cloudfront.net";
 
@@ -232,19 +244,21 @@ function ProductsContent() {
     "women-underscrub":                         `${S3}/women-full-sleeve-compression-under-scrub-banner`,
     "women-full-sleeve-compression-underscrub": `${S3}/women-full-sleeve-compression-under-scrub-banner`,
   };
-  const isUnderscrubCat = catKey in underscrubBannerMap;
+  const isUnderscrubCat = catKey in underscrubBannerMap || typeFilter === "underscrubs" || typeFilter === "underscrub";
 
   // Normalize cat for banner filenames (used for non-special categories)
-  let bannerCat = catKey;
-  if (catKey === "tshirts" || catKey === "tshirt" || catKey.includes("t-shirt") || catKey.includes("tshirt")) {
+  let bannerCat = catKey !== "all" ? catKey : (typeFilter || "all");
+  if (bannerCat === "tshirts" || bannerCat === "tshirt" || bannerCat.includes("t-shirt") || bannerCat.includes("tshirt")) {
     bannerCat = "cotton-crew-tshirt";
-  } else if (catKey.includes("surgeon-gown") || catKey.includes("surgical-gown")) {
+  } else if (bannerCat.includes("surgeon-gown") || bannerCat.includes("surgical-gown")) {
     bannerCat = "surgeon-gown";
-  } else if (catKey.includes("surgeon-cap") || catKey.includes("surgical-cap")) {
+  } else if (bannerCat.includes("surgeon-cap") || bannerCat.includes("surgical-cap")) {
     bannerCat = "surgeon-cap";
-  } else if (catKey.includes('scrub') && !catKey.includes('underscrub')) {
+  } else if (bannerCat.includes('scrub') && !bannerCat.includes('underscrub')) {
     bannerCat = 'scrub-suit';
   }
+
+  const isTypeOrCatActive = bannerCat !== "all";
 
   // Strip gender prefixes/suffixes from bannerCat for cleaner S3 matching
   bannerCat = bannerCat
@@ -262,9 +276,6 @@ function ProductsContent() {
   const safeTitle = (activeCatLabel.includes(genName) && genName !== "") ? activeCatLabel : `${titlePrefix}${activeCatLabel}`;
 
   // Exact S3 filenames lookup for surgical gown/cap — matches what was uploaded
-  // men-surgical-gown-banner.jpg, men-surgical-cap-banner.jpg (men uses "surgical")
-  // women-surgeon-gown-banner.jpg, women-surgeon-cap-banner.jpg (women uses "surgeon")
-  // surgeon-gown-banner.jpg, surgeon-cap-banner.jpg (no gender)
   const surgicalBannerMap: Record<string, string> = {
     "men-gown":   `${S3}/men-surgical-gown-banner`,
     "men-cap":    `${S3}/men-surgical-cap-banner`,
@@ -289,10 +300,10 @@ function ProductsContent() {
       staticBannerBase = `${S3}/surgical-wear-banner`;
     }
     staticBannerTitle = safeTitle;
-  } else if (catKey !== "all" && genKey !== "all") {
+  } else if (isTypeOrCatActive && genKey !== "all") {
     // Gender + Category: underscrub direct map, gown/cap map, then generic
     if (isUnderscrubCat) {
-      staticBannerBase = underscrubBannerMap[catKey] ?? `${S3}/${genKey}-underscrub-banner`;
+      staticBannerBase = underscrubBannerMap[catKey] ?? underscrubBannerMap[`${genKey}-underscrub`] ?? `${S3}/${genKey}-underscrub-banner`;
     } else if (isGownCat || isCapCat) {
       const lookupKey = `${genKey}-${isGownCat ? "gown" : "cap"}`;
       staticBannerBase = surgicalBannerMap[lookupKey] ?? `${S3}/${genKey}-${bannerCat}-banner`;
@@ -300,11 +311,13 @@ function ProductsContent() {
       staticBannerBase = `${S3}/${genKey}-${bannerCat}-banner`;
     }
     staticBannerTitle = safeTitle;
-  } else if (catKey !== "all") {
+  } else if (isTypeOrCatActive) {
     // General Category: check gown/cap map
     if (isGownCat || isCapCat) {
       const lookupKey = `all-${isGownCat ? "gown" : "cap"}`;
       staticBannerBase = surgicalBannerMap[lookupKey] ?? `${S3}/${bannerCat}-banner`;
+    } else if (isUnderscrubCat) {
+      staticBannerBase = `${S3}/men-full-sleeve-compression-under-scrub-banner`;
     } else {
       staticBannerBase = `${S3}/${bannerCat}-banner`;
     }
@@ -327,7 +340,7 @@ function ProductsContent() {
     "Surgical Wear": "Engineered for the highest standards of safety and comfort in the operating room. Our surgical collection is designed to provide maximum barrier protection while allowing for unrestricted movement."
   };
 
-  const activeDesc = typeConfigs[cat]?.d || descMap[staticBannerTitle] || genericDesc;
+  const activeDesc = typeConfigs[cat !== "all" ? cat : typeFilter]?.d || descMap[staticBannerTitle] || genericDesc;
 
   return (
     <div className="page" style={{ background: '#ffffff' }}>
@@ -557,6 +570,21 @@ function ProductsContent() {
               </div>
               {hasFilters && (
                 <div className="active-filters">
+                  {typeFilter && cat === "all" && (
+                    <span className="af-tag">
+                      {typeLabelActive}
+                      <span
+                        className="af-x"
+                        onClick={() => {
+                          setTypeFilter("");
+                          setPg(1);
+                          updateURL({ type: null });
+                        }}
+                      >
+                        ✕
+                      </span>
+                    </span>
+                  )}
                   {cat !== "all" && (
                     <span className="af-tag">
                       {activeCatLabel}

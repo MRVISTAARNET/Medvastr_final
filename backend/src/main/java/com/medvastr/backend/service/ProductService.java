@@ -326,22 +326,32 @@ public class ProductService {
                 .rating(r.getRating())
                 .title(r.getTitle())
                 .body(r.getBody())
-                .approved(false) // Starts as PENDING — admin must approve
-                .verified(false)
+                .approved(true) // Auto-approved so it shows up immediately
+                .verified(true)
                 .build();
 
         reviewRepo.save(rev);
+
+        // Update product rating stats immediately
+        double avg = reviewRepo.avgRating(p.getId()).orElse(rev.getRating().doubleValue());
+        p.setRating(java.math.BigDecimal.valueOf(avg));
+        p.setReviewCount((int) reviewRepo.countByProductIdAndApprovedTrue(p.getId()));
+        productRepo.save(p);
+
+        String lastInitial = (user.getLastName() != null && !user.getLastName().isEmpty()) 
+                ? " " + user.getLastName().charAt(0) + "." 
+                : "";
 
         return ReviewDTO.builder()
                 .id(rev.getId())
                 .productId(p.getId())
                 .productName(p.getName())
-                .userName(user.getFirstName() + " " + user.getLastName().charAt(0) + ".")
+                .userName(user.getFirstName() + lastInitial)
                 .rating(rev.getRating())
                 .title(rev.getTitle())
                 .body(rev.getBody())
-                .approved(false)
-                .verified(false)
+                .approved(true)
+                .verified(true)
                 .createdAt(rev.getCreatedAt())
                 .build();
     }
