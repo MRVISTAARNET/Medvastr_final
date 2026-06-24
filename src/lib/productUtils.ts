@@ -49,6 +49,17 @@ function buildClrImgs(api: any, normalizedImgs: string[]): Record<string, string
     )?.imageUrl;
 
     if (tagged.length > 0) {
+      // If a variant image exists and is in the tagged list, move it to the front
+      if (variantImg) {
+        const cleanVariant = normalizeMediaUrl(variantImg);
+        const idx = tagged.indexOf(cleanVariant);
+        if (idx > 0) {
+          tagged.splice(idx, 1);
+          tagged.unshift(cleanVariant);
+        } else if (idx === -1) {
+          tagged.unshift(cleanVariant);
+        }
+      }
       clrImgs[c.hex] = tagged;
     } else if (variantImg) {
       const primary = normalizeMediaUrl(variantImg);
