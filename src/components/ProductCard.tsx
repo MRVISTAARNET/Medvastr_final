@@ -19,12 +19,24 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
   const initialCi = useMemo(() => {
     if (forceColor && p.clrs) {
       const idx = p.clrs.indexOf(forceColor);
-      return idx !== -1 ? idx : 0;
+      if (idx !== -1) return idx;
     }
     if ((p as any).displayColorHex && p.clrs) {
       const idx = p.clrs.indexOf((p as any).displayColorHex);
-      return idx !== -1 ? idx : 0;
+      if (idx !== -1) return idx;
     }
+    
+    // Default to the color of the very first product image
+    if (p.imgs && p.imgs.length > 0 && p.clrs && p.clrs.length > 0 && p.clrImgs) {
+      const firstImg = p.imgs[0];
+      for (let i = 0; i < p.clrs.length; i++) {
+        const hex = p.clrs[i];
+        if (p.clrImgs[hex] && p.clrImgs[hex].includes(firstImg)) {
+          return i;
+        }
+      }
+    }
+    
     return 0;
   }, [p, forceColor]);
 

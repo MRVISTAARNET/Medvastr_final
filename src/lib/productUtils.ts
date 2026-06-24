@@ -68,10 +68,21 @@ function buildClrImgs(api: any, normalizedImgs: string[]): Record<string, string
 export function mapApiProduct(p: any): Product {
   const variants = p.variants || [];
   const colors = uniqueColors(variants);
-  const clrs = colors.map((c) => c.hex);
-  const clrNms = colors.map((c) => c.name);
   const normalizedImgs = (p.imageUrls || []).map((u: string) => normalizeMediaUrl(u));
   const clrImgs = buildClrImgs(p, normalizedImgs);
+  
+  // Re-order colors so that the color of the first uploaded image is always first
+  if (normalizedImgs.length > 0 && colors.length > 0) {
+    const firstImg = normalizedImgs[0];
+    const firstColorIdx = colors.findIndex(c => clrImgs[c.hex] && clrImgs[c.hex].includes(firstImg));
+    if (firstColorIdx > 0) {
+      const firstC = colors.splice(firstColorIdx, 1)[0];
+      colors.unshift(firstC);
+    }
+  }
+
+  const clrs = colors.map((c) => c.hex);
+  const clrNms = colors.map((c) => c.name);
   const variantSizes = [
     ...new Set(variants.map((v: any) => v.size).filter(Boolean)),
   ] as string[];
