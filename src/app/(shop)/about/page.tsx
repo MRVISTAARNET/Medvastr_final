@@ -121,8 +121,7 @@ export default function AboutPage() {
 
         .about-hero {
           width: 100%;
-          height: 600px;
-          min-height: 60vh;
+          height: 320px;
           position: relative;
           display: flex;
           align-items: center;
@@ -134,8 +133,7 @@ export default function AboutPage() {
 
         @media (max-width: 768px) {
           .about-hero {
-            height: 230px;
-            min-height: auto;
+            height: 140px;
           }
         }
 

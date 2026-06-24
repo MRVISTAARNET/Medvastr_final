@@ -9,6 +9,7 @@ import ProductCard from "@/components/ProductCard";
 import { API_BASE } from "@/lib/api";
 import { mapApiProduct, getImagesForColor, getSizesForColor } from "@/lib/productUtils";
 import ProductImageZoom from "@/components/ProductImageZoom";
+import ExpandableDescription from "@/components/ExpandableDescription";
 
 function DetailAccordion({ title, children, defaultOpen = false }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -567,7 +568,10 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
           <div className="pdp-details-wrap">
             <DetailAccordion title="Performance & Fabric" defaultOpen={true}>
               <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '12px', marginBottom: '24px', border: '1px solid #e2e8f0' }}>
-                <p style={{ color: '#334155', lineHeight: 1.8, fontSize: '15px', fontWeight: 500 }}>{p.desc}</p>
+                <ExpandableDescription
+                  text={p.desc}
+                  style={{ color: '#334155', lineHeight: 1.8, fontSize: '15px', fontWeight: 500 }}
+                />
               </div>
               <div className="pdp-specs-grid-premium">
                 {[

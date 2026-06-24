@@ -1,7 +1,7 @@
 import { Product } from "@/lib/data";
 import { normalizeMediaUrl } from "@/lib/api";
 
-const SIZE_ORDER = ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"];
+const SIZE_ORDER = ["FREE SIZE", "FREE", "ONE SIZE", "OS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"];
 
 function sortSizes(sizes: string[]): string[] {
   return [...sizes].sort((a, b) => {

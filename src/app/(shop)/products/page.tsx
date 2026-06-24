@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
+import ExpandableDescription from "@/components/ExpandableDescription";
 import { fmt } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
 import { findCategoryBySlug, flattenCategoryTree, productMatchesCategory } from "@/lib/categoryUtils";
@@ -367,9 +368,11 @@ function ProductsContent() {
         <div className="catalog-header" style={{ marginBottom: 50 }}>
           <h1 className="catalog-title" style={{ fontSize: '28px', marginBottom: '15px' }}>{staticBannerTitle}</h1>
           <div style={{ width: '60px', height: '4px', background: '#008080', marginBottom: '25px', borderRadius: '2px' }}></div>
-          <p className="catalog-subtitle" style={{ maxWidth: '800px', fontSize: '19px', lineHeight: '1.7', color: '#475569', margin: 0, fontWeight: 400 }}>
-            {activeDesc}
-          </p>
+          <ExpandableDescription
+            text={activeDesc}
+            className="catalog-subtitle"
+            style={{ maxWidth: '800px', fontSize: '19px', lineHeight: '1.7', color: '#475569', fontWeight: 400 }}
+          />
         </div>
 
         <button className="mob-filter-btn" onClick={() => setMobF(true)}>
@@ -844,7 +847,7 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
           position: relative;
           box-shadow: 0 4px 20px rgba(0,0,0,0.06);
           background: #f1f5f9;
-          aspect-ratio: 1600 / 500;
+          aspect-ratio: 1600 / 320;
         }
         .cat-banner-img {
           width: 100%;
@@ -854,13 +857,13 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
         }
         @media (max-width: 768px) {
           .cat-banner {
-            aspect-ratio: 1600 / 800; /* Makes it significantly taller on mobile */
+            aspect-ratio: 1600 / 450;
             border-radius: 12px;
           }
         }
         @media (max-width: 480px) {
           .cat-banner {
-            aspect-ratio: 1600 / 1000; /* Even taller for very small phones */
+            aspect-ratio: 1600 / 500;
           }
         }
       `}</style>
