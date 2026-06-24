@@ -100,8 +100,7 @@ export default function AdminProducts() {
   const [uploadingState, setUploadingState] = useState<{ active: boolean; current: number; total: number; filename: string }>({ active: false, current: 0, total: 0, filename: '' });
   const [isSaving, setIsSaving] = useState(false);
 
-  const { products, categoryTree } = useApp();
-  const fetchProducts = (useApp() as any).fetchProducts;
+  const { products, categoryTree, refreshProducts } = useApp();
 
   const [form, setForm] = useState<any>({
     name: '',
@@ -319,7 +318,7 @@ export default function AdminProducts() {
     const data = await res.json();
     if (data.success) {
       alert("Product saved successfully!");
-      fetchProducts();
+      refreshProducts();
       setIsModalOpen(false);
     } else {
       alert(data.message || "Save failed");
