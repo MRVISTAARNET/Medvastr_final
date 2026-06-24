@@ -98,6 +98,7 @@ export default function AdminProducts() {
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'basic' | 'pricing' | 'inventory' | 'media' | 'seo'>('basic');
   const [uploadingState, setUploadingState] = useState<{ active: boolean; current: number; total: number; filename: string }>({ active: false, current: 0, total: 0, filename: '' });
+  const [isSaving, setIsSaving] = useState(false);
 
   const { products, categoryTree } = useApp();
   const fetchProducts = (useApp() as any).fetchProducts;
@@ -239,7 +240,9 @@ export default function AdminProducts() {
     if (!form.imgs || form.imgs.length === 0) return alert("At least one product image is required");
     if (form.imgs.length > 30) return alert("Maximum 30 images allowed");
 
-    const token = getToken();
+    setIsSaving(true);
+    try {
+      const token = getToken();
     const slug = form.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     const clrsList = (form.clrs || '').split(',').map((c: string) => c.trim()).filter(Boolean);
     const sizeList = (form.sizes || '').split(',').map((s: string) => s.trim()).filter(Boolean);
@@ -315,10 +318,17 @@ export default function AdminProducts() {
     
     const data = await res.json();
     if (data.success) {
+      alert("Product saved successfully!");
       fetchProducts();
       setIsModalOpen(false);
     } else {
       alert(data.message || "Save failed");
+    }
+    } catch (err) {
+      console.error(err);
+      alert("Error saving product.");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -748,8 +758,10 @@ export default function AdminProducts() {
             </div>
 
             <div className="modal-foot">
-              <button className="btn-secondary" onClick={() => setIsModalOpen(false)}>Cancel</button>
-              <button className="btn-primary" onClick={handleSave}>Save Product</button>
+              <button className="btn-secondary" onClick={() => setIsModalOpen(false)} disabled={isSaving}>Cancel</button>
+              <button className="btn-primary" onClick={handleSave} disabled={isSaving}>
+                {isSaving ? "Saving..." : "Save Product"}
+              </button>
             </div>
           </div>
         </div>
