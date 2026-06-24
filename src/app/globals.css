@@ -1285,8 +1285,15 @@ textarea {
 
 @media (max-width: 768px) {
   .hero-slide {
-    height: 320px !important;
-    min-height: 320px !important;
+    height: 240px !important;
+    min-height: 240px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-slide {
+    height: 160px !important;
+    min-height: 160px !important;
   }
 }
 
