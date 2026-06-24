@@ -104,7 +104,17 @@ function ProductsContent() {
     if (cat !== "all" && !productMatchesCategory(p, cat, categoryTree)) return false;
 
     // Type Filter (used by home page "Shop by Category" cards — e.g. ?type=scrubs)
-    if (typeFilter && p.type?.toLowerCase() !== typeFilter.toLowerCase()) return false;
+    if (typeFilter) {
+      const pType = p.type?.toLowerCase() || "";
+      const tFilter = typeFilter.toLowerCase();
+      if (tFilter === "underscrubs" || tFilter === "underscrub") {
+        if (pType !== "underscrubs" && pType !== "underscrub") return false;
+      } else if (tFilter === "tshirts" || tFilter === "tshirt") {
+        if (pType !== "tshirts" && pType !== "tshirt" && pType !== "cotton-crew-tshirt") return false;
+      } else if (pType !== tFilter) {
+        return false;
+      }
+    }
 
     // Price Filter
     if (minP && p.price < parseInt(minP)) return false;
@@ -207,7 +217,7 @@ function ProductsContent() {
     { id: "all", ico: "🏷️", l: "Complete Collection", n: products.length, depth: 0 },
     { id: "flexi-fit-v-scrub", ico: "🏷️", l: "Flexi Fit V Scrub", n: products.filter(p => productMatchesCategory(p, "flexi-fit-v-scrub", categoryTree)).length, depth: 0 },
     { id: "cotton-tshirt", ico: "🏷️", l: "Cotton Crew T-Shirt", n: products.filter(p => productMatchesCategory(p, "cotton-tshirt", categoryTree)).length, depth: 0 },
-    { id: "underscrub", ico: "🏷️", l: "Full Sleeve Compression Underscrub", n: products.filter(p => productMatchesCategory(p, "underscrub", categoryTree)).length, depth: 0 },
+    { id: "full-sleeve", ico: "🏷️", l: "Full Sleeve Compression Underscrub", n: products.filter(p => productMatchesCategory(p, "full-sleeve", categoryTree)).length, depth: 0 },
     { id: "surgeon-gown", ico: "🏷️", l: "Surgical Gown", n: products.filter(p => productMatchesCategory(p, "surgeon-gown", categoryTree)).length, depth: 0 },
     { id: "surgeon-cap", ico: "🏷️", l: "Surgical Cap", n: products.filter(p => productMatchesCategory(p, "surgeon-cap", categoryTree)).length, depth: 0 },
   ].filter(c => c.id === "all" || c.n > 0);
@@ -483,7 +493,7 @@ function ProductsContent() {
                     return (
                       <button
                         key={val}
-                        onClick={() => { setSizeFilter((prev: string) => prev === val ? '' : val); setPg(1); }}
+                        onClick={() => { updateURL({ size: sizeFilter === val ? '' : val, pg: "1" }); }}
                         style={{
                           padding: '6px 14px', borderRadius: 8, fontSize: 13, fontWeight: 700,
                           border: sizeFilter === val ? '2px solid #008080' : '1.5px solid #e2e8f0',

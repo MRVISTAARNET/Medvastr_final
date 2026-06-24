@@ -19,10 +19,10 @@ export default function Home() {
   const { products, banners, toast } = useApp();
   const promoBanners = banners.filter((b: any) => b.isActive && (b.position === "PROMO" || b.position === "HOME_MIDDLE"));
   const TABS = [
-    { id: "scrubs", label: "Uniforms & Scrubs", type: "scrubs" },
-    { id: "linen", label: "Linen & Bedding", type: "linen" },
-    { id: "surgical", label: "Surgical Wear", type: "surgical" },
-    { id: "diagnostic", label: "Diagnostic & Caps", type: "diagnostic" },
+    { id: "scrubs", label: "Uniforms & Scrubs", types: ["scrubs"] },
+    { id: "linen", label: "Linen & Bedding", types: ["linen", "bedding", "blanket", "dress"] },
+    { id: "surgical", label: "Surgical Wear", types: ["surgical"] },
+    { id: "diagnostic", label: "Diagnostic & Caps", types: ["diagnostic"] },
   ];
 
   const [activeTab, setActiveTab] = useState("scrubs");
@@ -46,8 +46,8 @@ export default function Home() {
     if (!tab) return [];
     // Only show products in this tab that are also tagged as Bestseller
     return products.filter((x) =>
-      x.type === tab.type &&
-      (x.badge || "").includes("Bestseller")
+      tab.types.includes(x.type || "") &&
+      (x.badge || "").toLowerCase().includes("bestseller")
     ).slice(0, 8);
   })();
 
@@ -96,9 +96,9 @@ export default function Home() {
           {[
             { nm: "Scrub Suit", href: "/products?type=scrubs", img: "cat-scrub-suit.jpg" },
             { nm: "Cotton Crew T-Shirt", href: "/products?type=tshirts", img: "cat-tshirt.jpg" },
-            { nm: "Full Sleeve Under Scrub", href: "/products?type=underscrubs", img: "cat-under-scrub.jpg" },
-            { nm: "Surgical Gown", href: "/products?type=surgical-gown", img: "cat-gown.jpg" },
-            { nm: "Surgical Cap", href: "/products?type=surgical-cap", img: "cat-cap.jpg" },
+            { nm: "Full Sleeve Under Scrub", href: "/products?type=underscrub", img: "cat-under-scrub.jpg" },
+            { nm: "Surgical Gown", href: "/products?cat=surgical-surgeon-gown", img: "cat-gown.jpg" },
+            { nm: "Surgical Cap", href: "/products?cat=surgical-surgeon-cap", img: "cat-cap.jpg" },
             { nm: "Bulk Orders", href: "/bulk-orders", img: "cat-bulk.jpg" },
           ].map(c => (
             <Link href={c.href} className="cat-c" key={c.nm}>
@@ -174,15 +174,15 @@ export default function Home() {
 
         <div className="prod-grid">
           {products
-            .filter(p => p.name.toLowerCase().includes("cotton crew tshirt") || p.name.toLowerCase().includes("crew tshirt"))
+            .filter(p => p.name.toLowerCase().includes("t-shirt") || p.name.toLowerCase().includes("tshirt") || p.type === "tshirts")
             .slice(0, 8)
             .map((p) => (
               <ProductCard key={p.id} p={p} />
             ))
           }
           {/* Fallback: show top tshirts */}
-          {products.filter(p => p.name.toLowerCase().includes("cotton crew tshirt") || p.name.toLowerCase().includes("crew tshirt")).length === 0 &&
-            products.filter(p => p.type === "cotton-crew-tshirt").slice(0, 8).map(p => (
+          {products.filter(p => p.name.toLowerCase().includes("t-shirt") || p.name.toLowerCase().includes("tshirt") || p.type === "tshirts").length === 0 &&
+            products.filter(p => p.type === "tshirts").slice(0, 8).map(p => (
               <ProductCard key={p.id} p={p} />
             ))
           }

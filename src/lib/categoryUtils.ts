@@ -140,8 +140,8 @@ export function productMatchesCategory(
   if (slug.includes("cotton-tshirt") || slug.includes("t-shirt") || slug.includes("tshirt")) {
     return type === "tshirts" || type === "tshirt" || name.includes("t-shirt") || name.includes("tshirt");
   }
-  if (slug.includes("underscrub") || slug.includes("under-scrub")) {
-    return type === "underscrubs" || type === "underscrub" || type.includes("under") || name.includes("under");
+  if (slug.includes("full-sleeve") || slug.includes("underscrub") || slug.includes("under-scrub")) {
+    return type === "underscrubs" || type === "underscrub" || type.includes("under") || name.includes("under") || pSubCatName.includes("under") || pChildCatName.includes("full sleeve");
   }
   if (slug.includes("surgeon-gown") || slug.includes("surgical-gown")) {
     return type === "surgical-gown" || type === "gown" || name.includes("gown");
