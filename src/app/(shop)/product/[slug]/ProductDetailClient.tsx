@@ -111,7 +111,7 @@ function LightboxZoomImage({ src, onError }: { src: string; onError?: () => void
 export default function ProductDetailClient({ initialProduct }: { initialProduct?: any }) {
   const { slug } = useParams();
   const router = useRouter();
-  const { products, addToCart, wishlist, toggleWishlist, toast } = useApp();
+  const { products, addToCart, wishlist, toggleWishlist, toast, user, setIsAuthOpen } = useApp();
 
   const idOrSlug = String(slug || "");
   const numericId = Number(idOrSlug);
@@ -135,6 +135,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const [mainImg, setMainImg] = useState(0);
   const [brokenImages, setBrokenImages] = useState<Record<number, boolean>>({});
   const [reviews, setReviews] = useState<any[]>([]);
+  const [reviewCount, setReviewCount] = useState(0); // tracks live count
 
   // Review Form State
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -173,9 +174,18 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
   useEffect(() => {
     if (!p) return;
+    // Set initial count from product data
+    setReviewCount(p.rev || 0);
     fetch(`${API_BASE}/products/${p.id}/reviews?size=50`)
       .then((r) => r.json())
-      .then((d) => { if (d.success) setReviews(d.data?.content || []); })
+      .then((d) => {
+        if (d.success) {
+          const fetched = d.data?.content || [];
+          setReviews(fetched);
+          // Use API total count if available, else use fetched length
+          setReviewCount(d.data?.totalElements ?? fetched.length ?? p.rev ?? 0);
+        }
+      })
       .catch(() => { });
   }, [p?.id]);
 
@@ -195,17 +205,48 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
   const submitReview = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      setIsAuthOpen(true);
+      return;
+    }
     if (!reviewForm.comment.trim()) return;
     setSubmittingReview(true);
     try {
-      // Simulate API call or call real API
-      setTimeout(() => {
-        setReviews([{ rating: reviewForm.rating, comment: reviewForm.comment, review: reviewForm.comment, userName: 'You' }, ...reviews]);
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+      const res = await fetch(`${API_BASE}/products/${p!.id}/reviews`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          rating: reviewForm.rating,
+          review: reviewForm.comment,
+          comment: reviewForm.comment,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok || data.success) {
+        // Add to top of local reviews immediately
+        const newReview = {
+          rating: reviewForm.rating,
+          review: reviewForm.comment,
+          comment: reviewForm.comment,
+          userName: user.firstName || 'You',
+          createdAt: new Date().toISOString(),
+          ...(data.data || {}),
+        };
+        setReviews(prev => [newReview, ...prev]);
+        setReviewCount(prev => prev + 1);
         setShowReviewForm(false);
-        setReviewForm({ rating: 5, comment: "" });
-        setSubmittingReview(false);
-      }, 800);
+        setReviewForm({ rating: 5, comment: '' });
+        toast('Review submitted! Thank you.', 'ok');
+      } else {
+        toast(data.message || 'Failed to submit review. Please try again.', 'bad');
+      }
     } catch {
+      toast('Network error. Please check your connection.', 'bad');
+    } finally {
       setSubmittingReview(false);
     }
   };
@@ -356,7 +397,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               <div className="pdp-rating-stars">
                 <span>★</span> {avgRating}
               </div>
-              <span className="pdp-review-count">({reviews.length} Verified Reviews)</span>
+              <span className="pdp-review-count">({reviewCount} Verified Reviews)</span>
             </div>
 
             <div className="pdp-price-wrap">
@@ -506,10 +547,17 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             <div className="pdp-reviews-score">{avgRating}</div>
             <div>
               <div className="pdp-reviews-stars">{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ color: s <= Math.round(Number(avgRating)) ? '#f59e0b' : '#e2e8f0' }}>★</span>)}</div>
-              <div className="pdp-reviews-count">Based on {reviews.length} reviews</div>
+              <div className="pdp-reviews-count">Based on {reviewCount} reviews</div>
             </div>
-            <button onClick={() => setShowReviewForm(!showReviewForm)} className="pdp-buy-btn" style={{ height: '44px', width: 'auto', padding: '0 24px', marginLeft: '24px', fontSize: '13px', letterSpacing: '1px' }}>
-              {showReviewForm ? 'Cancel' : 'Write a Review'}
+            <button
+              onClick={() => {
+                if (!user) { setIsAuthOpen(true); toast('Please log in to write a review', ''); return; }
+                setShowReviewForm(!showReviewForm);
+              }}
+              className="pdp-buy-btn"
+              style={{ height: '44px', width: 'auto', padding: '0 24px', marginLeft: '24px', fontSize: '13px', letterSpacing: '1px' }}
+            >
+              {showReviewForm ? 'Cancel' : user ? 'Write a Review' : '🔒 Login to Review'}
             </button>
           </div>
         </div>
