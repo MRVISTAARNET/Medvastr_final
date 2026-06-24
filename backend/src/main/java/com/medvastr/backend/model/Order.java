@@ -55,10 +55,10 @@ public class Order {
     @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
 
-    @Column(precision = 10, scale = 2)
+    @Column(name = "total_price", nullable = false, precision = 12, scale = 2)
     private BigDecimal subtotal;
 
-    @Column(precision = 10, scale = 2)
+    @Column(name = "discount_price", precision = 12, scale = 2)
     @Builder.Default
     private BigDecimal discountAmount = BigDecimal.ZERO;
 
@@ -70,7 +70,7 @@ public class Order {
     @Builder.Default
     private BigDecimal taxAmount = BigDecimal.ZERO;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(name = "final_price", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalAmount;
 
     private String promoCode;

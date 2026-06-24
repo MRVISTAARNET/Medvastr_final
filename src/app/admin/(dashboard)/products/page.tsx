@@ -7,6 +7,30 @@ import { useApp } from '@/context/AppContext';
 import { API_BASE, authHeaders, getToken } from '@/lib/api';
 import { logError } from '@/lib/logger';
 import { toJpeg } from 'html-to-image';
+import JsBarcode from 'jsbarcode';
+
+function BarcodeImage({ value }: { value: string }) {
+  const svgRef = useRef<SVGSVGElement>(null);
+
+  useEffect(() => {
+    if (svgRef.current) {
+      try {
+        JsBarcode(svgRef.current, value, {
+          format: "CODE128",
+          width: 1.5,
+          height: 45,
+          displayValue: true,
+          fontSize: 11,
+          margin: 5
+        });
+      } catch (err) {
+        console.error("Barcode generation error", err);
+      }
+    }
+  }, [value]);
+
+  return <svg ref={svgRef} style={{ maxWidth: '100%' }} />;
+}
 
 // Standardized Mappings for SKU Generation
 const GENDER_PREFIX = { 'Men': 'M', 'Women': 'W', 'Unisex': 'U' };
@@ -271,6 +295,108 @@ export default function AdminProducts() {
     downloadCSV(feed, `medvastr_inventory_${new Date().toISOString().slice(0, 10)}.csv`);
   };
 
+  const [barcodeProduct, setBarcodeProduct] = useState<any>(null);
+
+  const handleDownloadBarcodeItem = async (variant: any, elementId: string) => {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    const btn = el.querySelector('button');
+    if (btn) btn.style.display = 'none';
+
+    try {
+      const dataUrl = await toJpeg(el, { quality: 0.95, backgroundColor: '#ffffff' });
+      const link = document.createElement('a');
+      link.download = `barcode-${variant.sku}.jpeg`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      alert("Error generating barcode image");
+    } finally {
+      if (btn) btn.style.display = 'block';
+    }
+  };
+
+  const handleDownloadAllBarcodes = async (product: any) => {
+    const variants = product.variants || [];
+    if (!variants.length) return;
+    alert(`Downloading ${variants.length} barcode images. Please allow multiple file downloads in your browser.`);
+    for (let i = 0; i < variants.length; i++) {
+      const v = variants[i];
+      const cardId = `barcode-card-${v.id || i}`;
+      await handleDownloadBarcodeItem(v, cardId);
+      await new Promise(r => setTimeout(r, 200));
+    }
+  };
+
+  const handlePrintBarcodes = (product: any) => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return alert("Pop-up blocked. Please enable pop-ups to print.");
+
+    const variants = product.variants || [];
+    let barcodesHTML = '';
+    variants.forEach((v: any) => {
+      barcodesHTML += `
+        <div class="label-card">
+          <div class="header">
+            <strong>${product.name}</strong>
+            <span>Size: ${v.size} | Color: ${v.colorName}</span>
+          </div>
+          <svg class="barcode-svg" data-value="${v.sku || v.barcode}"></svg>
+          <div class="sku-text">${v.sku}</div>
+        </div>
+      `;
+    });
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Print Barcodes - ${product.name}</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 20px; background: white; }
+            .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+            .label-card { border: 1px dashed #94a3b8; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; page-break-inside: avoid; background: white; border-radius: 6px; }
+            .header { display: flex; flex-direction: column; font-size: 11px; margin-bottom: 5px; width: 100%; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; }
+            .sku-text { font-family: monospace; font-size: 10px; margin-top: 5px; word-break: break-all; }
+            @media print {
+              body { padding: 0; }
+              .label-card { border: 1px solid #e2e8f0; }
+            }
+          </style>
+          <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+        </head>
+        <body>
+          <div class="grid">
+            ${barcodesHTML}
+          </div>
+          <script>
+            window.onload = function() {
+              const svgs = document.querySelectorAll('.barcode-svg');
+              svgs.forEach(svg => {
+                const val = svg.getAttribute('data-value');
+                try {
+                  JsBarcode(svg, val, {
+                    format: "CODE128",
+                    width: 1.5,
+                    height: 40,
+                    displayValue: false,
+                    margin: 0
+                  });
+                } catch(e) {
+                  console.error(e);
+                }
+              });
+              setTimeout(() => {
+                window.print();
+                window.close();
+              }, 500);
+            };
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
   const openEditModal = (p: any) => { setEditingProduct(p); setActiveTab('basic'); setIsModalOpen(true); };
   const openAddModal = () => { setEditingProduct(null); setActiveTab('basic'); setIsModalOpen(true); };
 
@@ -301,7 +427,7 @@ export default function AdminProducts() {
                       <td>{p.gender}</td>
                       <td>{p.type}</td>
                       <td>{p.active ? <span className="badge b-grn">Active</span> : <span className="badge b-red">Inactive</span>}</td>
-                      <td><div className="act-btns"><div className="act-btn edit" onClick={() => openEditModal(p)}>✏️</div></div></td>
+                      <td><div className="act-btns"><div className="act-btn edit" onClick={() => openEditModal(p)} title="Edit Product">✏️</div><div className="act-btn barcode" onClick={() => setBarcodeProduct(p)} title="Download/Print Barcodes" style={{ cursor: 'pointer', fontSize: '15px', marginLeft: '8px' }}>🏷️</div></div></td>
                     </tr>
                   ))}
                 </tbody>
@@ -423,6 +549,17 @@ export default function AdminProducts() {
                       {form.name && (form.clrs || '').split(',')[0] && `${BRAND_PREFIX[form.brand as keyof typeof BRAND_PREFIX] || 'OTH'}-${GENDER_PREFIX[form.gender as keyof typeof GENDER_PREFIX] || 'U'}-${form.name.slice(0, 3).toUpperCase()}-${(form.clrs || '').split(',')[0].slice(0, 2).toUpperCase()}-S`}
                     </div>
                   </div>
+                  {editingProduct && (
+                    <div style={{ marginTop: '10px', padding: '15px', background: '#f0f9ff', border: '1px solid #bae6fd', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div>
+                        <strong style={{ fontSize: '13px', color: '#0369a1', display: 'block' }}>Variant Barcodes</strong>
+                        <span style={{ fontSize: '11px', color: '#0284c7' }}>Generate, print, or download scannable barcodes for all {editingProduct.variants?.length || 0} variants.</span>
+                      </div>
+                      <button type="button" className="btn-primary" style={{ padding: '8px 16px', background: '#0284c7', border: 'none', marginLeft: 'auto', color: 'white', borderRadius: '6px', cursor: 'pointer' }} onClick={() => { setIsModalOpen(false); setBarcodeProduct(editingProduct); }}>
+                        🏷️ View Barcodes
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -571,6 +708,51 @@ export default function AdminProducts() {
             <div className="modal-foot">
               <button className="btn-secondary" onClick={() => setIsModalOpen(false)}>Cancel</button>
               <button className="btn-primary" onClick={handleSave}>Save Product</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {barcodeProduct && (
+        <div className="modal-bg">
+          <div className="modal" style={{ maxWidth: '900px', width: '90%' }}>
+            <div className="modal-hd">
+              <div className="modal-title">Product Barcode Catalog: {barcodeProduct.name}</div>
+              <button className="modal-x" onClick={() => setBarcodeProduct(null)}>✕</button>
+            </div>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', padding: '15px 20px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
+              <button type="button" className="btn-secondary" onClick={() => handlePrintBarcodes(barcodeProduct)}>🖨️ Print Barcode Labels</button>
+              <button type="button" className="btn-primary" onClick={() => handleDownloadAllBarcodes(barcodeProduct)}>📥 Download All JPEGs</button>
+            </div>
+            <div className="modal-body" style={{ maxHeight: '60vh', overflowY: 'auto', padding: '20px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '20px' }}>
+                {(barcodeProduct.variants || []).map((v: any, index: number) => {
+                  const cardId = `barcode-card-${v.id || index}`;
+                  return (
+                    <div key={v.id || index} id={cardId} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '15px', display: 'flex', flexDirection: 'column', alignItems: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginBottom: '10px', fontSize: '12px' }}>
+                        <span style={{ fontWeight: 700, color: '#334155' }}>Size: {v.size}</span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                          <span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '50%', background: v.colorHex || '#cccccc' }} />
+                          {v.colorName}
+                        </span>
+                      </div>
+                      <div className="barcode-img-wrap" style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px', width: '100%', display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+                        <BarcodeImage value={v.sku || v.barcode} />
+                      </div>
+                      <div style={{ fontSize: '11px', color: '#64748b', fontFamily: 'monospace', marginBottom: '10px', wordBreak: 'break-all' }}>
+                        SKU: {v.sku}
+                      </div>
+                      <button type="button" className="btn-secondary" style={{ width: '100%', padding: '6px 12px', fontSize: '12px' }} onClick={() => handleDownloadBarcodeItem(v, cardId)}>
+                        Download JPEG
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="modal-foot">
+              <button type="button" className="btn-secondary" onClick={() => setBarcodeProduct(null)}>Close</button>
             </div>
           </div>
         </div>
