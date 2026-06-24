@@ -847,12 +847,13 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
           position: relative;
           box-shadow: 0 4px 20px rgba(0,0,0,0.06);
           background: #f1f5f9;
-          aspect-ratio: 1600 / 320;
+          aspect-ratio: 1600 / 420;
         }
         .cat-banner-img {
           width: 100%;
           height: 100%;
           object-fit: cover;
+          object-position: center 20%;
           display: block;
         }
         @media (max-width: 768px) {
