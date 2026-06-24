@@ -450,7 +450,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
           {/* OPTIONS */}
           <div className="space-y-10">
             {p.clrs && p.clrs.length > 0 && (
-              <div className="pdp-select-group">
+              <div id="pdp-color-select" className="pdp-select-group">
                 <div className="pdp-select-hd">
                   <label className="pdp-select-label">Select Color</label>
                   <span className="pdp-select-val">
@@ -475,7 +475,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
             {/* SIZE SELECTOR(S) */}
             {productSizes.length > 0 && (
-              <div className="pdp-select-group">
+              <div id="pdp-size-select" className="pdp-select-group">
                 <div className="pdp-select-hd">
                   <label className="pdp-select-label">{isSet ? "Select Top Size" : "Select Size"}</label>
                   <button className="pdp-sg" onClick={() => setShowSizeGuide(true)}>Size Guide</button>
@@ -494,7 +494,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             )}
 
             {isSet && productSizes.length > 0 && (
-              <div className="pdp-select-group" style={{ marginTop: '20px' }}>
+              <div id="pdp-bottom-size-select" className="pdp-select-group" style={{ marginTop: '20px' }}>
                 <div className="pdp-select-hd">
                   <label className="pdp-select-label">Select Bottom Size</label>
                 </div>
@@ -529,23 +529,27 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             </div>
             <button
               onClick={() => {
-                let hasError = false;
+                let firstErrorElementId: string | null = null;
                 // Validate color selection
                 if (p.clrs && p.clrs.length > 0 && ci === null) {
                   setColorError(true);
-                  hasError = true;
+                  if (!firstErrorElementId) firstErrorElementId = "pdp-color-select";
                 }
                 // Validate top size
                 if (productSizes.length > 0 && !sz) {
                   setSizeError(true);
-                  hasError = true;
+                  if (!firstErrorElementId) firstErrorElementId = "pdp-size-select";
                 }
                 // For sets: validate bottom size too
                 if (isSet && productSizes.length > 0 && !btmSz) {
                   setBottomSizeError(true);
-                  hasError = true;
+                  if (!firstErrorElementId) firstErrorElementId = "pdp-bottom-size-select";
                 }
-                if (hasError) {
+                if (firstErrorElementId) {
+                  const element = document.getElementById(firstErrorElementId);
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  }
                   return;
                 }
                 const finalSize = isSet ? `Top: ${sz} / Bot: ${btmSz}` : sz;

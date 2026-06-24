@@ -173,8 +173,16 @@ export default function CheckoutPage() {
       setIsAuthOpen(true);
       return toast("Please sign in to place order", "bad");
     }
-    if (!form.address || !form.phone || !form.firstName || !form.pincode) {
-      return toast("Missing shipping details", "bad");
+    if (
+      !form.firstName?.trim() ||
+      !form.lastName?.trim() ||
+      !form.address?.trim() ||
+      !form.city?.trim() ||
+      !form.state?.trim() ||
+      !form.pincode?.trim() ||
+      !form.phone?.trim()
+    ) {
+      return toast("Please fill in all shipping details *", "bad");
     }
     setSubmitting(true);
     const orderRequest = {
@@ -264,16 +272,51 @@ export default function CheckoutPage() {
               </div>
             )}
             <div className="co-input-row">
-              <input name="firstName" className="co-input-field" placeholder="First Name" value={form.firstName} onChange={handleInputChange} />
-              <input name="lastName" className="co-input-field" placeholder="Last Name" value={form.lastName} onChange={handleInputChange} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
+                  First Name <span style={{ color: '#e11d48' }}>*</span>
+                </label>
+                <input name="firstName" className="co-input-field" placeholder="First Name" value={form.firstName} onChange={handleInputChange} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
+                  Last Name <span style={{ color: '#e11d48' }}>*</span>
+                </label>
+                <input name="lastName" className="co-input-field" placeholder="Last Name" value={form.lastName} onChange={handleInputChange} />
+              </div>
             </div>
-            <input name="address" className="co-input-field mb-5" placeholder="Full Address / Street / Floor" value={form.address} onChange={handleInputChange} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
+                Full Address / Street / Floor <span style={{ color: '#e11d48' }}>*</span>
+              </label>
+              <input name="address" className="co-input-field" placeholder="Full Address / Street / Floor" value={form.address} onChange={handleInputChange} />
+            </div>
             <div className="co-input-row-3">
-              <input name="city" className="co-input-field" placeholder="City" value={form.city} onChange={handleInputChange} />
-              <input name="state" className="co-input-field" placeholder="State" value={form.state} onChange={handleInputChange} />
-              <input name="pincode" className="co-input-field" placeholder="Pincode" value={form.pincode} onChange={handleInputChange} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
+                  City <span style={{ color: '#e11d48' }}>*</span>
+                </label>
+                <input name="city" className="co-input-field" placeholder="City" value={form.city} onChange={handleInputChange} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
+                  State <span style={{ color: '#e11d48' }}>*</span>
+                </label>
+                <input name="state" className="co-input-field" placeholder="State" value={form.state} onChange={handleInputChange} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
+                  Pincode <span style={{ color: '#e11d48' }}>*</span>
+                </label>
+                <input name="pincode" className="co-input-field" placeholder="Pincode" value={form.pincode} onChange={handleInputChange} />
+              </div>
             </div>
-            <input name="phone" className="co-input-field" placeholder="Mobile Number" value={form.phone} onChange={handleInputChange} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
+                Mobile Number <span style={{ color: '#e11d48' }}>*</span>
+              </label>
+              <input name="phone" className="co-input-field" placeholder="Mobile Number" value={form.phone} onChange={handleInputChange} />
+            </div>
           </div>
 
           {/* PROMO */}

@@ -202,22 +202,14 @@ function ProductsContent() {
   else if (genKey === "men") activeRootSlugs = ["men"];
   else if (genKey === "women") activeRootSlugs = ["women"];
 
-  const filteredTree = categoryTree.filter((c) => activeRootSlugs.includes(c.slug));
-  const flatCats = flattenCategoryTree(filteredTree);
-  const dynamicCats = flatCats
-    .map((c) => ({
-      id: c.slug,
-      ico: "🏷️",
-      l: c.navLabel || c.name,
-      n: products.filter((p) => productMatchesCategory(p, c.slug, categoryTree)).length,
-      depth: c.depth,
-    }))
-    .filter((c) => c.n > 0);
-
   const cats = [
     { id: "all", ico: "🏷️", l: "Complete Collection", n: products.length, depth: 0 },
-    ...dynamicCats,
-  ];
+    { id: "flexi-fit-v-scrub", ico: "🏷️", l: "Flexi Fit V Scrub", n: products.filter(p => productMatchesCategory(p, "flexi-fit-v-scrub", categoryTree)).length, depth: 0 },
+    { id: "cotton-tshirt", ico: "🏷️", l: "Cotton Crew T-Shirt", n: products.filter(p => productMatchesCategory(p, "cotton-tshirt", categoryTree)).length, depth: 0 },
+    { id: "underscrub", ico: "🏷️", l: "Full Sleeve Compression Underscrub", n: products.filter(p => productMatchesCategory(p, "underscrub", categoryTree)).length, depth: 0 },
+    { id: "surgeon-gown", ico: "🏷️", l: "Surgical Gown", n: products.filter(p => productMatchesCategory(p, "surgeon-gown", categoryTree)).length, depth: 0 },
+    { id: "surgeon-cap", ico: "🏷️", l: "Surgical Cap", n: products.filter(p => productMatchesCategory(p, "surgeon-cap", categoryTree)).length, depth: 0 },
+  ].filter(c => c.id === "all" || c.n > 0);
 
   let rawCatLabel = cat !== 'all' ? (findCategoryBySlug(categoryTree, cat)?.name || cat.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')) : null;
 

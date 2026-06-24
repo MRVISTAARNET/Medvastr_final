@@ -27,7 +27,7 @@ export default function AdminOrders() {
             id: o.id,
             num: o.orderNumber,
             customer: o.shippingName || 'Unknown',
-            email: o.shippingPhone || '',
+            phone: o.shippingPhone || '',
             items: o.items?.length || 0,
             total: o.totalAmount,
             status: o.status,
@@ -123,7 +123,7 @@ export default function AdminOrders() {
                     <td><span className="td-mono">{o.num}</span></td>
                     <td>
                       <div className="td-name">{o.customer}</div>
-                      <div className="td-meta">{o.city}</div>
+                      <div className="td-meta">{o.phone || '—'}</div>
                     </td>
                     <td>
                       <div className="td-bold">{fmt(o.total)}</div>
@@ -169,6 +169,12 @@ export default function AdminOrders() {
                   <input type="text" disabled value={editingOrder.customer} />
                 </div>
                 <div className="fg">
+                  <label>Phone Number</label>
+                  <input type="text" disabled value={editingOrder.phone || '—'} />
+                </div>
+              </div>
+              <div className="fg-row" style={{ marginTop: '12px' }}>
+                <div className="fg">
                   <label>Order Status</label>
                   <select id="o-status" defaultValue={editingOrder.status}>
                     <option value="PENDING">Pending</option>
@@ -177,6 +183,10 @@ export default function AdminOrders() {
                     <option value="DELIVERED">Delivered</option>
                     <option value="CANCELLED">Cancelled</option>
                   </select>
+                </div>
+                <div className="fg">
+                  <label>Shipping City</label>
+                  <input type="text" disabled value={editingOrder.city} />
                 </div>
               </div>
               <div className="fg-row">

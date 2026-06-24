@@ -458,6 +458,7 @@ public class OrderService {
                 .shippingCity(o.getShippingCity())
                 .shippingState(o.getShippingState())
                 .shippingPincode(o.getShippingPincode())
+                .shippingPhone(o.getShippingPhone())
                 .trackingNumber(o.getTrackingNumber())
                 .courierName(o.getCourierName())
                 .createdAt(o.getCreatedAt())

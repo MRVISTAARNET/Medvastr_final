@@ -29,6 +29,7 @@ public class OrderDTO {
     private String shippingCity;
     private String shippingState;
     private String shippingPincode;
+    private String shippingPhone;
     private String trackingNumber;
     private String courierName;
     private String promoCode;
