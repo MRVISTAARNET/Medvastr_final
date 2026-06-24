@@ -36,6 +36,49 @@ function BarcodeImage({ value }: { value: string }) {
 const GENDER_PREFIX = { 'Men': 'M', 'Women': 'W', 'Unisex': 'U' };
 const BRAND_PREFIX = { 'Medvastr': 'MED', 'Fabscrubs': 'FAB', 'Others': 'OTH' };
 
+export function generateVariantSku(gender: string, style: string, name: string, color: string, size: string): string {
+  const gPrefix = gender === 'Men' ? 'M' : (gender === 'Women' ? 'W' : 'U');
+  const stylePrefix = style || 'Standard';
+
+  const excludeWords = new Set(['fit', 'suit', 'suits', 'wear', 'men', 'mens', 'women', 'womens', 'unisex']);
+  const pWords = name.replace(/[^a-zA-Z0-9 ]/g, '').split(' ').filter((w: string) => {
+    return w && !excludeWords.has(w.toLowerCase());
+  });
+  const pPrefix = pWords.map((w: string) => w.charAt(0).toUpperCase()).join('') || 'PROD';
+
+  const colorAbbrMap: Record<string, string> = {
+    'navy blue': 'NB', 'navy': 'NB', 'navi blue': 'NB', 'navi': 'NB',
+    'royal blue': 'RB', 'light blue': 'LB', 'maroon': 'MR', 'wine': 'WN',
+    'black': 'BK', 'white': 'WT', 'green': 'GN', 'olive': 'OL', 'teal': 'TL',
+    'grey': 'GR', 'gray': 'GR', 'pink': 'PK', 'purple': 'PL', 'burgundy': 'BG',
+    'lavender': 'LV'
+  };
+  const cleanColor = color.trim().toLowerCase();
+  let cPrefix = '';
+  if (colorAbbrMap[cleanColor]) {
+    cPrefix = colorAbbrMap[cleanColor];
+  } else {
+    const words = cleanColor.split(/\s+/).filter(Boolean);
+    if (words.length > 1) {
+      cPrefix = words.map(w => w.charAt(0).toUpperCase()).join('').slice(0, 3);
+    } else if (cleanColor.length > 1) {
+      cPrefix = (cleanColor.charAt(0) + cleanColor.charAt(cleanColor.length - 1)).toUpperCase();
+    } else {
+      cPrefix = cleanColor.toUpperCase();
+    }
+  }
+
+  const cleanSize = size.trim().toUpperCase();
+  let sPrefix = cleanSize;
+  if (cleanSize === '2XL') sPrefix = 'XXL';
+  else if (cleanSize === '3XL') sPrefix = 'XXXL';
+  else if (cleanSize === '4XL') sPrefix = 'XXXXL';
+  else if (cleanSize === '5XL') sPrefix = 'XXXXXL';
+  else if (cleanSize.toLowerCase().includes('free') || cleanSize.toLowerCase().includes('one')) sPrefix = 'FS';
+
+  return `${gPrefix}-${stylePrefix}-${pPrefix}-${cPrefix}-${sPrefix}`;
+}
+
 const downloadCSV = (data: any[], fileName: string) => {
   if (!data || !data.length) return;
   const headers = Object.keys(data[0]).join(',');
@@ -207,12 +250,7 @@ export default function AdminProducts() {
 
     const variants = sizeList.flatMap((s: string) => clrsList.map((c: string) => {
       const hex = getColHex(c);
-      const bPrefix = (BRAND_PREFIX as any)[form.brand] || 'OTH';
-      const gPrefix = (GENDER_PREFIX as any)[form.gender] || 'U';
-      const cPrefix = c.slice(0, 2).toUpperCase();
-      const sPrefix = s.toUpperCase();
-      const pPrefix = form.name.slice(0, 3).toUpperCase();
-      const variantSku = `${bPrefix}-${gPrefix}-${pPrefix}-${cPrefix}-${sPrefix}`;
+      const variantSku = generateVariantSku(form.gender, form.style, form.name, c, s);
       return {
         sku: variantSku,
         barcode: variantSku,
@@ -546,7 +584,11 @@ export default function AdminProducts() {
                   <div className="fg">
                     <label>Generated SKU Preview</label>
                     <div style={{ background: '#f1f5f9', padding: '15px', borderRadius: '10px', fontSize: '12px', fontFamily: 'monospace' }}>
-                      {form.name && (form.clrs || '').split(',')[0] && `${BRAND_PREFIX[form.brand as keyof typeof BRAND_PREFIX] || 'OTH'}-${GENDER_PREFIX[form.gender as keyof typeof GENDER_PREFIX] || 'U'}-${form.name.slice(0, 3).toUpperCase()}-${(form.clrs || '').split(',')[0].slice(0, 2).toUpperCase()}-S`}
+                      {form.name && (form.clrs || '').split(',')[0] && (() => {
+                        const firstColorName = (form.clrs || '').split(',')[0].trim();
+                        const firstSize = (form.sizes || '').split(',')[0]?.trim() || 'M';
+                        return generateVariantSku(form.gender, form.style, form.name, firstColorName, firstSize);
+                      })()}
                     </div>
                   </div>
                   {editingProduct && (
