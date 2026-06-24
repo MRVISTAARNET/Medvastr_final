@@ -9,7 +9,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 @Configuration
 @RequiredArgsConstructor
@@ -18,7 +17,6 @@ public class DataInitializer {
 
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
-    private final JdbcTemplate jdbcTemplate;
 
     @Value("${app.admin.email:admin@medvastr.com}")
     private String adminEmail;
@@ -29,28 +27,6 @@ public class DataInitializer {
     @Bean
     public CommandLineRunner initAdminUser() {
         return args -> {
-            // Modify legacy Hibernate columns to allow NULL to prevent DB constraint insertion crashes
-            try {
-                jdbcTemplate.execute("ALTER TABLE orders MODIFY subtotal DECIMAL(12,2) NULL");
-                log.info("[DataInitializer] Successfully modified orders.subtotal to allow NULL");
-            } catch (Exception e) {
-                log.debug("[DataInitializer] Could not alter orders.subtotal (likely already updated or doesn't exist): {}", e.getMessage());
-            }
-
-            try {
-                jdbcTemplate.execute("ALTER TABLE orders MODIFY discount_amount DECIMAL(12,2) NULL");
-                log.info("[DataInitializer] Successfully modified orders.discount_amount to allow NULL");
-            } catch (Exception e) {
-                log.debug("[DataInitializer] Could not alter orders.discount_amount (likely already updated or doesn't exist): {}", e.getMessage());
-            }
-
-            try {
-                jdbcTemplate.execute("ALTER TABLE orders MODIFY total_amount DECIMAL(12,2) NULL");
-                log.info("[DataInitializer] Successfully modified orders.total_amount to allow NULL");
-            } catch (Exception e) {
-                log.debug("[DataInitializer] Could not alter orders.total_amount (likely already updated or doesn't exist): {}", e.getMessage());
-            }
-
             if (adminPassword == null || adminPassword.isBlank()) {
                 log.info("[DataInitializer] ADMIN_INITIAL_PASSWORD not set — skipping admin bootstrap.");
                 return;
