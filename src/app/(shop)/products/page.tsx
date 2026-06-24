@@ -17,10 +17,12 @@ function ProductsContent() {
   const initSize = searchParams.get("size") || "";
   const initFabric = searchParams.get("fabric") || "";
   const initFit = searchParams.get("fit") || "";
+  const initType = searchParams.get("type") || "";
   const { products, banners, categoryTree, colors, sizes } = useApp();
 
   const [cat, setCat] = useState(initCat);
   const [gen, setGen] = useState(initGen);
+  const [typeFilter, setTypeFilter] = useState(initType);
   const [sort, setSort] = useState("default");
   const [minP, setMinP] = useState(searchParams.get("minP") || "");
   const [maxP, setMaxP] = useState(searchParams.get("maxP") || "");
@@ -55,10 +57,11 @@ function ProductsContent() {
     setFabricFilter(initFabric);
     setFitFilter(initFit);
     setGen(initGen);
+    setTypeFilter(initType);
     setMinP(searchParams.get("minP") || "");
     setMaxP(searchParams.get("maxP") || "");
     setPg(1);
-  }, [initCat, initColor, initSize, initFabric, initFit, initGen, searchParams]);
+  }, [initCat, initColor, initSize, initFabric, initFit, initGen, initType, searchParams]);
 
   const updateURL = (params: Record<string, string | null>) => {
     const newParams = new URLSearchParams(searchParams.toString());
@@ -98,6 +101,9 @@ function ProductsContent() {
 
     // Category Filter
     if (cat !== "all" && !productMatchesCategory(p, cat, categoryTree)) return false;
+
+    // Type Filter (used by home page "Shop by Category" cards — e.g. ?type=scrubs)
+    if (typeFilter && p.type?.toLowerCase() !== typeFilter.toLowerCase()) return false;
 
     // Price Filter
     if (minP && p.price < parseInt(minP)) return false;
