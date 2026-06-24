@@ -147,7 +147,10 @@ export function productMatchesCategory(
     return type === "surgical-gown" || type === "gown" || name.includes("gown");
   }
   if (slug.includes("surgeon-cap") || slug.includes("surgical-cap")) {
-    return type === "surgical-cap" || type === "cap" || name.includes("cap");
+    return type === "surgical-cap" || type === "cap" || name.includes("cap") || name.includes("head");
+  }
+  if (slug.includes("surgical-wear") || slug === "surgical-wear") {
+    return type === "surgical" || type.includes("surgical") || name.includes("surgical") || name.includes("surgeon") || name.includes("gown") || name.includes("cap");
   }
 
   // Bulk category mappings
