@@ -156,7 +156,7 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'INSTITUTIONAL SERVICES',
                 items: [
-                    { label: 'Scrub Suits', href: '/products?cat=scrub-suit' },
+                    { label: 'Scrub Suits', href: '/bulk-orders/scrub-suit' },
                     { label: 'Linen & Bedding', href: '/bulk-orders/linen-and-bedding' },
                     { label: 'Maternity Gown', href: '/bulk-orders/maternity-gown' },
                     { label: 'Patient Dress', href: '/bulk-orders/patient-dress' },

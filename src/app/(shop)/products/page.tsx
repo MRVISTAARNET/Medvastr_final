@@ -389,25 +389,6 @@ function ProductsContent() {
             </div>
 
             <div className="sb3-body">
-              {/* CATEGORIES */}
-              <div className="sb3-section">
-                <div className="sb3-sec-hd">CATEGORIES</div>
-                <div className="sb3-list">
-                  {cats.map((c) => (
-                    <div
-                      key={c.id}
-                      className={`sb3-item${cat === c.id ? " active" : ""}`}
-                      onClick={() => { updateURL({ cat: c.id, pg: "1" }); if (mobF) setMobF(false); }}
-                      style={{ paddingLeft: c.depth * 14 }}
-                    >
-                      <div className="sb3-check-box" />
-                      <span className="sb3-label">{c.l}</span>
-                      <span className="sb3-num">{c.n}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
               {/* GENDER */}
               <div className="sb3-section">
                 <div className="sb3-sec-hd">GENDER</div>
@@ -424,6 +405,25 @@ function ProductsContent() {
                     >
                       <div className="sb3-check-box" />
                       <span className="sb3-label">{l}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* CATEGORIES */}
+              <div className="sb3-section">
+                <div className="sb3-sec-hd">CATEGORIES</div>
+                <div className="sb3-list">
+                  {cats.map((c) => (
+                    <div
+                      key={c.id}
+                      className={`sb3-item${cat === c.id ? " active" : ""}`}
+                      onClick={() => { updateURL({ cat: c.id, pg: "1" }); if (mobF) setMobF(false); }}
+                      style={{ paddingLeft: c.depth * 14 }}
+                    >
+                      <div className="sb3-check-box" />
+                      <span className="sb3-label">{c.l}</span>
+                      <span className="sb3-num">{c.n}</span>
                     </div>
                   ))}
                 </div>
