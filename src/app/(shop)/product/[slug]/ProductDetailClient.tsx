@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { createPortal } from "react-dom";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { fmt, cn, Product } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
 import ProductCard from "@/components/ProductCard";
@@ -111,6 +111,8 @@ function LightboxZoomImage({ src, onError }: { src: string; onError?: () => void
 export default function ProductDetailClient({ initialProduct }: { initialProduct?: any }) {
   const { slug } = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const colorParam = searchParams ? searchParams.get("color") : null;
   const { products, addToCart, wishlist, toggleWishlist, toast, user, setIsAuthOpen } = useApp();
 
   const idOrSlug = String(slug || "");
@@ -131,6 +133,41 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const [ci, setCi] = useState<number | null>(null); // null = no color selected yet
   const [sz, setSz] = useState("");
   const [btmSz, setBtmSz] = useState(""); // Second size for sets
+
+  const [colorError, setColorError] = useState(false);
+  const [sizeError, setSizeError] = useState(false);
+  const [bottomSizeError, setBottomSizeError] = useState(false);
+
+  // Preselect color index from URL query param if available
+  useEffect(() => {
+    if (p && colorParam) {
+      const decodedColor = colorParam.trim().toLowerCase();
+      let foundIdx = p.clrNms?.findIndex(
+        (name: string) => name.trim().toLowerCase() === decodedColor
+      );
+      if (foundIdx === -1 || foundIdx === undefined) {
+        foundIdx = p.clrs?.findIndex(
+          (c: string) => c.trim().toLowerCase() === decodedColor
+        );
+      }
+      if (foundIdx !== -1 && foundIdx !== undefined && foundIdx !== null) {
+        setCi(foundIdx);
+      }
+    }
+  }, [p, colorParam]);
+
+  // Clear validation errors when user selects options
+  useEffect(() => {
+    if (ci !== null) setColorError(false);
+  }, [ci]);
+
+  useEffect(() => {
+    if (sz) setSizeError(false);
+  }, [sz]);
+
+  useEffect(() => {
+    if (btmSz) setBottomSizeError(false);
+  }, [btmSz]);
   const [qty, setQty] = useState(1);
   const [mainImg, setMainImg] = useState(0);
   const [brokenImages, setBrokenImages] = useState<Record<number, boolean>>({});
@@ -423,6 +460,11 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                     }
                   </span>
                 </div>
+                {colorError && (
+                  <div style={{ color: '#e11d48', fontSize: '13px', fontWeight: 600, marginTop: '-4px', marginBottom: '8px' }}>
+                    ⚠️ Please select a color
+                  </div>
+                )}
                 <div className="pdp-color-grid">
                   {p.clrs.map((c, i) => (
                     <div key={i} onClick={() => handleColorChange(i)} className={`pdp-color-dot ${ci === i ? 'on' : ''}`} style={{ background: c }} />
@@ -438,6 +480,11 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                   <label className="pdp-select-label">{isSet ? "Select Top Size" : "Select Size"}</label>
                   <button className="pdp-sg" onClick={() => setShowSizeGuide(true)}>Size Guide</button>
                 </div>
+                {sizeError && (
+                  <div style={{ color: '#e11d48', fontSize: '13px', fontWeight: 600, marginTop: '-4px', marginBottom: '8px' }}>
+                    ⚠️ {isSet ? 'Please select a top size' : 'Please select a size'}
+                  </div>
+                )}
                 <div className="pdp-size-btn-grid">
                   {productSizes.map(s => (
                     <button key={s} onClick={() => setSz(s)} className={`pdp-size-pill ${sz === s ? 'on' : ''}`}>{s}</button>
@@ -451,6 +498,11 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                 <div className="pdp-select-hd">
                   <label className="pdp-select-label">Select Bottom Size</label>
                 </div>
+                {bottomSizeError && (
+                  <div style={{ color: '#e11d48', fontSize: '13px', fontWeight: 600, marginTop: '-4px', marginBottom: '8px' }}>
+                    ⚠️ Please select a bottom size
+                  </div>
+                )}
                 <div className="pdp-size-btn-grid">
                   {productSizes.map(s => (
                     <button key={s} onClick={() => setBtmSz(s)} className={`pdp-size-pill ${btmSz === s ? 'on' : ''}`}>{s}</button>
@@ -477,19 +529,23 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             </div>
             <button
               onClick={() => {
+                let hasError = false;
                 // Validate color selection
                 if (p.clrs && p.clrs.length > 0 && ci === null) {
-                  toast('Please select a color before adding to cart', 'bad');
-                  return;
+                  setColorError(true);
+                  hasError = true;
                 }
                 // Validate top size
                 if (productSizes.length > 0 && !sz) {
-                  toast(isSet ? 'Please select a top size' : 'Please select a size', 'bad');
-                  return;
+                  setSizeError(true);
+                  hasError = true;
                 }
                 // For sets: validate bottom size too
                 if (isSet && productSizes.length > 0 && !btmSz) {
-                  toast('Please select a bottom size', 'bad');
+                  setBottomSizeError(true);
+                  hasError = true;
+                }
+                if (hasError) {
                   return;
                 }
                 const finalSize = isSet ? `Top: ${sz} / Bot: ${btmSz}` : sz;

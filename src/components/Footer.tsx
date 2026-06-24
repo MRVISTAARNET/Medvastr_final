@@ -77,8 +77,7 @@ export default function Footer() {
               ["Linen & Bedding", "linen-and-bedding", true],
               ["Brown Blanket", "brown-blankets", true],
               ["Maternity Gown", "maternity-gown", true],
-              ["Patient Dress", "patient-dress", true],
-              ["Scrub Suit (Bulk)", "scrubs", true]
+              ["Patient Dress", "patient-dress", true]
             ].map(([l, cat, isBulk]) => (
               <li key={l as string}>
                 <Link href={isBulk ? `/bulk-orders/${cat}` : `/products?cat=${cat}`}>{l as string}</Link>

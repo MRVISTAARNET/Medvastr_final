@@ -69,7 +69,6 @@ export const HARDCODED_CATEGORIES: CategoryNode[] = [
         children: [
             { id: 40, name: "Linen & Bedding", slug: "linen-and-bedding" },
             { id: 41, name: "Brown Blanket", slug: "brown-blankets" },
-            { id: 42, name: "Scrub Suit", slug: "scrub-suit" },
             { id: 43, name: "Patient Dress", slug: "patient-dress" },
             { id: 44, name: "Maternity Gown", slug: "maternity-gown" }
         ]
@@ -157,7 +156,7 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'INSTITUTIONAL SERVICES',
                 items: [
-                    { label: 'Scrub Suits', href: '/bulk-orders/scrub-suit' },
+                    { label: 'Scrub Suits', href: '/products?cat=scrub-suit' },
                     { label: 'Linen & Bedding', href: '/bulk-orders/linen-and-bedding' },
                     { label: 'Maternity Gown', href: '/bulk-orders/maternity-gown' },
                     { label: 'Patient Dress', href: '/bulk-orders/patient-dress' },
