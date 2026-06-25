@@ -104,16 +104,7 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
                 sizes="(max-width: 768px) 50vw, 300px"
                 priority={false}
               />
-              {/* Only show hover flip if we are at the first image and have a second one */}
-              {ii === 0 && colorImages[1] && (
-                <Image
-                  src={colorImages[1]}
-                  alt={p.name}
-                  fill
-                  className={`pc-img-main absolute inset-0 transition-opacity duration-500 ${hover ? 'opacity-100' : 'opacity-0'}`}
-                  sizes="(max-width: 768px) 50vw, 300px"
-                />
-              )}
+              {/* Hover flip removed as per user request to always show 1st image */}
             </>
           ) : (
             <div className="pc-emo-placeholder w-full h-full flex items-center justify-center bg-slate-50">
