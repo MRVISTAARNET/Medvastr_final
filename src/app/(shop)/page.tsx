@@ -58,6 +58,14 @@ export default function Home() {
     (p.badge || "").includes("New Launch")
   ).slice(0, 8);
 
+  const flexiBestsellers = products.filter(p => p.name.toLowerCase().includes("flexi fit v scrub") && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8);
+  const flexiFallback = flexiBestsellers.length === 0 ? products.filter(p => p.type === "scrubs" && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8) : [];
+  const hasFlexi = flexiBestsellers.length > 0 || flexiFallback.length > 0;
+
+  const tshirtBestsellers = products.filter(p => (p.name.toLowerCase().includes("t-shirt") || p.name.toLowerCase().includes("tshirt") || p.type === "tshirts") && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8);
+  const tshirtFallback = tshirtBestsellers.length === 0 ? products.filter(p => p.type === "tshirts" && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8) : [];
+  const hasTshirts = tshirtBestsellers.length > 0 || tshirtFallback.length > 0;
+
   return (
     <div className="page">
       <Hero onShop={() => (window.location.href = "/products")} />
@@ -134,81 +142,81 @@ export default function Home() {
       </div>
 
       {/* BESTSELLING SECTION 1: FLEXI FIT V SCRUB */}
-      <div className="sec">
-        <div className="sec-hd">
-          <div>
-            <div className="sec-t">Shop Flexi-Fit V Scrub</div>
-            <div className="sec-s">Classic comfort and durability for peak performance</div>
+      {hasFlexi && (
+        <div className="sec">
+          <div className="sec-hd">
+            <div>
+              <div className="sec-t">Shop Flexi-Fit V Scrub</div>
+              <div className="sec-s">Classic comfort and durability for peak performance</div>
+            </div>
+            <Link href="/products?type=scrubs" className="va">
+              Shop All Scrubs →
+            </Link>
           </div>
-          <Link href="/products?type=scrubs" className="va">
-            Shop All Scrubs →
-          </Link>
-        </div>
 
-        <div className="prod-grid">
-          {products
-            .filter(p => p.name.toLowerCase().includes("flexi fit v scrub") && (p.badge || "").toLowerCase().includes("bestseller"))
-            .slice(0, 8)
-            .map((p) => (
-              <ProductCard key={p.id} p={p} />
-            ))
-          }
-          {/* Fallback if no specific products found: show top scrubs */}
-          {products.filter(p => p.name.toLowerCase().includes("flexi fit v scrub") && (p.badge || "").toLowerCase().includes("bestseller")).length === 0 &&
-            products.filter(p => p.type === "scrubs" && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8).map(p => (
-              <ProductCard key={p.id} p={p} />
-            ))
-          }
+          <div className="prod-grid">
+            {flexiBestsellers.map((p) => (
+                <ProductCard key={p.id} p={p} />
+              ))
+            }
+            {/* Fallback if no specific products found: show top scrubs */}
+            {flexiBestsellers.length === 0 &&
+              flexiFallback.map(p => (
+                <ProductCard key={p.id} p={p} />
+              ))
+            }
+          </div>
         </div>
-      </div>
+      )}
 
       {/* BESTSELLING SECTION 2: COTTON CREW TSHIRT */}
-      <div className="sec">
-        <div className="sec-hd">
-          <div>
-            <div className="sec-t">Shop Cotton Crew T-Shirt</div>
-            <div className="sec-s">Premium essentials for your everyday routine</div>
+      {hasTshirts && (
+        <div className="sec">
+          <div className="sec-hd">
+            <div>
+              <div className="sec-t">Shop Cotton Crew T-Shirt</div>
+              <div className="sec-s">Premium essentials for your everyday routine</div>
+            </div>
+            <Link href="/products?type=tshirts" className="va">
+              Shop All T-Shirts →
+            </Link>
           </div>
-          <Link href="/products?type=tshirts" className="va">
-            Shop All T-Shirts →
-          </Link>
-        </div>
 
-        <div className="prod-grid">
-          {products
-            .filter(p => (p.name.toLowerCase().includes("t-shirt") || p.name.toLowerCase().includes("tshirt") || p.type === "tshirts") && (p.badge || "").toLowerCase().includes("bestseller"))
-            .slice(0, 8)
-            .map((p) => (
-              <ProductCard key={p.id} p={p} />
-            ))
-          }
-          {/* Fallback: show top tshirts */}
-          {products.filter(p => (p.name.toLowerCase().includes("t-shirt") || p.name.toLowerCase().includes("tshirt") || p.type === "tshirts") && (p.badge || "").toLowerCase().includes("bestseller")).length === 0 &&
-            products.filter(p => p.type === "tshirts" && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8).map(p => (
-              <ProductCard key={p.id} p={p} />
-            ))
-          }
+          <div className="prod-grid">
+            {tshirtBestsellers.map((p) => (
+                <ProductCard key={p.id} p={p} />
+              ))
+            }
+            {/* Fallback: show top tshirts */}
+            {tshirtBestsellers.length === 0 &&
+              tshirtFallback.map(p => (
+                <ProductCard key={p.id} p={p} />
+              ))
+            }
+          </div>
         </div>
-      </div>
+      )}
 
 
       {/* NEW ARRIVALS */}
-      <div className="sec">
-        <div className="sec-hd">
-          <div>
-            <div className="sec-t">New Arrivals</div>
-            <div className="sec-s">Fresh additions to the Medvastr collection</div>
+      {newArr.length > 0 && (
+        <div className="sec">
+          <div className="sec-hd">
+            <div>
+              <div className="sec-t">New Arrivals</div>
+              <div className="sec-s">Fresh additions to the Medvastr collection</div>
+            </div>
+            <Link href="/products" className="va">
+              View All New Arrivals →
+            </Link>
           </div>
-          <Link href="/products" className="va">
-            View All New Arrivals →
-          </Link>
+          <div className="prod-grid">
+            {newArr.map((p) => (
+              <ProductCard key={p.id} p={p} />
+            ))}
+          </div>
         </div>
-        <div className="prod-grid">
-          {newArr.map((p) => (
-            <ProductCard key={p.id} p={p} />
-          ))}
-        </div>
-      </div>
+      )}
 
       {/* FEATURE STRIP */}
 

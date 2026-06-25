@@ -1518,7 +1518,7 @@ textarea {
 .sec {
   max-width: 1560px;
   margin: 0 auto;
-  padding: 68px 44px;
+  padding: 32px 44px; /* Reduced from 68px to tighten vertical spacing */
 }
 
 .sec-hd {
@@ -4568,7 +4568,7 @@ footer {
   }
 
   .sec {
-    padding: 50px 20px;
+    padding: 24px 20px;
   }
 }
 
@@ -4798,7 +4798,7 @@ footer {
   }
 
   .sec {
-    padding: 40px 20px;
+    padding: 20px 20px;
   }
 
   .sec-hd {
