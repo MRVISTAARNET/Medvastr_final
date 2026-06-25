@@ -83,6 +83,7 @@ export default function BlogPostClient({
           dangerouslySetInnerHTML={{ __html: contentHtml }}
         />
         <style>{`
+          article { font-family: var(--sans); }
           article h1 { font-size: 28px; font-weight: 800; margin: 32px 0 12px; color: var(--ink, #1a1a2e); }
           article h2 { font-size: 22px; font-weight: 700; margin: 28px 0 10px; color: var(--ink, #1a1a2e); }
           article h3 { font-size: 18px; font-weight: 700; margin: 20px 0 8px; color: var(--ink, #1a1a2e); }
@@ -92,6 +93,7 @@ export default function BlogPostClient({
           article em { font-style: italic; }
           article a { color: #008080; text-decoration: underline; }
           article p { margin-bottom: 16px; }
+          article * { font-family: inherit !important; }
         `}</style>
         {related.length > 0 && (
           <section style={{ marginTop: 48 }}>
