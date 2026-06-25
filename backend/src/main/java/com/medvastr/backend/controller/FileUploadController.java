@@ -60,10 +60,8 @@ public class FileUploadController {
             FileUploadValidator.validate(file);
             String extension = FileUploadValidator.sanitizedExtension(file.getOriginalFilename());
 
-            if (accessKeyId == null || accessKeyId.isBlank()) {
-                log.warn("AWS Credentials not found. Falling back to local storage.");
-                return saveLocally(file, extension);
-            }
+            // We rely on buildS3Client() to use IAM roles if accessKeyId is blank.
+            // No local storage fallback anymore unless S3 actually fails.
 
             String s3Key = "media/" + UUID.randomUUID() + extension;
 
