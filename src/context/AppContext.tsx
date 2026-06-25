@@ -247,7 +247,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const fetchProducts = useCallback(async () => {
     try {
-      const data = await apiJson<{ content: any[] }>("/products?size=500", { skipAuth: true });
+      const ts = new Date().getTime();
+      const data = await apiJson<{ content: any[] }>(`/products?size=500&t=${ts}`, { skipAuth: true });
       if (data.success && data.data?.content) {
         setProducts(data.data.content.map((p: any) => mapApiProduct(p)));
         return true;
@@ -288,6 +289,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Fetch data on mount - forcing refresh to load new image order logic
   useEffect(() => {
     fetchProducts();
     fetchCategories();
