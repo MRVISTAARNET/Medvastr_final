@@ -89,7 +89,9 @@ export function productMatchesCategory(
 ): boolean {
   if (!categorySlug || categorySlug === "all") return true;
 
-  // 1. Try matching using category IDs if they align
+  const slug = categorySlug.toLowerCase();
+  
+  // 1. Check ID-based mapping from category tree if available
   const cat = findCategoryBySlug(tree, categorySlug);
   if (cat) {
     const ids = new Set(collectDescendantIds(cat));
@@ -103,72 +105,64 @@ export function productMatchesCategory(
     }
   }
 
-  // 2. Robust fallback matching using category slugs, type, names and gender
-  const slug = categorySlug.toLowerCase();
-  const name = (product.name || "").toLowerCase();
-  const type = (product.type || "").toLowerCase();
+  // 2. Extract Gender requirements from slug
   const gen = (product.gen || "").toLowerCase();
-
-  // Extract gender prefix requirement from hardcoded category slug (e.g. "men-scrub-suit")
   let reqGen: string | null = null;
   if (slug.startsWith("men-")) reqGen = "men";
   else if (slug.startsWith("women-")) reqGen = "women";
 
-  if (reqGen && gen !== "all" && !gen.split(',').map(g => g.trim().toLowerCase()).includes(reqGen)) {
-    return false;
+  if (reqGen && gen !== "all") {
+    const pGens = gen.split(',').map(g => g.trim().toLowerCase());
+    if (pGens.length > 0 && !pGens.includes(reqGen) && !pGens.includes("unisex")) {
+      return false; // Strict reject if gender explicitly doesn't match
+    }
   }
 
-  // Check matching by category/subcategory name string if they match tree node names
+  // 3. Fallback semantic checks
+  const name = (product.name || "").toLowerCase();
+  const type = (product.type || "").toLowerCase();
+  
   const pCatName = (product.categoryName || "").toLowerCase();
   const pSubCatName = (product.subcategoryName || "").toLowerCase();
   const pChildCatName = (product.childCategoryName || "").toLowerCase();
 
+  // If node name matches category tree name
   if (cat) {
     const catName = cat.name.toLowerCase();
-    if (pCatName === catName || pSubCatName === catName || pChildCatName === catName) {
+    if (pCatName.includes(catName) || pSubCatName.includes(catName) || pChildCatName.includes(catName)) {
       return true;
     }
   }
 
-  // Category specific keyword/type mapping rules
+  // Specific semantic overrides
   if (slug.includes("scrub-suit") || slug.includes("scrubs")) {
-    return type === "scrubs" || type.includes("scrub") || name.includes("scrub");
+    return type.includes("scrub") && !type.includes("under");
   }
   if (slug.includes("flexi-fit-v-scrub") || slug.includes("flexi-v-scrub")) {
-    return (type === "scrubs" || type.includes("scrub") || name.includes("scrub")) && name.includes("flexi");
+    return type.includes("scrub") && !type.includes("under") && name.includes("flexi");
   }
   if (slug.includes("cotton-tshirt") || slug.includes("t-shirt") || slug.includes("tshirt")) {
-    return type === "tshirts" || type === "tshirt" || name.includes("t-shirt") || name.includes("tshirt");
+    return type.includes("tshirt") || type.includes("t-shirt") || name.includes("t-shirt") || name.includes("tshirt");
   }
   if (slug.includes("full-sleeve") || slug.includes("underscrub") || slug.includes("under-scrub")) {
-    return type === "underscrubs" || type === "underscrub" || type.includes("under") || name.includes("under") || pSubCatName.includes("under") || pChildCatName.includes("full sleeve");
+    return type.includes("under") || name.includes("under");
   }
   if (slug.includes("surgeon-gown") || slug.includes("surgical-gown")) {
-    return type === "surgical-gown" || type === "gown" || name.includes("gown");
+    return type.includes("gown") || name.includes("gown");
   }
   if (slug.includes("surgeon-cap") || slug.includes("surgical-cap")) {
-    return type === "surgical-cap" || type === "cap" || name.includes("cap") || name.includes("head");
+    return type.includes("cap") || name.includes("cap") || name.includes("head");
   }
   if (slug.includes("surgical-wear") || slug === "surgical-wear") {
-    return type === "surgical" || type.includes("surgical") || name.includes("surgical") || name.includes("surgeon") || name.includes("gown") || name.includes("cap");
+    return type.includes("surgical") || type.includes("gown") || type.includes("cap") || name.includes("surgical") || name.includes("surgeon") || name.includes("gown") || name.includes("cap");
   }
 
-  // Bulk category mappings
-  if (slug === "bulk-orders" || slug === "bulk-order") {
-    return true; 
-  }
-  if (slug === "linen-and-bedding") {
-    return type === "linen" || name.includes("linen") || name.includes("bedding") || pCatName.includes("linen") || pSubCatName.includes("linen");
-  }
-  if (slug === "brown-blankets" || slug === "brown-blanket") {
-    return name.includes("blanket") || pCatName.includes("blanket") || pSubCatName.includes("blanket");
-  }
-  if (slug === "patient-dress") {
-    return name.includes("patient") || pCatName.includes("patient") || pSubCatName.includes("patient");
-  }
-  if (slug === "maternity-gown") {
-    return name.includes("maternity") || pCatName.includes("maternity") || pSubCatName.includes("maternity");
-  }
+  // Bulk and others
+  if (slug.includes("bulk-order")) return true;
+  if (slug.includes("linen") || slug.includes("bedding")) return type.includes("linen") || name.includes("linen") || name.includes("bedding");
+  if (slug.includes("blanket")) return type.includes("blanket") || name.includes("blanket");
+  if (slug.includes("patient")) return type.includes("patient") || name.includes("patient");
+  if (slug.includes("maternity")) return type.includes("maternity") || name.includes("maternity");
 
   return false;
 }

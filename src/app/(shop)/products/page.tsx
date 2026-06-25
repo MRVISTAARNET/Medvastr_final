@@ -98,7 +98,7 @@ function ProductsContent() {
   let f = flattened.filter((p) => {
     // Gender Filter
     const pGens = (p.gen || "men").toLowerCase().split(',').map((s: string) => s.trim());
-    if (gen !== "all" && !pGens.includes(gen.toLowerCase())) return false;
+    if (gen !== "all" && !pGens.includes(gen.toLowerCase()) && !pGens.includes("unisex") && pGens.length > 0) return false;
 
     // Category Filter
     if (cat !== "all" && !productMatchesCategory(p, cat, categoryTree)) return false;
@@ -107,10 +107,15 @@ function ProductsContent() {
     if (typeFilter) {
       const pType = p.type?.toLowerCase() || "";
       const tFilter = typeFilter.toLowerCase();
+      
       if (tFilter === "underscrubs" || tFilter === "underscrub") {
-        if (pType !== "underscrubs" && pType !== "underscrub") return false;
+        if (!pType.includes("under")) return false;
       } else if (tFilter === "tshirts" || tFilter === "tshirt") {
-        if (pType !== "tshirts" && pType !== "tshirt" && pType !== "cotton-crew-tshirt") return false;
+        if (!pType.includes("tshirt") && !pType.includes("t-shirt")) return false;
+      } else if (tFilter === "scrubs" || tFilter === "scrub") {
+        if (!pType.includes("scrub") || pType.includes("under")) return false;
+      } else if (tFilter === "surgical" || tFilter === "surgical-wear") {
+        if (!pType.includes("surgical") && !pType.includes("gown") && !pType.includes("cap")) return false;
       } else if (pType !== tFilter) {
         return false;
       }

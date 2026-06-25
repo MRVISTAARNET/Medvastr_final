@@ -20,8 +20,10 @@ export default function Home() {
   const promoBanners = banners.filter((b: any) => b.isActive && (b.position === "PROMO" || b.position === "HOME_MIDDLE"));
   const TABS = [
     { id: "scrubs", label: "Uniforms & Scrubs", types: ["scrubs"] },
+    { id: "tshirts", label: "T-Shirts", types: ["tshirts", "tshirt", "cotton-crew-tshirt"] },
+    { id: "underscrubs", label: "Under Scrubs", types: ["underscrubs", "underscrub"] },
     { id: "linen", label: "Linen & Bedding", types: ["linen", "bedding", "blanket", "dress"] },
-    { id: "surgical", label: "Surgical Wear", types: ["surgical"] },
+    { id: "surgical", label: "Surgical Wear", types: ["surgical", "surgical-gown", "surgical-cap", "gown", "cap"] },
     { id: "diagnostic", label: "Diagnostic & Caps", types: ["diagnostic"] },
   ];
 
@@ -145,15 +147,15 @@ export default function Home() {
 
         <div className="prod-grid">
           {products
-            .filter(p => p.name.toLowerCase().includes("flexi fit v scrub"))
+            .filter(p => p.name.toLowerCase().includes("flexi fit v scrub") && (p.badge || "").toLowerCase().includes("bestseller"))
             .slice(0, 8)
             .map((p) => (
               <ProductCard key={p.id} p={p} />
             ))
           }
           {/* Fallback if no specific products found: show top scrubs */}
-          {products.filter(p => p.name.toLowerCase().includes("flexi fit v scrub")).length === 0 &&
-            products.filter(p => p.type === "scrubs").slice(0, 8).map(p => (
+          {products.filter(p => p.name.toLowerCase().includes("flexi fit v scrub") && (p.badge || "").toLowerCase().includes("bestseller")).length === 0 &&
+            products.filter(p => p.type === "scrubs" && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8).map(p => (
               <ProductCard key={p.id} p={p} />
             ))
           }
@@ -174,15 +176,15 @@ export default function Home() {
 
         <div className="prod-grid">
           {products
-            .filter(p => p.name.toLowerCase().includes("t-shirt") || p.name.toLowerCase().includes("tshirt") || p.type === "tshirts")
+            .filter(p => (p.name.toLowerCase().includes("t-shirt") || p.name.toLowerCase().includes("tshirt") || p.type === "tshirts") && (p.badge || "").toLowerCase().includes("bestseller"))
             .slice(0, 8)
             .map((p) => (
               <ProductCard key={p.id} p={p} />
             ))
           }
           {/* Fallback: show top tshirts */}
-          {products.filter(p => p.name.toLowerCase().includes("t-shirt") || p.name.toLowerCase().includes("tshirt") || p.type === "tshirts").length === 0 &&
-            products.filter(p => p.type === "tshirts").slice(0, 8).map(p => (
+          {products.filter(p => (p.name.toLowerCase().includes("t-shirt") || p.name.toLowerCase().includes("tshirt") || p.type === "tshirts") && (p.badge || "").toLowerCase().includes("bestseller")).length === 0 &&
+            products.filter(p => p.type === "tshirts" && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8).map(p => (
               <ProductCard key={p.id} p={p} />
             ))
           }
