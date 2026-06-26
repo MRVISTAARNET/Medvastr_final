@@ -51,6 +51,7 @@ function ProductsContent() {
     genderFilteredProducts.map(p => p.fit).filter(Boolean)
   )).sort();
 
+  useEffect(() => {
     setCat(initCat);
     setColorFilter(initColor);
     setSizeFilter(initSize);
