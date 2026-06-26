@@ -40,7 +40,27 @@ function TrackContent() {
       const orderJson = await resOrder.json();
 
       if (trackJson.success && trackJson.data) {
-        setTracking(trackJson.data);
+        let finalTracking = trackJson.data;
+        if (orderJson.success && orderJson.data && orderJson.data.trackingNumber) {
+          try {
+             const srRes = await fetch(`${API_BASE}/shipping/track/${orderJson.data.trackingNumber}`);
+             const srJson = await srRes.json();
+             if (srJson.tracking_data?.shipment_track_activities?.length > 0) {
+                const activities = srJson.tracking_data.shipment_track_activities;
+                const realScans = activities.map((act: any) => ({
+                   label: act.activity + (act.location ? ` - ${act.location}` : ''),
+                   completed: true,
+                   timestamp: act.date
+                }));
+                // Overwrite backend timeline with real scans (keeping "Order Placed" at the start)
+                finalTracking.timeline = [
+                   finalTracking.timeline[0],
+                   ...realScans.reverse()
+                ];
+             }
+          } catch (e) {}
+        }
+        setTracking(finalTracking);
       } else {
         setError(trackJson.message || "Order not found");
       }

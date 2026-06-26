@@ -17,6 +17,9 @@ export default function CheckoutPage() {
   const { cart, clearCart, toast, user, isHydrated, setIsAuthOpen } = useApp();
   const [submitting, setSubmitting] = useState(false);
   const [orderNum, setOrderNum] = useState<string | null>(null);
+  const [shippingCost, setShippingCost] = useState<number>(0);
+  const [shippingLoading, setShippingLoading] = useState(false);
+  const [shippingError, setShippingError] = useState("");
   const razorpayLoaded = useRef(false);
   const pendingOrderRef = useRef<any>(null);
 
@@ -47,8 +50,38 @@ export default function CheckoutPage() {
   }, [user]);
 
   const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const ship = sub > 999 ? 0 : 99;
-  const tot = Math.max(0, sub + ship - promoDiscount);
+  const tot = Math.max(0, sub + shippingCost - promoDiscount);
+
+  // Shiprocket Serviceability Call
+  useEffect(() => {
+    if (form.pincode.length === 6 && cart.length > 0) {
+      setShippingLoading(true);
+      setShippingError("");
+      const totalWeight = cart.reduce((s, i) => s + 0.5 * i.qty, 0); // Default 0.5kg per item
+      const isCod = form.paymentMethod === "COD";
+      
+      fetch(`${API_BASE}/shipping/serviceability?pincode=${form.pincode}&weight=${totalWeight}&isCod=${isCod}`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.status === 200 && data.data && data.data.available_courier_companies && data.data.available_courier_companies.length > 0) {
+            // Find cheapest or recommended courier
+            const courier = data.data.available_courier_companies[0];
+            setShippingCost(courier.freight_charge);
+            
+            // Auto-fill City & State
+            if (courier.city && !form.city) setForm(f => ({ ...f, city: courier.city }));
+            if (courier.state && !form.state) setForm(f => ({ ...f, state: courier.state }));
+          } else {
+            setShippingError("Delivery not available for this Pincode/Payment method.");
+            setShippingCost(99); // Fallback
+          }
+        })
+        .catch(() => {
+          setShippingCost(99);
+        })
+        .finally(() => setShippingLoading(false));
+    }
+  }, [form.pincode, form.paymentMethod, cart]);
 
   const applyPromo = async () => {
     if (!promoInput.trim()) return;
@@ -187,6 +220,7 @@ export default function CheckoutPage() {
     setSubmitting(true);
     const orderRequest = {
       ...form,
+      shippingAmount: shippingCost,
       items: cart.map((i) => ({
         productId: i.id,
         variantId: i.variantId,
@@ -308,9 +342,11 @@ export default function CheckoutPage() {
                 <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
                   Pincode <span style={{ color: '#e11d48' }}>*</span>
                 </label>
-                <input name="pincode" className="co-input-field" placeholder="Pincode" value={form.pincode} onChange={handleInputChange} />
+                <input name="pincode" className="co-input-field" placeholder="Pincode" maxLength={6} value={form.pincode} onChange={e => setForm({...form, pincode: e.target.value.replace(/[^0-9]/g, '')})} />
               </div>
             </div>
+            {shippingError && <p style={{ color: '#e11d48', fontSize: '13px', fontWeight: 600, marginBottom: '20px' }}>{shippingError}</p>}
+            {shippingLoading && <p style={{ color: '#008080', fontSize: '13px', fontWeight: 600, marginBottom: '20px' }}>Calculating live shipping rates...</p>}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
               <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
                 Mobile Number <span style={{ color: '#e11d48' }}>*</span>
@@ -392,8 +428,8 @@ export default function CheckoutPage() {
               <span className="co-val-ink">{fmt(sub)}</span>
             </div>
             <div className="co-total-row">
-              <span>Shipping Cost</span>
-              <span className={ship === 0 ? 'co-val-free' : 'co-val-ink'}>{ship === 0 ? 'COMPLIMENTARY' : fmt(ship)}</span>
+              <span>Shipping Cost {shippingLoading ? '(Calculating...)' : ''}</span>
+              <span className={shippingCost === 0 ? 'co-val-free' : 'co-val-ink'}>{shippingCost === 0 ? 'COMPLIMENTARY' : fmt(shippingCost)}</span>
             </div>
             {promoDiscount > 0 && (
               <div className="co-total-row">
@@ -409,7 +445,7 @@ export default function CheckoutPage() {
 
           {/* SIDEBAR TRUST INFO */}
           <div className="co-sidebar-trust">
-            {[['🚚', 'Free Delivery', `Orders above ₹999 ship free. Others at ₹${ship}.`],
+            {[['🚚', 'Live Courier Rates', `Shipping is calculated directly via Shiprocket.`],
             ['↩️', 'Easy Returns', '7-day hassle-free returns on all orders.'],
             ['💬', 'Support', 'Need help? Chat with us or call Mon–Sat 10am–6pm.']
             ].map(([ico, title, desc]) => (

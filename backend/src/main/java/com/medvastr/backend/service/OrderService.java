@@ -101,7 +101,9 @@ public class OrderService {
             }
         }
 
-        BigDecimal ship = subtotal.compareTo(FREE_SHIP) >= 0 ? BigDecimal.ZERO : SHIP_COST;
+        BigDecimal ship = r.getShippingAmount() != null 
+            ? BigDecimal.valueOf(r.getShippingAmount()) 
+            : (subtotal.compareTo(FREE_SHIP) >= 0 ? BigDecimal.ZERO : SHIP_COST);
         BigDecimal disc = BigDecimal.ZERO;
 
         if (r.getPromoCode() != null && !r.getPromoCode().isBlank()) {

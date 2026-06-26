@@ -370,4 +370,43 @@ public class ShiprocketService {
             order.setStatus(Order.OrderStatus.RETURNED);
         }
     }
+
+    public String getServiceability(String deliveryPincode, double weight, boolean isCod) {
+        try {
+            String token = getValidToken();
+            if (token == null) return "{\"success\": false, \"message\": \"Authentication failed\"}";
+
+            String url = String.format("https://apiv2.shiprocket.in/v1/external/courier/serviceability/?pickup_postcode=400063&delivery_postcode=%s&weight=%s&cod=%d",
+                    deliveryPincode, weight, isCod ? 1 : 0);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(token);
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            ResponseEntity<String> res = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+            return res.getBody();
+        } catch (Exception e) {
+            log.error("[Shiprocket] Serviceability error for {}: {}", deliveryPincode, e.getMessage());
+            return "{\"success\": false, \"message\": \"" + e.getMessage() + "\"}";
+        }
+    }
+
+    public String getTrackingDetails(String awb) {
+        try {
+            String token = getValidToken();
+            if (token == null) return "{\"success\": false, \"message\": \"Authentication failed\"}";
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(token);
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            ResponseEntity<String> res = restTemplate.exchange(
+                    "https://apiv2.shiprocket.in/v1/external/courier/track/awb/" + awb,
+                    HttpMethod.GET, entity, String.class);
+            return res.getBody();
+        } catch (Exception e) {
+            log.error("[Shiprocket] Tracking error for AWB {}: {}", awb, e.getMessage());
+            return "{\"success\": false, \"message\": \"" + e.getMessage() + "\"}";
+        }
+    }
 }

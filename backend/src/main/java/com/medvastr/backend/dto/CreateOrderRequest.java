@@ -47,4 +47,5 @@ public class CreateOrderRequest {
     private String paymentMethod;
     private String promoCode;
     private String notes;
+    private Double shippingAmount;
 }
