@@ -69,18 +69,18 @@ export default function Footer() {
           </h4>
           <ul className="ft-lnks">
             {[
-              ["Scrub Suit", "scrubs", false],
-              ["Cotton Crew T-Shirt", "tshirts", false],
-              ["Full Sleeve Under Scrub", "underscrubs", false],
-              ["Surgical Gown", "surgical-gown", false],
-              ["Surgical Cap", "surgical-cap", false],
-              ["Linen & Bedding", "linen-and-bedding", true],
-              ["Brown Blanket", "brown-blankets", true],
-              ["Maternity Gown", "maternity-gown", true],
-              ["Patient Dress", "patient-dress", true]
-            ].map(([l, cat, isBulk]) => (
+              ["Scrub Suit", "scrubs", false, true],
+              ["Cotton Crew T-Shirt", "tshirts", false, true],
+              ["Full Sleeve Under Scrub", "underscrub", false, true],
+              ["Surgical Gown", "surgical-gown", false, true],
+              ["Surgical Cap", "surgical-cap", false, true],
+              ["Linen & Bedding", "linen-and-bedding", true, false],
+              ["Brown Blanket", "brown-blankets", true, false],
+              ["Maternity Gown", "maternity-gown", true, false],
+              ["Patient Dress", "patient-dress", true, false]
+            ].map(([l, cat, isBulk, isType]) => (
               <li key={l as string}>
-                <Link href={isBulk ? `/bulk-orders/${cat}` : `/products?cat=${cat}`}>{l as string}</Link>
+                <Link href={isBulk ? `/bulk-orders/${cat}` : (isType ? `/products?type=${cat}` : `/products?cat=${cat}`)}>{l as string}</Link>
               </li>
             ))}
           </ul>

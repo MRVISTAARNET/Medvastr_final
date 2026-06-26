@@ -126,7 +126,7 @@ function ProductsContent() {
     return true;
   });
 
-  const availableColorHexes = new Set(baseSubset.map(p => p.displayColorHex?.toLowerCase()));
+  const availableColorNames = new Set(baseSubset.map(p => p.displayColorName?.toLowerCase()));
   const availableSizesSet = new Set<string>();
   baseSubset.forEach(p => {
     if (p.sizes) p.sizes.forEach((s: string) => availableSizesSet.add(s.toUpperCase()));
@@ -478,11 +478,11 @@ function ProductsContent() {
               </div>
 
               {/* COLORS */}
-              {colors.filter((c: any) => availableColorHexes.has(c.hexCode?.toLowerCase())).length > 0 && (
+              {colors.filter((c: any) => availableColorNames.has(c.name?.toLowerCase())).length > 0 && (
                 <div className="sb3-section">
                   <div className="sb3-sec-hd">COLOURS</div>
                   <div className="sb3-color-grid">
-                    {colors.filter((c: any) => availableColorHexes.has(c.hexCode?.toLowerCase())).map((c: any) => (
+                    {colors.filter((c: any) => availableColorNames.has(c.name?.toLowerCase())).map((c: any) => (
                       <div
                         key={c.name}
                         className={`sb3-color-item${colorFilter === c.name ? " active" : ""}`}
