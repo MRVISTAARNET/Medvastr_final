@@ -37,6 +37,9 @@ public class ShiprocketService {
     @Value("${shiprocket.pickup_location:Primary}")
     private String pickupLocation;
 
+    @Value("${shiprocket.pickup_postcode:400063}")
+    private String pickupPostcode;
+
     private final RestTemplate restTemplate = new RestTemplate();
 
     // Thread-safe token storage with expiry
@@ -402,8 +405,8 @@ public class ShiprocketService {
             String token = getValidToken();
             if (token == null) return "{\"success\": false, \"message\": \"Authentication failed\"}";
 
-            String url = String.format("https://apiv2.shiprocket.in/v1/external/courier/serviceability/?pickup_postcode=400063&delivery_postcode=%s&weight=%s&cod=%d",
-                    deliveryPincode, weight, isCod ? 1 : 0);
+            String url = String.format("https://apiv2.shiprocket.in/v1/external/courier/serviceability/?pickup_postcode=%s&delivery_postcode=%s&weight=%s&cod=%d",
+                    pickupPostcode, deliveryPincode, weight, isCod ? 1 : 0);
 
             HttpHeaders headers = new HttpHeaders();
             headers.setBearerAuth(token);

@@ -98,6 +98,22 @@ export default function CheckoutPage() {
       }, 0);
       const isCod = form.paymentMethod === "COD";
       
+      // Auto-fill City & State using public API first
+      fetch(`https://api.postalpincode.in/pincode/${form.pincode}`)
+        .then(r => r.json())
+        .then(pdata => {
+          if (pdata && pdata[0] && pdata[0].Status === "Success" && pdata[0].PostOffice && pdata[0].PostOffice.length > 0) {
+            const po = pdata[0].PostOffice[0];
+            setForm(f => ({
+              ...f,
+              city: f.city || po.District || po.Region,
+              state: f.state || po.State
+            }));
+          }
+        })
+        .catch(console.error);
+
+      // Shiprocket Serviceability Call
       fetch(`${API_BASE}/shipping/serviceability?pincode=${form.pincode}&weight=${totalWeight}&isCod=${isCod}`)
         .then(r => r.json())
         .then(data => {
@@ -106,9 +122,9 @@ export default function CheckoutPage() {
             const courier = data.data.available_courier_companies[0];
             setShippingCost(courier.freight_charge);
             const estDays = courier.etd || "5-7";
-            setShippingSuccess(`✓ Delivery Available. Estimated in ${estDays} days.`);
+            setShippingSuccess(`✓ Delivery Available via ${courier.courier_name}. Est in ${estDays} days.`);
             
-            // Auto-fill City & State
+            // Auto-fill City & State from Shiprocket if public API failed
             if (courier.city && !form.city) setForm(f => ({ ...f, city: courier.city }));
             if (courier.state && !form.state) setForm(f => ({ ...f, state: courier.state }));
           } else if (data.status === 404 || (data.message && data.message.toLowerCase().includes('not serviceable'))) {
@@ -116,12 +132,14 @@ export default function CheckoutPage() {
             setShippingError("Delivery not available for this Pincode/Payment method.");
             setShippingCost(99); // Fallback
           } else {
-            // Shiprocket unconfigured, auth failed, or other API error -> Fallback to default
+            // Shiprocket unconfigured, auth failed, or other API error
+            console.error("Shiprocket API Error:", data.message);
             setShippingCost(99);
-            setShippingSuccess("✓ Delivery Available. Estimated in 5-7 days.");
+            setShippingSuccess(`✓ Delivery Available (Fallback due to Shiprocket Error: ${data.message || 'Unknown'}).`);
           }
         })
-        .catch(() => {
+        .catch((e) => {
+          console.error("Shiprocket Fetch Error:", e);
           setShippingCost(99);
           setShippingSuccess("✓ Delivery Available. Estimated in 5-7 days.");
         })
