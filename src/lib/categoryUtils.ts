@@ -6,6 +6,7 @@ export interface CategoryNode {
   slug: string;
   navLabel?: string;
   showInNav?: boolean;
+  active?: boolean;
   parentId?: number | null;
   children?: CategoryNode[];
 }
