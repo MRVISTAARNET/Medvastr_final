@@ -228,13 +228,29 @@ function ProductsContent() {
 
   const isSurgicalMode = isSurgical || catKey.includes('surgical') || catKey.includes('surgeon');
 
-  const cats = [
-    !isSurgicalMode ? { id: "flexi-fit-v-scrub", l: "Scrub Suit", depth: 0 } : null,
-    !isSurgicalMode ? { id: "cotton-tshirt", l: "Cotton T-Shirt", depth: 0 } : null,
-    !isSurgicalMode ? { id: "full-sleeve", l: "Underscrub", depth: 0 } : null,
-    (isSurgicalMode || genKey === "all") ? { id: "surgeon-gown", l: "Surgical Gown", depth: 0 } : null,
-    (isSurgicalMode || genKey === "all") ? { id: "surgeon-cap", l: "Surgical Cap", depth: 0 } : null,
-  ].filter(Boolean) as any[];
+  // DYNAMIC CATEGORY MAPPING
+  let dynamicCats: any[] = [];
+  if (isSurgicalMode) {
+    const root = findCategoryBySlug(categoryTree, "surgical-wear");
+    if (root?.children) {
+      dynamicCats = root.children.filter(c => c.active !== false).map(c => ({ id: c.slug, l: c.name, depth: 0 }));
+    }
+  } else if (genKey === "men" || genKey === "women") {
+    const root = findCategoryBySlug(categoryTree, genKey);
+    if (root?.children) {
+      dynamicCats = root.children.filter(c => c.active !== false).map(c => ({ id: c.slug, l: c.name, depth: 0 }));
+    }
+  } else {
+    // If "All Products" is selected, show generic categories matching Medvastr's main types
+    dynamicCats = [
+      { id: "scrub-suit", l: "Scrub Suits", depth: 0 },
+      { id: "underscrub", l: "Underscrubs", depth: 0 },
+      { id: "cotton-tshirt", l: "Cotton T-Shirts", depth: 0 },
+      { id: "surgical-wear", l: "Surgical Wear", depth: 0 }
+    ];
+  }
+
+  const cats = dynamicCats;
 
   let rawCatLabel = cat !== 'all' ? (findCategoryBySlug(categoryTree, cat)?.name || cat.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')) : null;
 
@@ -389,7 +405,7 @@ function ProductsContent() {
           )}
         </div>
 
-        <div className="catalog-header" style={{ marginBottom: 50 }}>
+        <div className="catalog-header" style={{ marginBottom: cats.length > 0 ? 25 : 50 }}>
           <h1 className="catalog-title" style={{ fontSize: '28px', marginBottom: '15px' }}>{staticBannerTitle}</h1>
           <div style={{ width: '60px', height: '4px', background: '#008080', marginBottom: '25px', borderRadius: '2px' }}></div>
           <ExpandableDescription
@@ -398,6 +414,33 @@ function ProductsContent() {
             style={{ maxWidth: '800px', fontSize: '19px', lineHeight: '1.7', color: '#475569', fontWeight: 400 }}
           />
         </div>
+
+        {/* HORIZONTAL CATEGORY PILLS */}
+        {cats.length > 0 && (
+          <div className="category-pills-row" style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '20px', marginBottom: '25px', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
+            {cats.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => { updateURL({ cat: c.id, pg: "1" }); }}
+                style={{
+                  whiteSpace: 'nowrap',
+                  padding: '8px 18px',
+                  borderRadius: '20px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  border: cat === c.id ? '1.5px solid #008080' : '1.5px solid #cbd5e1',
+                  background: cat === c.id ? '#f0fdfa' : 'white',
+                  color: cat === c.id ? '#008080' : '#475569',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  boxShadow: cat === c.id ? '0 2px 4px rgba(0,128,128,0.1)' : 'none'
+                }}
+              >
+                {c.l}
+              </button>
+            ))}
+          </div>
+        )}
 
         <button className="mob-filter-btn" onClick={() => setMobF(true)}>
           <span style={{ fontSize: 18 }}>⚙️</span> Show Filters
@@ -417,25 +460,36 @@ function ProductsContent() {
 
             <div className="sb3-body">
               {/* GENDER */}
-              <div className="sb3-section">
-                <div className="sb3-sec-hd">GENDER</div>
-                <div className="sb3-list">
-                  {[
-                    ["all", "All"],
-                    ["men", "Men"],
-                    ["women", "Women"]
-                  ].map(([v, l]) => (
-                    <div
-                      key={v}
-                      className={`sb3-item${gen === v ? " active" : ""}`}
-                      onClick={() => { updateURL({ gender: v, pg: "1" }); if (mobF) setMobF(false); }}
-                    >
-                      <div className="sb3-check-box" />
-                      <span className="sb3-label">{l}</span>
-                    </div>
-                  ))}
+              {!isSurgicalMode && (
+                <div className="sb3-section">
+                  <div className="sb3-sec-hd">GENDER</div>
+                  <div className="sb3-list">
+                    {[
+                      ["all", "All"],
+                      ["men", "Men"],
+                      ["women", "Women"]
+                    ].map(([v, l]) => {
+                      // Disable selection of other genders when strictly in a gender collection
+                      const isDisabled = gen !== "all" && v !== "all" && gen !== v;
+                      return (
+                        <div
+                          key={v}
+                          className={`sb3-item${gen === v ? " active" : ""}${isDisabled ? " disabled" : ""}`}
+                          onClick={() => { 
+                            if (isDisabled) return;
+                            updateURL({ gender: v, pg: "1" }); 
+                            if (mobF) setMobF(false); 
+                          }}
+                          style={{ opacity: isDisabled ? 0.4 : 1, cursor: isDisabled ? 'not-allowed' : 'pointer' }}
+                        >
+                          <div className="sb3-check-box" />
+                          <span className="sb3-label">{l}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* CATEGORIES */}
               <div className="sb3-section">
