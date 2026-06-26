@@ -333,9 +333,25 @@ public class ShiprocketService {
     @Transactional
     public void handleWebhook(String payload) {
         JSONObject json = new JSONObject(payload);
-        String orderId = json.optString("order_id");
-        String status = json.optString("status");
+        
+        String orderId = json.optString("channel_order_id");
+        if (orderId.isEmpty() || orderId.equalsIgnoreCase("enter your channel order id")) {
+            orderId = json.optString("order_id");
+        }
+        
+        String status = json.optString("current_status");
+        if (status.isEmpty()) {
+            status = json.optString("shipment_status");
+        }
+        if (status.isEmpty()) {
+            status = json.optString("status");
+        }
+        
         String awb = json.optString("awb");
+        if (awb.isEmpty()) {
+            awb = json.optString("awb_code");
+        }
+        
         String courier = json.optString("courier_name");
 
         if (orderId == null || orderId.isEmpty()) {
