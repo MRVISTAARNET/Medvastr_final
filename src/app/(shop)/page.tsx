@@ -130,10 +130,10 @@ export default function Home() {
         <div className="clr-in">
           <div className="clr-t">Shop By Colours</div>
           <div className="clr-s">
-            {colors.filter(c => products.some(p => p.clrs?.some(pc => pc.toLowerCase() === (c.hexCode || '').toLowerCase()))).length} shades across all categories
+            {colors.filter(c => products.some(p => p.clrNms?.some(pc => pc.toLowerCase() === (c.name || '').toLowerCase()))).length} shades across all categories
           </div>
           <div className="clr-row" style={{ flexWrap: 'wrap', justifyContent: 'flex-start' }}>
-            {colors.filter(c => products.some(p => p.clrs?.some(pc => pc.toLowerCase() === (c.hexCode || '').toLowerCase()))).map((c, i) => (
+            {colors.filter(c => products.some(p => p.clrNms?.some(pc => pc.toLowerCase() === (c.name || '').toLowerCase()))).map((c, i) => (
               <Link href={`/products?color=${encodeURIComponent(c.name)}`} className="clr-sw" key={i}>
                 <div className="sw-c" style={{ background: c.hexCode }} />
                 <div className="sw-l">{c.name}</div>
