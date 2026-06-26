@@ -417,7 +417,7 @@ function ProductsContent() {
 
         {/* HORIZONTAL CATEGORY PILLS */}
         {cats.length > 0 && (
-          <div className="category-pills-row" style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '20px', marginBottom: '25px', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
+          <div className="category-pills-row" style={{ display: 'flex', justifyContent: 'center', gap: '12px', overflowX: 'auto', paddingBottom: '20px', marginBottom: '25px', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
             {cats.map((c) => (
               <button
                 key={c.id}
@@ -425,7 +425,7 @@ function ProductsContent() {
                 style={{
                   whiteSpace: 'nowrap',
                   padding: '8px 18px',
-                  borderRadius: '20px',
+                  borderRadius: '6px',
                   fontSize: '14px',
                   fontWeight: 600,
                   border: cat === c.id ? '1.5px solid #008080' : '1.5px solid #cbd5e1',

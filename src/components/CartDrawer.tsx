@@ -17,7 +17,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const router = useRouter();
 
   const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const ship = sub > 999 ? 0 : 99;
+  const freeShip = sub > 999;
 
   const handleCheckout = () => {
     onClose();
@@ -147,11 +147,11 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
             </div>
             <div className="sum-r">
               <span>Shipping</span>
-              <span>{ship === 0 ? "FREE" : fmt(ship)}</span>
+              <span style={{ fontSize: freeShip ? '14px' : '12px' }}>{freeShip ? "FREE" : "Calculated at checkout"}</span>
             </div>
             <div className="sum-r tot">
-              <span>Total</span>
-              <span>{fmt(sub + ship)}</span>
+              <span>Subtotal</span>
+              <span>{fmt(sub)}</span>
             </div>
             <button className="co-cta" onClick={handleCheckout}>
               Checkout Now →

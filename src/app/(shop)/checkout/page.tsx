@@ -135,7 +135,7 @@ export default function CheckoutPage() {
             // Shiprocket unconfigured, auth failed, or other API error
             console.error("Shiprocket API Error:", data.message);
             setShippingCost(99);
-            setShippingSuccess(`✓ Delivery Available (Fallback due to Shiprocket Error: ${data.message || 'Unknown'}).`);
+            setShippingSuccess("✓ Delivery Available. Estimated in 5-7 days.");
           }
         })
         .catch((e) => {
