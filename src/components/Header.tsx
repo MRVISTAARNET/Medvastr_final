@@ -104,7 +104,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
           <button className="ha mob-only" onClick={() => setMs(!mS)}>
             🔍
           </button>
-          <button className="ha" onClick={onAcct} title="Account" style={{ whiteSpace: 'nowrap' }}>
+          <button className="ha" onClick={onAcct} title="Account" style={{ whiteSpace: 'nowrap', width: user ? 'auto' : '42px', padding: user ? '0 15px' : '0', borderRadius: user ? '999px' : '50%' }}>
             {user ? (
               <span style={{ fontSize: 13, fontWeight: 700, color: "var(--t)" }}>
                 Hello, {user.firstName || "Admin"}
