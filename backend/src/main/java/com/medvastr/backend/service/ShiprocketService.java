@@ -359,7 +359,9 @@ public class ShiprocketService {
             return;
         }
 
-        orderRepository.findByOrderNumber(orderId).ifPresent(order -> {
+        var orderOpt = orderRepository.findByOrderNumber(orderId);
+        if (orderOpt.isPresent()) {
+            Order order = orderOpt.get();
             log.info("[Shiprocket Webhook] Updating order {} to status: {}", orderId, status);
 
             if (awb != null && !awb.isEmpty()) {
@@ -373,7 +375,7 @@ public class ShiprocketService {
             updateOrderStatusMapping(order, status);
 
             orderRepository.save(order);
-        });
+        }
     }
 
     private void updateOrderStatusMapping(Order order, String shiprocketStatus) {
