@@ -545,7 +545,7 @@ function ProductsContent() {
                         <div className="sb3-color-dot" style={{ background: c.hexCode }} />
                         <span className="sb3-color-name">{c.name}</span>
                         {colorFilter === c.name && (
-                          <span style={{ marginLeft: '4px', color: 'white', fontWeight: 900, fontSize: 13 }}>✓</span>
+                          <span style={{ marginLeft: 'auto', color: '#008080', fontWeight: 900, fontSize: 15 }}>✓</span>
                         )}
                       </div>
                     ))}
@@ -772,23 +772,21 @@ function ProductsContent() {
         .sb3-section { margin-bottom: 40px; }
         .sb3-sec-hd { font-size: 13px; font-weight: 900; color: #0f172a; margin-bottom: 20px; letter-spacing: 1.2px; }
         
-        .sb3-list { display: flex; flex-wrap: wrap; gap: 10px; flex-direction: row; }
-        .sb3-item { padding: 8px 14px; border: 1.5px solid #475569; border-radius: 6px; cursor: pointer; transition: all 0.2s; background: white; display: flex; align-items: center; justify-content: center; }
-        .sb3-check-box { display: none; }
-        .sb3-label { font-size: 13px; font-weight: 600; color: #475569; transition: color 0.2s; }
-        .sb3-item:hover { border-color: #008080; }
+        .sb3-list { display: flex; flex-direction: column; gap: 14px; }
+        .sb3-item { display: flex; align-items: center; gap: 14px; cursor: pointer; transition: all 0.2s; }
+        .sb3-check-box { width: 18px; height: 18px; border: 1.5px solid #475569; border-radius: 4px; transition: all 0.2s; position: relative; }
+        .sb3-item.active .sb3-check-box { background: #008080; border-color: #008080; }
+        .sb3-item.active .sb3-check-box::after { content: '✓'; position: absolute; color: white; font-size: 10px; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+        .sb3-label { font-size: 14px; font-weight: 500; color: #475569; transition: color 0.2s; }
         .sb3-item:hover .sb3-label { color: #008080; }
-        .sb3-item.active { border-color: #008080; background: #008080; }
-        .sb3-item.active .sb3-label { color: white; font-weight: 600; }
-        .sb3-num { font-size: 12px; color: #94a3b8; margin-left: auto; font-weight: 500; display: none; }
+        .sb3-item.active .sb3-label { color: #0f172a; font-weight: 700; }
+        .sb3-num { font-size: 12px; color: #94a3b8; margin-left: auto; font-weight: 500; }
 
-        .sb3-color-grid { display: flex; flex-wrap: wrap; gap: 10px; }
-        .sb3-color-item { padding: 8px 14px; border: 1.5px solid #475569; border-radius: 6px; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s; background: white; }
-        .sb3-color-dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #e2e8f0; flex-shrink: 0; }
-        .sb3-color-name { font-size: 13px; color: #475569; font-weight: 600; }
-        .sb3-color-item:hover { border-color: #008080; }
-        .sb3-color-item.active { border-color: #008080; background: #008080; }
-        .sb3-color-item.active .sb3-color-name { color: white; font-weight: 600; }
+        .sb3-color-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
+        .sb3-color-item { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .sb3-color-dot { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #475569; flex-shrink: 0; }
+        .sb3-color-name { font-size: 14px; color: #475569; font-weight: 500; }
+        .sb3-color-item.active .sb3-color-name { color: #0f172a; font-weight: 700; }
 
         .sb3-select { width: 100%; border: 1px solid #e2e8f0; padding: 12px 15px; border-radius: 4px; font-size: 14px; font-weight: 600; color: #334155; appearance: none; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") no-repeat right 15px center; background-size: 16px; cursor: pointer; transition: border 0.3s; }
         .sb3-select:focus { border-color: #008080; }
