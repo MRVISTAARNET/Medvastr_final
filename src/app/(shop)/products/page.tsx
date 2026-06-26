@@ -155,6 +155,7 @@ function ProductsContent() {
   const pages = Math.ceil(f.length / PER);
   const paged = f.slice((pg - 1) * PER, pg * PER);
 
+  const reset = () => {
     setCat("all");
     setGen("all");
     setTypeFilter("");
