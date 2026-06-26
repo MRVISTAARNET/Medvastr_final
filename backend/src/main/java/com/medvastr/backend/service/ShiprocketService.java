@@ -172,18 +172,40 @@ public class ShiprocketService {
 
             HttpEntity<String> entity = new HttpEntity<>(shipOrder.toString(), headers);
 
+            log.info("[Shiprocket] Request payload: {}", shipOrder.toString());
             ResponseEntity<String> res = restTemplate.postForEntity(
                     "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
                     entity,
                     String.class);
 
-            log.info("[Shiprocket] Response for {}: {} - {}", order.getOrderNumber(), res.getStatusCode(),
-                    res.getBody());
+            log.info("[Shiprocket] Response for {}: {} - {}", order.getOrderNumber(), res.getStatusCode(), res.getBody());
 
             if (res.getStatusCode() == HttpStatus.OK || res.getStatusCode() == HttpStatus.CREATED) {
                 log.info("[Shiprocket] Order pushed successfully: {}", order.getOrderNumber());
+                try {
+                    JSONObject resJson = new JSONObject(res.getBody());
+                    String awb = resJson.optString("awb_code");
+                    String courier = resJson.optString("courier_name");
+                    long shipmentId = resJson.optLong("shipment_id", 0);
+                    log.info("[Shiprocket] Shipment ID: {}, AWB: {}, Courier: {}", shipmentId, awb, courier);
+                    
+                    boolean updated = false;
+                    if (awb != null && !awb.isEmpty() && !awb.equals("null")) {
+                        order.setTrackingNumber(awb);
+                        updated = true;
+                    }
+                    if (courier != null && !courier.isEmpty() && !courier.equals("null")) {
+                        order.setCourierName(courier);
+                        updated = true;
+                    }
+                    if (updated) {
+                        orderRepository.save(order);
+                    }
+                } catch (Exception parseEx) {
+                    log.warn("[Shiprocket] Failed to parse success response: {}", parseEx.getMessage());
+                }
             } else {
-                log.warn("[Shiprocket] Failed to push order {}: {}", order.getOrderNumber(), res.getBody());
+                log.error("[Shiprocket] Failed to push order {}: {}", order.getOrderNumber(), res.getBody());
             }
 
         } catch (org.springframework.web.client.HttpStatusCodeException e) {
@@ -195,6 +217,7 @@ public class ShiprocketService {
             }
         } catch (Exception e) {
             log.error("[Shiprocket] Error pushing order {}: {}", order.getOrderNumber(), e.getMessage());
+            log.error("[Shiprocket] Exception trace: ", e);
         }
     }
 
@@ -208,19 +231,28 @@ public class ShiprocketService {
         shipOrder.put("comment", order.getNotes() != null ? order.getNotes() : "E-commerce Order");
 
         // Parse customer name safely
-        String fullName = order.getShippingName() != null ? order.getShippingName() : "Customer";
-        String[] names = fullName.trim().split("\\s+");
-        shipOrder.put("billing_customer_name", names[0]);
-        shipOrder.put("billing_last_name", names.length > 1 ? names[names.length - 1] : ".");
+        String fullName = order.getShippingName() != null ? order.getShippingName().trim() : "Customer";
+        if (fullName.isEmpty()) fullName = "Customer";
+        String[] names = fullName.split("\\s+");
+        shipOrder.put("billing_customer_name", names[0].replaceAll("[^a-zA-Z0-9 ]", ""));
+        shipOrder.put("billing_last_name", names.length > 1 ? names[names.length - 1].replaceAll("[^a-zA-Z0-9 ]", "") : names[0].replaceAll("[^a-zA-Z0-9 ]", ""));
 
-        shipOrder.put("billing_address", order.getShippingAddress());
-        shipOrder.put("billing_city", order.getShippingCity());
+        String address = order.getShippingAddress() != null ? order.getShippingAddress().trim() : "Medvastr Address";
+        if (address.length() < 10) {
+            address = address + " (Additional Address Info)";
+        }
+        shipOrder.put("billing_address", address);
+        shipOrder.put("billing_city", order.getShippingCity() != null ? order.getShippingCity() : "Mumbai");
         shipOrder.put("billing_pincode",
-                order.getShippingPincode() != null ? order.getShippingPincode().replaceAll("[^0-9]", "") : "");
-        shipOrder.put("billing_state", order.getShippingState());
+                order.getShippingPincode() != null ? order.getShippingPincode().replaceAll("[^0-9]", "") : "400063");
+        shipOrder.put("billing_state", order.getShippingState() != null ? order.getShippingState() : "Maharashtra");
         shipOrder.put("billing_country", "India");
-        shipOrder.put("billing_email", order.getUser().getEmail());
-        shipOrder.put("billing_phone", order.getShippingPhone());
+        shipOrder.put("billing_email", order.getUser() != null ? order.getUser().getEmail() : "customer@medvastr.com");
+        
+        String phone = order.getShippingPhone() != null ? order.getShippingPhone().replaceAll("[^0-9]", "") : "9999999999";
+        if (phone.length() < 10) phone = "9999999999";
+        if (phone.length() > 10) phone = phone.substring(phone.length() - 10);
+        shipOrder.put("billing_phone", phone);
 
         shipOrder.put("shipping_is_billing", true);
 

@@ -315,7 +315,7 @@ public class EmailService {
                             %s
                         </table>
                         <div style="margin-top: 20px; text-align: center;">
-                            <a href="%s/admin" style="background: %s; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">View in Dashboard</a>
+                            <a href="%s/admin/orders" style="background: %s; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">View in Dashboard</a>
                         </div>
                     </div>
                 </div>
@@ -392,7 +392,7 @@ public class EmailService {
                         </div>
 
                         <div style="text-align: center; margin-top: 50px;">
-                            <a href="%s/my-orders" style="background: #1e293b; color: white; padding: 14px 28px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 14px; display: inline-block;">Track Your Order</a>
+                            <a href="%s/track?order=%s" style="background: #1e293b; color: white; padding: 14px 28px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 14px; display: inline-block;">Track Your Order</a>
                         </div>
 
                         <hr style="border: none; border-top: 1px solid #f1f5f9; margin: 40px 0;">
@@ -419,6 +419,7 @@ public class EmailService {
                         HtmlUtils.htmlEscape(order.getShippingState()),
                         HtmlUtils.htmlEscape(order.getShippingPincode()),
                         frontendUrl,
+                        HtmlUtils.htmlEscape(order.getOrderNumber()),
                         frontendUrl,
                         BRAND_COLOR);
     }

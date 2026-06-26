@@ -104,7 +104,7 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
           /* ── Logged in ─────────────────────────────────────────────── */
           <div style={{ textAlign: "center" }}>
             <div style={{ width: 72, height: 72, borderRadius: "50%", background: "#f0f9f9", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 32, margin: "0 auto 20px", color: '#008080', border: '2px solid #008080' }}>👤</div>
-            <h2 style={{ fontFamily: "serif", fontSize: 26, marginBottom: 8 }}>Hi, {user.firstName}!</h2>
+            <h2 style={{ fontFamily: "serif", fontSize: 26, marginBottom: 8 }}>Hi, {user.firstName ? user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1).toLowerCase() : ''}!</h2>
             <div style={{ fontSize: 13, color: "#999", marginBottom: 32 }}>{user.email}</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               <Link href="/my-orders" onClick={onClose} style={{ width: "100%", height: 50, borderRadius: 12, background: '#008080', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', fontWeight: 700 }}>View My Orders</Link>

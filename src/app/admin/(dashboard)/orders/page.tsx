@@ -178,7 +178,8 @@ export default function AdminOrders() {
                   <label>Order Status</label>
                   <select id="o-status" defaultValue={editingOrder.status}>
                     <option value="PENDING">Pending</option>
-                    <option value="PROCESSING">Processing / Packed</option>
+                    <option value="PROCESSING">Processing</option>
+                    <option value="PACKED">Packed</option>
                     <option value="SHIPPED">Shipped</option>
                     <option value="DELIVERED">Delivered</option>
                     <option value="CANCELLED">Cancelled</option>

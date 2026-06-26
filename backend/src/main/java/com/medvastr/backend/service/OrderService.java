@@ -250,12 +250,13 @@ public class OrderService {
 
     public TrackingDTO track(String num) {
         Order o = orderRepo.findByOrderNumber(num).orElseThrow(() -> new RuntimeException("Not found: " + num));
-        List<String> steps = Arrays.asList("PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "OUT_FOR_DELIVERY",
+        List<String> steps = Arrays.asList("PENDING", "CONFIRMED", "PROCESSING", "PACKED", "SHIPPED", "OUT_FOR_DELIVERY",
                 "DELIVERED");
         Map<String, String> lbl = Map.of(
                 "PENDING", "Order Placed",
                 "CONFIRMED", "Confirmed",
-                "PROCESSING", "Being Prepared",
+                "PROCESSING", "Processing",
+                "PACKED", "Packed",
                 "SHIPPED", "Shipped",
                 "OUT_FOR_DELIVERY", "Out for Delivery",
                 "DELIVERED", "Delivered");

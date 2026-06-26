@@ -2,14 +2,16 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import GenericPage from "@/components/GenericPage";
-import { B } from "@/lib/data";
+import Link from "next/link";
+import { B, fmt } from "@/lib/data";
 import { API_BASE } from "@/lib/api";
+import GenericPage from "@/components/GenericPage";
 
 function TrackContent() {
   const searchParams = useSearchParams();
   const [orderNum, setOrderNum] = useState(searchParams.get("order") || "");
   const [tracking, setTracking] = useState<any>(null);
+  const [orderData, setOrderData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -27,13 +29,24 @@ function TrackContent() {
     setLoading(true);
     setError("");
     setTracking(null);
+    setOrderData(null);
     try {
-      const res = await fetch(`${API_BASE}/orders/track/${encodeURIComponent(n)}`);
-      const data = await res.json();
-      if (data.success && data.data) {
-        setTracking(data.data);
+      // Fetch timeline
+      const resTrack = await fetch(`${API_BASE}/orders/track/${encodeURIComponent(n)}`);
+      const trackJson = await resTrack.json();
+      
+      // Fetch full order details
+      const resOrder = await fetch(`${API_BASE}/orders/${encodeURIComponent(n)}`);
+      const orderJson = await resOrder.json();
+
+      if (trackJson.success && trackJson.data) {
+        setTracking(trackJson.data);
       } else {
-        setError(data.message || "Order not found");
+        setError(trackJson.message || "Order not found");
+      }
+
+      if (orderJson.success && orderJson.data) {
+        setOrderData(orderJson.data);
       }
     } catch {
       setError("Could not fetch tracking info");
@@ -42,76 +55,199 @@ function TrackContent() {
     }
   };
 
-  return (
-    <GenericPage title="Track My Order" desc="Enter your order number to track your Medvastr delivery.">
-      <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-        <div>
-          <h3 style={{ fontSize: 18, marginBottom: 16 }}>🔍 Track by Order Number</h3>
-          <div style={{ display: "flex", gap: 10 }}>
-            <input
-              className="price-inp"
-              placeholder="e.g. MVS-2026-123456"
-              style={{ flex: 1 }}
-              value={orderNum}
-              onChange={(e) => setOrderNum(e.target.value)}
-            />
-            <button className="btn-t" onClick={() => trackOrder()} disabled={loading}>
-              {loading ? "…" : "Track"}
-            </button>
-          </div>
-          {error && <p style={{ color: "#c00", marginTop: 12, fontSize: 14 }}>{error}</p>}
-        </div>
+  const getEstimatedDelivery = () => {
+    if (!orderData?.createdAt) return "TBD";
+    const d = new Date(orderData.createdAt);
+    d.setDate(d.getDate() + 5); // Example: 5 days shipping
+    return d.toLocaleDateString("en-US", { weekday: 'short', month: 'short', day: 'numeric' });
+  };
 
-        {tracking && (
-          <div style={{ background: "var(--warm)", padding: 24, borderRadius: 12 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 12 }}>
-              <div>
-                <div style={{ fontSize: 13, color: "var(--lt)" }}>Order</div>
-                <div style={{ fontWeight: 700, fontSize: 18 }}>{tracking.orderNumber}</div>
-              </div>
-              <span className="badge b-grn" style={{ alignSelf: "flex-start" }}>{tracking.status}</span>
+  return (
+    <div style={{ background: "#f8fafc", minHeight: "100vh", paddingBottom: "60px" }}>
+      <div className="container" style={{ paddingTop: "40px" }}>
+        
+        <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+          
+          <div style={{ background: "white", borderRadius: "16px", padding: "30px", boxShadow: "0 4px 20px rgba(0,0,0,0.03)", marginBottom: "20px" }}>
+            <h1 style={{ fontSize: "24px", fontWeight: "800", color: "#0f172a", marginBottom: "8px" }}>Track Your Order</h1>
+            <p style={{ color: "#64748b", fontSize: "15px", marginBottom: "24px" }}>Enter your order ID to get real-time delivery updates.</p>
+            
+            <div style={{ display: "flex", gap: "12px", background: "#f1f5f9", padding: "8px", borderRadius: "12px" }}>
+              <input
+                type="text"
+                placeholder="e.g. MVS-2026-000001"
+                style={{ flex: 1, padding: "14px 20px", border: "none", background: "transparent", outline: "none", fontSize: "16px", fontWeight: "600", color: "#1e293b" }}
+                value={orderNum}
+                onChange={(e) => setOrderNum(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && trackOrder()}
+              />
+              <button 
+                onClick={() => trackOrder()} 
+                disabled={loading}
+                style={{ background: "#0f172a", color: "white", padding: "0 30px", border: "none", borderRadius: "8px", fontWeight: "700", cursor: loading ? "not-allowed" : "pointer" }}
+              >
+                {loading ? "..." : "TRACK"}
+              </button>
             </div>
-            {tracking.trackingNumber && (
-              <p style={{ fontSize: 14, marginBottom: 16 }}>
-                AWB: <strong>{tracking.trackingNumber}</strong>
-                {tracking.courierName && <> · {tracking.courierName}</>}
-              </p>
-            )}
-            {tracking.timeline?.length > 0 && (
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {tracking.timeline.map((ev: any, i: number) => (
-                  <div key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: i === 0 ? "var(--t)" : "#ccc", marginTop: 6, flexShrink: 0 }} />
-                    <div>
-                      <div style={{ fontWeight: 600, fontSize: 14 }}>{ev.status || ev.label}</div>
-                      {ev.date && <div style={{ fontSize: 12, color: "var(--lt)" }}>{new Date(ev.date).toLocaleString("en-IN")}</div>}
-                      {ev.description && <div style={{ fontSize: 13, color: "var(--lt)" }}>{ev.description}</div>}
+            {error && <p style={{ color: "#ef4444", marginTop: "16px", fontSize: "14px", fontWeight: "500", display: "flex", alignItems: "center", gap: "6px" }}>⚠️ {error}</p>}
+          </div>
+
+          {tracking && orderData && (
+            <div style={{ background: "white", borderRadius: "16px", padding: "30px", boxShadow: "0 4px 20px rgba(0,0,0,0.03)" }}>
+              
+              {/* Header */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "20px", marginBottom: "30px", paddingBottom: "30px", borderBottom: "1px solid #e2e8f0" }}>
+                <div>
+                  <div style={{ fontSize: "13px", fontWeight: "700", color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "4px" }}>Order ID</div>
+                  <div style={{ fontSize: "22px", fontWeight: "800", color: "#0f172a" }}>{tracking.orderNumber}</div>
+                  <div style={{ fontSize: "14px", color: "#64748b", marginTop: "4px" }}>Placed on {new Date(orderData.createdAt).toLocaleDateString("en-US", { year: 'numeric', month: 'short', day: 'numeric' })}</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: "13px", fontWeight: "700", color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "4px" }}>Est. Delivery</div>
+                  <div style={{ fontSize: "20px", fontWeight: "700", color: "#10b981" }}>{getEstimatedDelivery()}</div>
+                  {tracking.trackingNumber && (
+                     <div style={{ fontSize: "14px", color: "#0f172a", marginTop: "4px", fontWeight: "600" }}>
+                       AWB: <span style={{ color: "#3b82f6" }}>{tracking.trackingNumber}</span> ({tracking.courierName})
+                     </div>
+                  )}
+                </div>
+              </div>
+
+              {/* TIMELINE */}
+              {tracking.timeline?.length > 0 && (
+                <div style={{ marginBottom: "40px", paddingBottom: "40px", borderBottom: "1px solid #e2e8f0" }}>
+                  <h3 style={{ fontSize: "16px", fontWeight: "700", color: "#0f172a", marginBottom: "24px" }}>Delivery Status</h3>
+                  
+                  <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
+                    {tracking.timeline.map((ev: any, i: number) => {
+                      const isLast = i === tracking.timeline.length - 1;
+                      const isCompleted = ev.completed;
+                      const isCurrent = isCompleted && (!tracking.timeline[i+1] || !tracking.timeline[i+1].completed);
+                      
+                      return (
+                        <div key={i} style={{ display: "flex", gap: "20px" }}>
+                          {/* Node & Line */}
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "24px" }}>
+                            <div style={{ 
+                              width: "24px", height: "24px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2,
+                              background: isCompleted ? "#10b981" : "#f1f5f9",
+                              color: "white", fontSize: "12px", border: isCompleted ? "none" : "2px solid #e2e8f0",
+                              boxShadow: isCurrent ? "0 0 0 4px rgba(16, 185, 129, 0.2)" : "none"
+                            }}>
+                              {isCompleted && "✓"}
+                            </div>
+                            {!isLast && (
+                              <div style={{ width: "2px", flex: 1, background: isCompleted && !isCurrent ? "#10b981" : "#e2e8f0", margin: "4px 0" }} />
+                            )}
+                          </div>
+                          
+                          {/* Content */}
+                          <div style={{ paddingBottom: isLast ? "0" : "30px", paddingTop: "2px" }}>
+                            <div style={{ fontSize: "15px", fontWeight: isCurrent ? "800" : "600", color: isCompleted ? "#0f172a" : "#94a3b8" }}>
+                              {ev.status || ev.label}
+                            </div>
+                            {ev.timestamp && (
+                              <div style={{ fontSize: "13px", color: "#64748b", marginTop: "2px" }}>
+                                {new Date(ev.timestamp).toLocaleString("en-US", { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Order Details Grid */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "30px", marginBottom: "40px" }}>
+                <div>
+                  <h3 style={{ fontSize: "14px", fontWeight: "700", color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "12px" }}>Shipping Address</h3>
+                  <div style={{ fontSize: "15px", color: "#0f172a", lineHeight: "1.6" }}>
+                    <div style={{ fontWeight: "600", marginBottom: "4px" }}>{orderData.shippingName}</div>
+                    {orderData.shippingAddress}<br />
+                    {orderData.shippingCity}, {orderData.shippingState} {orderData.shippingPincode}<br />
+                    <span style={{ color: "#64748b", marginTop: "4px", display: "inline-block" }}>Phone: {orderData.shippingPhone}</span>
+                  </div>
+                </div>
+                <div>
+                  <h3 style={{ fontSize: "14px", fontWeight: "700", color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "12px" }}>Payment Info</h3>
+                  <div style={{ fontSize: "15px", color: "#0f172a", lineHeight: "1.6" }}>
+                    <div style={{ display: "flex", gap: "8px", alignItems: "center", marginBottom: "8px" }}>
+                      Method: <span style={{ fontWeight: "700", background: "#f1f5f9", padding: "2px 8px", borderRadius: "4px", fontSize: "13px" }}>{orderData.paymentMethod}</span>
+                    </div>
+                    <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                      Status: <span style={{ fontWeight: "700", color: orderData.paymentStatus === "PAID" ? "#10b981" : "#f59e0b" }}>{orderData.paymentStatus}</span>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
-            )}
-          </div>
-        )}
 
-        <div style={{ width: "100%", height: 1.5, background: "var(--bdr)" }} />
-        <div style={{ background: "var(--warm)", padding: 24, borderRadius: 12, display: "flex", gap: 14 }}>
-          <span style={{ fontSize: 24 }}>📞</span>
-          <div>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>Need help tracking?</div>
-            <div style={{ fontSize: 13, color: "var(--lt)" }}>
-              Call us at <a href={`tel:${B.phone1}`} style={{ color: "var(--t)", fontWeight: 700 }}>{B.phone1}</a> (24/7)
+              {/* Items & Summary */}
+              <div>
+                <h3 style={{ fontSize: "16px", fontWeight: "700", color: "#0f172a", marginBottom: "16px" }}>Items in this Order</h3>
+                <div style={{ border: "1px solid #e2e8f0", borderRadius: "12px", overflow: "hidden" }}>
+                  {orderData.items.map((item: any, i: number) => (
+                    <div key={i} style={{ display: "flex", gap: "16px", padding: "16px", borderBottom: i !== orderData.items.length - 1 ? "1px solid #e2e8f0" : "none", background: "#f8fafc" }}>
+                      <div style={{ width: "80px", height: "80px", borderRadius: "8px", background: "white", border: "1px solid #e2e8f0", overflow: "hidden" }}>
+                        <img src={item.imageUrl || "https://via.placeholder.com/80"} alt={item.productName} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      </div>
+                      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                        <div style={{ fontSize: "15px", fontWeight: "700", color: "#0f172a" }}>{item.productName}</div>
+                        <div style={{ fontSize: "13px", color: "#64748b", marginTop: "4px" }}>Size: {item.size} | Color: {item.colorName}</div>
+                        <div style={{ fontSize: "13px", color: "#64748b", marginTop: "4px" }}>Qty: {item.quantity}</div>
+                      </div>
+                      <div style={{ fontSize: "16px", fontWeight: "700", color: "#0f172a", alignSelf: "center" }}>
+                        {fmt(item.totalPrice)}
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {/* Summary Block */}
+                  <div style={{ background: "white", padding: "20px 24px", borderTop: "1px solid #e2e8f0" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "15px", color: "#64748b" }}>
+                      <span>Subtotal</span>
+                      <span>{fmt(orderData.subtotal)}</span>
+                    </div>
+                    {orderData.discountAmount > 0 && (
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px", fontSize: "15px", color: "#10b981" }}>
+                        <span>Discount</span>
+                        <span>-{fmt(orderData.discountAmount)}</span>
+                      </div>
+                    )}
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "16px", fontSize: "15px", color: "#64748b" }}>
+                      <span>Shipping</span>
+                      <span>{orderData.shippingAmount > 0 ? fmt(orderData.shippingAmount) : "FREE"}</span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "space-between", paddingTop: "16px", borderTop: "1px solid #e2e8f0", fontSize: "18px", fontWeight: "800", color: "#0f172a" }}>
+                      <span>Grand Total</span>
+                      <span>{fmt(orderData.totalAmount)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: "flex", gap: "16px", marginTop: "40px" }}>
+                <Link href="/products" style={{ flex: 1, textAlign: "center", background: "#f1f5f9", color: "#0f172a", padding: "14px", borderRadius: "10px", fontWeight: "700", textDecoration: "none" }}>
+                  Continue Shopping
+                </Link>
+                <a href={`tel:${B.phone1}`} style={{ flex: 1, textAlign: "center", background: "#008080", color: "white", padding: "14px", borderRadius: "10px", fontWeight: "700", textDecoration: "none" }}>
+                  Contact Support
+                </a>
+              </div>
+
             </div>
-          </div>
+          )}
         </div>
       </div>
-    </GenericPage>
+    </div>
   );
 }
 
 export default function TrackPage() {
   return (
-    <Suspense fallback={<div className="page sec">Loading…</div>}>
+    <Suspense fallback={<div style={{ textAlign: "center", padding: "100px", color: "#64748b" }}>Loading Tracking Portal...</div>}>
       <TrackContent />
     </Suspense>
   );

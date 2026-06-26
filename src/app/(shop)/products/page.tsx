@@ -51,12 +51,9 @@ function ProductsContent() {
     genderFilteredProducts.map(p => p.fit).filter(Boolean)
   )).sort();
 
-  useEffect(() => {
     setCat(initCat);
     setColorFilter(initColor);
     setSizeFilter(initSize);
-    setFabricFilter(initFabric);
-    setFitFilter(initFit);
     setGen(initGen);
     setTypeFilter(initType);
     setMinP(searchParams.get("minP") || "");
@@ -157,7 +154,6 @@ function ProductsContent() {
   const pages = Math.ceil(f.length / PER);
   const paged = f.slice((pg - 1) * PER, pg * PER);
 
-  const reset = () => {
     setCat("all");
     setGen("all");
     setTypeFilter("");
@@ -166,13 +162,11 @@ function ProductsContent() {
     setMaxP("");
     setColorFilter("");
     setSizeFilter("");
-    setFabricFilter("");
-    setFitFilter("");
     setPg(1);
     router.push('/products', { scroll: false });
   };
 
-  const hasFilters = cat !== "all" || gen !== "all" || minP || maxP || colorFilter || sizeFilter || fabricFilter || fitFilter || !!typeFilter;
+  const hasFilters = cat !== "all" || gen !== "all" || minP || maxP || colorFilter || sizeFilter || !!typeFilter;
 
   const typeConfigs: Record<string, { ico: string; l: string; d: string }> = {
     scrubs: {
@@ -218,14 +212,16 @@ function ProductsContent() {
   else if (genKey === "men") activeRootSlugs = ["men"];
   else if (genKey === "women") activeRootSlugs = ["women"];
 
+  const isSurgicalMode = isSurgical || catKey.includes('surgical') || catKey.includes('surgeon');
+
   const cats = [
-    { id: "all", ico: "🏷️", l: "Complete Collection", n: products.length, depth: 0 },
-    { id: "flexi-fit-v-scrub", ico: "🏷️", l: "Flexi Fit V Scrub", n: products.filter(p => productMatchesCategory(p, "flexi-fit-v-scrub", categoryTree)).length, depth: 0 },
-    { id: "cotton-tshirt", ico: "🏷️", l: "Cotton Crew T-Shirt", n: products.filter(p => productMatchesCategory(p, "cotton-tshirt", categoryTree)).length, depth: 0 },
-    { id: "full-sleeve", ico: "🏷️", l: "Full Sleeve Compression Underscrub", n: products.filter(p => productMatchesCategory(p, "full-sleeve", categoryTree)).length, depth: 0 },
-    { id: "surgeon-gown", ico: "🏷️", l: "Surgical Gown", n: products.filter(p => productMatchesCategory(p, "surgeon-gown", categoryTree)).length, depth: 0 },
-    { id: "surgeon-cap", ico: "🏷️", l: "Surgical Cap", n: products.filter(p => productMatchesCategory(p, "surgeon-cap", categoryTree)).length, depth: 0 },
-  ].filter(c => c.id === "all" || c.n > 0);
+    { id: "all", l: "Complete Collection", depth: 0 },
+    !isSurgicalMode ? { id: "flexi-fit-v-scrub", l: "Scrub Suit", depth: 0 } : null,
+    !isSurgicalMode ? { id: "cotton-tshirt", l: "Cotton T-Shirt", depth: 0 } : null,
+    !isSurgicalMode ? { id: "full-sleeve", l: "Underscrub", depth: 0 } : null,
+    (isSurgicalMode || genKey === "all") ? { id: "surgeon-gown", l: "Surgical Gown", depth: 0 } : null,
+    (isSurgicalMode || genKey === "all") ? { id: "surgeon-cap", l: "Surgical Cap", depth: 0 } : null,
+  ].filter(Boolean) as any[];
 
   let rawCatLabel = cat !== 'all' ? (findCategoryBySlug(categoryTree, cat)?.name || cat.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')) : null;
 
@@ -441,7 +437,6 @@ function ProductsContent() {
                     >
                       <div className="sb3-check-box" />
                       <span className="sb3-label">{c.l}</span>
-                      <span className="sb3-num">{c.n}</span>
                     </div>
                   ))}
                 </div>
@@ -514,50 +509,6 @@ function ProductsContent() {
                 </div>
               </div>
 
-              {/* FABRIC */}
-              {fabrics.length > 0 && (
-                <div className="sb3-section">
-                  <div className="sb3-sec-hd">FABRIC</div>
-                  <div className="sb3-list">
-                    {fabrics.map((f: string) => (
-                      <div
-                        key={f}
-                        className={`sb3-item${fabricFilter.toLowerCase() === f.toLowerCase() ? " active" : ""}`}
-                        onClick={() => {
-                          updateURL({ fabric: fabricFilter.toLowerCase() === f.toLowerCase() ? "" : f, pg: "1" });
-                          if (mobF) setMobF(false);
-                        }}
-                      >
-                        <div className="sb3-check-box" />
-                        <span className="sb3-label">{f}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* FIT */}
-              {fits.length > 0 && (
-                <div className="sb3-section">
-                  <div className="sb3-sec-hd">FIT</div>
-                  <div className="sb3-list">
-                    {fits.map((f: string) => (
-                      <div
-                        key={f}
-                        className={`sb3-item${fitFilter.toLowerCase() === f.toLowerCase() ? " active" : ""}`}
-                        onClick={() => {
-                          updateURL({ fit: fitFilter.toLowerCase() === f.toLowerCase() ? "" : f, pg: "1" });
-                          if (mobF) setMobF(false);
-                        }}
-                      >
-                        <div className="sb3-check-box" />
-                        <span className="sb3-label">{f}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               {/* SORT */}
               <div className="sb3-section">
                 <div className="sb3-sec-hd">SORT BY</div>
@@ -629,32 +580,6 @@ function ProductsContent() {
                       <span
                         className="af-x"
                         onClick={() => { setColorFilter(''); setPg(1); }}
-                      >
-                        ✕
-                      </span>
-                    </span>
-                  )}
-                  {fabricFilter && (
-                    <span className="af-tag">
-                      🧵 {fabricFilter}
-                      <span
-                        className="af-x"
-                        onClick={() => {
-                          updateURL({ fabric: "", pg: "1" });
-                        }}
-                      >
-                        ✕
-                      </span>
-                    </span>
-                  )}
-                  {fitFilter && (
-                    <span className="af-tag">
-                      👕 {fitFilter}
-                      <span
-                        className="af-x"
-                        onClick={() => {
-                          updateURL({ fit: "", pg: "1" });
-                        }}
                       >
                         ✕
                       </span>

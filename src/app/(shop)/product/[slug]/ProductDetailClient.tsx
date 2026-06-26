@@ -498,6 +498,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               <div id="pdp-bottom-size-select" className="pdp-select-group" style={{ marginTop: '20px' }}>
                 <div className="pdp-select-hd">
                   <label className="pdp-select-label">Select Bottom Size</label>
+                  <button className="pdp-sg" onClick={() => setShowSizeGuide(true)}>Size Guide</button>
                 </div>
                 {bottomSizeError && (
                   <div style={{ color: '#e11d48', fontSize: '13px', fontWeight: 600, marginTop: '-4px', marginBottom: '8px' }}>
