@@ -1,3 +1,4 @@
+Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
 $zipPath = "..\medvastr-prod-final.zip"
