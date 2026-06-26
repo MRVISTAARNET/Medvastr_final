@@ -401,9 +401,12 @@ public class ShiprocketService {
     }
 
     public String getServiceability(String deliveryPincode, double weight, boolean isCod) {
+        return getServiceabilityInternal(deliveryPincode, weight, isCod, true);
+    }
+
+    private String getServiceabilityInternal(String deliveryPincode, double weight, boolean isCod, boolean retryOn401) {
         try {
             String token = getValidToken();
-            if (token == null) return "{\"success\": false, \"message\": \"Authentication failed\"}";
 
             String url = String.format("https://apiv2.shiprocket.in/v1/external/courier/serviceability/?pickup_postcode=%s&delivery_postcode=%s&weight=%s&cod=%d",
                     pickupPostcode, deliveryPincode, weight, isCod ? 1 : 0);
@@ -414,6 +417,14 @@ public class ShiprocketService {
 
             ResponseEntity<String> res = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
             return res.getBody();
+        } catch (org.springframework.web.client.HttpClientErrorException.Unauthorized e) {
+            if (retryOn401) {
+                log.warn("[Shiprocket] 401 Unauthorized on serviceability. Invalidating token and retrying...");
+                tokenCache.remove(TOKEN_CACHE_KEY);
+                return getServiceabilityInternal(deliveryPincode, weight, isCod, false);
+            }
+            log.error("[Shiprocket] Serviceability unauthorized after retry for {}: {}", deliveryPincode, e.getMessage());
+            return "{\"success\": false, \"message\": \"Unauthorized\"}";
         } catch (Exception e) {
             log.error("[Shiprocket] Serviceability error for {}: {}", deliveryPincode, e.getMessage());
             return "{\"success\": false, \"message\": \"" + e.getMessage() + "\"}";
