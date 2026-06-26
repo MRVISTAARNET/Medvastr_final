@@ -38,7 +38,7 @@ interface LoginOptions {
 
 interface AppContextType {
   cart: CartItem[];
-  wishlist: number[];
+  wishlist: string[];
   products: Product[];
   categories: any[];
   categoryTree: any[];
@@ -62,7 +62,7 @@ interface AppContextType {
   updateCartQty: (index: number, delta: number) => void;
   removeFromCart: (index: number) => void;
   clearCart: () => void;
-  toggleWishlist: (id: number) => void;
+  toggleWishlist: (id: number | string, variantId?: string) => void;
   addProduct: (p: Product) => Promise<Product | null>;
   updateProduct: (p: Product) => Promise<void>;
   deleteProduct: (id: number) => Promise<void>;
@@ -127,7 +127,7 @@ function persistAuth(token: string, authUser: User, options?: LoginOptions): boo
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [cart, dispatch] = useReducer(cartReducer, []);
-  const [wishlist, setWishlist] = useState<number[]>([]);
+  const [wishlist, setWishlist] = useState<string[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [categoryTree, setCategoryTree] = useState<any[]>([]);
@@ -161,7 +161,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (wish.success && Array.isArray(wish.data)) {
-            setWishlist(wish.data.map((p: any) => p.id));
+            setWishlist(wish.data.map((w: any) => (w.variantId && w.variantId !== "default") ? w.variantId : String(w.productId)));
           }
         } catch { /* ignore */ }
 
@@ -481,25 +481,28 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     try {
       const data = await apiJson<any[]>("/users/me/wishlist");
       if (data.success && Array.isArray(data.data)) {
-        setWishlist(data.data.map((p: any) => p.id));
+        setWishlist(data.data.map((w: any) => (w.variantId && w.variantId !== "default") ? w.variantId : String(w.productId)));
       }
     } catch {
       /* guest or offline */
     }
   }, []);
 
-  const toggleWishlist = useCallback(async (id: number) => {
+  const toggleWishlist = useCallback(async (id: number | string, variantId?: string) => {
+    const vId = variantId || String(id);
+    const pid = String(id).includes('-') ? Number(String(id).split('-')[0]) : Number(id);
+
     let wasWished = false;
     setWishlist((prev) => {
-      wasWished = prev.includes(id);
-      return wasWished ? prev.filter((x) => x !== id) : [...prev, id];
+      wasWished = prev.includes(vId);
+      return wasWished ? prev.filter((x) => x !== vId) : [...prev, vId];
     });
     toast(wasWished ? "Removed from wishlist" : "Saved to wishlist ❤️", wasWished ? "" : "ok");
     if (user) {
       try {
-        await apiJson(`/users/me/wishlist/${id}`, { method: "POST" });
+        await apiJson(`/users/me/wishlist/${pid}?variantId=${encodeURIComponent(vId)}`, { method: "POST" });
       } catch {
-        setWishlist((prev) => (wasWished ? [...prev, id] : prev.filter((x) => x !== id)));
+        setWishlist((prev) => (wasWished ? [...prev, vId] : prev.filter((x) => x !== vId)));
       }
     }
   }, [toast, user]);

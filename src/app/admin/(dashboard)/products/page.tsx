@@ -127,7 +127,8 @@ export default function AdminProducts() {
     badge: 'None',
     fit: 'Classic Fit',
     pocketCount: 0,
-    weight: '180 GSM',
+    weightValue: '0.5',
+    weightUnit: 'kg',
     careInstructions: 'Machine Wash Cold',
     shortDescription: '',
     material: '',
@@ -138,6 +139,17 @@ export default function AdminProducts() {
 
   useEffect(() => {
     if (editingProduct) {
+      let wv = '0.5';
+      let wu = 'kg';
+      const rawW = editingProduct.weight || editingProduct.wt || '';
+      if (rawW) {
+        const num = parseFloat(rawW);
+        if (!isNaN(num)) {
+          wv = num.toString();
+          wu = rawW.toLowerCase().includes('g') && !rawW.toLowerCase().includes('kg') ? 'g' : 'kg';
+        }
+      }
+
       setForm({
         ...editingProduct,
         parentId: editingProduct.categoryId || editingProduct.catId || (editingProduct.categoryIds ? editingProduct.categoryIds.split(',')[0] : '') || '',
@@ -153,13 +165,15 @@ export default function AdminProducts() {
         seoTitle: editingProduct.seoTitle || '',
         seoDescription: editingProduct.seoDescription || '',
         seoKeywords: editingProduct.seoKeywords || '',
+        weightValue: wv,
+        weightUnit: wu,
       });
     } else {
       setForm({
         name: '', brand: 'Medvastr', gender: 'Men', style: 'Standard', parentId: '', subCategoryId: '', childCategoryId: '',
         price: 0, origPrice: 0, tax: 0, type: 'scrubs', description: '', fabric: '',
         sizes: 'S, M, L, XL', clrs: '', imgs: [], videoUrl: '', active: true, imgsByColor: {},
-        badge: 'None', fit: 'Classic Fit', pocketCount: 0, weight: '180 GSM', careInstructions: 'Machine Wash Cold', shortDescription: '',
+        badge: 'None', fit: 'Classic Fit', pocketCount: 0, weightValue: '0.5', weightUnit: 'kg', careInstructions: 'Machine Wash Cold', shortDescription: '',
         material: '', sku: '', stock: 100, seoTitle: '', seoDescription: '', seoKeywords: ''
       });
     }
@@ -229,7 +243,7 @@ export default function AdminProducts() {
     if (!form.description?.trim()) return alert("Description is required");
     if (!form.shortDescription?.trim()) return alert("Product Hook is required");
     if (!form.fabric?.trim()) return alert("Fabric is required");
-    if (!form.weight?.trim()) return alert("Fabric Weight is required");
+    if (!form.weightValue?.toString().trim()) return alert("Fabric Weight is required");
     if (!form.material?.trim()) return alert("Fabric Composition (Material) is required");
     if (!form.fit?.trim()) return alert("Fit is required");
     if (!form.careInstructions?.trim()) return alert("Care Instructions are required");
@@ -305,7 +319,8 @@ export default function AdminProducts() {
       categoryIds: [Number(form.parentId), Number(form.subCategoryId), Number(form.childCategoryId)].filter(Boolean).join(','),
       seoTitle,
       seoDescription,
-      seoKeywords
+      seoKeywords,
+      weight: `${form.weightValue}${form.weightUnit}`
     };
 
     const url = editingProduct ? `${API_BASE}/products/${editingProduct.id}` : `${API_BASE}/products`;
@@ -513,7 +528,16 @@ export default function AdminProducts() {
                   <div className="fg"><label>Silhouette (Fit) <span style={{ color: 'red' }}>*</span></label><input id="p-fit" value={form.fit} onChange={handleInputChange} placeholder="e.g. Modern Slim Fit" /></div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                     <div className="fg"><label>Pocket Count</label><input type="number" id="p-pocketCount" value={form.pocketCount} onChange={handleInputChange} /></div>
-                    <div className="fg"><label>Fabric Weight <span style={{ color: 'red' }}>*</span></label><input id="p-weight" value={form.weight} onChange={handleInputChange} placeholder="e.g. 240 GSM" /></div>
+                    <div className="fg">
+                      <label>Product Weight (for shipping) <span style={{ color: 'red' }}>*</span></label>
+                      <div style={{ display: 'flex', gap: '10px' }}>
+                        <input id="p-weightValue" type="number" step="0.01" value={form.weightValue} onChange={handleInputChange} placeholder="e.g. 0.5" style={{ flex: 1 }} />
+                        <select id="p-weightUnit" value={form.weightUnit} onChange={handleInputChange} style={{ width: '80px' }}>
+                          <option value="kg">kg</option>
+                          <option value="g">g</option>
+                        </select>
+                      </div>
+                    </div>
                   </div>
                   <div className="fg"><label>Care Instructions <span style={{ color: 'red' }}>*</span></label><input id="p-careInstructions" value={form.careInstructions} onChange={handleInputChange} placeholder="e.g. Machine Wash Cold, Tumble Dry Low" /></div>
                   <div className="fg"><label>Fabric / Composition <span style={{ color: 'red' }}>*</span></label><input id="p-fabric" value={form.fabric} onChange={handleInputChange} placeholder="e.g. Polyester Blend" /></div>

@@ -42,7 +42,8 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
 
   const [ci, setCi] = useState(initialCi); // Color Index
   const [ii, setIi] = useState(0); // Image Index within color
-  const wished = wishlist.includes(p.id);
+  const currentVariantId = (p as any).variantId || `${p.id}-${ci}`;
+  const wished = wishlist.includes(currentVariantId) || wishlist.includes(String(p.id));
 
   const productPath = useMemo(() => {
     const base = `/product/${p.slug || p.id}`;
@@ -140,7 +141,7 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();
-            toggleWishlist(p.id);
+            toggleWishlist(currentVariantId);
           }}
         >
           {wished ? "❤️" : "🤍"}

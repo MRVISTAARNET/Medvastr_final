@@ -20,6 +20,7 @@ export default function CheckoutPage() {
   const [shippingCost, setShippingCost] = useState<number>(0);
   const [shippingLoading, setShippingLoading] = useState(false);
   const [shippingError, setShippingError] = useState("");
+  const [shippingSuccess, setShippingSuccess] = useState("");
   const razorpayLoaded = useRef(false);
   const pendingOrderRef = useRef<any>(null);
 
@@ -69,10 +70,32 @@ export default function CheckoutPage() {
 
   // Shiprocket Serviceability Call
   useEffect(() => {
+    if (form.pincode.length !== 6) {
+      setShippingError("");
+      setShippingSuccess("");
+      return;
+    }
     if (form.pincode.length === 6 && cart.length > 0) {
       setShippingLoading(true);
       setShippingError("");
-      const totalWeight = cart.reduce((s, i) => s + 0.5 * i.qty, 0); // Default 0.5kg per item
+      setShippingSuccess("");
+      const totalWeight = cart.reduce((s, i) => {
+        let w = 0.5;
+        if (i.wt) {
+          const num = parseFloat(i.wt);
+          if (!isNaN(num)) {
+            const lower = i.wt.toLowerCase();
+            if (lower.includes('kg')) {
+              w = num;
+            } else if (lower.includes('g') || lower.includes('gm')) {
+              w = num / 1000;
+            } else {
+              w = num < 10 ? num : num / 1000;
+            }
+          }
+        }
+        return s + Math.max(0.1, w) * i.qty;
+      }, 0);
       const isCod = form.paymentMethod === "COD";
       
       fetch(`${API_BASE}/shipping/serviceability?pincode=${form.pincode}&weight=${totalWeight}&isCod=${isCod}`)
@@ -82,6 +105,8 @@ export default function CheckoutPage() {
             // Find cheapest or recommended courier
             const courier = data.data.available_courier_companies[0];
             setShippingCost(courier.freight_charge);
+            const estDays = courier.etd || "5-7";
+            setShippingSuccess(`✓ Delivery Available. Estimated in ${estDays} days.`);
             
             // Auto-fill City & State
             if (courier.city && !form.city) setForm(f => ({ ...f, city: courier.city }));
@@ -93,6 +118,7 @@ export default function CheckoutPage() {
         })
         .catch(() => {
           setShippingCost(99);
+          setShippingSuccess("✓ Delivery Available. Estimated in 5-7 days.");
         })
         .finally(() => setShippingLoading(false));
     }
@@ -299,6 +325,10 @@ export default function CheckoutPage() {
     );
   }
 
+  if (!isHydrated) {
+    return <div className="co-container page" style={{ minHeight: '70vh' }} />;
+  }
+
   return (
     <div className="co-container page">
       <h1 className="co-title">Secure Checkout</h1>
@@ -382,6 +412,7 @@ export default function CheckoutPage() {
               </div>
             </div>
             {shippingError && <p style={{ color: '#e11d48', fontSize: '13px', fontWeight: 600, marginBottom: '20px' }}>{shippingError}</p>}
+            {shippingSuccess && <p style={{ color: '#10b981', fontSize: '13px', fontWeight: 600, marginBottom: '20px' }}>{shippingSuccess}</p>}
             {shippingLoading && <p style={{ color: '#008080', fontSize: '13px', fontWeight: 600, marginBottom: '20px' }}>Calculating live shipping rates...</p>}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
               <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>

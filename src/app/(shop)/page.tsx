@@ -16,7 +16,7 @@ import { useApp } from "@/context/AppContext";
 import { API_BASE } from "@/lib/api";
 
 export default function Home() {
-  const { products, banners, toast } = useApp();
+  const { products, banners, colors, toast } = useApp();
   const promoBanners = banners.filter((b: any) => b.isActive && (b.position === "PROMO" || b.position === "HOME_MIDDLE"));
   const TABS = [
     { id: "scrubs", label: "Uniforms & Scrubs", types: ["scrubs"] },
@@ -129,12 +129,14 @@ export default function Home() {
       <div className="clr-sec">
         <div className="clr-in">
           <div className="clr-t">Shop By Colours</div>
-          <div className="clr-s">4 shades across all categories</div>
-          <div className="clr-row">
-            {COLS.map((c, i) => (
-              <Link href={`/products?color=${encodeURIComponent(c.n)}`} className="clr-sw" key={i}>
-                <div className="sw-c" style={{ background: c.h }} />
-                <div className="sw-l">{c.n}</div>
+          <div className="clr-s">
+            {colors.filter(c => products.some(p => p.clrs?.includes(c.hexCode))).length} shades across all categories
+          </div>
+          <div className="clr-row" style={{ flexWrap: 'wrap', justifyContent: 'center' }}>
+            {colors.filter(c => products.some(p => p.clrs?.includes(c.hexCode))).map((c, i) => (
+              <Link href={`/products?color=${encodeURIComponent(c.name)}`} className="clr-sw" key={i}>
+                <div className="sw-c" style={{ background: c.hexCode }} />
+                <div className="sw-l">{c.name}</div>
               </Link>
             ))}
           </div>

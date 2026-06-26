@@ -3,6 +3,7 @@
 import React from "react";
 import { useApp } from "@/context/AppContext";
 import { fmt } from "@/lib/data";
+import { getImagesForColor } from "@/lib/productUtils";
 
 import Image from "next/image";
 
@@ -14,7 +15,13 @@ interface WishlistDrawerProps {
 export default function WishlistDrawer({ open, onClose }: WishlistDrawerProps) {
   const { wishlist, toggleWishlist, addToCart, toast, products } = useApp();
 
-  const items = products.filter((p) => wishlist.includes(p.id));
+  const items = wishlist.map(vId => {
+    const pid = vId.includes('-') ? Number(vId.split('-')[0]) : Number(vId);
+    const ci = vId.includes('-') ? Number(vId.split('-')[1]) : 0;
+    const p = products.find(prod => prod.id === pid);
+    if (!p) return null;
+    return { p, ci, vId };
+  }).filter(Boolean);
 
   return (
     <>
@@ -47,10 +54,15 @@ export default function WishlistDrawer({ open, onClose }: WishlistDrawerProps) {
               </button>
             </div>
           ) : (
-            items.map((p) => {
-              const thumb = p.imgs?.[0];
+            items.map((item) => {
+              if (!item) return null;
+              const { p, ci, vId } = item;
+              const colorImages = getImagesForColor(p, ci);
+              const thumb = colorImages?.[0] || p.imgs?.[0];
+              const colorName = p.clrNms?.[ci] || "";
+              
               return (
-                <div key={p.id} style={{
+                <div key={vId} style={{
                   display: 'flex',
                   gap: '16px',
                   padding: '24px 0',
@@ -89,7 +101,7 @@ export default function WishlistDrawer({ open, onClose }: WishlistDrawerProps) {
                         lineHeight: 1.3,
                         marginBottom: '4px'
                       }}>
-                        {p.name}
+                        {p.name} {colorName && <span style={{ color: '#64748b', fontSize: '13px', fontWeight: 600 }}>({colorName})</span>}
                       </div>
                       <div style={{ fontSize: '14px', fontWeight: 800, color: '#008080' }}>
                         {fmt(p.price)}
@@ -101,14 +113,14 @@ export default function WishlistDrawer({ open, onClose }: WishlistDrawerProps) {
                         className="btn-p"
                         style={{ height: '36px', padding: "0 16px", fontSize: '12px', fontWeight: 700, borderRadius: '8px', flex: 1 }}
                         onClick={() => {
-                          addToCart(p, 0, p.sizes?.[0] || "M");
+                          addToCart(p, ci, p.sizes?.[0] || "M");
                           toast(`${p.name} added to bag!`, "ok");
                         }}
                       >
                         Add to Bag
                       </button>
                       <button
-                        onClick={() => toggleWishlist(p.id)}
+                        onClick={() => toggleWishlist(vId)}
                         style={{
                           width: '36px',
                           height: '36px',

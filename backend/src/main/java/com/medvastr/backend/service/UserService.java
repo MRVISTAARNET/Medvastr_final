@@ -6,6 +6,7 @@ import com.medvastr.backend.dto.ChangePasswordRequest;
 import com.medvastr.backend.dto.ProductDTO;
 import com.medvastr.backend.dto.UpdateProfileRequest;
 import com.medvastr.backend.dto.UserDTO;
+import com.medvastr.backend.dto.WishlistResponseDTO;
 import com.medvastr.backend.model.Address;
 import com.medvastr.backend.model.User;
 import com.medvastr.backend.model.WishlistItem;
@@ -135,17 +136,22 @@ public class UserService {
                 .build();
     }
 
-    public void toggleWishlist(Long pid) {
+    public void toggleWishlist(Long pid, String variantId) {
         User u = me();
-        wishRepo.findByUserIdAndProductId(u.getId(), pid).ifPresentOrElse(
+        String vId = (variantId == null || variantId.isEmpty()) ? "default" : variantId;
+        wishRepo.findByUserIdAndProductIdAndVariantId(u.getId(), pid, vId).ifPresentOrElse(
                 wishRepo::delete,
                 () -> productRepo.findById(pid)
-                        .ifPresent(p -> wishRepo.save(WishlistItem.builder().user(u).product(p).build())));
+                        .ifPresent(p -> wishRepo.save(WishlistItem.builder().user(u).product(p).variantId(vId).build())));
     }
 
-    public List<ProductDTO> getWishlist() {
+    public List<WishlistResponseDTO> getWishlist() {
         return wishRepo.findByUserId(me().getId()).stream()
-                .map(w -> productService.toDTO(w.getProduct()))
+                .map(w -> WishlistResponseDTO.builder()
+                        .productId(w.getProduct().getId())
+                        .variantId(w.getVariantId())
+                        .product(productService.toDTO(w.getProduct()))
+                        .build())
                 .collect(Collectors.toList());
     }
 

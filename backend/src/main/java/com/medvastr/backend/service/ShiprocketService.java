@@ -276,7 +276,15 @@ public class ShiprocketService {
             try {
                 String ws = oi.getProduct() != null ? oi.getProduct().getWeight() : null;
                 if (ws != null && !ws.isEmpty()) {
-                    w = Double.parseDouble(ws.replaceAll("[^0-9.]", ""));
+                    double num = Double.parseDouble(ws.replaceAll("[^0-9.]", ""));
+                    String lower = ws.toLowerCase();
+                    if (lower.contains("kg")) {
+                        w = num;
+                    } else if (lower.contains("g") || lower.contains("gm")) {
+                        w = num / 1000.0;
+                    } else {
+                        w = num < 10 ? num : num / 1000.0;
+                    }
                 }
             } catch (Exception e) {
                 log.debug("Weight parse error: {}", e.getMessage());

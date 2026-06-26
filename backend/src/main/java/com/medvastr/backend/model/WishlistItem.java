@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "wishlist_items", uniqueConstraints = {
-        @jakarta.persistence.UniqueConstraint(columnNames = { "user_id", "product_id" }) })
+        @jakarta.persistence.UniqueConstraint(columnNames = { "user_id", "product_id", "variant_id" }) })
 @Getter
 @Setter
 @NoArgsConstructor
@@ -37,6 +37,9 @@ public class WishlistItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
+
+    @jakarta.persistence.Column(name = "variant_id", nullable = false)
+    private String variantId = "default";
 
     @CreationTimestamp
     private LocalDateTime addedAt;

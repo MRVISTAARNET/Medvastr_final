@@ -15,7 +15,7 @@ interface HeaderProps {
 }
 
 export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
-  const { cart, wishlist, products } = useApp();
+  const { cart, wishlist, products, isHydrated } = useApp();
   const [q, setQ] = useState("");
   const [sd, setSd] = useState(false);
   const [mn, setMn] = useState(false); // Mobile Nav
@@ -104,10 +104,10 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
           <button className="ha mob-only" onClick={() => setMs(!mS)}>
             🔍
           </button>
-          <button className="ha" onClick={onAcct} title="Account">
+          <button className="ha" onClick={onAcct} title="Account" style={{ whiteSpace: 'nowrap' }}>
             {user ? (
-              <span style={{ fontSize: 14, fontWeight: 700, color: "var(--t)", fontFamily: "var(--serif)" }}>
-                {(user.firstName || "U").charAt(0)}
+              <span style={{ fontSize: 13, fontWeight: 700, color: "var(--t)" }}>
+                Hello, {user.firstName || "Admin"}
               </span>
             ) : (
               "👤"
@@ -118,7 +118,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             {wc > 0 && <span className="ha-badge">{wc}</span>}
           </button>
           <button className="cart-pill" onClick={onCart}>
-            🛒 <span className="mob-hide">Cart</span> <span className="cart-n">{cc}</span>
+            🛒 <span className="mob-hide">Cart</span> {isHydrated ? <span className="cart-n">{cc}</span> : <span className="cart-n">...</span>}
           </button>
         </div>
       </div>

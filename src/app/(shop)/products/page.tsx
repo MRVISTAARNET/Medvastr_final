@@ -92,8 +92,8 @@ function ProductsContent() {
     }
   });
 
-  // 2. APPLY FILTERS TO FLATTENED LIST
-  let f = flattened.filter((p) => {
+  // 2. APPLY BASE FILTERS TO FLATTENED LIST
+  const baseSubset = flattened.filter((p) => {
     // Gender Filter
     const pGens = (p.gen || "men").toLowerCase().split(',').map((s: string) => s.trim());
     if (gen !== "all" && !pGens.includes(gen.toLowerCase()) && !pGens.includes("unisex") && pGens.length > 0) return false;
@@ -123,6 +123,18 @@ function ProductsContent() {
     if (minP && p.price < parseInt(minP)) return false;
     if (maxP && p.price > parseInt(maxP)) return false;
 
+    return true;
+  });
+
+  const availableColorHexes = new Set(baseSubset.map(p => p.displayColorHex?.toLowerCase()));
+  const availableSizesSet = new Set<string>();
+  baseSubset.forEach(p => {
+    if (p.sizes) p.sizes.forEach((s: string) => availableSizesSet.add(s.toUpperCase()));
+    if (p.variants) p.variants.forEach((v: any) => { if (v.size) availableSizesSet.add(v.size.toUpperCase()); });
+  });
+
+  // 3. APPLY COLOR/SIZE FILTERS
+  let f = baseSubset.filter((p) => {
     // Color Filter (Matches specific variant color)
     if (colorFilter) {
       if (p.displayColorName.toLowerCase() !== colorFilter.toLowerCase() &&
@@ -217,7 +229,6 @@ function ProductsContent() {
   const isSurgicalMode = isSurgical || catKey.includes('surgical') || catKey.includes('surgeon');
 
   const cats = [
-    { id: "all", l: "Complete Collection", depth: 0 },
     !isSurgicalMode ? { id: "flexi-fit-v-scrub", l: "Scrub Suit", depth: 0 } : null,
     !isSurgicalMode ? { id: "cotton-tshirt", l: "Cotton T-Shirt", depth: 0 } : null,
     !isSurgicalMode ? { id: "full-sleeve", l: "Underscrub", depth: 0 } : null,
@@ -467,49 +478,53 @@ function ProductsContent() {
               </div>
 
               {/* COLORS */}
-              <div className="sb3-section">
-                <div className="sb3-sec-hd">COLOURS</div>
-                <div className="sb3-color-grid">
-                  {(colors.length ? colors : []).map((c: any) => (
-                    <div
-                      key={c.name}
-                      className={`sb3-color-item${colorFilter === c.name ? " active" : ""}`}
-                      onClick={() => { updateURL({ color: colorFilter === c.name ? "" : c.name, pg: "1" }); }}
-                    >
-                      <div className="sb3-color-dot" style={{ background: c.hexCode }} />
-                      <span className="sb3-color-name">{c.name}</span>
-                      {colorFilter === c.name && (
-                        <span style={{ marginLeft: 'auto', color: '#008080', fontWeight: 900, fontSize: 15 }}>✓</span>
-                      )}
-                    </div>
-                  ))}
+              {colors.filter((c: any) => availableColorHexes.has(c.hexCode?.toLowerCase())).length > 0 && (
+                <div className="sb3-section">
+                  <div className="sb3-sec-hd">COLOURS</div>
+                  <div className="sb3-color-grid">
+                    {colors.filter((c: any) => availableColorHexes.has(c.hexCode?.toLowerCase())).map((c: any) => (
+                      <div
+                        key={c.name}
+                        className={`sb3-color-item${colorFilter === c.name ? " active" : ""}`}
+                        onClick={() => { updateURL({ color: colorFilter === c.name ? "" : c.name, pg: "1" }); }}
+                      >
+                        <div className="sb3-color-dot" style={{ background: c.hexCode }} />
+                        <span className="sb3-color-name">{c.name}</span>
+                        {colorFilter === c.name && (
+                          <span style={{ marginLeft: 'auto', color: '#008080', fontWeight: 900, fontSize: 15 }}>✓</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* SIZES */}
-              <div className="sb3-section">
-                <div className="sb3-sec-hd">SIZE</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 6 }}>
-                  {(sizes.length ? sizes : [{ sizeValue: "XS" }, { sizeValue: "S" }, { sizeValue: "M" }, { sizeValue: "L" }, { sizeValue: "XL" }, { sizeValue: "2XL" }]).map((s: any) => {
-                    const val = s.sizeValue || s.name;
-                    return (
-                      <button
-                        key={val}
-                        onClick={() => { updateURL({ size: sizeFilter === val ? '' : val, pg: "1" }); }}
-                        style={{
-                          padding: '6px 14px', borderRadius: 8, fontSize: 13, fontWeight: 700,
-                          border: sizeFilter === val ? '2px solid #008080' : '1.5px solid #e2e8f0',
-                          background: sizeFilter === val ? '#008080' : 'white',
-                          color: sizeFilter === val ? 'white' : '#475569',
-                          cursor: 'pointer', transition: 'all 0.15s',
-                        }}
-                      >
-                        {val}
-                      </button>
-                    );
-                  })}
+              {sizes.filter((s: any) => availableSizesSet.has((s.sizeValue || s.name).toUpperCase())).length > 0 && (
+                <div className="sb3-section">
+                  <div className="sb3-sec-hd">SIZE</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 6 }}>
+                    {sizes.filter((s: any) => availableSizesSet.has((s.sizeValue || s.name).toUpperCase())).map((s: any) => {
+                      const val = s.sizeValue || s.name;
+                      return (
+                        <button
+                          key={val}
+                          onClick={() => { updateURL({ size: sizeFilter === val ? '' : val, pg: "1" }); }}
+                          style={{
+                            padding: '6px 14px', borderRadius: 8, fontSize: 13, fontWeight: 700,
+                            border: sizeFilter === val ? '2px solid #008080' : '1.5px solid #e2e8f0',
+                            background: sizeFilter === val ? '#008080' : 'white',
+                            color: sizeFilter === val ? 'white' : '#475569',
+                            cursor: 'pointer', transition: 'all 0.15s',
+                          }}
+                        >
+                          {val}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* SORT */}
               <div className="sb3-section">

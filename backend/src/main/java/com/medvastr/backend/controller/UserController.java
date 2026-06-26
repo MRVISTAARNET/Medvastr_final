@@ -64,14 +64,14 @@ public class UserController {
 
     @GetMapping("/me/wishlist")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ApiResponse<List<ProductDTO>>> wish() {
+    public ResponseEntity<ApiResponse<List<com.medvastr.backend.dto.WishlistResponseDTO>>> wish() {
         return ResponseEntity.ok(ApiResponse.ok("Wishlist", s.getWishlist()));
     }
 
     @PostMapping("/me/wishlist/{id}")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ApiResponse<Void>> toggleWish(@PathVariable Long id) {
-        s.toggleWishlist(id);
+    public ResponseEntity<ApiResponse<Void>> toggleWish(@PathVariable Long id, @RequestParam(required = false) String variantId) {
+        s.toggleWishlist(id, variantId);
         return ResponseEntity.ok(ApiResponse.ok("Toggled", null));
     }
 

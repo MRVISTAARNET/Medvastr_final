@@ -322,7 +322,8 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
     return <div className="min-h-screen flex items-center justify-center bg-slate-50"><div className="text-center text-slate-600">Product not found.</div></div>;
   }
 
-  const wished = wishlist.includes(p.id);
+  const currentVariantId = (p as any).variantId || `${p.id}-${ci || 0}`;
+  const wished = wishlist.includes(currentVariantId) || wishlist.includes(String(p.id));
   const relatedPool = products.filter((x) => x.id !== p.id && x.active !== false);
   const related = relatedPool.slice(0, 4);
 
@@ -522,7 +523,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                 <div className="pdp-qty-display">{qty}</div>
                 <button className="pdp-step-btn" onClick={() => setQty(q => q + 1)}>+</button>
               </div>
-              <button onClick={() => toggleWishlist(p.id)} className={`pdp-heart-btn ${wished ? 'on' : ''}`} style={{ flex: 1 }}>
+              <button onClick={() => toggleWishlist(currentVariantId)} className={`pdp-heart-btn ${wished ? 'on' : ''}`} style={{ flex: 1 }}>
                 {wished ? '❤️ WISHLISTED' : '♡ WISHLIST'}
               </button>
               <button onClick={handleShare} className="pdp-heart-btn" title="Share Product" style={{ minWidth: '44px', padding: '0 10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -712,38 +713,91 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             <button className="size-guide-close" onClick={() => setShowSizeGuide(false)}>✕</button>
             <h3 className="size-guide-title">Medvastr Size Specifications Guide</h3>
             <p className="size-guide-subtitle">All measurements are in inches. Body measurements should be taken directly on your body.</p>
-            <div className="size-guide-table-container">
-              <table className="size-guide-table">
-                <thead>
-                  <tr>
-                    <th>Size</th>
-                    <th>Chest (in)</th>
-                    <th>Waist (in)</th>
-                    <th>Hip (in)</th>
-                    <th>Top Length (in)</th>
-                    <th>Pant Inseam (in)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    { sz: "XS", chest: "32 - 34", waist: "26 - 28", hip: "33 - 35", len: "26.5", inseam: "29" },
-                    { sz: "S", chest: "35 - 37", waist: "29 - 31", hip: "36 - 38", len: "27.5", inseam: "30" },
-                    { sz: "M", chest: "38 - 40", waist: "32 - 34", hip: "39 - 41", len: "28.5", inseam: "30" },
-                    { sz: "L", chest: "41 - 43", waist: "35 - 37", hip: "42 - 44", len: "29.5", inseam: "31" },
-                    { sz: "XL", chest: "44 - 46", waist: "38 - 40", hip: "45 - 47", len: "30.5", inseam: "31" },
-                    { sz: "2XL", chest: "47 - 49", waist: "41 - 43", hip: "48 - 50", len: "31.5", inseam: "32" },
-                  ].map(row => (
-                    <tr key={row.sz}>
-                      <td><strong>{row.sz}</strong></td>
-                      <td>{row.chest}</td>
-                      <td>{row.waist}</td>
-                      <td>{row.hip}</td>
-                      <td>{row.len}</td>
-                      <td>{row.inseam}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', maxHeight: '70vh', overflowY: 'auto', paddingRight: '10px' }}>
+              
+              {/* TOP SIZE GUIDE */}
+              {(p.type?.toLowerCase().includes('scrub') || p.type?.toLowerCase().includes('tshirt') || p.type?.toLowerCase().includes('under') || p.type?.toLowerCase().includes('gown')) && (
+                <div>
+                  <h4 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '15px', color: '#1e293b' }}>
+                    Top Size Guide ({p.gen?.toLowerCase().includes('women') ? "Women's" : "Men's"})
+                  </h4>
+                  <div className="size-guide-table-container">
+                    <table className="size-guide-table">
+                      <thead>
+                        <tr>
+                          <th>Size</th>
+                          <th>Chest (in)</th>
+                          <th>Top Length (in)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          { sz: "XS", chest: "32 - 34", len: "26.5" },
+                          { sz: "S", chest: "35 - 37", len: "27.5" },
+                          { sz: "M", chest: "38 - 40", len: "28.5" },
+                          { sz: "L", chest: "41 - 43", len: "29.5" },
+                          { sz: "XL", chest: "44 - 46", len: "30.5" },
+                          { sz: "2XL", chest: "47 - 49", len: "31.5" },
+                        ].map(row => (
+                          <tr key={row.sz}>
+                            <td><strong>{row.sz}</strong></td>
+                            <td>{row.chest}</td>
+                            <td>{row.len}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div style={{ marginTop: '10px', fontSize: '13px', color: '#64748b' }}>
+                    <strong>How to measure Chest:</strong> Measure under your arms around the fullest part of your chest.
+                  </div>
+                </div>
+              )}
+
+              {/* BOTTOM SIZE GUIDE */}
+              {(p.type?.toLowerCase().includes('scrub') || p.type?.toLowerCase().includes('pant')) && (
+                <div>
+                  <h4 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '15px', color: '#1e293b' }}>
+                    Bottom Size Guide ({p.gen?.toLowerCase().includes('women') ? "Women's" : "Men's"})
+                  </h4>
+                  <div className="size-guide-table-container">
+                    <table className="size-guide-table">
+                      <thead>
+                        <tr>
+                          <th>Size</th>
+                          <th>Waist (in)</th>
+                          <th>Hip (in)</th>
+                          <th>Pant Inseam (in)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          { sz: "XS", waist: "26 - 28", hip: "33 - 35", inseam: "29" },
+                          { sz: "S", waist: "29 - 31", hip: "36 - 38", inseam: "30" },
+                          { sz: "M", waist: "32 - 34", hip: "39 - 41", inseam: "30" },
+                          { sz: "L", waist: "35 - 37", hip: "42 - 44", inseam: "31" },
+                          { sz: "XL", waist: "38 - 40", hip: "45 - 47", inseam: "31" },
+                          { sz: "2XL", waist: "41 - 43", hip: "48 - 50", inseam: "32" },
+                        ].map(row => (
+                          <tr key={row.sz}>
+                            <td><strong>{row.sz}</strong></td>
+                            <td>{row.waist}</td>
+                            <td>{row.hip}</td>
+                            <td>{row.inseam}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <div style={{ marginTop: '10px', fontSize: '13px', color: '#64748b' }}>
+                    <strong>How to measure:</strong><br />
+                    • <strong>Waist:</strong> Measure around your natural waistline, keeping the tape comfortably loose.<br />
+                    • <strong>Hip:</strong> Stand with your feet together and measure around the fullest part of your hips.<br />
+                    • <strong>Inseam:</strong> Measure from the crotch to the bottom of the leg.
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
