@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useApp } from "@/context/AppContext";
 import { fmt } from "@/lib/data";
-import { apiJson, API_BASE, RAZORPAY_KEY } from "@/lib/api";
+import { apiJson, API_BASE, RAZORPAY_KEY, getToken } from "@/lib/api";
 import { getImagesForColor } from "@/lib/productUtils";
 
 declare global {
@@ -38,6 +38,8 @@ export default function CheckoutPage() {
   const [promoDiscount, setPromoDiscount] = useState(0);
   const [promoMsg, setPromoMsg] = useState("");
 
+  const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
+
   useEffect(() => {
     if (user) {
       setForm((prev) => ({
@@ -46,6 +48,19 @@ export default function CheckoutPage() {
         lastName: user.lastName || prev.lastName,
         phone: user.phone || prev.phone,
       }));
+      
+      // Fetch saved addresses
+      const fetchAddrs = async () => {
+        const token = getToken();
+        if (!token) return;
+        try {
+          const res = await apiJson<any[]>("/users/me/addresses", { headers: { Authorization: `Bearer ${token}` } });
+          if (res.success && Array.isArray(res.data)) {
+            setSavedAddresses(res.data);
+          }
+        } catch {}
+      };
+      fetchAddrs();
     }
   }, [user]);
 
@@ -305,6 +320,27 @@ export default function CheckoutPage() {
                 <button onClick={() => setIsAuthOpen(true)} className="co-signin-btn">Sign In</button>
               </div>
             )}
+            
+            {user && savedAddresses.length > 0 && (
+              <div style={{ marginBottom: "20px", padding: "20px", background: "#f8fafc", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
+                <h4 style={{ fontSize: "14px", fontWeight: 700, marginBottom: "12px", color: "#0f172a" }}>Select a Saved Address</h4>
+                <div style={{ display: "flex", gap: "12px", overflowX: "auto", paddingBottom: "5px" }}>
+                  {savedAddresses.map(a => (
+                    <div 
+                      key={a.id} 
+                      onClick={() => setForm(f => ({
+                        ...f, address: a.addressLine1 + (a.addressLine2 ? ', ' + a.addressLine2 : ''), city: a.city, state: a.state, pincode: a.pincode, phone: a.phone
+                      }))}
+                      style={{ border: "1px solid #cbd5e1", background: "white", padding: "12px", borderRadius: "8px", cursor: "pointer", minWidth: "200px" }}
+                    >
+                      <div style={{ fontWeight: 700, fontSize: "13px", marginBottom: "4px" }}>{a.type}</div>
+                      <div style={{ fontSize: "12px", color: "#64748b" }}>{a.addressLine1}, {a.city} {a.pincode}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="co-input-row">
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>

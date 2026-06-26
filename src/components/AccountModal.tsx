@@ -107,7 +107,7 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
             <h2 style={{ fontFamily: "serif", fontSize: 26, marginBottom: 8 }}>Hi, {user.firstName ? user.firstName.charAt(0).toUpperCase() + user.firstName.slice(1).toLowerCase() : ''}!</h2>
             <div style={{ fontSize: 13, color: "#999", marginBottom: 32 }}>{user.email}</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <Link href="/my-orders" onClick={onClose} style={{ width: "100%", height: 50, borderRadius: 12, background: '#008080', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', fontWeight: 700 }}>View My Orders</Link>
+              <Link href="/account" onClick={onClose} style={{ width: "100%", height: 50, borderRadius: 12, background: '#008080', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', fontWeight: 700 }}>My Account Dashboard</Link>
               <button style={{ width: "100%", height: 50, borderRadius: 12, border: '1.5px solid #eee', background: 'white', cursor: 'pointer', fontWeight: 600, fontSize: 14 }} onClick={() => { logout(); onClose(); }}>Sign Out</button>
             </div>
           </div>

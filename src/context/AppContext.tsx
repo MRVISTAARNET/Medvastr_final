@@ -164,6 +164,29 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
             setWishlist(wish.data.map((p: any) => p.id));
           }
         } catch { /* ignore */ }
+
+        // Fetch backend cart
+        try {
+          const cartRes = await apiJson<any>("/cart", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (cartRes.success && cartRes.data && Array.isArray(cartRes.data.items)) {
+            const beCart = cartRes.data.items.map((i: any) => ({
+              id: i.productId,
+              k: `${i.productId}-${0}-${i.size}`, // Simplification for key
+              name: i.productName,
+              short: i.productName,
+              price: i.price,
+              imgs: [i.imageUrl],
+              col: i.colorHex,
+              colNm: i.colorName,
+              size: i.size,
+              qty: i.quantity,
+              variantId: i.variantId,
+            }));
+            dispatch({ type: "SET", data: beCart });
+          }
+        } catch { /* ignore */ }
       } else {
         clearToken();
         setUser(null);
@@ -324,7 +347,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           toast("Access denied. Admin credentials required.", "bad");
           return false;
         }
+        
+        // Push local cart to backend if any
+        if (cart.length > 0) {
+          for (const item of cart) {
+            try {
+              await fetch(`${API_BASE}/cart/add`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${data.data.token}` },
+                body: JSON.stringify({ productId: item.id, variantId: item.variantId, quantity: item.qty })
+              });
+            } catch {}
+          }
+        }
+
         setUser(data.data.user);
+        await fetchMe(data.data.token); // this will pull the merged cart
         toast("Welcome back!", "ok");
         return true;
       }
@@ -396,24 +434,47 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const logout = () => {
     clearToken();
     setUser(null);
+    dispatch({ type: "CLR" }); // Clear local cart on logout
     toast("Logged out successfully");
   };
 
-  const addToCart = useCallback((p: Product, ci = 0, sz = "M", qty = 1) => {
+  const addToCart = useCallback(async (p: Product, ci = 0, sz = "M", qty = 1) => {
     dispatch({ type: "ADD", p, ci, sz, qty });
     toast("Added to bag!", "ok");
+    const token = getToken();
+    if (token) {
+      try {
+        await fetch(`${API_BASE}/cart/add`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ productId: p.id, variantId: resolveVariantId(p, sz, p.clrs?.[ci] || "#000"), quantity: qty })
+        });
+      } catch {}
+    }
   }, [toast]);
 
-  const updateCartQty = useCallback((index: number, delta: number) => {
+  const updateCartQty = useCallback(async (index: number, delta: number) => {
     dispatch({ type: "QTY", index, delta });
+    // Note: To fully sync exact quantities we'd need CartItemId from backend.
+    // For now, syncing relies on add/clear, or the initial pull.
   }, []);
 
-  const removeFromCart = useCallback((index: number) => {
+  const removeFromCart = useCallback(async (index: number) => {
     dispatch({ type: "DEL", index });
+    // Similarly, we would need the backend CartItemId to call DELETE /cart/item/{id}.
   }, []);
 
-  const clearCart = useCallback(() => {
+  const clearCart = useCallback(async () => {
     dispatch({ type: "CLR" });
+    const token = getToken();
+    if (token) {
+      try {
+        await fetch(`${API_BASE}/cart`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      } catch {}
+    }
   }, []);
 
   const syncWishlist = useCallback(async () => {
