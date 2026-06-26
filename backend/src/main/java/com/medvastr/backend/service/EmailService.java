@@ -53,6 +53,9 @@ public class EmailService {
                 ? fromEmail.substring(0, 3) + "****"
                 : "NOT SET";
         log.info("SMTP Username: {}", maskedUser);
+        if (frontendUrl != null && frontendUrl.endsWith("/")) {
+            frontendUrl = frontendUrl.substring(0, frontendUrl.length() - 1);
+        }
         log.info("Frontend URL: {}", frontendUrl);
         if (fromEmail == null || fromEmail.isEmpty()) {
             log.error("CRITICAL: spring.mail.username (MAIL_USERNAME) is NOT SET. Emails will fail.");
@@ -97,7 +100,7 @@ public class EmailService {
         log.info("[EmailService] Sending admin notification - Admin Email: {} | Subject: {}", adminEmail, subject);
 
         try {
-            String html = getOrderConfirmationHtml(order);
+            String html = getAdminNotificationHtml(order);
             sendHtmlEmailInner(adminEmail, subject, html, "orders@medvastr.com", "Medvastr Bot");
             log.info("[EmailService] Admin Notification Status: SUCCESS | Admin Email: {} | Subject: {}", adminEmail,
                     subject);
@@ -269,6 +272,64 @@ public class EmailService {
                 </div>
                 """
                 .formatted(SECONDARY_COLOR, HtmlUtils.htmlEscape(email), link, BRAND_COLOR);
+    }
+
+    private String getAdminNotificationHtml(Order order) {
+        NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("en", "IN"));
+        StringBuilder itemsHtml = new StringBuilder();
+
+        if (order.getItems() != null) {
+            for (OrderItem item : order.getItems()) {
+                itemsHtml.append("""
+                                <tr>
+                                    <td style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                                        <strong>%s</strong> (x%d)<br>
+                                        <span style="font-size: 12px; color: #666;">Size: %s | Color: %s</span>
+                                    </td>
+                                    <td style="padding: 10px 0; border-bottom: 1px solid #eee; text-align: right;">
+                                        %s
+                                    </td>
+                                </tr>
+                                """
+                                .formatted(
+                                        HtmlUtils.htmlEscape(item.getProductName()),
+                                        item.getQuantity(),
+                                        HtmlUtils.htmlEscape(item.getSize()),
+                                        HtmlUtils.htmlEscape(item.getColorName()),
+                                        nf.format(item.getTotalPrice())));
+            }
+        }
+
+        return """
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 12px; overflow: hidden;">
+                    <div style="background: %s; padding: 20px; text-align: center; color: white;">
+                        <h1 style="margin: 0; font-size: 22px;">New Order Received</h1>
+                    </div>
+                    <div style="padding: 30px; color: #333; line-height: 1.6;">
+                        <p><strong>Order Number:</strong> %s</p>
+                        <p><strong>Customer:</strong> %s (%s)</p>
+                        <p><strong>Amount:</strong> %s</p>
+                        <p><strong>Payment Method:</strong> %s</p>
+                        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+                        <table style="width: 100%%; border-collapse: collapse;">
+                            %s
+                        </table>
+                        <div style="margin-top: 20px; text-align: center;">
+                            <a href="%s/admin" style="background: %s; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">View in Dashboard</a>
+                        </div>
+                    </div>
+                </div>
+                """
+                .formatted(
+                        SECONDARY_COLOR,
+                        HtmlUtils.htmlEscape(order.getOrderNumber()),
+                        HtmlUtils.htmlEscape(order.getShippingName()),
+                        HtmlUtils.htmlEscape(order.getUser().getEmail()),
+                        nf.format(order.getTotalAmount()),
+                        order.getPaymentMethod().name(),
+                        itemsHtml.toString(),
+                        frontendUrl,
+                        BRAND_COLOR);
     }
 
     private String getOrderConfirmationHtml(Order order) {
