@@ -43,7 +43,7 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
   const [ci, setCi] = useState(initialCi); // Color Index
   const [ii, setIi] = useState(0); // Image Index within color
   const currentVariantId = (p as any).variantId || `${p.id}-${ci}`;
-  const wished = wishlist.includes(currentVariantId) || wishlist.includes(String(p.id));
+  const wished = wishlist.includes(currentVariantId);
 
   const productPath = useMemo(() => {
     const base = `/product/${p.slug || p.id}`;

@@ -323,7 +323,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   }
 
   const currentVariantId = (p as any).variantId || `${p.id}-${ci || 0}`;
-  const wished = wishlist.includes(currentVariantId) || wishlist.includes(String(p.id));
+  const wished = wishlist.includes(currentVariantId);
   const relatedPool = products.filter((x) => x.id !== p.id && x.active !== false);
   const related = relatedPool.slice(0, 4);
 
