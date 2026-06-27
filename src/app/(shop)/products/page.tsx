@@ -417,7 +417,7 @@ function ProductsContent() {
 
         {/* HORIZONTAL CATEGORY PILLS */}
         {cats.length > 0 && (
-          <div className="category-pills-row" style={{ display: 'flex', justifyContent: 'center', gap: '12px', overflowX: 'auto', paddingBottom: '20px', marginBottom: '25px', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
+          <div className="category-pills-row">
             {cats.map((c) => (
               <button
                 key={c.id}
@@ -753,6 +753,12 @@ function ProductsContent() {
 
         .catalog-header { margin-bottom: 40px; }
         .catalog-title { font-size: 32px; font-weight: 900; color: #0f172a; margin-bottom: 6px; letter-spacing: -0.03em; }
+
+        .category-pills-row { display: flex; justify-content: flex-start; gap: 12px; overflow-x: auto; padding-bottom: 20px; margin-bottom: 25px; -ms-overflow-style: none; scrollbar-width: none; }
+        .category-pills-row::-webkit-scrollbar { display: none; }
+        @media (min-width: 768px) {
+          .category-pills-row { justify-content: center; }
+        }
 
         .mob-filter-btn { display: none; align-items: center; gap: 8px; background: #0f172a; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; margin-bottom: 20px; }
 
