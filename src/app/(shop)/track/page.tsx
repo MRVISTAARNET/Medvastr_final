@@ -41,7 +41,8 @@ function TrackContent() {
         let finalTracking = trackJson.data;
         if (orderJson.success && orderJson.data && orderJson.data.trackingNumber) {
           try {
-             const srJson = await apiJson<any>(`/shipping/track/${orderJson.data.trackingNumber}`);
+             const srResponse = await apiJson<any>(`/shipping/track/${orderJson.data.trackingNumber}`);
+             const srJson = srResponse as any;
              if (srJson.tracking_data?.shipment_track_activities?.length > 0) {
                 const activities = srJson.tracking_data.shipment_track_activities;
                 const realScans = activities.map((act: any) => ({
