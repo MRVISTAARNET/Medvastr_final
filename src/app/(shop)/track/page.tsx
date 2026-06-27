@@ -4,7 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { B, fmt } from "@/lib/data";
-import { API_BASE } from "@/lib/api";
+import { apiJson, API_BASE } from "@/lib/api";
 import GenericPage from "@/components/GenericPage";
 
 function TrackContent() {
@@ -32,19 +32,16 @@ function TrackContent() {
     setOrderData(null);
     try {
       // Fetch timeline
-      const resTrack = await fetch(`${API_BASE}/orders/track/${encodeURIComponent(n)}`);
-      const trackJson = await resTrack.json();
+      const trackJson = await apiJson<any>(`/orders/track/${encodeURIComponent(n)}`);
       
       // Fetch full order details
-      const resOrder = await fetch(`${API_BASE}/orders/${encodeURIComponent(n)}`);
-      const orderJson = await resOrder.json();
+      const orderJson = await apiJson<any>(`/orders/${encodeURIComponent(n)}`);
 
       if (trackJson.success && trackJson.data) {
         let finalTracking = trackJson.data;
         if (orderJson.success && orderJson.data && orderJson.data.trackingNumber) {
           try {
-             const srRes = await fetch(`${API_BASE}/shipping/track/${orderJson.data.trackingNumber}`);
-             const srJson = await srRes.json();
+             const srJson = await apiJson<any>(`/shipping/track/${orderJson.data.trackingNumber}`);
              if (srJson.tracking_data?.shipment_track_activities?.length > 0) {
                 const activities = srJson.tracking_data.shipment_track_activities;
                 const realScans = activities.map((act: any) => ({

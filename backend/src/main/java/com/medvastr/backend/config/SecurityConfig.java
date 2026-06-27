@@ -58,7 +58,8 @@ public class SecurityConfig {
                                     "/api/sizes/**", "/sizes/**",
                                     "/api/blog/**", "/blog/**",
                                     "/api/attributes/**", "/attributes/**",
-                                    "/api/promos/**", "/promos/**")
+                                    "/api/promos/**", "/promos/**",
+                                    "/api/shipping/**", "/shipping/**")
                             .permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/orders/track/**", "/orders/track/**").permitAll()
                             .requestMatchers("/api/payments/webhook", "/payments/webhook").permitAll()
