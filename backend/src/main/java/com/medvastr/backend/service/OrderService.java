@@ -67,7 +67,25 @@ public class OrderService {
     }
 
     public OrderDTO createOrder(CreateOrderRequest r) {
-        User u = me();
+        User u = null;
+        try {
+            u = me();
+        } catch (Exception e) {
+            if (r.getEmail() == null || r.getEmail().isBlank()) {
+                throw new RuntimeException("Email is required for guest checkout");
+            }
+            u = userRepo.findByEmail(r.getEmail()).orElseGet(() -> {
+                User newUser = User.builder()
+                        .email(r.getEmail())
+                        .firstName(r.getFirstName())
+                        .lastName(r.getLastName())
+                        .phone(r.getPhone())
+                        .role(User.Role.CUSTOMER)
+                        .password("")
+                        .build();
+                return userRepo.save(newUser);
+            });
+        }
 
         List<OrderItem> orderItems = new ArrayList<>();
         BigDecimal subtotal = BigDecimal.ZERO;
@@ -252,6 +270,7 @@ public class OrderService {
 
     public TrackingDTO track(String num) {
         Order o = orderRepo.findByOrderNumber(num).orElseThrow(() -> new RuntimeException("Not found: " + num));
+        assertOrderOwner(o);
         List<String> steps = Arrays.asList("PENDING", "CONFIRMED", "PROCESSING", "PACKED", "SHIPPED", "OUT_FOR_DELIVERY",
                 "DELIVERED");
         Map<String, String> lbl = Map.of(

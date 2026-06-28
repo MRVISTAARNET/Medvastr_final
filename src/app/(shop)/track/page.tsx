@@ -6,8 +6,10 @@ import Link from "next/link";
 import { B, fmt } from "@/lib/data";
 import { apiJson, API_BASE } from "@/lib/api";
 import GenericPage from "@/components/GenericPage";
+import { useApp } from "@/context/AppContext";
 
 function TrackContent() {
+  const { setIsAuthOpen } = useApp();
   const searchParams = useSearchParams();
   const [orderNum, setOrderNum] = useState(searchParams.get("order") || "");
   const [tracking, setTracking] = useState<any>(null);
@@ -66,8 +68,13 @@ function TrackContent() {
       if (orderJson.success && orderJson.data) {
         setOrderData(orderJson.data);
       }
-    } catch {
-      setError("Could not fetch tracking info");
+    } catch (err: any) {
+      if (err.status === 401 || err.message?.toLowerCase().includes("unauthorized") || err.message?.toLowerCase().includes("login") || err.message?.toLowerCase().includes("access")) {
+        setIsAuthOpen(true);
+        setError("Please log in to track your order.");
+      } else {
+        setError("Could not fetch tracking info");
+      }
     } finally {
       setLoading(false);
     }

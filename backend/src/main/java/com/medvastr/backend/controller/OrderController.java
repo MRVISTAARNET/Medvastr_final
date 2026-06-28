@@ -17,13 +17,11 @@ public class OrderController {
     private final OrderService s;
 
     @PostMapping
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<OrderDTO>> create(@RequestBody CreateOrderRequest r) {
         return ResponseEntity.status(201).body(ApiResponse.ok("Order placed", s.createOrder(r)));
     }
 
     @PostMapping("/verify-payment")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<OrderDTO>> verify(@RequestBody PaymentVerificationRequest r) {
         return ResponseEntity.ok(ApiResponse.ok("Payment verified", s.verifyPayment(r)));
     }
@@ -37,6 +35,7 @@ public class OrderController {
     }
 
     @GetMapping("/{num}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<OrderDTO>> get(@PathVariable String num) {
         return ResponseEntity.ok(ApiResponse.ok("Order", s.getByNum(num)));
     }
@@ -48,6 +47,7 @@ public class OrderController {
     }
 
     @GetMapping("/track/{num}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<TrackingDTO>> track(@PathVariable String num) {
         return ResponseEntity.ok(ApiResponse.ok("Tracking", s.track(num)));
     }

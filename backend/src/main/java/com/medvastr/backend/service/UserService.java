@@ -102,7 +102,8 @@ public class UserService {
         a.setCity(r.getCity());
         a.setState(r.getState());
         a.setPincode(r.getPincode());
-        if (r.getType() != null) a.setType(Address.AddressType.valueOf(r.getType()));
+        if (r.getType() != null)
+            a.setType(Address.AddressType.valueOf(r.getType()));
         if (r.isDefault()) {
             u.getAddresses().forEach(addr -> addr.setDefault(addr.getId().equals(id)));
         }
@@ -142,7 +143,8 @@ public class UserService {
         wishRepo.findByUserIdAndProductIdAndVariantId(u.getId(), pid, vId).ifPresentOrElse(
                 wishRepo::delete,
                 () -> productRepo.findById(pid)
-                        .ifPresent(p -> wishRepo.save(WishlistItem.builder().user(u).product(p).variantId(vId).build())));
+                        .ifPresent(
+                                p -> wishRepo.save(WishlistItem.builder().user(u).product(p).variantId(vId).build())));
     }
 
     public List<WishlistResponseDTO> getWishlist() {

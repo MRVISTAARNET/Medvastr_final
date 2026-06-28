@@ -32,6 +32,7 @@ export default function CheckoutPage() {
     state: "",
     pincode: "",
     phone: "",
+    email: "",
     paymentMethod: "ONLINE" as "ONLINE" | "COD",
     promoCode: "",
   });
@@ -48,6 +49,7 @@ export default function CheckoutPage() {
         firstName: user.firstName || prev.firstName,
         lastName: user.lastName || prev.lastName,
         phone: user.phone || prev.phone,
+        email: user.email || prev.email,
       }));
       
       // Fetch saved addresses
@@ -266,10 +268,6 @@ export default function CheckoutPage() {
 
   const placeOrder = async () => {
     if (submitting) return;
-    if (!user) {
-      setIsAuthOpen(true);
-      return toast("Please sign in to place order", "bad");
-    }
     if (
       !form.firstName?.trim() ||
       !form.lastName?.trim() ||
@@ -277,9 +275,10 @@ export default function CheckoutPage() {
       !form.city?.trim() ||
       !form.state?.trim() ||
       !form.pincode?.trim() ||
-      !form.phone?.trim()
+      !form.phone?.trim() ||
+      !form.email?.trim()
     ) {
-      return toast("Please fill in all shipping details *", "bad");
+      return toast("Please fill in all shipping details, including email *", "bad");
     }
     setSubmitting(true);
     const orderRequest = {
@@ -442,6 +441,12 @@ export default function CheckoutPage() {
                 Mobile Number <span style={{ color: '#e11d48' }}>*</span>
               </label>
               <input name="phone" className="co-input-field" placeholder="Mobile Number" value={form.phone} onChange={handleInputChange} />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
+                Email Address <span style={{ color: '#e11d48' }}>*</span>
+              </label>
+              <input name="email" type="email" className="co-input-field" placeholder="Email Address" value={form.email} onChange={handleInputChange} />
             </div>
           </div>
 

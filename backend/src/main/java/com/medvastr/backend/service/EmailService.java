@@ -174,7 +174,6 @@ public class EmailService {
         sendHtmlEmail(toEmail, "Welcome to the Medvastr Community", html, "support@medvastr.com", "Medvastr Welcome");
     }
 
-    @Async
     public void sendOtpEmail(String toEmail, String otpCode) {
         String html = """
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 12px; overflow: hidden;">
@@ -194,7 +193,12 @@ public class EmailService {
                 </div>
                 """
                 .formatted(otpCode);
-        sendHtmlEmail(toEmail, "Your Medvastr Verification Code", html, "info@medvastr.com", "Medvastr");
+        try {
+            sendHtmlEmailInner(toEmail, "Your Medvastr Verification Code", html, "info@medvastr.com", "Medvastr");
+        } catch (Exception e) {
+            log.error("Failed to send OTP", e);
+            throw new RuntimeException("Failed to send OTP email: " + e.getMessage());
+        }
     }
 
     @Async
