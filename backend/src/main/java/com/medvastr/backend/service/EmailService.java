@@ -33,7 +33,7 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-    @Value("${spring.mail.properties.mail.smtps.ssl.enable:true}")
+    @Value("${spring.mail.properties.mail.smtp.ssl.enable:false}")
     private String sslEnabled;
 
     @Value("${spring.mail.properties.mail.smtp.starttls.enable:false}")
