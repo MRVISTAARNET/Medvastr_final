@@ -23,7 +23,6 @@ public class AdminController {
     }
 
     private final OrderRepository orderRepo;
-    private final OrderItemRepository orderItemRepo;
     private final CartRepository cartRepo;
     private final CartItemRepository cartItemRepo;
     private final ProductRepository productRepo;
@@ -35,7 +34,6 @@ public class AdminController {
     public ResponseEntity<ApiResponse<String>> wipeTestData() {
         cartItemRepo.deleteAll();
         cartRepo.deleteAll();
-        orderItemRepo.deleteAll();
         orderRepo.deleteAll();
         invRepo.deleteAll();
         variantRepo.deleteAll();
