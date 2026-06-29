@@ -114,7 +114,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const router = useRouter();
   const searchParams = useSearchParams();
   const colorParam = searchParams ? searchParams.get("color") : null;
-  const { products, addToCart, wishlist, toggleWishlist, toast, user, setIsAuthOpen } = useApp();
+  const { products, addToCart, wishlist, toggleWishlist, toast, user, setIsAuthOpen, storeSettings } = useApp();
 
   const idOrSlug = String(slug || "");
   const numericId = Number(idOrSlug);
@@ -343,6 +343,14 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const selectedVariant = ci !== null ? p.variants?.find((v: any) => v.size === sz && v.colorHex === p.clrs?.[ci]) : undefined;
   const isOutOfStock = selectedVariant ? selectedVariant.stockQuantity <= 0 : false;
   const discount = p.origPrice ? Math.round(((p.origPrice - p.price) / p.origPrice) * 100) : 0;
+
+  let freeShippingText = `Free Shipping ₹${storeSettings?.SHIPPING_FREE_THRESHOLD || 999}+`;
+  if (storeSettings?.SHIPPING_PROMO_FREE_UNTIL) {
+    const promoDate = new Date(storeSettings.SHIPPING_PROMO_FREE_UNTIL);
+    if (new Date() < promoDate) {
+      freeShippingText = `Free Shipping till ${promoDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`;
+    }
+  }
 
   return (
     <div className="pdp-container">
@@ -614,7 +622,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
           {/* TRUST STRIP */}
           <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', paddingTop: '24px', borderTop: '1px solid var(--bdr2)' }}>
-            {[['🔒', 'Secure Payment'], ['↩️', 'Easy Returns'], ['✅', 'Genuine Product'], ['🚚', 'Free Shipping ₹999+']].map(([ico, label]) => (
+            {[['🔒', 'Secure Payment'], ['↩️', 'Easy Returns'], ['✅', 'Genuine Product'], ['🚚', freeShippingText]].map(([ico, label]) => (
               <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '12px', color: 'var(--lt)', fontWeight: 600 }}>
                 <span style={{ fontSize: '16px' }}>{ico}</span> {label}
               </div>

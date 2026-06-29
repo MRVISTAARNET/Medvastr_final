@@ -14,7 +14,7 @@ declare global {
 }
 
 export default function CheckoutPage() {
-  const { cart, clearCart, toast, user, isHydrated, setIsAuthOpen } = useApp();
+  const { cart, clearCart, toast, user, isHydrated, setIsAuthOpen, storeSettings } = useApp();
   const [submitting, setSubmitting] = useState(false);
   const [orderNum, setOrderNum] = useState<string | null>(null);
   const [shippingCost, setShippingCost] = useState<number>(0);
@@ -463,7 +463,18 @@ export default function CheckoutPage() {
             <div className="co-trust-badge">🔒 SSL Encrypted</div>
             <div className="co-trust-badge">🛡️ Razorpay Secured</div>
             <div className="co-trust-badge">↩️ Easy Returns</div>
-            <div className="co-trust-badge">📦 Free Shipping ₹999+</div>
+            <div className="co-trust-badge">
+              📦 {(() => {
+                let txt = `Free Shipping ₹${storeSettings?.SHIPPING_FREE_THRESHOLD || 999}+`;
+                if (storeSettings?.SHIPPING_PROMO_FREE_UNTIL) {
+                  const promoDate = new Date(storeSettings.SHIPPING_PROMO_FREE_UNTIL);
+                  if (new Date() < promoDate) {
+                    txt = `Free Shipping till ${promoDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`;
+                  }
+                }
+                return txt;
+              })()}
+            </div>
           </div>
         </div>
 

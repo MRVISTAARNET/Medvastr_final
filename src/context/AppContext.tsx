@@ -36,6 +36,12 @@ interface LoginOptions {
   adminOnly?: boolean;
 }
 
+export interface StoreSettings {
+  SHIPPING_BASE_FEE: string;
+  SHIPPING_FREE_THRESHOLD: string;
+  SHIPPING_PROMO_FREE_UNTIL: string;
+}
+
 interface AppContextType {
   cart: CartItem[];
   wishlist: string[];
@@ -48,12 +54,14 @@ interface AppContextType {
   banners: any[];
   collections: any[];
   bulkOrderTiers: any[];
+  storeSettings: StoreSettings;
   refreshCategories: () => Promise<void>;
   refreshNav: () => Promise<void>;
   refreshProducts: () => Promise<boolean>;
   refreshBanners: () => Promise<void>;
   refreshCollections: () => Promise<void>;
   refreshBulkOrders: () => Promise<void>;
+  refreshSettings: () => Promise<void>;
   user: User | null;
   isAuthOpen: boolean;
   setIsAuthOpen: (open: boolean) => void;
@@ -137,6 +145,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [banners, setBanners] = useState<any[]>([]);
   const [collections, setCollections] = useState<any[]>([]);
   const [bulkOrderTiers, setBulkOrderTiers] = useState<any[]>([]);
+  const [storeSettings, setStoreSettings] = useState<StoreSettings>({
+    SHIPPING_BASE_FEE: "99",
+    SHIPPING_FREE_THRESHOLD: "999",
+    SHIPPING_PROMO_FREE_UNTIL: ""
+  });
   const [user, setUser] = useState<User | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
@@ -312,6 +325,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const fetchSettings = useCallback(async () => {
+    try {
+      const [res1, res2, res3] = await Promise.all([
+        fetch(`${API_BASE}/settings/SHIPPING_BASE_FEE`),
+        fetch(`${API_BASE}/settings/SHIPPING_FREE_THRESHOLD`),
+        fetch(`${API_BASE}/settings/SHIPPING_PROMO_FREE_UNTIL`)
+      ]);
+      const [d1, d2, d3] = await Promise.all([res1.json(), res2.json(), res3.json()]);
+      setStoreSettings({
+        SHIPPING_BASE_FEE: d1.data || "99",
+        SHIPPING_FREE_THRESHOLD: d2.data || "999",
+        SHIPPING_PROMO_FREE_UNTIL: d3.data ? d3.data.split('T')[0] : ""
+      });
+    } catch {
+      /* non-blocking */
+    }
+  }, []);
+
   // Fetch data on mount - forcing refresh to load new image order logic
   useEffect(() => {
     fetchProducts();
@@ -321,7 +352,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     fetchBanners();
     fetchCollections();
     fetchBulkOrderTiers();
-  }, [fetchProducts, fetchCategories, fetchColors, fetchSizes, fetchBanners, fetchCollections, fetchBulkOrderTiers]);
+    fetchSettings();
+  }, [fetchProducts, fetchCategories, fetchColors, fetchSizes, fetchBanners, fetchCollections, fetchBulkOrderTiers, fetchSettings]);
 
   useEffect(() => {
     if (isHydrated) {
@@ -563,6 +595,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         banners,
         collections,
         bulkOrderTiers,
+        storeSettings,
         user,
         isAuthOpen,
         setIsAuthOpen,
@@ -589,6 +622,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         refreshBanners: fetchBanners,
         refreshCollections: fetchCollections,
         refreshBulkOrders: fetchBulkOrderTiers,
+        refreshSettings: fetchSettings,
       }}
     >
       {children}
