@@ -40,6 +40,9 @@ public class SecurityConfig {
                         .contentTypeOptions(c -> {
                         })
                         .frameOptions(f -> f.deny())
+                        .httpStrictTransportSecurity(hsts -> hsts
+                                .includeSubDomains(true)
+                                .maxAgeInSeconds(31536000))
                         .referrerPolicy(r -> r
                                 .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
                         .permissionsPolicy(p -> p.policy("geolocation=(), microphone=(), camera=()")))

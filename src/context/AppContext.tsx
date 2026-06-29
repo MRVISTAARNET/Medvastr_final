@@ -40,6 +40,7 @@ export interface StoreSettings {
   SHIPPING_BASE_FEE: string;
   SHIPPING_FREE_THRESHOLD: string;
   SHIPPING_PROMO_FREE_UNTIL: string;
+  razorpay_key?: string;
 }
 
 interface AppContextType {
@@ -148,7 +149,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [storeSettings, setStoreSettings] = useState<StoreSettings>({
     SHIPPING_BASE_FEE: "99",
     SHIPPING_FREE_THRESHOLD: "999",
-    SHIPPING_PROMO_FREE_UNTIL: ""
+    SHIPPING_PROMO_FREE_UNTIL: "",
+    razorpay_key: ""
   });
   const [user, setUser] = useState<User | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -327,16 +329,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const fetchSettings = useCallback(async () => {
     try {
-      const [res1, res2, res3] = await Promise.all([
+      const [res1, res2, res3, res4] = await Promise.all([
         fetch(`${API_BASE}/settings/SHIPPING_BASE_FEE`),
         fetch(`${API_BASE}/settings/SHIPPING_FREE_THRESHOLD`),
-        fetch(`${API_BASE}/settings/SHIPPING_PROMO_FREE_UNTIL`)
+        fetch(`${API_BASE}/settings/SHIPPING_PROMO_FREE_UNTIL`),
+        fetch(`${API_BASE}/settings/razorpay_key`)
       ]);
-      const [d1, d2, d3] = await Promise.all([res1.json(), res2.json(), res3.json()]);
+      const [d1, d2, d3, d4] = await Promise.all([res1.json(), res2.json(), res3.json(), res4.json()]);
       setStoreSettings({
         SHIPPING_BASE_FEE: d1.data || "99",
         SHIPPING_FREE_THRESHOLD: d2.data || "999",
-        SHIPPING_PROMO_FREE_UNTIL: d3.data ? d3.data.split('T')[0] : ""
+        SHIPPING_PROMO_FREE_UNTIL: d3.data ? d3.data.split('T')[0] : "",
+        razorpay_key: d4.data || ""
       });
     } catch {
       /* non-blocking */
