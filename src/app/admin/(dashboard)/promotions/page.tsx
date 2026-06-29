@@ -88,13 +88,20 @@ export default function PromotionsPage() {
 
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">Free Shipping For ALL Until Date</label>
-          <input 
-            type="date" 
-            className="w-full border p-2 rounded" 
-            value={promoDate} 
-            onChange={(e) => setPromoDate(e.target.value)} 
-          />
-          <p className="text-xs text-gray-500 mt-1">Leave empty to disable. If set, ALL orders get free shipping until this date.</p>
+          <div className="flex gap-2 items-center">
+            <input 
+              type="date" 
+              className="w-full border p-2 rounded" 
+              value={promoDate} 
+              onChange={(e) => setPromoDate(e.target.value)} 
+            />
+            {promoDate && (
+              <button type="button" onClick={() => setPromoDate("")} className="btn-secondary whitespace-nowrap text-red-600 border-red-200">
+                Clear Date
+              </button>
+            )}
+          </div>
+          <p className="text-xs text-gray-500 mt-1">Leave empty or clear to disable. If set, ALL orders get free shipping until this date.</p>
         </div>
 
         <button 
