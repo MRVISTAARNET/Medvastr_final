@@ -173,12 +173,12 @@ export default function CheckoutPage() {
             razorpaySignature: response.razorpay_signature,
           }),
         });
-        if (data.success) {
+        if (data.success && data.data?.paymentStatus === 'PAID') {
           setOrderNum(orderData.orderNumber);
           clearCart();
           toast("Payment Successful!", "ok");
         } else {
-          toast(data.message || "Payment verification failed", "bad");
+          toast("Payment verification failed", "bad");
         }
       } catch {
         toast("Payment verification failed", "bad");
@@ -196,8 +196,8 @@ export default function CheckoutPage() {
         toast("Payment could not be started. Try again or use COD.", "bad");
         setSubmitting(false);
         return;
-      }
-      if (!RAZORPAY_KEY) {
+      const activeRzpKey = storeSettings?.razorpay_key || RAZORPAY_KEY;
+      if (!activeRzpKey) {
         toast("Razorpay is not configured on the storefront.", "bad");
         setSubmitting(false);
         return;
@@ -211,7 +211,7 @@ export default function CheckoutPage() {
       pendingOrderRef.current = orderData;
 
       const options = {
-        key: RAZORPAY_KEY,
+        key: activeRzpKey,
         amount: Math.round(orderData.totalAmount * 100),
         currency: "INR",
         name: "Medvastr",
