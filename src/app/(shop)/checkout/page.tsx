@@ -127,10 +127,15 @@ export default function CheckoutPage() {
     try {
       const res = await fetch(`${API_BASE}/promos/validate?code=${encodeURIComponent(promoInput)}&total=${sub}`);
       const data = await res.json();
-      if (data.valid) {
-        setPromoDiscount(Number(data.discountAmount) || 0);
+      const discountAmt = Number(data.discountAmount) || 0;
+      if (data.valid && discountAmt > 0) {
+        setPromoDiscount(discountAmt);
         setForm((f) => ({ ...f, promoCode: promoInput.trim().toUpperCase() }));
         setPromoMsg(data.message || "Promo applied");
+      } else if (data.valid && discountAmt === 0) {
+        setPromoDiscount(0);
+        setForm((f) => ({ ...f, promoCode: "" }));
+        setPromoMsg("This promo code is valid but provides a ₹0 discount. Check minimum cart value.");
       } else {
         setPromoDiscount(0);
         setForm((f) => ({ ...f, promoCode: "" }));
