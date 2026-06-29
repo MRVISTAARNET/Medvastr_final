@@ -99,6 +99,9 @@ export default function AdminProducts() {
   const [activeTab, setActiveTab] = useState<'basic' | 'pricing' | 'inventory' | 'media' | 'seo'>('basic');
   const [uploadingState, setUploadingState] = useState<{ active: boolean; current: number; total: number; filename: string }>({ active: false, current: 0, total: 0, filename: '' });
   const [isSaving, setIsSaving] = useState(false);
+  const [pwdModalOpen, setPwdModalOpen] = useState(false);
+  const [pwdInput, setPwdInput] = useState('');
+  const [pwdResolver, setPwdResolver] = useState<{ resolve: (value: string | null) => void } | null>(null);
 
   const { products, categoryTree, refreshProducts } = useApp();
 
@@ -253,7 +256,12 @@ export default function AdminProducts() {
     if (!form.imgs || form.imgs.length === 0) return alert("At least one product image is required");
     if (form.imgs.length > 30) return alert("Maximum 30 images allowed");
 
-    const adminPwd = window.prompt("Security Check: Enter your admin password to confirm these changes:");
+    const adminPwd = await new Promise<string | null>((resolve) => {
+      setPwdInput('');
+      setPwdResolver({ resolve });
+      setPwdModalOpen(true);
+    });
+
     if (!adminPwd) {
       setIsSaving(false);
       return;
@@ -837,6 +845,36 @@ export default function AdminProducts() {
             <div className="modal-foot">
               <button type="button" className="btn-secondary" onClick={() => setBarcodeProduct(null)}>Close</button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* PASSWORD CONFIRMATION MODAL */}
+      {pwdModalOpen && (
+        <div className="modal-bg">
+          <div className="modal" style={{ maxWidth: '400px', width: '90%' }}>
+            <div className="modal-hd">
+              <div className="modal-title">Security Check</div>
+              <button type="button" className="modal-x" onClick={() => { setPwdModalOpen(false); pwdResolver?.resolve(null); }}>✕</button>
+            </div>
+            <form onSubmit={(e) => { e.preventDefault(); setPwdModalOpen(false); pwdResolver?.resolve(pwdInput); }}>
+              <div className="modal-body" style={{ padding: '20px' }}>
+                <label className="input-label" htmlFor="admin-password">Enter Admin Password to confirm changes:</label>
+                <input
+                  id="admin-password"
+                  type="password"
+                  className="input-field"
+                  value={pwdInput}
+                  onChange={e => setPwdInput(e.target.value)}
+                  autoComplete="current-password"
+                  autoFocus
+                />
+              </div>
+              <div className="modal-foot">
+                <button type="button" className="btn-secondary" onClick={() => { setPwdModalOpen(false); pwdResolver?.resolve(null); }}>Cancel</button>
+                <button type="submit" className="btn-primary">Confirm</button>
+              </div>
+            </form>
           </div>
         </div>
       )}
