@@ -858,25 +858,26 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
       <style jsx>{`
         .cat-banner {
           width: 100%;
-          margin-bottom: 30px;
-          border-radius: 20px;
+          margin-bottom: 25px;
+          border-radius: 16px;
           overflow: hidden;
           position: relative;
           box-shadow: 0 4px 20px rgba(0,0,0,0.06);
           background: #f1f5f9;
-          aspect-ratio: 1600 / 420;
+          aspect-ratio: 1600 / 300; /* Made thinner for desktop so products show immediately */
         }
         .cat-banner-img {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          object-position: center 20%;
+          object-position: center;
           display: block;
         }
         @media (max-width: 768px) {
           .cat-banner {
-            aspect-ratio: 1600 / 450;
+            aspect-ratio: 1600 / 500; /* Proportioned for mobile so it's not too tall */
             border-radius: 12px;
+            margin-bottom: 20px;
           }
         }
         @media (max-width: 480px) {

@@ -401,9 +401,9 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
 
   return (
     <div
+      className="bulk-smart-banner"
       style={{
         width: "100%",
-        aspectRatio: "1920 / 480",
         background: "#0a0f1c",
         display: "flex",
         alignItems: "center",
@@ -419,6 +419,16 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
         onError={tryNext}
         style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
       />
+      <style jsx>{`
+        .bulk-smart-banner {
+          aspect-ratio: 1600 / 300;
+        }
+        @media (max-width: 768px) {
+          .bulk-smart-banner {
+            aspect-ratio: 1600 / 500;
+          }
+        }
+      `}</style>
     </div>
   );
 }
