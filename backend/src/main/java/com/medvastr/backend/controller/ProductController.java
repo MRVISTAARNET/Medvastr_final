@@ -80,38 +80,19 @@ public class ProductController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<ProductDTO>> create(
-            @Valid @RequestBody ProductRequest r,
-            @RequestHeader(value = "X-Admin-Password", required = false) String adminPassword,
-            Principal principal) {
-        if (!userService.verifyPassword(principal.getName(), adminPassword)) {
-            return ResponseEntity.status(403).body(ApiResponse.err("Invalid admin password. Action forbidden."));
-        }
+    public ResponseEntity<ApiResponse<ProductDTO>> create(@Valid @RequestBody ProductRequest r) {
         return ResponseEntity.status(201).body(ApiResponse.ok("Created", s.create(r)));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<ProductDTO>> update(
-            @PathVariable Long id, 
-            @Valid @RequestBody ProductRequest r,
-            @RequestHeader(value = "X-Admin-Password", required = false) String adminPassword,
-            Principal principal) {
-        if (!userService.verifyPassword(principal.getName(), adminPassword)) {
-            return ResponseEntity.status(403).body(ApiResponse.err("Invalid admin password. Action forbidden."));
-        }
+    public ResponseEntity<ApiResponse<ProductDTO>> update(@PathVariable Long id, @Valid @RequestBody ProductRequest r) {
         return ResponseEntity.ok(ApiResponse.ok("Updated", s.update(id, r)));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> delete(
-            @PathVariable Long id,
-            @RequestHeader(value = "X-Admin-Password", required = false) String adminPassword,
-            Principal principal) {
-        if (!userService.verifyPassword(principal.getName(), adminPassword)) {
-            return ResponseEntity.status(403).body(ApiResponse.err("Invalid admin password. Action forbidden."));
-        }
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
         s.delete(id);
         return ResponseEntity.ok(ApiResponse.ok("Deleted", null));
     }

@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { API_BASE } from "@/lib/api";
+import { API_BASE, getToken } from "@/lib/api";
 
 export default function PromotionsPage() {
   const [baseFee, setBaseFee] = useState("99");
@@ -31,7 +31,7 @@ export default function PromotionsPage() {
   };
 
   const handleSave = async () => {
-    const token = localStorage.getItem("medvastr_admin_token");
+    const token = getToken();
     if (!token) return alert("Unauthorized");
     setLoading(true);
 
