@@ -333,7 +333,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         fetch(`${API_BASE}/settings/SHIPPING_BASE_FEE`),
         fetch(`${API_BASE}/settings/SHIPPING_FREE_THRESHOLD`),
         fetch(`${API_BASE}/settings/SHIPPING_PROMO_FREE_UNTIL`),
-        fetch(`${API_BASE}/settings/razorpay_key`)
+        fetch(`${API_BASE}/settings/razorpay-public-key`)
       ]);
       const [d1, d2, d3, d4] = await Promise.all([res1.json(), res2.json(), res3.json(), res4.json()]);
       setStoreSettings({

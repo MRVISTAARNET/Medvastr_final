@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import com.medvastr.backend.service.RazorpayService;
 import java.util.Map;
 
 @RestController
@@ -17,6 +18,7 @@ import java.util.Map;
 public class SettingsController {
 
     private final StoreSettingRepository repo;
+    private final RazorpayService razorpayService;
 
     /** Public read - used by Hero, VideoSection, etc. */
     @GetMapping("/{key}")
@@ -24,6 +26,12 @@ public class SettingsController {
         return repo.findById(key)
                 .map(s -> ResponseEntity.ok(ApiResponse.ok("Setting", s.getSettingValue())))
                 .orElse(ResponseEntity.ok(ApiResponse.<String>ok("Setting", null)));
+    }
+
+    /** Returns the active Razorpay public key (from DB override or EB env var) */
+    @GetMapping("/razorpay-public-key")
+    public ResponseEntity<ApiResponse<String>> getRazorpayPublicKey() {
+        return ResponseEntity.ok(ApiResponse.ok("Razorpay Key", razorpayService.getKeyId()));
     }
 
     /** Admin write - save or update any setting */

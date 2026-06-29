@@ -196,6 +196,7 @@ export default function CheckoutPage() {
         toast("Payment could not be started. Try again or use COD.", "bad");
         setSubmitting(false);
         return;
+      }
       const activeRzpKey = storeSettings?.razorpay_key || RAZORPAY_KEY;
       if (!activeRzpKey) {
         toast("Razorpay is not configured on the storefront.", "bad");
