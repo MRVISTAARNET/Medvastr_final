@@ -18,6 +18,7 @@ import com.medvastr.backend.repository.OrderRepository;
 import com.medvastr.backend.repository.ProductRepository;
 import com.medvastr.backend.repository.ProductVariantRepository;
 import com.medvastr.backend.repository.UserRepository;
+import com.medvastr.backend.repository.StoreSettingRepository;
 import com.medvastr.backend.model.InventoryLog;
 import com.medvastr.backend.repository.InventoryLogRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,7 @@ public class OrderService {
     private static final BigDecimal SHIP_COST = BigDecimal.valueOf(99);
 
     private final OrderRepository orderRepo;
+    private final StoreSettingRepository settingsRepo;
     private final CartRepository cartRepo;
     private final UserRepository userRepo;
     private final ProductRepository productRepo;
@@ -64,6 +66,27 @@ public class OrderService {
         if (!order.getUser().getId().equals(me().getId())) {
             throw new RuntimeException("You do not have access to this order");
         }
+    }
+
+    public BigDecimal calculateShippingFee(BigDecimal subtotal) {
+        String baseStr = settingsRepo.findById("SHIPPING_BASE_FEE").map(s -> s.getSettingValue()).orElse("99");
+        String thresholdStr = settingsRepo.findById("SHIPPING_FREE_THRESHOLD").map(s -> s.getSettingValue()).orElse("999");
+        String promoDateStr = settingsRepo.findById("SHIPPING_PROMO_FREE_UNTIL").map(s -> s.getSettingValue()).orElse("");
+
+        BigDecimal ship = new BigDecimal(baseStr);
+        if (subtotal.compareTo(new BigDecimal(thresholdStr)) >= 0) {
+            ship = BigDecimal.ZERO;
+        }
+
+        if (promoDateStr != null && !promoDateStr.isBlank()) {
+            try {
+                LocalDateTime promoDate = LocalDateTime.parse(promoDateStr);
+                if (LocalDateTime.now().isBefore(promoDate)) {
+                    ship = BigDecimal.ZERO;
+                }
+            } catch (Exception ignored) {}
+        }
+        return ship;
     }
 
     public OrderDTO createOrder(CreateOrderRequest r) {
@@ -119,9 +142,8 @@ public class OrderService {
             }
         }
 
-        BigDecimal ship = r.getShippingAmount() != null 
-            ? BigDecimal.valueOf(r.getShippingAmount()) 
-            : (subtotal.compareTo(FREE_SHIP) >= 0 ? BigDecimal.ZERO : SHIP_COST);
+        BigDecimal ship = calculateShippingFee(subtotal);
+        
         BigDecimal disc = BigDecimal.ZERO;
 
         if (r.getPromoCode() != null && !r.getPromoCode().isBlank()) {

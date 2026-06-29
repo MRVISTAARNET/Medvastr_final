@@ -16,6 +16,11 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
     private final OrderService s;
 
+    @GetMapping("/shipping-fee")
+    public ResponseEntity<ApiResponse<java.math.BigDecimal>> getShippingFee(@RequestParam java.math.BigDecimal subtotal) {
+        return ResponseEntity.ok(ApiResponse.ok("Shipping fee calculated", s.calculateShippingFee(subtotal)));
+    }
+
     @PostMapping
     public ResponseEntity<ApiResponse<OrderDTO>> create(@RequestBody CreateOrderRequest r) {
         return ResponseEntity.status(201).body(ApiResponse.ok("Order placed", s.createOrder(r)));

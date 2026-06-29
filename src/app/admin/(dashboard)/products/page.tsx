@@ -253,6 +253,12 @@ export default function AdminProducts() {
     if (!form.imgs || form.imgs.length === 0) return alert("At least one product image is required");
     if (form.imgs.length > 30) return alert("Maximum 30 images allowed");
 
+    const adminPwd = window.prompt("Security Check: Enter your admin password to confirm these changes:");
+    if (!adminPwd) {
+      setIsSaving(false);
+      return;
+    }
+
     setIsSaving(true);
     try {
       const token = getToken();
@@ -326,7 +332,7 @@ export default function AdminProducts() {
     const url = editingProduct ? `${API_BASE}/products/${editingProduct.id}` : `${API_BASE}/products`;
     const res = await fetch(url, {
       method: editingProduct ? 'PUT' : 'POST',
-      headers: { 'Content-Type': 'application/json', ...authHeaders(token) },
+      headers: { 'Content-Type': 'application/json', ...authHeaders(token), 'X-Admin-Password': adminPwd },
       body: JSON.stringify(body)
     });
     

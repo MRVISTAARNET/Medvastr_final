@@ -94,7 +94,7 @@ const BULK_ITEMS: Record<string, any> = {
     ],
     features: [
       "Moisture-wicking fabric",
-      "Four-way stretch",
+      "Two-way stretch",
       "Anti-wrinkle finish",
       "Multiple utility pockets"
     ],

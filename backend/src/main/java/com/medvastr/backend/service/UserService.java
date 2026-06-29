@@ -47,6 +47,12 @@ public class UserService {
         return userRepo.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    public boolean verifyPassword(String email, String rawPassword) {
+        if (rawPassword == null || rawPassword.isEmpty()) return false;
+        User u = getByEmail(email);
+        return encoder.matches(rawPassword, u.getPassword());
+    }
+
     public UserDTO updateProfile(UpdateProfileRequest r) {
         User u = me();
         u.setFirstName(r.getFirstName());

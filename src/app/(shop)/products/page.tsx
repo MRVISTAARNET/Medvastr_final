@@ -186,7 +186,7 @@ function ProductsContent() {
     scrubs: {
       ico: "🥼",
       l: "Premium Scrubs",
-      d: "Our signature scrubs are engineered with specialized fabric that is anti-microbial, moisture-wicking, and features a four-way stretch for maximum comfort during long shifts."
+      d: "Our signature scrubs are engineered with specialized fabric that is anti-microbial, moisture-wicking, and features a two-way stretch for maximum comfort during long shifts."
     },
     stethoscope: {
       ico: "🩺",
