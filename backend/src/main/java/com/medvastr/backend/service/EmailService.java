@@ -95,7 +95,7 @@ public class EmailService {
 
     @Async
     public void sendAdminNotification(Order order) {
-        String adminEmail = "admin@medvastr.com";
+        String adminEmail = "info@medvastr.com";
         String subject = "New Order Received - " + order.getOrderNumber();
         log.info("[EmailService] Sending admin notification - Admin Email: {} | Subject: {}", adminEmail, subject);
 

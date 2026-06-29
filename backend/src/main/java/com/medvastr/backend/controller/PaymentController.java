@@ -16,13 +16,11 @@ public class PaymentController {
     private final PaymentService s;
 
     @PostMapping("/create-order")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<Map<String, Object>>> create(@RequestBody Map<String, Object> r) {
         return ResponseEntity.ok(ApiResponse.ok("Created", s.createOrder(r)));
     }
 
     @PostMapping("/verify")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<Map<String, String>>> verify(@RequestBody Map<String, String> p) {
         return ResponseEntity.ok(ApiResponse.ok("Verified", s.verify(p)));
     }
