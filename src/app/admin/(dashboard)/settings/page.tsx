@@ -48,28 +48,7 @@ export default function AdminSettings() {
     setApiLoading(false);
   };
 
-  const [wipeLoading, setWipeLoading] = useState(false);
-  const handleWipeData = async () => {
-    if (!window.confirm("CRITICAL WARNING: This will permanently delete ALL orders, carts, products, and inventory from the live database. ONLY the Admin account and settings will remain. Are you absolutely sure you want to proceed?")) return;
-    
-    setWipeLoading(true);
-    try {
-      const res = await fetch(`${API_BASE}/admin/system/wipe-test-data`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...authHeaders() }
-      });
-      const data = await res.json();
-      if (data.success) {
-        alert("Success! The database has been wiped clean. You can now start fresh.");
-        window.location.reload();
-      } else {
-        alert("Failed to wipe data: " + data.message);
-      }
-    } catch {
-      alert("Network error while wiping data.");
-    }
-    setWipeLoading(false);
-  };
+
 
   const inp = {
     width: '100%', height: '44px',
@@ -141,23 +120,6 @@ export default function AdminSettings() {
                   {pwdMsg && <div style={{ fontSize: 13, margin: '8px 0', color: pwdMsg.startsWith('✅') ? 'green' : 'red' }}>{pwdMsg}</div>}
                   <button className="btn-primary" onClick={handleChangePassword} disabled={pwdLoading}>
                     {pwdLoading ? 'Changing...' : 'Change Password'}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* DANGER ZONE */}
-            <div style={{ gridColumn: '1 / -1' }}>
-              <div className="table-card" style={{ marginBottom: 0, border: '1px solid #ef4444' }}>
-                <div className="table-hd" style={{ background: '#fef2f2', borderBottom: '1px solid #fee2e2' }}>
-                  <div className="table-title" style={{ color: '#dc2626' }}>⚠️ DANGER ZONE: Wipe Production Data</div>
-                </div>
-                <div style={{ padding: '22px' }}>
-                  <p style={{ color: '#4b5563', fontSize: '14px', marginBottom: '16px' }}>
-                    Clicking the button below will <strong>permanently delete</strong> all products, variants, inventory logs, carts, orders, and order items from the live database. Only your Admin account, Promo Codes, and Store Settings will be preserved. This action CANNOT be undone.
-                  </p>
-                  <button className="btn-primary" style={{ background: '#ef4444', color: 'white' }} onClick={handleWipeData} disabled={wipeLoading}>
-                    {wipeLoading ? 'Wiping Database...' : 'Delete All Test Data & Start Fresh'}
                   </button>
                 </div>
               </div>
