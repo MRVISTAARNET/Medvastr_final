@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { API_BASE } from "@/lib/constants";
-import { toast } from "sonner";
+import { API_BASE } from "@/lib/api";
 
 export default function PromotionsPage() {
   const [baseFee, setBaseFee] = useState("99");
@@ -33,7 +32,7 @@ export default function PromotionsPage() {
 
   const handleSave = async () => {
     const token = localStorage.getItem("medvastr_admin_token");
-    if (!token) return toast.error("Unauthorized");
+    if (!token) return alert("Unauthorized");
     setLoading(true);
 
     try {
@@ -51,10 +50,10 @@ export default function PromotionsPage() {
       });
 
       await Promise.all([p1, p2, p3]);
-      toast.success("Promotions saved successfully");
+      alert("Promotions saved successfully");
     } catch (e) {
       console.error(e);
-      toast.error("Failed to save settings");
+      alert("Failed to save settings");
     } finally {
       setLoading(false);
     }
