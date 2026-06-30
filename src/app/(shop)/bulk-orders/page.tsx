@@ -405,9 +405,6 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
       style={{
         width: "100%",
         background: "#0a0f1c",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
         position: "relative",
         overflow: "hidden",
       }}
@@ -417,23 +414,8 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
         src={src}
         alt={title}
         onError={tryNext}
-        style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+        style={{ width: "100%", height: "auto", display: "block" }}
       />
-      <style jsx>{`
-        .bulk-smart-banner {
-          aspect-ratio: 1920 / 400; /* Matches category banner size exactly on desktop */
-        }
-        @media (max-width: 768px) {
-          .bulk-smart-banner {
-            aspect-ratio: 1920 / 650;
-          }
-        }
-        @media (max-width: 480px) {
-          .bulk-smart-banner {
-            aspect-ratio: 1920 / 750; /* keeps it taller on mobile so text is legible */
-          }
-        }
-      `}</style>
     </div>
   );
 }

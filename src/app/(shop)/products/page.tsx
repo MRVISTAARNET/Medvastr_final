@@ -864,25 +864,16 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
           position: relative;
           box-shadow: 0 4px 20px rgba(0,0,0,0.06);
           background: #f1f5f9;
-          aspect-ratio: 1920 / 400; /* Matches category banner size exactly on desktop */
         }
         .cat-banner-img {
           width: 100%;
-          height: 100%;
-          object-fit: cover;
-          object-position: center;
+          height: auto;
           display: block;
         }
         @media (max-width: 768px) {
           .cat-banner {
-            aspect-ratio: 1920 / 650;
             border-radius: 12px;
             margin-bottom: 20px;
-          }
-        }
-        @media (max-width: 480px) {
-          .cat-banner {
-            aspect-ratio: 1920 / 750; /* keeps it taller on mobile so text is legible */
           }
         }
       `}</style>

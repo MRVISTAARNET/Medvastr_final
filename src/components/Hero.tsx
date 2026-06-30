@@ -40,7 +40,7 @@ export default function Hero({ onShop }: HeroProps) {
       <div className="hero-track" style={{ transform: `translateX(-${cur * 100}%)` }}>
         {dynamicSlides.map((s, i) => (
           <div className="hero-slide" key={i}>
-            <SmartSlide base={s.base} priority={i === 0} />
+            <SmartSlide base={s.base} />
           </div>
         ))}
       </div>
@@ -96,20 +96,21 @@ export default function Hero({ onShop }: HeroProps) {
   );
 }
 
-// Replaced waterfall image loading with Next.js optimized Image component
-function SmartSlide({ base, priority }: { base: string, priority?: boolean }) {
-  const src = base + '.jpg'; // Stop waterfall! Assert extension.
+// SmartSlide: always hides text, tries jpg/png/webp, and renders crop-free with height: auto
+function SmartSlide({ base }: { base: string }) {
+  const [src, setSrc] = useState(base + ".jpg");
+  const tryNext = () => {
+    if (src.endsWith(".jpg")) { setSrc(base + ".png"); }
+    else if (src.endsWith(".png")) { setSrc(base + ".webp"); }
+  };
 
   return (
-    <div className="slide-bg">
-      <Image
-        src={src}
-        alt="Hero Promotional Banner"
-        fill
-        style={{ objectFit: 'cover', objectPosition: 'center' }}
-        priority={priority}
-        sizes="100vw"
-      />
-    </div>
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt="Hero Promotional Banner"
+      onError={tryNext}
+      style={{ width: "100%", height: "auto", display: "block" }}
+    />
   );
 }

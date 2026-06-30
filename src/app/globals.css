@@ -1277,23 +1277,20 @@ textarea {
 
 .hero-slide {
   min-width: 100%;
-  aspect-ratio: 1920 / 600;
   position: relative;
-  display: flex;
-  align-items: center;
+  display: block;
   height: auto;
   min-height: auto;
 }
 
 @media (max-width: 1024px) {
   .hero-slide {
-    aspect-ratio: 1920 / 700;
+    height: auto;
   }
 }
 
 @media (max-width: 768px) {
   .hero-slide {
-    aspect-ratio: 1920 / 800;
     height: auto !important;
     min-height: auto !important;
   }
@@ -1301,7 +1298,6 @@ textarea {
 
 @media (max-width: 480px) {
   .hero-slide {
-    aspect-ratio: 1920 / 950;
     height: auto !important;
     min-height: auto !important;
   }
