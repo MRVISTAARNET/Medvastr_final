@@ -13,6 +13,7 @@ export default function AdminOrders() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState<any>(null);
+  const [debugResponse, setDebugResponse] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -249,11 +250,11 @@ export default function AdminOrders() {
                             const token = localStorage.getItem('token');
                             const res = await fetch(`${API_BASE}/orders/admin/${editingOrder.id}/shiprocket-sync`, {
                               method: 'POST',
-                              headers: { 'Authorization': `Bearer ${token}` }
+                              headers: { 'Authorization': 'Bearer ' + token }
                             });
                             const data = await res.json();
                             if (data.success) {
-                              alert("Sync Response Detail:\n\n" + data.data);
+                              setDebugResponse(data.data);
                             } else {
                               alert(data.message || "Failed to push order to Shiprocket (Sync)");
                             }
@@ -292,6 +293,25 @@ export default function AdminOrders() {
                   }
                 })();
               }}>Save Changes</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {debugResponse && (
+        <div className="modal-bg" onClick={() => setDebugResponse(null)}>
+          <div className="modal" style={{ maxWidth: '800px' }}>
+            <div className="modal-hd">
+              <div className="modal-title">Shiprocket Sync Debug Details</div>
+              <button className="modal-x" onClick={() => setDebugResponse(null)}>✕</button>
+            </div>
+            <div className="modal-body" style={{ maxHeight: '70vh', overflowY: 'auto' }}>
+              <pre style={{ background: '#f1f5f9', padding: '16px', borderRadius: '8px', overflowX: 'auto', whiteSpace: 'pre-wrap', fontSize: '13px', fontFamily: 'monospace', color: '#0f172a' }}>
+                {debugResponse}
+              </pre>
+            </div>
+            <div className="modal-foot">
+              <button className="btn-primary" onClick={() => setDebugResponse(null)}>Close</button>
             </div>
           </div>
         </div>

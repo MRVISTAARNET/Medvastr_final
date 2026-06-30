@@ -145,14 +145,34 @@ public class ShiprocketService {
         }
     }
 
+    private void preloadOrderRelations(Order order) {
+        if (order.getItems() != null) {
+            order.getItems().forEach(i -> {
+                if (i.getProduct() != null) {
+                    i.getProduct().getName();
+                }
+                if (i.getVariant() != null) {
+                    i.getVariant().getSku();
+                }
+            });
+        }
+        if (order.getUser() != null) {
+            order.getUser().getEmail();
+        }
+    }
+
     @Async
-    public void createOrder(Order order) {
+    @Transactional
+    public void createOrder(Long orderId) {
         if (!enabled) {
             log.debug("[Shiprocket] Service disabled");
             return;
         }
 
         try {
+            Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
+            preloadOrderRelations(order);
+
             String token = getValidToken();
             if (token == null) {
                 log.error("[Shiprocket] Cannot push order {} - Failed to get token", order.getOrderNumber());
@@ -161,15 +181,19 @@ public class ShiprocketService {
 
             pushOrderToShiprocket(order, token);
         } catch (Exception e) {
-            log.error("[Shiprocket] Error creating order {}: {}", order.getOrderNumber(), e.getMessage());
+            log.error("[Shiprocket] Error creating order id {}: {}", orderId, e.getMessage(), e);
         }
     }
 
-    public String createOrderSync(Order order) {
+    @Transactional
+    public String createOrderSync(Long orderId) {
         if (!enabled) {
             return "Shiprocket service is disabled in application.properties (shiprocket.enabled=false)";
         }
         try {
+            Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
+            preloadOrderRelations(order);
+
             String token = getValidToken();
             if (token == null) {
                 return "Failed to authenticate with Shiprocket (getValidToken returned null)";

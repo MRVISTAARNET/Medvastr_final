@@ -297,16 +297,13 @@ public class OrderService {
     @Transactional
     public OrderDTO pushToShiprocket(Long id) {
         Order o = orderRepo.findById(id).orElseThrow();
-        preloadOrderRelations(o);
-        pushToShiprocketAfterCommit(o);
+        pushToShiprocketAfterCommit(o.getId());
         return toDTO(o);
     }
 
     @Transactional
     public String pushToShiprocketSync(Long id) {
-        Order o = orderRepo.findById(id).orElseThrow();
-        preloadOrderRelations(o);
-        return shiprocketService.createOrderSync(o);
+        return shiprocketService.createOrderSync(id);
     }
 
     public TrackingDTO track(String num) {
@@ -368,7 +365,7 @@ public class OrderService {
                         try {
                             emailService.sendOrderConfirmationEmail(order);
                             emailService.sendAdminNotification(order);
-                            shiprocketService.createOrder(order);
+                            shiprocketService.createOrder(order.getId());
                         } catch (Exception e) {
                             log.error("Failed to run async post-commit actions", e);
                         }
@@ -378,22 +375,22 @@ public class OrderService {
         } else {
             emailService.sendOrderConfirmationEmail(order);
             emailService.sendAdminNotification(order);
-            shiprocketService.createOrder(order);
+            shiprocketService.createOrder(order.getId());
         }
     }
 
-    private void pushToShiprocketAfterCommit(Order order) {
+    private void pushToShiprocketAfterCommit(Long orderId) {
         if (org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive()) {
             org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
                 new org.springframework.transaction.support.TransactionSynchronization() {
                     @Override
                     public void afterCommit() {
-                        shiprocketService.createOrder(order);
+                        shiprocketService.createOrder(orderId);
                     }
                 }
             );
         } else {
-            shiprocketService.createOrder(order);
+            shiprocketService.createOrder(orderId);
         }
     }
 

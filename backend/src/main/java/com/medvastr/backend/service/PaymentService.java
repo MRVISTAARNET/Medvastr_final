@@ -114,7 +114,7 @@ public class PaymentService {
                     public void afterCommit() {
                         try {
                             emailService.sendOrderConfirmationEmail(order);
-                            shiprocketService.createOrder(order);
+                            shiprocketService.createOrder(order.getId());
                         } catch (Exception e) {
                             log.error("Failed to run async post-commit actions", e);
                         }
@@ -123,7 +123,7 @@ public class PaymentService {
             );
         } else {
             emailService.sendOrderConfirmationEmail(order);
-            shiprocketService.createOrder(order);
+            shiprocketService.createOrder(order.getId());
         }
     }
 }
