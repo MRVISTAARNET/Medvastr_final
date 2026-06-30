@@ -100,12 +100,20 @@ export default function CheckoutPage() {
       }, 0);
       const isCod = form.paymentMethod === "COD";
       
-      // Shiprocket logic commented out in favor of backend promotional shipping calculation
-      /*
-      // Auto-fill City & State using public API first
+      // Auto-fill City & State using postal pincode API
       fetch(`https://api.postalpincode.in/pincode/${form.pincode}`)
-        ...
-      */
+        .then(r => r.json())
+        .then(data => {
+          if (data && data[0] && data[0].Status === "Success" && data[0].PostOffice?.length > 0) {
+            const po = data[0].PostOffice[0];
+            setForm(f => ({
+              ...f,
+              city: po.District || po.Block || f.city,
+              state: po.State || f.state
+            }));
+          }
+        })
+        .catch(console.error);
 
       fetch(`${API_BASE}/orders/shipping-fee?subtotal=${sub}`)
         .then(r => r.json())

@@ -139,6 +139,64 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const [sizeError, setSizeError] = useState(false);
   const [bottomSizeError, setBottomSizeError] = useState(false);
 
+  const [pincode, setPincode] = useState("");
+  const [checkingPincode, setCheckingPincode] = useState(false);
+  const [pincodeStatus, setPincodeStatus] = useState<{ serviceable: boolean; etd?: string; cod?: boolean; message?: string } | null>(null);
+
+  const checkPincodeServiceability = async () => {
+    if (pincode.length !== 6) return;
+    setCheckingPincode(true);
+    setPincodeStatus(null);
+    try {
+      const res = await fetch(`${API_BASE}/shipping/serviceability?pincode=${pincode}&weight=0.5&isCod=false`);
+      const text = await res.text();
+      try {
+        const data = JSON.parse(text);
+        if (data.status === 200 && data.data && data.data.available_courier_companies?.length > 0) {
+          const companies = data.data.available_courier_companies;
+          const etds = companies.map((c: any) => c.etd).filter(Boolean);
+          let formattedEtd = "";
+          if (etds.length > 0) {
+            etds.sort();
+            const earliestEtd = new Date(etds[0]);
+            if (!isNaN(earliestEtd.getTime())) {
+              const day = earliestEtd.getDate();
+              const month = earliestEtd.toLocaleDateString('en-GB', { month: 'short' });
+              let suffix = "th";
+              if (day === 1 || day === 21 || day === 31) suffix = "st";
+              else if (day === 2 || day === 22) suffix = "nd";
+              else if (day === 3 || day === 23) suffix = "rd";
+              formattedEtd = `${day}${suffix} ${month}`;
+            }
+          }
+          const codSupported = companies.some((c: any) => c.cod === 1);
+          setPincodeStatus({
+            serviceable: true,
+            etd: formattedEtd || undefined,
+            cod: codSupported
+          });
+        } else {
+          setPincodeStatus({
+            serviceable: false,
+            message: data.message || "Delivery not available for this pincode"
+          });
+        }
+      } catch (err) {
+        setPincodeStatus({
+          serviceable: false,
+          message: "Unable to verify serviceability for this pincode."
+        });
+      }
+    } catch (e) {
+      setPincodeStatus({
+        serviceable: false,
+        message: "Network error checking serviceability."
+      });
+    } finally {
+      setCheckingPincode(false);
+    }
+  };
+
   // Preselect color index from URL query param if available
   useEffect(() => {
     if (p && colorParam) {
@@ -571,7 +629,49 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             >
               {isOutOfStock ? 'Currently Out of Stock' : `Add to Bag • ${fmt(p.price * qty)}`}
             </button>
-            <div className="pdp-delivery-msg">Standard delivery in 3-5 business days</div>
+            <div style={{ marginTop: '20px', padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+              <div style={{ fontSize: '15px', fontWeight: 700, color: '#1e293b', marginBottom: '10px' }}>Delivery Details</div>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input 
+                  type="text" 
+                  maxLength={6}
+                  placeholder="Enter Pincode" 
+                  value={pincode}
+                  onChange={(e) => setPincode(e.target.value.replace(/\D/g, ''))}
+                  style={{ flex: 1, padding: '8px 12px', border: '1.5px solid #cbd5e1', borderRadius: '8px', fontSize: '14px', outline: 'none', background: 'white', color: '#1e293b' }}
+                />
+                <button 
+                  type="button"
+                  onClick={checkPincodeServiceability}
+                  disabled={pincode.length !== 6 || checkingPincode}
+                  style={{ padding: '8px 16px', background: 'var(--ink, #1e1b4b)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '14px', cursor: pincode.length === 6 && !checkingPincode ? 'pointer' : 'default', opacity: pincode.length === 6 ? 1 : 0.6 }}
+                >
+                  {checkingPincode ? 'Checking...' : 'Check'}
+                </button>
+              </div>
+              {pincodeStatus ? (
+                <div style={{ marginTop: '12px', fontSize: '13px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  {pincodeStatus.serviceable ? (
+                    <>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#16a34a', fontWeight: 600 }}>
+                        <span style={{ fontSize: '16px' }}>🚚</span> Delivery {pincodeStatus.etd ? `by ${pincodeStatus.etd}` : 'available'}
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: pincodeStatus.cod ? '#16a34a' : '#475569', fontWeight: 600 }}>
+                        <span style={{ fontSize: '16px' }}>💵</span> {pincodeStatus.cod ? 'Cash on delivery available' : 'Prepaid payment only'}
+                      </div>
+                    </>
+                  ) : (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#dc2626', fontWeight: 600 }}>
+                      <span style={{ fontSize: '16px' }}>❌</span> {pincodeStatus.message || 'Delivery not available for this pincode'}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div style={{ marginTop: '8px', fontSize: '12px', color: '#64748b' }}>
+                  Standard delivery in 3-5 business days
+                </div>
+              )}
+            </div>
           </div>
 
           {/* ACCORDIONS */}
