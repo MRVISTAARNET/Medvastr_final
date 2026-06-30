@@ -275,36 +275,86 @@ public class ProductService {
             replaceImages(p, r.getImageUrls());
         }
 
-        java.util.Map<String, Integer> previousStocks = p.getVariants().stream()
-                .filter(v -> v.getSku() != null)
-                .collect(Collectors.toMap(ProductVariant::getSku, ProductVariant::getStockQuantity, (a, b) -> a));
+        // Parse requested variants
+        Set<ProductVariant> requestedVariants = buildVariants(r, p);
 
-        p.getVariants().clear();
-        productRepo.saveAndFlush(p); // Force clear old variants
+        // Keep track of existing variants by a unique key: size + colorName
+        java.util.Map<String, ProductVariant> existingMap = new java.util.HashMap<>();
+        for (ProductVariant v : p.getVariants()) {
+            if (v.getSize() != null) {
+                String key = v.getSize().trim().toUpperCase() + "_" + (v.getColorName() != null ? v.getColorName().trim().toLowerCase() : "");
+                existingMap.put(key, v);
+            }
+        }
+
+        // We will build the new set of variants
+        Set<ProductVariant> mergedVariants = new LinkedHashSet<>();
         
-        Set<ProductVariant> newVariants = buildVariants(r, p);
-        p.getVariants().addAll(newVariants);
+        for (ProductVariant req : requestedVariants) {
+            String key = req.getSize().trim().toUpperCase() + "_" + (req.getColorName() != null ? req.getColorName().trim().toLowerCase() : "");
+            if (existingMap.containsKey(key)) {
+                // Update existing variant in place
+                ProductVariant ext = existingMap.get(key);
+                
+                int prevStock = ext.getStockQuantity();
+                ext.setStockQuantity(req.getStockQuantity());
+                ext.setVariantPrice(req.getVariantPrice());
+                ext.setVariantOriginalPrice(req.getVariantOriginalPrice());
+                ext.setImageUrl(req.getImageUrl());
+                ext.setActive(req.getActive());
+                ext.setSku(req.getSku());
+                ext.setBarcode(req.getBarcode());
+                
+                // Write inventory log if stock changed
+                if (prevStock != ext.getStockQuantity()) {
+                    InventoryLog logEntry = InventoryLog.builder()
+                            .variant(ext)
+                            .changeQuantity(ext.getStockQuantity() - prevStock)
+                            .previousStock(prevStock)
+                            .newStock(ext.getStockQuantity())
+                            .actionType("ADMIN_UPDATE")
+                            .notes("Product variant update")
+                            .build();
+                    inventoryLogRepo.save(logEntry);
+                }
+                mergedVariants.add(ext);
+            } else {
+                // Save new variant first to generate ID
+                ProductVariant savedVariant = variantRepo.save(req);
+                mergedVariants.add(savedVariant);
+                
+                InventoryLog logEntry = InventoryLog.builder()
+                        .variant(savedVariant)
+                        .changeQuantity(savedVariant.getStockQuantity())
+                        .previousStock(0)
+                        .newStock(savedVariant.getStockQuantity())
+                        .actionType("INITIAL_CREATION")
+                        .notes("Initial product variant creation")
+                        .build();
+                inventoryLogRepo.save(logEntry);
+            }
+        }
 
-        Product saved = productRepo.save(p);
-
-        if (saved.getVariants() != null) {
-            for (ProductVariant v : saved.getVariants()) {
-                if (v.getSku() != null) {
-                    Integer prev = previousStocks.getOrDefault(v.getSku(), 0);
-                    if (!prev.equals(v.getStockQuantity())) {
-                        InventoryLog logEntry = InventoryLog.builder()
-                                .variant(v)
-                                .changeQuantity(v.getStockQuantity() - prev)
-                                .previousStock(prev)
-                                .newStock(v.getStockQuantity())
-                                .actionType(prev == 0 ? "INITIAL_CREATION" : "ADMIN_UPDATE")
-                                .notes("Product variant update")
-                                .build();
-                        inventoryLogRepo.save(logEntry);
-                    }
+        // For any existing variants that were NOT requested, we deactivate them instead of deleting them!
+        // This completely avoids Foreign Key violations!
+        for (ProductVariant ext : p.getVariants()) {
+            if (ext.getSize() != null) {
+                String key = ext.getSize().trim().toUpperCase() + "_" + (ext.getColorName() != null ? ext.getColorName().trim().toLowerCase() : "");
+                boolean stillRequested = requestedVariants.stream().anyMatch(req -> {
+                    String reqKey = req.getSize().trim().toUpperCase() + "_" + (req.getColorName() != null ? req.getColorName().trim().toLowerCase() : "");
+                    return reqKey.equals(key);
+                });
+                if (!stillRequested) {
+                    ext.setActive(false);
+                    mergedVariants.add(ext);
                 }
             }
         }
+
+        p.getVariants().clear();
+        p.getVariants().addAll(mergedVariants);
+
+        Product saved = productRepo.save(p);
 
         return toDTO(saved);
     }
