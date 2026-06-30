@@ -165,6 +165,48 @@ public class ShiprocketService {
         }
     }
 
+    public String createOrderSync(Order order) {
+        if (!enabled) {
+            return "Shiprocket service is disabled in application.properties (shiprocket.enabled=false)";
+        }
+        try {
+            String token = getValidToken();
+            if (token == null) {
+                return "Failed to authenticate with Shiprocket (getValidToken returned null)";
+            }
+            return pushOrderToShiprocketSync(order, token);
+        } catch (Exception e) {
+            log.error("[Shiprocket Sync] Sync error: ", e);
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    private String pushOrderToShiprocketSync(Order order, String token) {
+        try {
+            JSONObject shipOrder = buildShiprocketOrderJson(order);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setBearerAuth(token);
+
+            HttpEntity<String> entity = new HttpEntity<>(shipOrder.toString(), headers);
+            log.info("[Shiprocket Sync] Request payload: {}", shipOrder.toString());
+
+            ResponseEntity<String> res = restTemplate.postForEntity(
+                    "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
+                    entity,
+                    String.class);
+
+            log.info("[Shiprocket Sync] Response: {} - {}", res.getStatusCode(), res.getBody());
+            return "Status: " + res.getStatusCode() + " | Response: " + res.getBody() + " | Payload Sent: " + shipOrder.toString();
+        } catch (org.springframework.web.client.HttpStatusCodeException e) {
+            log.error("[Shiprocket Sync] API error: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
+            return "API Error Code: " + e.getStatusCode() + " | Response: " + e.getResponseBodyAsString();
+        } catch (Exception e) {
+            log.error("[Shiprocket Sync] Exception: ", e);
+            return "Exception: " + e.getMessage();
+        }
+    }
+
     private void pushOrderToShiprocket(Order order, String token) {
         try {
             JSONObject shipOrder = buildShiprocketOrderJson(order);

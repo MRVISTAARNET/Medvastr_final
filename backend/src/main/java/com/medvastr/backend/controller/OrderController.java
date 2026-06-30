@@ -77,4 +77,10 @@ public class OrderController {
     public ResponseEntity<ApiResponse<OrderDTO>> pushToShiprocket(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.ok("Pushed to Shiprocket", s.pushToShiprocket(id)));
     }
+
+    @PostMapping("/admin/{id}/shiprocket-sync")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<String>> pushToShiprocketSync(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok("Sync push attempted", s.pushToShiprocketSync(id)));
+    }
 }

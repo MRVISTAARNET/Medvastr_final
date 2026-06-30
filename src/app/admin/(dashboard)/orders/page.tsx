@@ -221,27 +221,48 @@ export default function AdminOrders() {
                     <label>Courier AWB</label>
                     <input type="text" id="o-awb" defaultValue={editingOrder.awb} placeholder="Enter Tracking AWB" />
                   </div>
-                <div className="fg">
+                  <div className="fg">
                     <label>Action</label>
-                    <button type="button" className="btn-secondary" style={{ width: '100%' }} onClick={() => {
-                      (async () => {
-                        try {
-                          const token = localStorage.getItem('token');
-                          const res = await fetch(`${API_BASE}/orders/admin/${editingOrder.id}/shiprocket`, {
-                            method: 'POST',
-                            headers: { 'Authorization': `Bearer ${token}` }
-                          });
-                          const data = await res.json();
-                          if (data.success) {
-                            alert("Order pushed to Shiprocket successfully.");
-                          } else {
-                            alert(data.message || "Failed to push order to Shiprocket");
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button type="button" className="btn-secondary" style={{ flex: 1 }} onClick={() => {
+                        (async () => {
+                          try {
+                            const token = localStorage.getItem('token');
+                            const res = await fetch(`${API_BASE}/orders/admin/${editingOrder.id}/shiprocket`, {
+                              method: 'POST',
+                              headers: { 'Authorization': `Bearer ${token}` }
+                            });
+                            const data = await res.json();
+                            if (data.success) {
+                              alert("Order pushed to Shiprocket successfully.");
+                            } else {
+                              alert(data.message || "Failed to push order to Shiprocket");
+                            }
+                          } catch (e) {
+                            alert("Shiprocket push failed");
                           }
-                        } catch (e) {
-                          alert("Shiprocket push failed");
-                        }
-                      })();
-                    }}>Push to Shiprocket</button>
+                        })();
+                      }}>Push Async</button>
+                      <button type="button" className="btn-secondary" style={{ flex: 1, backgroundColor: '#f1f5f9' }} onClick={() => {
+                        (async () => {
+                          try {
+                            const token = localStorage.getItem('token');
+                            const res = await fetch(`${API_BASE}/orders/admin/${editingOrder.id}/shiprocket-sync`, {
+                              method: 'POST',
+                              headers: { 'Authorization': `Bearer ${token}` }
+                            });
+                            const data = await res.json();
+                            if (data.success) {
+                              alert("Sync Response Detail:\n\n" + data.data);
+                            } else {
+                              alert(data.message || "Failed to push order to Shiprocket (Sync)");
+                            }
+                          } catch (e) {
+                            alert("Sync push failed");
+                          }
+                        })();
+                      }}>Push Sync (Debug)</button>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -302,6 +302,13 @@ public class OrderService {
         return toDTO(o);
     }
 
+    @Transactional
+    public String pushToShiprocketSync(Long id) {
+        Order o = orderRepo.findById(id).orElseThrow();
+        preloadOrderRelations(o);
+        return shiprocketService.createOrderSync(o);
+    }
+
     public TrackingDTO track(String num) {
         Order o = orderRepo.findByOrderNumber(num).orElseThrow(() -> new RuntimeException("Not found: " + num));
         assertOrderOwner(o);
