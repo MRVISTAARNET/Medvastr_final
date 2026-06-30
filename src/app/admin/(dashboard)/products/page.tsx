@@ -152,6 +152,16 @@ export default function AdminProducts() {
 
       setForm({
         ...editingProduct,
+        gender: editingProduct.gen || editingProduct.gender || 'Men',
+        fabric: editingProduct.fab || editingProduct.fabric || '',
+        description: editingProduct.desc || editingProduct.description || '',
+        emoji: editingProduct.emo || editingProduct.emoji || '🥼',
+        bgColor: editingProduct.bg || editingProduct.bgColor || '#f0f0f0',
+        fabricDetail: editingProduct.fabD || editingProduct.fabricDetail || '',
+        stretchType: editingProduct.stretch || editingProduct.stretchType || '',
+        pocketCount: editingProduct.pockets || editingProduct.pocketCount || 0,
+        careInstructions: editingProduct.care || editingProduct.careInstructions || '',
+        stock: editingProduct.variants?.[0]?.stockQuantity ?? 100,
         parentId: editingProduct.categoryId || editingProduct.catId || (editingProduct.categoryIds ? editingProduct.categoryIds.split(',')[0] : '') || '',
         subCategoryId: editingProduct.subcategoryId || (editingProduct.categoryIds ? editingProduct.categoryIds.split(',')[1] : '') || '',
         childCategoryId: editingProduct.childCategoryId || (editingProduct.categoryIds ? editingProduct.categoryIds.split(',')[2] : '') || '',
