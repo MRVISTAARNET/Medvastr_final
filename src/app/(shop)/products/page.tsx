@@ -864,7 +864,7 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
           position: relative;
           box-shadow: 0 4px 20px rgba(0,0,0,0.06);
           background: #f1f5f9;
-          aspect-ratio: 1600 / 300; /* Made thinner for desktop so products show immediately */
+          aspect-ratio: 1920 / 400; /* Matches category banner size exactly on desktop */
         }
         .cat-banner-img {
           width: 100%;
@@ -875,14 +875,14 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
         }
         @media (max-width: 768px) {
           .cat-banner {
-            aspect-ratio: 1600 / 500; /* Proportioned for mobile so it's not too tall */
+            aspect-ratio: 1920 / 650;
             border-radius: 12px;
             margin-bottom: 20px;
           }
         }
         @media (max-width: 480px) {
           .cat-banner {
-            aspect-ratio: 1600 / 500;
+            aspect-ratio: 1920 / 750; /* keeps it taller on mobile so text is legible */
           }
         }
       `}</style>

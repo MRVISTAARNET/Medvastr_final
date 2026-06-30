@@ -91,9 +91,11 @@ public class OrderService {
 
     public OrderDTO createOrder(CreateOrderRequest r) {
         User u = null;
+        boolean isGuest = false;
         try {
             u = me();
         } catch (Exception e) {
+            isGuest = true;
             if (r.getEmail() == null || r.getEmail().isBlank()) {
                 throw new RuntimeException("Email is required for guest checkout");
             }
@@ -196,10 +198,12 @@ public class OrderService {
         saved.setItems(orderItems);
 
         Order finalSaved = orderRepo.save(saved);
-        try {
-            cartService.clearCart();
-        } catch (Exception e) {
-            log.info("Skipped clearing cart for guest checkout");
+        if (!isGuest) {
+            try {
+                cartService.clearCart();
+            } catch (Exception e) {
+                log.error("Failed to clear cart for logged-in user", e);
+            }
         }
 
         if (finalSaved.getPaymentMethod() == Order.PaymentMethod.COD) {

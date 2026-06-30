@@ -1277,23 +1277,33 @@ textarea {
 
 .hero-slide {
   min-width: 100%;
-  min-height: 530px;
+  aspect-ratio: 1920 / 600;
   position: relative;
   display: flex;
   align-items: center;
+  height: auto;
+  min-height: auto;
+}
+
+@media (max-width: 1024px) {
+  .hero-slide {
+    aspect-ratio: 1920 / 700;
+  }
 }
 
 @media (max-width: 768px) {
   .hero-slide {
-    height: 350px !important;
-    min-height: 350px !important;
+    aspect-ratio: 1920 / 800;
+    height: auto !important;
+    min-height: auto !important;
   }
 }
 
 @media (max-width: 480px) {
   .hero-slide {
-    height: 270px !important;
-    min-height: 270px !important;
+    aspect-ratio: 1920 / 950;
+    height: auto !important;
+    min-height: auto !important;
   }
 }
 
@@ -7262,7 +7272,7 @@ body {
 
 .bulk-banner {
   width: 100%;
-  aspect-ratio: 1600 / 320;
+  aspect-ratio: 1920 / 400;
   background: #f1f5f9;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
@@ -7281,7 +7291,7 @@ body {
   }
 
   .bulk-banner {
-    aspect-ratio: 1600 / 550;
+    aspect-ratio: 1920 / 750;
   }
 }
 

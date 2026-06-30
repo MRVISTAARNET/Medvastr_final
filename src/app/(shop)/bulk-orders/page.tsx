@@ -421,11 +421,16 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
       />
       <style jsx>{`
         .bulk-smart-banner {
-          aspect-ratio: 1600 / 300;
+          aspect-ratio: 1920 / 400; /* Matches category banner size exactly on desktop */
         }
         @media (max-width: 768px) {
           .bulk-smart-banner {
-            aspect-ratio: 1600 / 500;
+            aspect-ratio: 1920 / 650;
+          }
+        }
+        @media (max-width: 480px) {
+          .bulk-smart-banner {
+            aspect-ratio: 1920 / 750; /* keeps it taller on mobile so text is legible */
           }
         }
       `}</style>
