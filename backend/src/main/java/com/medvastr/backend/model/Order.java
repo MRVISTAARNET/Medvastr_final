@@ -116,6 +116,9 @@ public class Order {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
+    @jakarta.persistence.Transient
+    private String tempPassword;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

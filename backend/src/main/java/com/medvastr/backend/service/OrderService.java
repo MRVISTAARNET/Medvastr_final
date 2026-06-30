@@ -57,6 +57,8 @@ public class OrderService {
     private final EmailService emailService;
     private final ShiprocketService shiprocketService;
     private final InventoryLogRepository inventoryLogRepo;
+    private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+    private final WhatsAppService whatsAppService;
 
     private User me() {
         return userRepo.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow();
@@ -92,6 +94,7 @@ public class OrderService {
     public OrderDTO createOrder(CreateOrderRequest r) {
         User u = null;
         boolean isGuest = false;
+        String generatedPassword = null;
         try {
             u = me();
         } catch (Exception e) {
@@ -99,17 +102,24 @@ public class OrderService {
             if (r.getEmail() == null || r.getEmail().isBlank()) {
                 throw new RuntimeException("Email is required for guest checkout");
             }
+            final String[] tempPassHolder = new String[1];
             u = userRepo.findByEmail(r.getEmail()).orElseGet(() -> {
+                String rawPhone = r.getPhone() != null ? r.getPhone().replaceAll("[^0-9]", "") : "";
+                String last4 = rawPhone.length() >= 4 ? rawPhone.substring(rawPhone.length() - 4) : "1234";
+                String tempPassword = "Mv@" + last4;
+                tempPassHolder[0] = tempPassword;
+                
                 User newUser = User.builder()
                         .email(r.getEmail())
                         .firstName(r.getFirstName())
                         .lastName(r.getLastName())
                         .phone(r.getPhone())
                         .role(User.Role.CUSTOMER)
-                        .password("")
+                        .password(passwordEncoder.encode(tempPassword))
                         .build();
                 return userRepo.save(newUser);
             });
+            generatedPassword = tempPassHolder[0];
         }
 
         List<OrderItem> orderItems = new ArrayList<>();
@@ -179,6 +189,7 @@ public class OrderService {
                 .shippingPincode(r.getPincode())
                 .paymentStatus(Order.PaymentStatus.PENDING)
                 .status(Order.OrderStatus.PENDING)
+                .tempPassword(generatedPassword)
                 .build();
 
         if (o.getPaymentMethod() == Order.PaymentMethod.ONLINE) {
@@ -365,6 +376,7 @@ public class OrderService {
                         try {
                             emailService.sendOrderConfirmationEmail(order);
                             emailService.sendAdminNotification(order);
+                            whatsAppService.sendOrderAlerts(order);
                             shiprocketService.createOrder(order.getId());
                         } catch (Exception e) {
                             log.error("Failed to run async post-commit actions", e);
@@ -375,6 +387,7 @@ public class OrderService {
         } else {
             emailService.sendOrderConfirmationEmail(order);
             emailService.sendAdminNotification(order);
+            whatsAppService.sendOrderAlerts(order);
             shiprocketService.createOrder(order.getId());
         }
     }

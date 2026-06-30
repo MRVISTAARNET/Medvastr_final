@@ -363,6 +363,21 @@ public class EmailService {
             }
         }
 
+        String credentialsHtml = "";
+        if (order.getTempPassword() != null && !order.getTempPassword().isEmpty()) {
+            credentialsHtml = """
+                    <div style="background: #e0f2fe; border: 1.5px dashed #0284c7; border-radius: 16px; padding: 25px; margin: 35px 0;">
+                        <h3 style="margin: 0 0 10px; font-size: 15px; font-weight: 800; color: #0369a1;">🔑 Your Medvastr Account has been Created!</h3>
+                        <p style="margin: 0 0 12px; font-size: 14px; color: #0369a1; line-height: 1.5;">We have automatically registered a customer account for you. You can use it to log in, track shipments, and view order history.</p>
+                        <div style="background: white; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 13px; color: #334155; line-height: 1.6;">
+                            <b>Email:</b> %s<br>
+                            <b>Temporary Password:</b> %s
+                        </div>
+                        <p style="margin: 12px 0 0; font-size: 12px; color: #0284c7; font-style: italic;">*You can change your password anytime after logging in.</p>
+                    </div>
+                    """.formatted(HtmlUtils.htmlEscape(order.getUser().getEmail()), HtmlUtils.htmlEscape(order.getTempPassword()));
+        }
+
         return """
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
                     <div style="background: %s; padding: 50px 30px; text-align: center; color: white;">
@@ -374,6 +389,8 @@ public class EmailService {
                     <div style="padding: 40px; color: #1e293b; line-height: 1.6;">
                         <p style="margin-top: 0;">Hi <b>%s</b>,</p>
                         <p>Great news! We've received your order <b>#%s</b> and our team is already working on getting it to you. We'll send you another update as soon as it ships.</p>
+
+                        %s
 
                         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 25px; margin: 35px 0;">
                             <h3 style="margin: 0 0 15px; font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 10px;">Order Summary</h3>
@@ -415,6 +432,7 @@ public class EmailService {
                         BRAND_COLOR,
                         HtmlUtils.htmlEscape(order.getShippingName()),
                         HtmlUtils.htmlEscape(order.getOrderNumber()),
+                        credentialsHtml,
                         itemsHtml.toString(),
                         BRAND_COLOR,
                         nf.format(order.getTotalAmount()),

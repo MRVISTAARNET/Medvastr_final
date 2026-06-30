@@ -26,6 +26,7 @@ public class PaymentService {
     private final OrderRepository orderRepository;
     private final EmailService emailService;
     private final ShiprocketService shiprocketService;
+    private final WhatsAppService whatsAppService;
 
     public Map<String, Object> createOrder(Map<String, Object> r) {
         try {
@@ -114,6 +115,8 @@ public class PaymentService {
                     public void afterCommit() {
                         try {
                             emailService.sendOrderConfirmationEmail(order);
+                            emailService.sendAdminNotification(order);
+                            whatsAppService.sendOrderAlerts(order);
                             shiprocketService.createOrder(order.getId());
                         } catch (Exception e) {
                             log.error("Failed to run async post-commit actions", e);
@@ -123,6 +126,8 @@ public class PaymentService {
             );
         } else {
             emailService.sendOrderConfirmationEmail(order);
+            emailService.sendAdminNotification(order);
+            whatsAppService.sendOrderAlerts(order);
             shiprocketService.createOrder(order.getId());
         }
     }

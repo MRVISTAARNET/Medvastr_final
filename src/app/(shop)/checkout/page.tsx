@@ -344,6 +344,37 @@ export default function CheckoutPage() {
 
       <div className="co-grid-premium">
         <div className="co-card-premium">
+          {/* Contact Details at Top */}
+          <div className="co-form-group" style={{ borderBottom: '1px solid #e2e8f0', paddingBottom: '20px', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ink)', margin: 0 }}>Contact</h3>
+              {!user && (
+                <div style={{ fontSize: '13px', color: '#64748b' }}>
+                  Already have an account?{' '}
+                  <button onClick={() => setIsAuthOpen(true)} style={{ color: '#008080', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontWeight: 600 }}>
+                    Log in
+                  </button>
+                </div>
+              )}
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
+              <input 
+                name="email" 
+                type="email" 
+                className="co-input-field" 
+                placeholder="Email for order confirmation" 
+                value={form.email} 
+                onChange={handleInputChange} 
+              />
+            </div>
+            {!user && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <input type="checkbox" id="email-marketing" defaultChecked style={{ cursor: 'pointer' }} />
+                <label htmlFor="email-marketing" style={{ fontSize: '13px', color: '#475569', cursor: 'pointer', userSelect: 'none' }}>Email me with news and offers</label>
+              </div>
+            )}
+          </div>
+
           {/* STEP 1: SHIPPING */}
           <div className="co-form-group">
             <h3 className="co-section-title"><span className="step-n">1</span> Delivery Details</h3>
@@ -428,12 +459,6 @@ export default function CheckoutPage() {
                 Mobile Number <span style={{ color: '#e11d48' }}>*</span>
               </label>
               <input name="phone" className="co-input-field" placeholder="Mobile Number" value={form.phone} onChange={handleInputChange} />
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
-              <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
-                Email Address <span style={{ color: '#e11d48' }}>*</span>
-              </label>
-              <input name="email" type="email" className="co-input-field" placeholder="Email Address" value={form.email} onChange={handleInputChange} />
             </div>
           </div>
 
