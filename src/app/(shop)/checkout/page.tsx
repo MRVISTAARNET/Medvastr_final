@@ -164,7 +164,7 @@ export default function CheckoutPage() {
   const verifyPayment = useCallback(
     async (orderData: any, response: any) => {
       try {
-        const data = await apiJson("/orders/verify-payment", {
+        const data = await apiJson<any>("/orders/verify-payment", {
           method: "POST",
           body: JSON.stringify({
             orderNumber: orderData.orderNumber,
