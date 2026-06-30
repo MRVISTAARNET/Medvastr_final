@@ -39,7 +39,7 @@ export default function Hero({ onShop }: HeroProps) {
     <div className="hero">
       <div className="hero-track" style={{ transform: `translateX(-${cur * 100}%)` }}>
         {dynamicSlides.map((s, i) => (
-          <div className="hero-slide" key={i}>
+          <div className="hero-slide" key={i} style={{ height: 'auto', minHeight: 'auto', aspectRatio: 'auto', display: 'block' }}>
             <SmartSlide base={s.base} />
           </div>
         ))}
