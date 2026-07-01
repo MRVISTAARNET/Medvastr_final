@@ -8,7 +8,7 @@ import ProductCard from "@/components/ProductCard";
 import ExpandableDescription from "@/components/ExpandableDescription";
 import { fmt } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
-import { findCategoryBySlug, flattenCategoryTree, productMatchesCategory } from "@/lib/categoryUtils";
+import { findCategoryBySlug, flattenCategoryTree, productMatchesCategory, findAncestors } from "@/lib/categoryUtils";
 
 function ProductsContent() {
   const searchParams = useSearchParams();
@@ -233,7 +233,26 @@ function ProductsContent() {
     }
   };
   const catKey = cat.toLowerCase();
-  const genKey = gen.toLowerCase();
+  
+  let genKey = gen.toLowerCase();
+  if (genKey === "all" && catKey !== "all") {
+    if (catKey.startsWith("men-") || catKey.endsWith("-men") || catKey === "men") {
+      genKey = "men";
+    } else if (catKey.startsWith("women-") || catKey.endsWith("-women") || catKey === "women") {
+      genKey = "women";
+    } else {
+      const catNode = findCategoryBySlug(categoryTree, catKey);
+      if (catNode) {
+        const ancestors = findAncestors(catNode.id, categoryTree);
+        const ancestorSlugs = ancestors.map(a => a.slug.toLowerCase());
+        if (ancestorSlugs.includes("men") || ancestorSlugs.some(s => s.startsWith("men-"))) {
+          genKey = "men";
+        } else if (ancestorSlugs.includes("women") || ancestorSlugs.some(s => s.startsWith("women-"))) {
+          genKey = "women";
+        }
+      }
+    }
+  }
   // isSurgical = only when browsing Surgical Wear parent tree
   // men-surgeon-gown / women-surgeon-cap belong to Men/Women trees, NOT Surgical Wear
   const isSurgical = catKey === "surgical-wear" ||
