@@ -153,6 +153,7 @@ public class ShiprocketService {
             order.getItems().forEach(i -> {
                 if (i.getProduct() != null) {
                     i.getProduct().getName();
+                    i.getProduct().getTax();
                 }
                 if (i.getVariant() != null) {
                     i.getVariant().getSku();
@@ -350,12 +351,16 @@ public class ShiprocketService {
             double unitPrice = oi.getUnitPrice().doubleValue();
             item.put("selling_price", unitPrice);
 
-            // Calculate 5% inclusive GST
-            double taxRate = 0.05;
-            double taxAmount = (unitPrice * taxRate / (1.0 + taxRate)) * oi.getQuantity();
-            double roundedTax = Math.round(taxAmount * 100.0) / 100.0;
+             // Calculate product specific inclusive GST
+             double taxPercent = 5.0;
+             if (oi.getProduct() != null && oi.getProduct().getTax() != null) {
+                 taxPercent = oi.getProduct().getTax().doubleValue();
+             }
+             double taxRate = taxPercent / 100.0;
+             double taxAmount = (unitPrice * taxRate / (1.0 + taxRate)) * oi.getQuantity();
+             double roundedTax = Math.round(taxAmount * 100.0) / 100.0;
 
-            item.put("tax", roundedTax);
+             item.put("tax", roundedTax);
 
             boolean isIntrastate = false;
             String buyerState = order.getShippingState();

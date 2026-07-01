@@ -176,13 +176,29 @@ public class OrderService {
         BigDecimal total = subtotal.add(ship).subtract(disc);
         String orderNum = genNum();
 
+        BigDecimal taxVal = BigDecimal.ZERO;
+        for (var oi : orderItems) {
+            BigDecimal itemPrice = oi.getTotalPrice();
+            if (disc.compareTo(BigDecimal.ZERO) > 0 && subtotal.compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal proportion = itemPrice.divide(subtotal, 4, java.math.RoundingMode.HALF_UP);
+                itemPrice = itemPrice.subtract(disc.multiply(proportion));
+            }
+            BigDecimal itemTaxPercent = oi.getProduct() != null && oi.getProduct().getTax() != null 
+                    ? oi.getProduct().getTax() 
+                    : new BigDecimal("5.0");
+            
+            BigDecimal itemTax = itemPrice.multiply(itemTaxPercent)
+                    .divide(new BigDecimal("100").add(itemTaxPercent), 2, java.math.RoundingMode.HALF_UP);
+            taxVal = taxVal.add(itemTax);
+        }
+
         Order o = Order.builder()
                 .orderNumber(orderNum)
                 .user(u)
                 .subtotal(subtotal)
                 .discountAmount(disc)
                 .shippingAmount(ship)
-                .taxAmount(subtotal.subtract(disc).multiply(new java.math.BigDecimal("5")).divide(new java.math.BigDecimal("105"), 2, java.math.RoundingMode.HALF_UP))
+                .taxAmount(taxVal)
                 .totalAmount(total)
                 .promoCode(r.getPromoCode())
                 .paymentMethod(r.getPaymentMethod() != null ? Order.PaymentMethod.valueOf(r.getPaymentMethod())
