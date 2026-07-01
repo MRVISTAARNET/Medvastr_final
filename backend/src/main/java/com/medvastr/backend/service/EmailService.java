@@ -75,21 +75,21 @@ public class EmailService {
 
     @Async
     public void sendOrderConfirmationEmail(Order order) {
-        String customerEmail = order.getUser().getEmail();
-        String subject = "Order Confirmed - " + order.getOrderNumber();
-        log.info("[EmailService] Sending order confirmation - Customer Email: {} | Subject: {}", customerEmail,
-                subject);
-
         try {
+            if (order.getUser() == null || order.getUser().getEmail() == null) {
+                log.warn("[EmailService] No customer email available for order {}", order.getOrderNumber());
+                return;
+            }
+            String customerEmail = order.getUser().getEmail();
+            String subject = "Order Confirmed - " + order.getOrderNumber();
+            log.info("[EmailService] Sending order confirmation - Customer Email: {} | Subject: {}", customerEmail,
+                    subject);
             String html = getOrderConfirmationHtml(order);
             sendHtmlEmailInner(customerEmail, subject, html, "orders@medvastr.com", "Medvastr Orders");
             log.info("[EmailService] Order Confirmation Status: SUCCESS | Customer Email: {} | Subject: {}",
                     customerEmail, subject);
         } catch (Exception ex) {
-            log.error("[EmailService] Order Confirmation Status: FAILED | Customer Email: {} | Subject: {}",
-                    customerEmail, subject, ex);
-            // We log the complete stack trace and do not throw, so order creation does not
-            // fail.
+            log.error("[EmailService] Order Confirmation Status: FAILED | Order: {}", order.getOrderNumber(), ex);
         }
     }
 

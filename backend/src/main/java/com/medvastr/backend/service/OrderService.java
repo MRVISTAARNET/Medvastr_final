@@ -382,20 +382,48 @@ public class OrderService {
                     public void afterCommit() {
                         try {
                             emailService.sendOrderConfirmationEmail(order);
+                        } catch (Exception e) {
+                            log.error("Failed to send order confirmation email", e);
+                        }
+                        try {
                             emailService.sendAdminNotification(order);
+                        } catch (Exception e) {
+                            log.error("Failed to send admin notification email", e);
+                        }
+                        try {
                             whatsAppService.sendOrderAlerts(order);
+                        } catch (Exception e) {
+                            log.error("Failed to send WhatsApp order alerts", e);
+                        }
+                        try {
                             shiprocketService.createOrder(order.getId());
                         } catch (Exception e) {
-                            log.error("Failed to run async post-commit actions", e);
+                            log.error("Failed to push order to Shiprocket", e);
                         }
                     }
                 }
             );
         } else {
-            emailService.sendOrderConfirmationEmail(order);
-            emailService.sendAdminNotification(order);
-            whatsAppService.sendOrderAlerts(order);
-            shiprocketService.createOrder(order.getId());
+            try {
+                emailService.sendOrderConfirmationEmail(order);
+            } catch (Exception e) {
+                log.error("Failed to send order confirmation email", e);
+            }
+            try {
+                emailService.sendAdminNotification(order);
+            } catch (Exception e) {
+                log.error("Failed to send admin notification email", e);
+            }
+            try {
+                whatsAppService.sendOrderAlerts(order);
+            } catch (Exception e) {
+                log.error("Failed to send WhatsApp order alerts", e);
+            }
+            try {
+                shiprocketService.createOrder(order.getId());
+            } catch (Exception e) {
+                log.error("Failed to push order to Shiprocket", e);
+            }
         }
     }
 

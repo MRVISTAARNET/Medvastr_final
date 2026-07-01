@@ -299,12 +299,19 @@ public class ShiprocketService {
         shipOrder.put("channel_id", "");
         shipOrder.put("comment", order.getNotes() != null ? order.getNotes() : "E-commerce Order");
 
-        // Parse customer name safely
         String fullName = order.getShippingName() != null ? order.getShippingName().trim() : "Customer";
         if (fullName.isEmpty()) fullName = "Customer";
         String[] names = fullName.split("\\s+");
-        shipOrder.put("billing_customer_name", names[0].replaceAll("[^a-zA-Z0-9 ]", ""));
-        shipOrder.put("billing_last_name", names.length > 1 ? names[names.length - 1].replaceAll("[^a-zA-Z0-9 ]", "") : names[0].replaceAll("[^a-zA-Z0-9 ]", ""));
+        String billingCustomerName = names[0].replaceAll("[^a-zA-Z0-9 ]", "").trim();
+        if (billingCustomerName.isEmpty()) {
+            billingCustomerName = "Customer";
+        }
+        String billingLastName = names.length > 1 ? names[names.length - 1].replaceAll("[^a-zA-Z0-9 ]", "").trim() : "";
+        if (billingLastName.isEmpty()) {
+            billingLastName = billingCustomerName;
+        }
+        shipOrder.put("billing_customer_name", billingCustomerName);
+        shipOrder.put("billing_last_name", billingLastName);
 
         String address = order.getShippingAddress() != null ? order.getShippingAddress().trim() : "Medvastr Address";
         if (address.length() < 10) {
