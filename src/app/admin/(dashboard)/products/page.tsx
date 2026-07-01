@@ -432,9 +432,9 @@ export default function AdminProducts() {
             body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; background: white; -webkit-print-color-adjust: exact; }
             .grid { display: flex; flex-direction: column; align-items: center; }
             .label-card { width: 2in; height: 1in; box-sizing: border-box; padding: 3px 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center; page-break-after: always; background: white; }
-            .header { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 7px; font-weight: bold; line-height: 1; border-bottom: 1px solid #e2e8f0; padding-bottom: 2px; }
-            .header-left { text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; }
-            .header-right { text-align: right; font-weight: 800; }
+            .header { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; font-size: 6px; font-weight: bold; line-height: 1.1; border-bottom: 1px solid #e2e8f0; padding-bottom: 2px; }
+            .header-left { text-align: left; max-width: 65%; word-break: break-word; }
+            .header-right { text-align: right; font-weight: 800; font-size: 6px; white-space: nowrap; }
             .barcode-svg { width: 1.8in !important; height: 0.45in !important; }
             .footer-info { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 7px; font-weight: 600; margin-top: 1px; }
             .sku-text { font-family: monospace; font-size: 7px; }
@@ -836,9 +836,9 @@ export default function AdminProducts() {
                         boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
                         boxSizing: 'border-box'
                       }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', borderBottom: '1px solid #f1f5f9', paddingBottom: '4px', fontSize: '11px', fontWeight: 600 }}>
-                          <span style={{ color: '#0f172a', fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '65%' }}>{barcodeProduct.name} ({v.size}/{v.colorName})</span>
-                          <span style={{ color: '#0284c7', fontWeight: 800 }}>MRP: &#8377;{price}</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', borderBottom: '1px solid #f1f5f9', paddingBottom: '4px', fontSize: '10px', fontWeight: 600, alignItems: 'flex-start' }}>
+                          <span style={{ color: '#0f172a', fontWeight: 800, wordBreak: 'break-word', maxWidth: '65%', lineHeight: 1.2 }}>{barcodeProduct.name} ({v.size}/{v.colorName})</span>
+                          <span style={{ color: '#0284c7', fontWeight: 800, whiteSpace: 'nowrap' }}>MRP: &#8377;{price}</span>
                         </div>
                         <div className="barcode-img-wrap" style={{ background: '#f8fafc', padding: '4px', borderRadius: '6px', width: '100%', display: 'flex', justifyContent: 'center', height: '80px', alignItems: 'center' }}>
                           <BarcodeImage value={v.sku || v.barcode} />
