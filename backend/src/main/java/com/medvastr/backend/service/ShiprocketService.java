@@ -65,20 +65,23 @@ public class ShiprocketService {
     public void testAuth() {
         log.info("========== SHIPROCKET DIAGNOSTICS ==========");
         if (!enabled) {
-            log.info("Shiprocket Service: DISABLED");
+            log.info("Shiprocket Service: DISABLED (set SHIPROCKET_ENABLED=true in env)");
             log.info("============================================");
             return;
         }
         log.info("Shiprocket Service: ENABLED");
         String maskedEmail = (email != null && email.length() > 3) ? email.substring(0, 3) + "****" : "NOT SET";
+        String maskedPass = (password != null && !password.isBlank()) ? "SET (" + password.length() + " chars)" : "NOT SET";
         log.info("Shiprocket Email: {}", maskedEmail);
+        log.info("Shiprocket Password: {}", maskedPass);
+        log.info("Shiprocket Pickup Location: {}", pickupLocation);
         log.info("Attempting startup auth test...");
         try {
             String token = login();
-            if (token != null) {
-                log.info("Startup Auth Test: SUCCESS");
+            if (token != null && !token.isBlank()) {
+                log.info("Startup Auth Test: SUCCESS - Token obtained (length={})", token.length());
             } else {
-                log.error("Startup Auth Test: FAILED (Check credentials!)");
+                log.error("Startup Auth Test: FAILED - Check SHIPROCKET_EMAIL and SHIPROCKET_PASSWORD in Beanstalk env!");
             }
         } catch (Exception e) {
             log.error("Startup Auth Test: EXCEPTION - {}", e.getMessage());
@@ -165,23 +168,25 @@ public class ShiprocketService {
     @Transactional
     public void createOrder(Long orderId) {
         if (!enabled) {
-            log.debug("[Shiprocket] Service disabled");
+            log.warn("[Shiprocket] Service is DISABLED - order {} will NOT be pushed. Set SHIPROCKET_ENABLED=true in Beanstalk env.", orderId);
             return;
         }
 
+        log.info("[Shiprocket] Starting async push for order id={}", orderId);
         try {
             Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
             preloadOrderRelations(order);
+            log.info("[Shiprocket] Pushing order {} to Shiprocket...", order.getOrderNumber());
 
             String token = getValidToken();
             if (token == null) {
-                log.error("[Shiprocket] Cannot push order {} - Failed to get token", order.getOrderNumber());
+                log.error("[Shiprocket] Cannot push order {} - Failed to obtain auth token. Check SHIPROCKET_EMAIL/SHIPROCKET_PASSWORD.", order.getOrderNumber());
                 return;
             }
 
             pushOrderToShiprocket(order, token);
         } catch (Exception e) {
-            log.error("[Shiprocket] Error creating order id {}: {}", orderId, e.getMessage(), e);
+            log.error("[Shiprocket] Error pushing order id={}: {}", orderId, e.getMessage(), e);
         }
     }
 
