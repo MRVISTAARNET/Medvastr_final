@@ -12,6 +12,10 @@ const COLORS = {
 };
 
 export default function AboutPage() {
+  React.useEffect(() => {
+    document.title = "About Us | Medvastr";
+  }, []);
+
   return (
     <div className="about-page">
       {/* 1. HERO BANNER */}

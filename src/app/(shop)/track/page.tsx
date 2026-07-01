@@ -9,6 +9,10 @@ import GenericPage from "@/components/GenericPage";
 import { useApp } from "@/context/AppContext";
 
 function TrackContent() {
+  useEffect(() => {
+    document.title = "Track Your Order | Medvastr";
+  }, []);
+
   const { user, setIsAuthOpen } = useApp();
   const searchParams = useSearchParams();
   const [orderNum, setOrderNum] = useState(searchParams.get("order") || "");

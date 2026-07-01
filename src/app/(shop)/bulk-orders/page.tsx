@@ -9,6 +9,10 @@ import Image from "next/image";
 
 
 export default function BulkOrderPage() {
+  React.useEffect(() => {
+    document.title = "Bulk Orders & Custom Hospital Uniforms | Medvastr";
+  }, []);
+
   const ctx = useContext(AppContext);
   const [selectedQuantity, setSelectedQuantity] = useState(50);
 

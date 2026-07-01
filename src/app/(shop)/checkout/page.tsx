@@ -14,6 +14,10 @@ declare global {
 }
 
 export default function CheckoutPage() {
+  useEffect(() => {
+    document.title = "Checkout | Medvastr";
+  }, []);
+
   const { cart, clearCart, toast, user, isHydrated, setIsAuthOpen, storeSettings } = useApp();
   const [submitting, setSubmitting] = useState(false);
   const [orderNum, setOrderNum] = useState<string | null>(null);

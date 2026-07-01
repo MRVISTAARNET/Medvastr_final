@@ -62,6 +62,24 @@ function ProductsContent() {
     setPg(1);
   }, [initCat, initColor, initSize, initFabric, initFit, initGen, initType, searchParams]);
 
+  useEffect(() => {
+    let title = "Shop Professional Scrubs & Lab Coats | Medvastr";
+    if (gen !== "all" || cat !== "all" || typeFilter) {
+      const parts: string[] = [];
+      if (gen !== "all") {
+        parts.push(gen.charAt(0).toUpperCase() + gen.slice(1) + "'s");
+      }
+      if (typeFilter) {
+        parts.push(typeFilter.charAt(0).toUpperCase() + typeFilter.slice(1).replace(/-/g, ' '));
+      } else if (cat !== "all") {
+        parts.push(cat.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()));
+      }
+      parts.push("Collection");
+      title = `${parts.join(" ")} | Medvastr`;
+    }
+    document.title = title;
+  }, [gen, cat, typeFilter]);
+
   const updateURL = (params: Record<string, string | null>) => {
     const newParams = new URLSearchParams(searchParams.toString());
     Object.entries(params).forEach(([key, val]) => {
