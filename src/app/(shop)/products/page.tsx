@@ -14,7 +14,7 @@ function ProductsContent() {
   const searchParams = useSearchParams();
   const initCat = searchParams.get("cat") || "all";
   const initColor = searchParams.get("color") || "";
-  const initGen = searchParams.get("gender")?.toLowerCase() || "all";
+  const initGen = (searchParams.get("gender") || searchParams.get("gen"))?.toLowerCase() || "all";
   const initSize = searchParams.get("size") || "";
   const initFabric = searchParams.get("fabric") || "";
   const initFit = searchParams.get("fit") || "";
@@ -82,9 +82,24 @@ function ProductsContent() {
 
   const updateURL = (params: Record<string, string | null>) => {
     const newParams = new URLSearchParams(searchParams.toString());
+    
+    // Standardize 'gen' parameter to 'gender'
+    if (newParams.has('gen')) {
+      const val = newParams.get('gen');
+      newParams.delete('gen');
+      if (val) newParams.set('gender', val);
+    }
+
     Object.entries(params).forEach(([key, val]) => {
-      if (val === null || val === "" || val === "all") newParams.delete(key);
-      else newParams.set(key, val);
+      const targetKey = key === 'gen' ? 'gender' : key;
+      if (val === null || val === "" || val === "all") {
+        newParams.delete(targetKey);
+        if (targetKey === 'gender') {
+          newParams.delete('gen');
+        }
+      } else {
+        newParams.set(targetKey, val);
+      }
     });
     router.push(`/products?${newParams.toString()}`, { scroll: false });
   };
@@ -263,7 +278,7 @@ function ProductsContent() {
   else if (genKey === "men") activeRootSlugs = ["men"];
   else if (genKey === "women") activeRootSlugs = ["women"];
 
-  const isSurgicalMode = isSurgical || catKey.includes('surgical') || catKey.includes('surgeon');
+  const isSurgicalMode = (genKey !== "men" && genKey !== "women") && (isSurgical || catKey.includes('surgical') || catKey.includes('surgeon'));
 
   // DYNAMIC CATEGORY MAPPING
   let dynamicCats: any[] = [];
