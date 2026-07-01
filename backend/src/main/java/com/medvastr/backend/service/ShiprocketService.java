@@ -347,7 +347,32 @@ public class ShiprocketService {
                     : (oi.getProduct() != null && oi.getProduct().getSku() != null ? oi.getProduct().getSku()
                     : "SKU-" + order.getOrderNumber() + "-" + (items.length() + 1)));
             item.put("units", oi.getQuantity());
-            item.put("selling_price", oi.getUnitPrice().doubleValue());
+            double unitPrice = oi.getUnitPrice().doubleValue();
+            item.put("selling_price", unitPrice);
+
+            // Calculate 5% inclusive GST
+            double taxRate = 0.05;
+            double taxAmount = (unitPrice * taxRate / (1.0 + taxRate)) * oi.getQuantity();
+            double roundedTax = Math.round(taxAmount * 100.0) / 100.0;
+
+            item.put("tax", roundedTax);
+
+            boolean isIntrastate = false;
+            String buyerState = order.getShippingState();
+            if (buyerState != null && (buyerState.trim().equalsIgnoreCase("maharashtra") || buyerState.trim().equalsIgnoreCase("mh"))) {
+                isIntrastate = true;
+            }
+
+            if (isIntrastate) {
+                double splitTax = Math.round((roundedTax / 2.0) * 100.0) / 100.0;
+                item.put("cgst", splitTax);
+                item.put("sgst", splitTax);
+                item.put("igst", 0.0);
+            } else {
+                item.put("cgst", 0.0);
+                item.put("sgst", 0.0);
+                item.put("igst", roundedTax);
+            }
             items.put(item);
 
             double w = 0.5;

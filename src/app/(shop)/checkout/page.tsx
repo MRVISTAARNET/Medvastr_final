@@ -559,9 +559,13 @@ export default function CheckoutPage() {
                 <span style={{ color: '#16a34a' }}>-{fmt(promoDiscount)}</span>
               </div>
             )}
-            <div className="co-total-row grand">
+            <div className="co-total-row grand" style={{ marginBottom: '2px' }}>
               <span>Grand Total</span>
               <span>{fmt(tot)}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#64748b', fontWeight: 600, paddingBottom: '12px', marginBottom: '8px' }}>
+              <span>Inclusive of 5% GST</span>
+              <span>{fmt((sub - promoDiscount) * 0.05 / 1.05)}</span>
             </div>
           </div>
 

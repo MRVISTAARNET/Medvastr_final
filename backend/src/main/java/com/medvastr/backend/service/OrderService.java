@@ -182,7 +182,7 @@ public class OrderService {
                 .subtotal(subtotal)
                 .discountAmount(disc)
                 .shippingAmount(ship)
-                .taxAmount(BigDecimal.ZERO)
+                .taxAmount(subtotal.subtract(disc).multiply(new java.math.BigDecimal("5")).divide(new java.math.BigDecimal("105"), 2, java.math.RoundingMode.HALF_UP))
                 .totalAmount(total)
                 .promoCode(r.getPromoCode())
                 .paymentMethod(r.getPaymentMethod() != null ? Order.PaymentMethod.valueOf(r.getPaymentMethod())
