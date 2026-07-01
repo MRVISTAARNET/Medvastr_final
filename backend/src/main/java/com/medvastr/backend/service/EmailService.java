@@ -39,7 +39,7 @@ public class EmailService {
     @Value("${spring.mail.properties.mail.smtp.starttls.enable:false}")
     private String starttlsEnabled;
 
-    @Value("${app.frontend.url:https://medvastr.com}")
+    @Value("${app.frontend.url:https://www.medvastr.com}")
     private String frontendUrl;
 
     @PostConstruct
