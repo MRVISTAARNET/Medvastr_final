@@ -347,10 +347,7 @@ public class ShiprocketService {
                     : (oi.getProduct() != null && oi.getProduct().getSku() != null ? oi.getProduct().getSku()
                     : "SKU-" + order.getOrderNumber() + "-" + (items.length() + 1)));
             item.put("units", oi.getQuantity());
-            item.put("selling_price", oi.getUnitPrice().toString());
-            item.put("discount", "");
-            item.put("tax", "");
-            item.put("hsn", "");
+            item.put("selling_price", oi.getUnitPrice().doubleValue());
             items.put(item);
 
             double w = 0.5;
