@@ -407,14 +407,18 @@ export default function AdminProducts() {
     const variants = product.variants || [];
     let barcodesHTML = '';
     variants.forEach((v: any) => {
+      const price = v.variantPrice || product.price;
       barcodesHTML += `
         <div class="label-card">
           <div class="header">
-            <strong>${product.name}</strong>
-            <span>Size: ${v.size} | Color: ${v.colorName}</span>
+            <span class="header-left">${product.name} (${v.size}/${v.colorName})</span>
+            <span class="header-right">MRP: &nbsp;&#8377;${price}</span>
           </div>
           <svg class="barcode-svg" data-value="${v.sku || v.barcode}"></svg>
-          <div class="sku-text">${v.sku}</div>
+          <div class="footer-info">
+            <span class="sku-text">SKU: ${v.sku}</span>
+            <span>Medvastr</span>
+          </div>
         </div>
       `;
     });
@@ -424,15 +428,16 @@ export default function AdminProducts() {
         <head>
           <title>Print Barcodes - ${product.name}</title>
           <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 20px; background: white; }
-            .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-            .label-card { border: 1px dashed #94a3b8; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; page-break-inside: avoid; background: white; border-radius: 6px; }
-            .header { display: flex; flex-direction: column; font-size: 11px; margin-bottom: 5px; width: 100%; border-bottom: 1px solid #f1f5f9; padding-bottom: 4px; }
-            .sku-text { font-family: monospace; font-size: 10px; margin-top: 5px; word-break: break-all; }
-            @media print {
-              body { padding: 0; }
-              .label-card { border: 1px solid #e2e8f0; }
-            }
+            @page { size: 2in 1in; margin: 0; }
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; background: white; -webkit-print-color-adjust: exact; }
+            .grid { display: flex; flex-direction: column; align-items: center; }
+            .label-card { width: 2in; height: 1in; box-sizing: border-box; padding: 3px 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center; page-break-after: always; background: white; }
+            .header { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 7px; font-weight: bold; line-height: 1; border-bottom: 1px solid #e2e8f0; padding-bottom: 2px; }
+            .header-left { text-align: left; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; }
+            .header-right { text-align: right; font-weight: 800; }
+            .barcode-svg { width: 1.8in !important; height: 0.45in !important; }
+            .footer-info { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 7px; font-weight: 600; margin-top: 1px; }
+            .sku-text { font-family: monospace; font-size: 7px; }
           </style>
           <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
         </head>
@@ -448,8 +453,8 @@ export default function AdminProducts() {
                 try {
                   JsBarcode(svg, val, {
                     format: "CODE128",
-                    width: 1.5,
-                    height: 40,
+                    width: 1.0,
+                    height: 25,
                     displayValue: false,
                     margin: 0
                   });
@@ -815,20 +820,33 @@ export default function AdminProducts() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '20px' }}>
                 {(barcodeProduct.variants || []).map((v: any, index: number) => {
                   const cardId = `barcode-card-${v.id || index}`;
+                  const price = v.variantPrice || barcodeProduct.price;
                   return (
-                    <div key={v.id || index} id={cardId} style={{ background: 'white', border: '1px solid #e2e8f0', borderRadius: '12px', padding: '15px', display: 'flex', flexDirection: 'column', alignItems: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginBottom: '10px', fontSize: '12px' }}>
-                        <span style={{ fontWeight: 700, color: '#334155' }}>Size: {v.size}</span>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                          <span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '50%', background: v.colorHex || '#cccccc' }} />
-                          {v.colorName}
-                        </span>
-                      </div>
-                      <div className="barcode-img-wrap" style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px', width: '100%', display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
-                        <BarcodeImage value={v.sku || v.barcode} />
-                      </div>
-                      <div style={{ fontSize: '11px', color: '#64748b', fontFamily: 'monospace', marginBottom: '10px', wordBreak: 'break-all' }}>
-                        SKU: {v.sku}
+                    <div key={v.id || index} style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+                      <div id={cardId} style={{
+                        background: 'white',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '8px',
+                        width: '320px',
+                        height: '160px',
+                        padding: '10px 14px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                        boxSizing: 'border-box'
+                      }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', borderBottom: '1px solid #f1f5f9', paddingBottom: '4px', fontSize: '11px', fontWeight: 600 }}>
+                          <span style={{ color: '#0f172a', fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '65%' }}>{barcodeProduct.name} ({v.size}/{v.colorName})</span>
+                          <span style={{ color: '#0284c7', fontWeight: 800 }}>MRP: &#8377;{price}</span>
+                        </div>
+                        <div className="barcode-img-wrap" style={{ background: '#f8fafc', padding: '4px', borderRadius: '6px', width: '100%', display: 'flex', justifyContent: 'center', height: '80px', alignItems: 'center' }}>
+                          <BarcodeImage value={v.sku || v.barcode} />
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: '10px', color: '#64748b', fontWeight: 600 }}>
+                          <span style={{ fontFamily: 'monospace' }}>SKU: {v.sku}</span>
+                          <span>Medvastr</span>
+                        </div>
                       </div>
                       <button type="button" className="btn-secondary" style={{ width: '100%', padding: '6px 12px', fontSize: '12px' }} onClick={() => handleDownloadBarcodeItem(v, cardId)}>
                         Download JPEG
