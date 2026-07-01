@@ -65,8 +65,21 @@ public class OrderService {
     }
 
     private void assertOrderOwner(Order order) {
-        if (!order.getUser().getId().equals(me().getId())) {
-            throw new RuntimeException("You do not have access to this order");
+        try {
+            var auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.isAuthenticated() && !auth.getName().equals("anonymousUser")) {
+                User caller = userRepo.findByEmail(auth.getName()).orElse(null);
+                if (caller != null) {
+                    if (caller.getRole() == User.Role.ADMIN) {
+                        return; // Admins can see all orders
+                    }
+                    if (!order.getUser().getId().equals(caller.getId())) {
+                        throw new RuntimeException("You do not have access to this order");
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+            // Allow guest tracking read-only access by unique order number
         }
     }
 
@@ -102,24 +115,18 @@ public class OrderService {
             if (r.getEmail() == null || r.getEmail().isBlank()) {
                 throw new RuntimeException("Email is required for guest checkout");
             }
-            final String[] tempPassHolder = new String[1];
             u = userRepo.findByEmail(r.getEmail()).orElseGet(() -> {
-                String rawPhone = r.getPhone() != null ? r.getPhone().replaceAll("[^0-9]", "") : "";
-                String last4 = rawPhone.length() >= 4 ? rawPhone.substring(rawPhone.length() - 4) : "1234";
-                String tempPassword = "Mv@" + last4;
-                tempPassHolder[0] = tempPassword;
-                
                 User newUser = User.builder()
                         .email(r.getEmail())
                         .firstName(r.getFirstName())
                         .lastName(r.getLastName())
                         .phone(r.getPhone())
                         .role(User.Role.CUSTOMER)
-                        .password(passwordEncoder.encode(tempPassword))
+                        .password(java.util.UUID.randomUUID().toString())
                         .build();
                 return userRepo.save(newUser);
             });
-            generatedPassword = tempPassHolder[0];
+            generatedPassword = null;
         }
 
         List<OrderItem> orderItems = new ArrayList<>();

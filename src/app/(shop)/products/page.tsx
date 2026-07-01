@@ -874,6 +874,14 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
           .cat-banner {
             border-radius: 12px;
             margin-bottom: 20px;
+            min-height: 140px;
+            display: flex;
+            align-items: center;
+          }
+          .cat-banner-img {
+            min-height: 140px;
+            object-fit: cover;
+            object-position: center;
           }
         }
       `}</style>

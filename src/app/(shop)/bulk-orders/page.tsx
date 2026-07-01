@@ -414,8 +414,30 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
         src={src}
         alt={title}
         onError={tryNext}
-        style={{ width: "100%", height: "auto", display: "block" }}
+        className="bulk-banner-img"
       />
+      <style jsx>{`
+        .bulk-smart-banner {
+          width: 100%;
+        }
+        .bulk-banner-img {
+          width: 100%;
+          height: auto;
+          display: block;
+        }
+        @media (max-width: 768px) {
+          .bulk-smart-banner {
+            min-height: 140px;
+            display: flex;
+            align-items: center;
+          }
+          .bulk-banner-img {
+            min-height: 140px;
+            object-fit: cover;
+            object-position: center;
+          }
+        }
+      `}</style>
     </div>
   );
 }

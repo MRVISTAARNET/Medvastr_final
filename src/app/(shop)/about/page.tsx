@@ -16,13 +16,11 @@ export default function AboutPage() {
     <div className="about-page">
       {/* 1. HERO BANNER */}
       <section className="about-hero">
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src="https://d2tnzshqdaedbc.cloudfront.net/about-1.jpg"
           alt="Medvastr Excellence"
-          fill
-          priority
-          style={{ objectFit: 'cover' }}
-          sizes="100vw"
+          style={{ width: "100%", height: "auto", display: "block" }}
         />
       </section>
 
@@ -121,20 +119,8 @@ export default function AboutPage() {
 
         .about-hero {
           width: 100%;
-          height: 320px;
           position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          color: ${COLORS.white};
           overflow: hidden;
-        }
-
-        @media (max-width: 768px) {
-          .about-hero {
-            height: 140px;
-          }
         }
 
 

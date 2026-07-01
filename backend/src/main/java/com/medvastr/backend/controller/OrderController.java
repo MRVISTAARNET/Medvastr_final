@@ -40,7 +40,6 @@ public class OrderController {
     }
 
     @GetMapping("/{num}")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<OrderDTO>> get(@PathVariable String num) {
         return ResponseEntity.ok(ApiResponse.ok("Order", s.getByNum(num)));
     }
@@ -52,7 +51,6 @@ public class OrderController {
     }
 
     @GetMapping("/track/{num}")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<TrackingDTO>> track(@PathVariable String num) {
         return ResponseEntity.ok(ApiResponse.ok("Tracking", s.track(num)));
     }

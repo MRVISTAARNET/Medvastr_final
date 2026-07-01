@@ -9,7 +9,7 @@ import GenericPage from "@/components/GenericPage";
 import { useApp } from "@/context/AppContext";
 
 function TrackContent() {
-  const { setIsAuthOpen } = useApp();
+  const { user, setIsAuthOpen } = useApp();
   const searchParams = useSearchParams();
   const [orderNum, setOrderNum] = useState(searchParams.get("order") || "");
   const [tracking, setTracking] = useState<any>(null);
@@ -261,6 +261,21 @@ function TrackContent() {
                   Contact Support
                 </a>
               </div>
+
+              {!user && (
+                <div style={{ marginTop: "30px", padding: "24px", background: "linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%)", borderRadius: "16px", border: "1px solid #7dd3fc", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
+                  <div style={{ flex: 1, minWidth: "260px", textAlign: "left" }}>
+                    <h4 style={{ margin: "0 0 6px", fontSize: "16px", fontWeight: "800", color: "#0369a1" }}>Save Your Order History</h4>
+                    <p style={{ margin: 0, fontSize: "14px", color: "#0284c7", lineHeight: "1.5" }}>Sign in or register an account to track all your orders, save delivery addresses, and checkout faster next time.</p>
+                  </div>
+                  <button 
+                    onClick={() => setIsAuthOpen(true)}
+                    style={{ background: "#0369a1", color: "white", padding: "12px 24px", border: "none", borderRadius: "8px", fontWeight: "700", cursor: "pointer" }}
+                  >
+                    Login / Register
+                  </button>
+                </div>
+              )}
 
             </div>
           )}
