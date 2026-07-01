@@ -305,7 +305,7 @@ function ProductsContent() {
     bannerCat = "surgeon-gown";
   } else if (bannerCat.includes("surgeon-cap") || bannerCat.includes("surgical-cap")) {
     bannerCat = "surgeon-cap";
-  } else if (bannerCat.includes('scrub') && !bannerCat.includes('underscrub')) {
+  } else if ((bannerCat.includes('scrub') || bannerCat.includes('flexi') || bannerCat.includes('fit')) && !bannerCat.includes('underscrub')) {
     bannerCat = 'scrub-suit';
   }
 
