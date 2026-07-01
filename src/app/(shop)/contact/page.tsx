@@ -5,6 +5,10 @@ import { B } from "@/lib/data";
 import { API_BASE } from "@/lib/api";
 
 export default function ContactPage() {
+  React.useEffect(() => {
+    document.title = "Contact Us | Medvastr";
+  }, []);
+
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
 

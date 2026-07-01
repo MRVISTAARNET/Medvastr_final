@@ -4,6 +4,10 @@ import { useApp } from "@/context/AppContext";
 import { normalizeMediaUrl } from "@/lib/api";
 
 export default function SizeGuidePage() {
+  React.useEffect(() => {
+    document.title = "Size Guide | Medvastr";
+  }, []);
+
   const S = {
     wrap: { maxWidth: '1400px', margin: '0 auto', padding: '64px 24px', fontFamily: 'inherit' },
     hero: { background: 'linear-gradient(135deg,#0f172a 0%,#1e3a5f 100%)', borderRadius: '20px', padding: '48px 40px', marginBottom: '40px', color: 'white', position: 'relative' as const, overflow: 'hidden' },

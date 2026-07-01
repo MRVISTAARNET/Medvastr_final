@@ -10,6 +10,10 @@ interface GenPageProps {
 }
 
 export default function GenericPage({ title, desc, children }: GenPageProps) {
+  React.useEffect(() => {
+    document.title = `${title} | Medvastr`;
+  }, [title]);
+
   return (
     <div className="page">
       <div

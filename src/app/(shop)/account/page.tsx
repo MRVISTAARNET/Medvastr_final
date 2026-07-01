@@ -21,6 +21,7 @@ export default function AccountPage() {
   const [showAddAddress, setShowAddAddress] = useState(false);
 
   useEffect(() => {
+    document.title = "My Account | Medvastr";
     if (user) {
       setProfileForm({ firstName: user.firstName, lastName: user.lastName, phone: user.phone || "" });
       fetchData();

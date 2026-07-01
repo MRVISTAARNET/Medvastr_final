@@ -9,6 +9,10 @@ function ResetPasswordForm() {
     const router = useRouter();
     const token = searchParams.get('token') ?? '';
 
+    useEffect(() => {
+        document.title = "Reset Password | Medvastr";
+    }, []);
+
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [status, setStatus] = useState<'valid' | 'invalid' | 'loading' | 'success' | 'error'>('valid');

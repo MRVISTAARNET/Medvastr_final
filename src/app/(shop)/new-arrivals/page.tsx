@@ -1,9 +1,13 @@
 "use client";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AppContext } from "@/context/AppContext";
 import ProductCard from "@/components/ProductCard";
 
 export default function NewArrivalsPage() {
+  useEffect(() => {
+    document.title = "New Arrivals | Medvastr";
+  }, []);
+
   const ctx = useContext(AppContext);
   if (!ctx) return null;
 
