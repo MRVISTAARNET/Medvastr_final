@@ -2,12 +2,27 @@
 
 import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
-import { fmt, fmtNum, fmtDate } from '@/lib/data';
+import { fmt, fmtNum, fmtDate, fmtDateTime } from '@/lib/data';
 import { API_BASE, authHeaders } from '@/lib/api';
+
+const downloadCSV = (data: any[], fileName: string) => {
+  if (!data || !data.length) return;
+  const headers = Object.keys(data[0]).join(',');
+  const rows = data.map(obj =>
+    Object.values(obj).map(v => typeof v === 'string' ? `"${v.replace(/"/g, '""')}"` : v).join(',')
+  ).join('\n');
+  const blob = new Blob([`${headers}\n${rows}`], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = fileName;
+  link.click();
+};
 
 export default function AdminOrders() {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('ALL');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [page, setPage] = useState(0);
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,8 +67,35 @@ export default function AdminOrders() {
   const filteredOrders = orders.filter(o => {
     const matchesSearch = !search || o.num.toLowerCase().includes(search.toLowerCase()) || o.customer.toLowerCase().includes(search.toLowerCase());
     const matchesFilter = filter === 'ALL' || o.status === filter;
-    return matchesSearch && matchesFilter;
+    
+    let matchesDate = true;
+    if (o.date) {
+      const orderDateStr = o.date.slice(0, 10);
+      if (startDate && orderDateStr < startDate) matchesDate = false;
+      if (endDate && orderDateStr > endDate) matchesDate = false;
+    } else if (startDate || endDate) {
+      matchesDate = false;
+    }
+
+    return matchesSearch && matchesFilter && matchesDate;
   });
+
+  const exportOrders = () => {
+    const feed = filteredOrders.map(o => ({
+      'Order ID': o.num,
+      'Customer Name': o.customer,
+      'Phone': o.phone,
+      'City': o.city,
+      'Date': o.date ? fmtDateTime(o.date) : '—',
+      'Payment Method': o.payment,
+      'Total Amount (₹)': o.total,
+      'Items Count': o.items,
+      'Status': o.status,
+      'Tracking AWB': o.awb,
+      'Courier': o.courier
+    }));
+    downloadCSV(feed, `medvastr_orders_${new Date().toISOString().slice(0, 10)}.csv`);
+  };
 
   const statusBadge = (s: string) => {
     const map: any = {
@@ -94,7 +136,27 @@ export default function AdminOrders() {
                 <div className="table-title">All Orders</div>
                 <div className="table-sub">{fmtNum(filteredOrders.length)} total orders</div>
               </div>
-              <div className="table-hd-right">
+              <div className="table-hd-right" style={{ gap: '10px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--txt2)' }}>From:</span>
+                  <input
+                    type="date"
+                    className="tbl-search"
+                    style={{ width: '130px', padding: '6px 10px', height: '36px' }}
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--txt2)' }}>To:</span>
+                  <input
+                    type="date"
+                    className="tbl-search"
+                    style={{ width: '130px', padding: '6px 10px', height: '36px' }}
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
+                </div>
                 <input
                   className="tbl-search"
                   placeholder="Search order ID or customer..."
@@ -110,6 +172,27 @@ export default function AdminOrders() {
                     <option key={s} value={s}>{s}</option>
                   ))}
                 </select>
+                <button
+                  type="button"
+                  className="btn-primary"
+                  style={{
+                    padding: '0 16px',
+                    height: '36px',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    cursor: 'pointer',
+                    background: '#008080',
+                    border: 'none',
+                    color: 'white'
+                  }}
+                  onClick={exportOrders}
+                >
+                  📥 Export CSV
+                </button>
               </div>
             </div>
             <table className="admin-table">
@@ -132,7 +215,7 @@ export default function AdminOrders() {
                     </td>
                     <td><span className="badge b-gray">{o.payment}</span></td>
                     <td>{o.city}</td>
-                    <td>{fmtDate(o.date)}</td>
+                    <td>{fmtDateTime(o.date)}</td>
                     <td>{statusBadge(o.status)}</td>
                     <td>
                       <div className="act-btns">

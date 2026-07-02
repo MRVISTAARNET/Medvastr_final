@@ -89,6 +89,13 @@ export const fmtDate = (d: string | Date) => {
   if (!d) return "—";
   return new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
 };
+export const fmtDateTime = (d: string | Date) => {
+  if (!d) return "—";
+  const dateObj = new Date(d);
+  const dateStr = dateObj.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+  const timeStr = dateObj.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+  return `${dateStr} ${timeStr}`;
+};
 
 // Common Admin Interfaces
 export interface AdminStats {
