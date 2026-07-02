@@ -522,7 +522,27 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               </div>
             ))}
           </div>
+
+          {/* Carousel Pagination Dots */}
+          <div className="pdp-gallery-dots">
+            {p.videoUrl && (
+              <button
+                className={`pdp-gallery-dot ${mainImg === -1 ? 'active' : ''}`}
+                onClick={() => scrollToImage(-1)}
+                aria-label="Go to video slide"
+              />
+            )}
+            {visibleImageIndexes.map((i, idx) => (
+              <button
+                key={i}
+                className={`pdp-gallery-dot ${mainImg === i ? 'active' : ''}`}
+                onClick={() => scrollToImage(i)}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </div>
         </div>
+
 
         {/* INFO */}
         <div className="pdp-info-sec">
