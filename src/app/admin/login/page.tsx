@@ -10,6 +10,7 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const { login } = useApp();
 
@@ -56,15 +57,42 @@ export default function AdminLogin() {
             </div>
             <div className="lf">
               <label htmlFor="admin-password">Password</label>
-              <input
-                id="admin-password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="current-password"
-                required
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  id="admin-password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="current-password"
+                  required
+                  style={{ paddingRight: '40px', width: '100%' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    fontSize: '16px',
+                    padding: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: showPassword ? 1 : 0.4,
+                    transition: 'opacity 0.2s',
+                    color: '#888',
+                    zIndex: 10
+                  }}
+                >
+                  👁️
+                </button>
+              </div>
             </div>
             <button className="login-btn" type="submit" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign In to Dashboard'}

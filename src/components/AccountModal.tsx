@@ -14,6 +14,7 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
   const [form, setForm] = useState({
     firstName: "", lastName: "", email: "", password: "", phone: "", otp: ""
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
@@ -193,7 +194,32 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
                       </span>
                     )}
                   </div>
-                  <input name="password" type="password" autoComplete={mode === 'login' ? "current-password" : "new-password"} placeholder="••••••••" required minLength={mode === 'register' ? 8 : undefined} value={form.password} onChange={handleInputChange} style={inp} />
+                  <div style={{ position: 'relative' }}>
+                    <input name="password" type={showPassword ? "text" : "password"} autoComplete={mode === 'login' ? "current-password" : "new-password"} placeholder="••••••••" required minLength={mode === 'register' ? 8 : undefined} value={form.password} onChange={handleInputChange} style={{ ...inp, paddingRight: '40px' }} />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      style={{
+                        position: 'absolute',
+                        right: '12px',
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        fontSize: '16px',
+                        padding: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        opacity: showPassword ? 1 : 0.4,
+                        transition: 'opacity 0.2s',
+                        zIndex: 10
+                      }}
+                    >
+                      👁️
+                    </button>
+                  </div>
                   {mode === 'register' && <div style={{ fontSize: 11, color: '#aaa', marginTop: 4 }}>Minimum 8 characters</div>}
                 </div>
               )}

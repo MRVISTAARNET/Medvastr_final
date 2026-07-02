@@ -9,6 +9,8 @@ export default function AdminSettings() {
   const [newPwd, setNewPwd] = useState('');
   const [pwdMsg, setPwdMsg] = useState('');
   const [pwdLoading, setPwdLoading] = useState(false);
+  const [showCurrentPwd, setShowCurrentPwd] = useState(false);
+  const [showNewPwd, setShowNewPwd] = useState(false);
 
   const [razorpayKey, setRazorpayKey] = useState('');
   const [apiMsg, setApiMsg] = useState('');
@@ -109,13 +111,65 @@ export default function AdminSettings() {
                 <div style={{ padding: '22px' }}>
                   <div className="fg">
                     <label>Current Password</label>
-                    <input type="password" placeholder="••••••••" style={inp}
-                      value={currentPwd} onChange={e => setCurrentPwd(e.target.value)} />
+                    <div style={{ position: 'relative' }}>
+                      <input type={showCurrentPwd ? 'text' : 'password'} placeholder="••••••••" style={{ ...inp, paddingRight: '40px' }}
+                        value={currentPwd} onChange={e => setCurrentPwd(e.target.value)} />
+                      <button
+                        type="button"
+                        onClick={() => setShowCurrentPwd(!showCurrentPwd)}
+                        style={{
+                          position: 'absolute',
+                          right: '12px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '16px',
+                          padding: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          opacity: showCurrentPwd ? 1 : 0.4,
+                          transition: 'opacity 0.2s',
+                          color: '#888',
+                          zIndex: 10
+                        }}
+                      >
+                        👁️
+                      </button>
+                    </div>
                   </div>
                   <div className="fg">
                     <label>New Password</label>
-                    <input type="password" placeholder="Minimum 6 characters" style={inp}
-                      value={newPwd} onChange={e => setNewPwd(e.target.value)} />
+                    <div style={{ position: 'relative' }}>
+                      <input type={showNewPwd ? 'text' : 'password'} placeholder="Minimum 6 characters" style={{ ...inp, paddingRight: '40px' }}
+                        value={newPwd} onChange={e => setNewPwd(e.target.value)} />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPwd(!showNewPwd)}
+                        style={{
+                          position: 'absolute',
+                          right: '12px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '16px',
+                          padding: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          opacity: showNewPwd ? 1 : 0.4,
+                          transition: 'opacity 0.2s',
+                          color: '#888',
+                          zIndex: 10
+                        }}
+                      >
+                        👁️
+                      </button>
+                    </div>
                   </div>
                   {pwdMsg && <div style={{ fontSize: 13, margin: '8px 0', color: pwdMsg.startsWith('✅') ? 'green' : 'red' }}>{pwdMsg}</div>}
                   <button className="btn-primary" onClick={handleChangePassword} disabled={pwdLoading}>

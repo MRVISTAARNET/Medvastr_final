@@ -17,6 +17,8 @@ function ResetPasswordForm() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [status, setStatus] = useState<'valid' | 'invalid' | 'loading' | 'success' | 'error'>('valid');
     const [message, setMessage] = useState('');
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -54,8 +56,72 @@ function ResetPasswordForm() {
                     <p style={{ color: '#22c55e' }}>Password updated! Redirecting...</p>
                 ) : (
                     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                        <input type="password" placeholder="New Password" value={newPassword} onChange={e => setNewPassword(e.target.value)} style={{ padding: '12px', borderRadius: '8px', border: 'none' }} />
-                        <input type="password" placeholder="Confirm Password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} style={{ padding: '12px', borderRadius: '8px', border: 'none' }} />
+                        <div style={{ position: 'relative', width: '100%' }}>
+                            <input 
+                                type={showNewPassword ? 'text' : 'password'} 
+                                placeholder="New Password" 
+                                value={newPassword} 
+                                onChange={e => setNewPassword(e.target.value)} 
+                                style={{ padding: '12px', paddingRight: '40px', borderRadius: '8px', border: 'none', width: '100%', boxSizing: 'border-box', color: '#1e293b' }} 
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowNewPassword(!showNewPassword)}
+                                style={{
+                                    position: 'absolute',
+                                    right: '12px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    fontSize: '16px',
+                                    padding: 0,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    opacity: showNewPassword ? 1 : 0.4,
+                                    transition: 'opacity 0.2s',
+                                    color: '#888',
+                                    zIndex: 10
+                                }}
+                            >
+                                👁️
+                            </button>
+                        </div>
+                        <div style={{ position: 'relative', width: '100%' }}>
+                            <input 
+                                type={showConfirmPassword ? 'text' : 'password'} 
+                                placeholder="Confirm Password" 
+                                value={confirmPassword} 
+                                onChange={e => setConfirmPassword(e.target.value)} 
+                                style={{ padding: '12px', paddingRight: '40px', borderRadius: '8px', border: 'none', width: '100%', boxSizing: 'border-box', color: '#1e293b' }} 
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                style={{
+                                    position: 'absolute',
+                                    right: '12px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    background: 'none',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    fontSize: '16px',
+                                    padding: 0,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    opacity: showConfirmPassword ? 1 : 0.4,
+                                    transition: 'opacity 0.2s',
+                                    color: '#888',
+                                    zIndex: 10
+                                }}
+                            >
+                                👁️
+                            </button>
+                        </div>
                         {message && <p style={{ color: '#ef4444', fontSize: '14px' }}>{message}</p>}
                         <button type="submit" disabled={status === 'loading'} style={{ padding: '12px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold' }}>
                             {status === 'loading' ? 'Saving...' : 'Update Password'}

@@ -19,6 +19,8 @@ export default function AccountPage() {
   const [pwdForm, setPwdForm] = useState({ oldPassword: "", newPassword: "" });
   const [addressForm, setAddressForm] = useState({ fullName: "", phone: "", addressLine1: "", addressLine2: "", city: "", state: "", pincode: "", type: "HOME" });
   const [showAddAddress, setShowAddAddress] = useState(false);
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
   useEffect(() => {
     document.title = "My Account | Medvastr";
@@ -171,11 +173,63 @@ export default function AccountPage() {
                 <form onSubmit={updatePwd} style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "400px" }}>
                   <div className="input-group">
                     <label>Current Password</label>
-                    <input type="password" className="co-input-field" value={pwdForm.oldPassword} onChange={e => setPwdForm({...pwdForm, oldPassword: e.target.value})} required />
+                    <div style={{ position: 'relative' }}>
+                      <input type={showOldPassword ? "text" : "password"} className="co-input-field" style={{ paddingRight: '40px' }} value={pwdForm.oldPassword} onChange={e => setPwdForm({...pwdForm, oldPassword: e.target.value})} required />
+                      <button
+                        type="button"
+                        onClick={() => setShowOldPassword(!showOldPassword)}
+                        style={{
+                          position: 'absolute',
+                          right: '12px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '16px',
+                          padding: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          opacity: showOldPassword ? 1 : 0.4,
+                          transition: 'opacity 0.2s',
+                          color: '#888',
+                          zIndex: 10
+                        }}
+                      >
+                        👁️
+                      </button>
+                    </div>
                   </div>
                   <div className="input-group">
                     <label>New Password</label>
-                    <input type="password" className="co-input-field" value={pwdForm.newPassword} onChange={e => setPwdForm({...pwdForm, newPassword: e.target.value})} required minLength={6} />
+                    <div style={{ position: 'relative' }}>
+                      <input type={showNewPassword ? "text" : "password"} className="co-input-field" style={{ paddingRight: '40px' }} value={pwdForm.newPassword} onChange={e => setPwdForm({...pwdForm, newPassword: e.target.value})} required minLength={6} />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPassword(!showNewPassword)}
+                        style={{
+                          position: 'absolute',
+                          right: '12px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '16px',
+                          padding: 0,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          opacity: showNewPassword ? 1 : 0.4,
+                          transition: 'opacity 0.2s',
+                          color: '#888',
+                          zIndex: 10
+                        }}
+                      >
+                        👁️
+                      </button>
+                    </div>
                   </div>
                   <button type="submit" className="pdp-buy-btn" style={{ marginTop: "10px" }}>Update Password</button>
                 </form>
