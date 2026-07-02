@@ -348,6 +348,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const [zoom, setZoom] = useState(false);
   const [zoomIndex, setZoomIndex] = useState(0);
   const imageRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (zoom) {
@@ -360,11 +361,40 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
     };
   }, [zoom]);
 
+  // Scroll the horizontal slider to the target image by its offsetLeft
   const scrollToImage = (index: number) => {
     setMainImg(index);
+    const container = scrollContainerRef.current;
     const target = imageRefs.current[index];
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (container && target) {
+      container.scrollTo({
+        left: target.offsetLeft,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  // Called on every scroll event inside the horizontal slider.
+  // Figures out which slide is centred and updates the active thumbnail.
+  const handleSliderScroll = () => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const scrollLeft = container.scrollLeft;
+    const width = container.clientWidth;
+    if (width <= 0) return;
+    const slideIndex = Math.round(scrollLeft / width);
+
+    if (p && p.videoUrl) {
+      // Slide 0 is the video (ref -1), slides 1+ are images
+      if (slideIndex === 0) {
+        if (mainImg !== -1) setMainImg(-1);
+      } else {
+        const targetIdx = visibleImageIndexes[slideIndex - 1];
+        if (targetIdx !== undefined && mainImg !== targetIdx) setMainImg(targetIdx);
+      }
+    } else {
+      const targetIdx = visibleImageIndexes[slideIndex];
+      if (targetIdx !== undefined && mainImg !== targetIdx) setMainImg(targetIdx);
     }
   };
 
@@ -465,9 +495,13 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
           ))}
         </div>
 
-        {/* GALLERY - Vertical Stack Logic */}
+        {/* GALLERY - Horizontal Slider */}
         <div className="pdp-gallery-wrap">
-          <div className="pdp-main-images vertical-stack">
+          <div
+            ref={scrollContainerRef}
+            onScroll={handleSliderScroll}
+            className="pdp-main-images horizontal-slider"
+          >
             {p.videoUrl && (
               <div className="pdp-main-image-item video-item" ref={el => { (imageRefs.current as any)[-1] = el }}>
                 <video src={p.videoUrl} autoPlay loop muted playsInline controls />

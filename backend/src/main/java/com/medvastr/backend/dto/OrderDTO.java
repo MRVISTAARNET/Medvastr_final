@@ -36,4 +36,6 @@ public class OrderDTO {
     private LocalDateTime createdAt;
     private LocalDateTime deliveredAt;
     private String razorpayOrderId;
+    private Long userId;
+    private String userEmail;
 }

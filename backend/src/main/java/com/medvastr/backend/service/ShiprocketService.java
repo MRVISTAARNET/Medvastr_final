@@ -613,7 +613,7 @@ public class ShiprocketService {
         } else if (s.contains("delivered")) {
             order.setStatus(Order.OrderStatus.DELIVERED);
             order.setDeliveredAt(java.time.LocalDateTime.now());
-        } else if (s.contains("cancelled")) {
+        } else if (s.contains("cancel")) {
             order.setStatus(Order.OrderStatus.CANCELLED);
         } else if (s.contains("out for delivery")) {
             order.setStatus(Order.OrderStatus.OUT_FOR_DELIVERY);

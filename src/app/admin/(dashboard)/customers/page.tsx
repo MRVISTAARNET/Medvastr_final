@@ -8,36 +8,65 @@ import { API_BASE, authHeaders } from '@/lib/api';
 export default function AdminCustomers() {
   const [customers, setCustomers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`${API_BASE}/users?size=100`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const data = await res.json();
-        if (data.success) {
-          setCustomers(data.data.content.map((u: any) => ({
-            id: u.id,
-            name: `${u.firstName} ${u.lastName}`,
-            email: u.email,
-            phone: u.phone,
-            orders: 0,
-            spent: 0,
-            city: '—',
-            joined: u.createdAt,
-            role: u.role
-          })));
+        const [usersRes, ordersRes] = await Promise.all([
+          fetch(`${API_BASE}/users?size=100`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          }),
+          fetch(`${API_BASE}/orders/admin/all?size=500`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          })
+        ]);
+        const usersData = await usersRes.json();
+        const ordersData = await ordersRes.json();
+
+        if (usersData.success && ordersData.success) {
+          const allOrders = ordersData.data.content || [];
+          setCustomers(usersData.data.content.map((u: any) => {
+            const userOrders = allOrders.filter((o: any) => 
+              (o.userId && o.userId === u.id) || 
+              (o.userEmail && o.userEmail.toLowerCase() === u.email.toLowerCase()) ||
+              (o.shippingPhone && u.phone && o.shippingPhone.replace(/\D/g, '') === u.phone.replace(/\D/g, ''))
+            );
+
+            const totalSpent = userOrders.reduce((sum: number, o: any) => sum + (o.totalAmount || 0), 0);
+            
+            // Get the city from the latest order
+            const latestOrder = userOrders[0];
+            const city = latestOrder?.shippingCity || '—';
+
+            return {
+              id: u.id,
+              name: `${u.firstName} ${u.lastName}`,
+              email: u.email,
+              phone: u.phone,
+              orders: userOrders.length,
+              spent: totalSpent,
+              city: city,
+              joined: u.createdAt,
+              role: u.role
+            };
+          }));
         }
       } catch (e) {
-        console.error("Failed to fetch users");
+        console.error("Failed to fetch customers and orders", e);
       } finally {
         setLoading(false);
       }
     };
-    fetchUsers();
+    fetchData();
   }, []);
+
+  const filteredCustomers = customers.filter(c => 
+    c.name.toLowerCase().includes(search.toLowerCase()) || 
+    c.email.toLowerCase().includes(search.toLowerCase()) ||
+    (c.phone && c.phone.includes(search))
+  );
 
   const maxSpent = customers.length > 0 ? Math.max(...customers.map((c: any) => c.spent || 0)) : 0;
   const avgOrders = customers.length > 0 ? (
@@ -65,10 +94,15 @@ export default function AdminCustomers() {
             <div className="table-hd">
               <div className="table-hd-left">
                 <div className="table-title">Customers</div>
-                <div className="table-sub">{customers.length} registered customers</div>
+                <div className="table-sub">{filteredCustomers.length} of {customers.length} registered customers</div>
               </div>
               <div className="table-hd-right">
-                <input className="tbl-search" placeholder="Search by name or email..." />
+                <input 
+                  className="tbl-search" 
+                  placeholder="Search by name or email..." 
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                />
               </div>
             </div>
             <table className="admin-table">
@@ -85,7 +119,7 @@ export default function AdminCustomers() {
                 </tr>
               </thead>
               <tbody>
-                {customers.map((c: any) => (
+                {filteredCustomers.map((c: any) => (
                   <tr key={c.id}>
                     <td>
                       <div className="td-flex">

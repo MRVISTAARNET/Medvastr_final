@@ -592,6 +592,8 @@ public class OrderService {
                 .createdAt(o.getCreatedAt())
                 .deliveredAt(o.getDeliveredAt())
                 .razorpayOrderId(o.getRazorpayOrderId())
+                .userId(o.getUser() != null ? o.getUser().getId() : null)
+                .userEmail(o.getUser() != null ? o.getUser().getEmail() : null)
                 .items(o.getItems() != null ? o.getItems().stream().map(i -> OrderItemDTO.builder()
                         .id(i.getId())
                         .productName(i.getProductName())
