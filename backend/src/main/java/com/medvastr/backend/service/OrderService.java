@@ -174,7 +174,7 @@ public class OrderService {
         }
 
         BigDecimal total = subtotal.add(ship).subtract(disc);
-        String orderNum = genNum();
+        String tempNum = "TEMP-" + java.util.UUID.randomUUID().toString();
 
         BigDecimal taxVal = BigDecimal.ZERO;
         for (var oi : orderItems) {
@@ -193,7 +193,7 @@ public class OrderService {
         }
 
         Order o = Order.builder()
-                .orderNumber(orderNum)
+                .orderNumber(tempNum)
                 .user(u)
                 .subtotal(subtotal)
                 .discountAmount(disc)
@@ -215,17 +215,21 @@ public class OrderService {
                 .tempPassword(generatedPassword)
                 .build();
 
-        if (o.getPaymentMethod() == Order.PaymentMethod.ONLINE) {
+        Order saved = orderRepo.save(o);
+        String orderNum = "MVS-" + LocalDateTime.now().getYear() + "-" + String.format("%06d", saved.getId());
+        saved.setOrderNumber(orderNum);
+
+        if (saved.getPaymentMethod() == Order.PaymentMethod.ONLINE) {
             try {
                 String razorpayId = razorpayService.createOrder(total, orderNum);
-                o.setRazorpayOrderId(razorpayId);
+                saved.setRazorpayOrderId(razorpayId);
             } catch (Exception e) {
                 log.error("Razorpay order creation failed", e);
                 throw new RuntimeException("Payment service unavailable. Try COD.");
             }
         }
 
-        Order saved = orderRepo.save(o);
+        saved = orderRepo.save(saved);
         for (var item : orderItems) {
             item.setOrder(saved);
         }

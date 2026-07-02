@@ -113,6 +113,16 @@ public class Order {
 
     private String courierName;
 
+    private Long shiprocketOrderId;
+
+    private Long shiprocketShipmentId;
+
+    @Column(length = 50)
+    private String shiprocketSyncStatus;
+
+    @Column(columnDefinition = "TEXT")
+    private String shiprocketSyncMessage;
+
     @Column(columnDefinition = "TEXT")
     private String notes;
 

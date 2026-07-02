@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class ShiprocketService {
     private final OrderRepository orderRepository;
+    private final java.util.Set<Long> ongoingSyncs = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
     @Value("${shiprocket.enabled:false}")
     private boolean enabled;
@@ -173,11 +175,20 @@ public class ShiprocketService {
             return;
         }
 
+        if (!ongoingSyncs.add(orderId)) {
+            log.info("[Shiprocket] Sync already in progress for order id={}. Skipping duplicate trigger.", orderId);
+            return;
+        }
+
         log.info("[Shiprocket] Starting async push for order id={}", orderId);
         try {
             Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
+            if (order.getShiprocketOrderId() != null) {
+                log.info("[Shiprocket] Order {} already synced (ID: {}). Skipping.", order.getOrderNumber(), order.getShiprocketOrderId());
+                return;
+            }
+
             preloadOrderRelations(order);
-            log.info("[Shiprocket] Pushing order {} to Shiprocket...", order.getOrderNumber());
 
             String token = getValidToken();
             if (token == null) {
@@ -188,6 +199,8 @@ public class ShiprocketService {
             pushOrderToShiprocket(order, token);
         } catch (Exception e) {
             log.error("[Shiprocket] Error pushing order id={}: {}", orderId, e.getMessage(), e);
+        } finally {
+            ongoingSyncs.remove(orderId);
         }
     }
 
@@ -195,6 +208,9 @@ public class ShiprocketService {
     public String createOrderSync(Long orderId) {
         if (!enabled) {
             return "Shiprocket service is disabled in application.properties (shiprocket.enabled=false)";
+        }
+        if (!ongoingSyncs.add(orderId)) {
+            return "Sync already in progress for order id=" + orderId;
         }
         try {
             Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
@@ -208,6 +224,8 @@ public class ShiprocketService {
         } catch (Exception e) {
             log.error("[Shiprocket Sync] Sync error: ", e);
             return "Error: " + e.getMessage();
+        } finally {
+            ongoingSyncs.remove(orderId);
         }
     }
 
@@ -219,20 +237,63 @@ public class ShiprocketService {
             headers.setBearerAuth(token);
 
             HttpEntity<String> entity = new HttpEntity<>(shipOrder.toString(), headers);
-            log.info("[Shiprocket Sync] Request payload: {}", shipOrder.toString());
+            
+            log.info("\n=== Shiprocket Request ===\nURL: https://apiv2.shiprocket.in/v1/external/orders/create/adhoc\nPayload:\n{}\n==========================", shipOrder.toString());
 
             ResponseEntity<String> res = restTemplate.postForEntity(
                     "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
                     entity,
                     String.class);
 
-            log.info("[Shiprocket Sync] Response: {} - {}", res.getStatusCode(), res.getBody());
+            log.info("\n=== Shiprocket Response ===\nHTTP Status: {}\nResponse Body:\n{}\n==========================", res.getStatusCode(), res.getBody());
+
+            if (res.getStatusCode() == HttpStatus.OK || res.getStatusCode() == HttpStatus.CREATED) {
+                JSONObject resJson = new JSONObject(res.getBody());
+                long srOrderId = resJson.optLong("order_id", 0);
+                long shipmentId = resJson.optLong("shipment_id", 0);
+                String status = resJson.optString("status", "NEW");
+                String awb = resJson.optString("awb_code");
+                String courier = resJson.optString("courier_name");
+
+                if (srOrderId > 0) order.setShiprocketOrderId(srOrderId);
+                if (shipmentId > 0) order.setShiprocketShipmentId(shipmentId);
+                order.setShiprocketSyncStatus(status);
+
+                if (awb != null && !awb.isEmpty() && !awb.equals("null")) {
+                    order.setTrackingNumber(awb);
+                }
+                if (courier != null && !courier.isEmpty() && !courier.equals("null")) {
+                    order.setCourierName(courier);
+                }
+
+                if ("CANCELED".equalsIgnoreCase(status)) {
+                    String reason = fetchCancellationReason(srOrderId, token);
+                    order.setShiprocketSyncMessage("CANCELED. Reason: " + reason);
+                } else {
+                    order.setShiprocketSyncMessage("Synced successfully with status: " + status);
+                }
+                orderRepository.save(order);
+            } else {
+                order.setShiprocketSyncStatus("FAILED");
+                order.setShiprocketSyncMessage("HTTP Error " + res.getStatusCode() + ": " + res.getBody());
+                orderRepository.save(order);
+            }
+
             return "Status: " + res.getStatusCode() + " | Response: " + res.getBody() + " | Payload Sent: " + shipOrder.toString();
         } catch (org.springframework.web.client.HttpStatusCodeException e) {
-            log.error("[Shiprocket Sync] API error: {} - {}", e.getStatusCode(), e.getResponseBodyAsString());
+            log.error("\n=== Error Response ===\nHTTP Status: {}\nResponse Body:\n{}\n==========================", e.getStatusCode(), e.getResponseBodyAsString());
+            if (e.getStatusCode().value() == 401) {
+                tokenCache.remove(TOKEN_CACHE_KEY);
+            }
+            order.setShiprocketSyncStatus("FAILED");
+            order.setShiprocketSyncMessage("API Error " + e.getStatusCode() + ": " + e.getResponseBodyAsString());
+            orderRepository.save(order);
             return "API Error Code: " + e.getStatusCode() + " | Response: " + e.getResponseBodyAsString();
         } catch (Exception e) {
             log.error("[Shiprocket Sync] Exception: ", e);
+            order.setShiprocketSyncStatus("FAILED");
+            order.setShiprocketSyncMessage("Exception: " + e.getMessage());
+            orderRepository.save(order);
             return "Exception: " + e.getMessage();
         }
     }
@@ -247,52 +308,98 @@ public class ShiprocketService {
 
             HttpEntity<String> entity = new HttpEntity<>(shipOrder.toString(), headers);
 
-            log.info("[Shiprocket] Request payload: {}", shipOrder.toString());
+            log.info("\n=== Shiprocket Request ===\nURL: https://apiv2.shiprocket.in/v1/external/orders/create/adhoc\nPayload:\n{}\n==========================", shipOrder.toString());
             ResponseEntity<String> res = restTemplate.postForEntity(
                     "https://apiv2.shiprocket.in/v1/external/orders/create/adhoc",
                     entity,
                     String.class);
 
-            log.info("[Shiprocket] Response for {}: {} - {}", order.getOrderNumber(), res.getStatusCode(), res.getBody());
+            log.info("\n=== Shiprocket Response ===\nHTTP Status: {}\nResponse Body:\n{}\n==========================", res.getStatusCode(), res.getBody());
 
             if (res.getStatusCode() == HttpStatus.OK || res.getStatusCode() == HttpStatus.CREATED) {
-                log.info("[Shiprocket] Order pushed successfully: {}", order.getOrderNumber());
                 try {
                     JSONObject resJson = new JSONObject(res.getBody());
+                    long srOrderId = resJson.optLong("order_id", 0);
+                    long shipmentId = resJson.optLong("shipment_id", 0);
+                    String status = resJson.optString("status", "NEW");
                     String awb = resJson.optString("awb_code");
                     String courier = resJson.optString("courier_name");
-                    long shipmentId = resJson.optLong("shipment_id", 0);
-                    log.info("[Shiprocket] Shipment ID: {}, AWB: {}, Courier: {}", shipmentId, awb, courier);
-                    
-                    boolean updated = false;
+
+                    if (srOrderId > 0) order.setShiprocketOrderId(srOrderId);
+                    if (shipmentId > 0) order.setShiprocketShipmentId(shipmentId);
+                    order.setShiprocketSyncStatus(status);
+
                     if (awb != null && !awb.isEmpty() && !awb.equals("null")) {
                         order.setTrackingNumber(awb);
-                        updated = true;
                     }
                     if (courier != null && !courier.isEmpty() && !courier.equals("null")) {
                         order.setCourierName(courier);
-                        updated = true;
                     }
-                    if (updated) {
-                        orderRepository.save(order);
+
+                    if ("CANCELED".equalsIgnoreCase(status)) {
+                        String reason = fetchCancellationReason(srOrderId, token);
+                        order.setShiprocketSyncMessage("CANCELED. Reason: " + reason);
+                    } else {
+                        order.setShiprocketSyncMessage("Synced successfully with status: " + status);
                     }
+                    orderRepository.save(order);
                 } catch (Exception parseEx) {
-                    log.warn("[Shiprocket] Failed to parse success response: {}", parseEx.getMessage());
+                    log.error("[Shiprocket] Failed to parse success response: {}", parseEx.getMessage());
+                    order.setShiprocketSyncStatus("ERROR");
+                    order.setShiprocketSyncMessage("Failed to parse API response: " + parseEx.getMessage());
+                    orderRepository.save(order);
                 }
             } else {
                 log.error("[Shiprocket] Failed to push order {}: {}", order.getOrderNumber(), res.getBody());
+                order.setShiprocketSyncStatus("FAILED");
+                order.setShiprocketSyncMessage("HTTP Error " + res.getStatusCode() + ": " + res.getBody());
+                orderRepository.save(order);
             }
 
         } catch (org.springframework.web.client.HttpStatusCodeException e) {
-            log.error("[Shiprocket] API error for {}: {} - {}", order.getOrderNumber(), e.getStatusCode(),
-                    e.getResponseBodyAsString());
+            log.error("\n=== Error Response ===\nHTTP Status: {}\nResponse Body:\n{}\n==========================", e.getStatusCode(), e.getResponseBodyAsString());
             if (e.getStatusCode().value() == 401) {
-                // Token expired, clear cache to force re-login
                 tokenCache.remove(TOKEN_CACHE_KEY);
             }
+            order.setShiprocketSyncStatus("FAILED");
+            order.setShiprocketSyncMessage("API Error " + e.getStatusCode() + ": " + e.getResponseBodyAsString());
+            orderRepository.save(order);
         } catch (Exception e) {
             log.error("[Shiprocket] Error pushing order {}: {}", order.getOrderNumber(), e.getMessage());
-            log.error("[Shiprocket] Exception trace: ", e);
+            order.setShiprocketSyncStatus("FAILED");
+            order.setShiprocketSyncMessage("Exception: " + e.getMessage());
+            orderRepository.save(order);
+        }
+    }
+
+    public String fetchCancellationReason(Long shiprocketOrderId, String token) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(token);
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            log.info("\n=== Shiprocket Request ===\nURL: https://apiv2.shiprocket.in/v1/external/orders/show/{}\n==========================", shiprocketOrderId);
+            ResponseEntity<String> res = restTemplate.exchange(
+                    "https://apiv2.shiprocket.in/v1/external/orders/show/" + shiprocketOrderId,
+                    HttpMethod.GET,
+                    entity,
+                    String.class);
+            log.info("\n=== Shiprocket Response ===\nHTTP Status: {}\nResponse Body:\n{}\n==========================", res.getStatusCode(), res.getBody());
+
+            JSONObject json = new JSONObject(res.getBody());
+            if (json.has("data")) {
+                JSONObject dataObj = json.getJSONObject("data");
+                if (dataObj.has("cancellation_reason")) {
+                    return dataObj.optString("cancellation_reason", "None specified");
+                }
+            }
+            if (json.has("cancellation_reason")) {
+                return json.optString("cancellation_reason", "None specified");
+            }
+            return "No reason provided by Shiprocket API";
+        } catch (Exception e) {
+            log.error("[Shiprocket] Error querying cancellation reason for ID {}: {}", shiprocketOrderId, e.getMessage());
+            return "Failed to fetch cancellation reason: " + e.getMessage();
         }
     }
 
@@ -349,7 +456,17 @@ public class ShiprocketService {
                     : "SKU-" + order.getOrderNumber() + "-" + (items.length() + 1)));
             item.put("units", oi.getQuantity());
             double unitPrice = oi.getUnitPrice().doubleValue();
-            item.put("selling_price", unitPrice);
+            BigDecimal itemPrice = oi.getTotalPrice();
+            BigDecimal discountAmount = order.getDiscountAmount() != null ? order.getDiscountAmount() : BigDecimal.ZERO;
+            BigDecimal orderSubtotal = order.getSubtotal() != null ? order.getSubtotal() : BigDecimal.ZERO;
+
+            if (discountAmount.compareTo(BigDecimal.ZERO) > 0 && orderSubtotal.compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal proportion = itemPrice.divide(orderSubtotal, 4, java.math.RoundingMode.HALF_UP);
+                itemPrice = itemPrice.subtract(discountAmount.multiply(proportion));
+            }
+            double discountedUnitPrice = itemPrice.doubleValue() / oi.getQuantity();
+            discountedUnitPrice = Math.round(discountedUnitPrice * 100.0) / 100.0;
+            item.put("selling_price", discountedUnitPrice);
 
              // Calculate product specific inclusive GST
              double taxPercent = 5.0;
@@ -357,7 +474,7 @@ public class ShiprocketService {
                  taxPercent = oi.getProduct().getTax().doubleValue();
              }
              double taxRate = taxPercent / 100.0;
-             double taxAmount = (unitPrice * taxRate / (1.0 + taxRate)) * oi.getQuantity();
+             double taxAmount = (discountedUnitPrice * taxRate / (1.0 + taxRate)) * oi.getQuantity();
              double roundedTax = Math.round(taxAmount * 100.0) / 100.0;
 
              item.put("tax", roundedTax);
