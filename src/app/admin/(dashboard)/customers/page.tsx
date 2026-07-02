@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
 import { fmt, fmtNum, fmtDate } from '@/lib/data';
-import { API_BASE, authHeaders } from '@/lib/api';
+import { API_BASE } from '@/lib/api';
 
 export default function AdminCustomers() {
   const [customers, setCustomers] = useState<any[]>([]);
@@ -74,6 +74,17 @@ export default function AdminCustomers() {
   ).toFixed(1) : '0';
   const avgSpent = customers.length > 0 ?
     customers.reduce((s: number, c: any) => s + (c.spent || 0), 0) / customers.length : 0;
+
+  if (loading) {
+    return (
+      <>
+        <AdminTopbar title="Customers" sub="View and manage customer accounts" />
+        <div className="admin-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px' }}>
+          <div style={{ color: 'var(--ink)', opacity: 0.5, fontSize: 16 }}>Loading customers...</div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
