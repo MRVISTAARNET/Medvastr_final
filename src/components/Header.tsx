@@ -104,11 +104,16 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
           <button className="ha mob-only" onClick={() => setMs(!mS)}>
             🔍
           </button>
-          <button className="ha" onClick={onAcct} title="Account" style={{ whiteSpace: 'nowrap', width: user ? 'auto' : '42px', padding: user ? '0 15px' : '0', borderRadius: user ? '999px' : '50%' }}>
+          <button className="ha ha-user-btn" onClick={onAcct} title="Account" style={{ whiteSpace: 'nowrap', width: user ? 'auto' : '42px', padding: user ? '0 15px' : '0', borderRadius: user ? '999px' : '50%' }}>
             {user ? (
-              <span style={{ fontSize: 13, fontWeight: 700, color: "var(--t)" }}>
-                Hello, {user.firstName || "Admin"}
-              </span>
+              <>
+                <span className="mob-hide" style={{ fontSize: 13, fontWeight: 700, color: "var(--t)" }}>
+                  Hello, {user.firstName || "Admin"}
+                </span>
+                <span className="mob-only" style={{ display: 'none' }}>
+                  👤
+                </span>
+              </>
             ) : (
               "👤"
             )}
@@ -180,6 +185,11 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
           .ha {
             -webkit-tap-highlight-color: transparent;
             touch-action: manipulation;
+          }
+          .ha-user-btn {
+            width: 42px !important;
+            padding: 0 !important;
+            border-radius: 50% !important;
           }
         }
       `}</style>
