@@ -98,4 +98,5 @@ public class ProductRequest {
     private String videoUrl;
 
     private String categoryIds;
+    private Boolean codDisabled;
 }

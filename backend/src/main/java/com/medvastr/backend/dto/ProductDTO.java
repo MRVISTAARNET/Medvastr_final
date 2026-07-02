@@ -47,6 +47,7 @@ public class ProductDTO {
     private Integer reviewCount;
     private boolean active;
     private boolean featured;
+    private boolean codDisabled;
     private String categoryName;
     private Long categoryId;
     private Long subcategoryId;

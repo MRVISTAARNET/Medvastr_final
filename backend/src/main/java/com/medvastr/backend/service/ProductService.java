@@ -168,6 +168,7 @@ public class ProductService {
                 .seoDescription(seoDescription)
                 .seoKeywords(seoKeywords)
                 .tax(r.getTax() != null ? r.getTax() : BigDecimal.ZERO)
+                .codDisabled(r.getCodDisabled() != null ? r.getCodDisabled() : false)
                 .slug(generateUniqueSlug(r.getName()))
                 .build();
 
@@ -264,6 +265,7 @@ public class ProductService {
         p.setSeoDescription(seoDescription);
         p.setSeoKeywords(seoKeywords);
         p.setTax(r.getTax() != null ? r.getTax() : BigDecimal.ZERO);
+        p.setCodDisabled(r.getCodDisabled() != null ? r.getCodDisabled() : false);
 
         if (r.getCategoryId() != null)
             catRepo.findById(r.getCategoryId()).ifPresent(p::setCategory);
@@ -503,6 +505,7 @@ public class ProductService {
                 .reviewCount(p.getReviewCount())
                 .active(p.isActive())
                 .featured(p.isFeatured())
+                .codDisabled(p.isCodDisabled())
                 .categoryName(p.getCategory() != null ? p.getCategory().getName() : null)
                 .categoryId(p.getCategory() != null ? p.getCategory().getId() : null)
                 .subcategoryId(p.getSubcategory() != null ? p.getSubcategory().getId() : null)

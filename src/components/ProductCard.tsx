@@ -193,12 +193,6 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
             </div>
           )}
         </div>
-
-        <div className="pc-foot-actions">
-          <button className="pc-quick-add" onClick={(e) => { e.stopPropagation(); addToCart(p, ci, defaultSize); }}>
-            Quick Add
-          </button>
-        </div>
       </div>
     </div>
   );

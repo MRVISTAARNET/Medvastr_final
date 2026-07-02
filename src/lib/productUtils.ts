@@ -139,6 +139,7 @@ export function mapApiProduct(p: any): Product {
     shortDescription: p.shortDescription,
     material: p.material,
     tags: p.tags,
+    codDisabled: p.codDisabled !== undefined ? p.codDisabled : false,
   };
 }
 

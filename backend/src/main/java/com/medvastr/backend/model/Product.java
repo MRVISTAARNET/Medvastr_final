@@ -116,6 +116,9 @@ public class Product {
     @Builder.Default
     private boolean featured = false;
 
+    @Builder.Default
+    private boolean codDisabled = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;

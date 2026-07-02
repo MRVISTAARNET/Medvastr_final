@@ -73,6 +73,7 @@ export default function CheckoutPage() {
 
   const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const tot = Math.max(0, sub + shippingCost - promoDiscount);
+  const hasCodDisabled = cart.some(i => i.codDisabled === true);
 
   // Shiprocket Serviceability Call
   useEffect(() => {
@@ -168,6 +169,12 @@ export default function CheckoutPage() {
     };
     document.body.appendChild(script);
   }, []);
+
+  useEffect(() => {
+    if (hasCodDisabled && form.paymentMethod === "COD") {
+      setForm(f => ({ ...f, paymentMethod: "ONLINE" }));
+    }
+  }, [hasCodDisabled, form.paymentMethod]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -487,14 +494,35 @@ export default function CheckoutPage() {
               </div>
               <span className="text-2xl">💳</span>
             </div>
-            <div onClick={() => setForm(f => ({ ...f, paymentMethod: 'COD' }))} className={`co-pay-method ${form.paymentMethod === 'COD' ? 'active' : ''}`}>
-              <div className="co-radio-circle" />
-              <div className="co-pay-info">
-                <span className="co-pay-name">Cash on Delivery</span>
-                <span className="co-pay-desc">Pay upon receiving your package at your doorstep</span>
+            {hasCodDisabled ? (
+              <div 
+                style={{ 
+                  opacity: 0.6, 
+                  cursor: "not-allowed", 
+                  background: "#f8fafc", 
+                  border: "1px dashed #cbd5e1" 
+                }} 
+                className="co-pay-method"
+              >
+                <div className="co-radio-circle" style={{ background: "#cbd5e1", border: "1px solid #cbd5e1" }} />
+                <div className="co-pay-info">
+                  <span className="co-pay-name" style={{ color: "#64748b" }}>Cash on Delivery (Unavailable)</span>
+                  <span className="co-pay-desc" style={{ color: "#ef4444", fontWeight: 600 }}>
+                    COD is disabled for one or more items in your cart.
+                  </span>
+                </div>
+                <span className="text-2xl">🚚</span>
               </div>
-              <span className="text-2xl">🚚</span>
-            </div>
+            ) : (
+              <div onClick={() => setForm(f => ({ ...f, paymentMethod: 'COD' }))} className={`co-pay-method ${form.paymentMethod === 'COD' ? 'active' : ''}`}>
+                <div className="co-radio-circle" />
+                <div className="co-pay-info">
+                  <span className="co-pay-name">Cash on Delivery</span>
+                  <span className="co-pay-desc">Pay upon receiving your package at your doorstep</span>
+                </div>
+                <span className="text-2xl">🚚</span>
+              </div>
+            )}
           </div>
 
           <button onClick={placeOrder} disabled={submitting} className="pdp-buy-btn mt-4">

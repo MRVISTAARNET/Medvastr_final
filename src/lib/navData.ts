@@ -91,7 +91,6 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'UNDER SCRUBS & TOPS',
                 items: [
-                    { label: 'All Under Scrubs', href: '/products?cat=men-underscrub&gender=men' },
                     { label: 'Full Sleeve Compression', href: '/products?cat=men-full-sleeve-compression-underscrub&gender=men' },
                     { label: 'Cotton T-Shirt', href: '/products?cat=men-cotton-tshirt&gender=men' },
                 ]
@@ -120,7 +119,6 @@ export const NAV_DATA: NavItem[] = [
             {
                 title: 'UNDER SCRUBS & TOPS',
                 items: [
-                    { label: 'All Under Scrubs', href: '/products?cat=women-underscrub&gender=women' },
                     { label: 'Full Sleeve Compression', href: '/products?cat=women-full-sleeve-compression-underscrub&gender=women' },
                     { label: 'Cotton T-Shirt', href: '/products?cat=women-cotton-tshirt&gender=women' },
                 ]

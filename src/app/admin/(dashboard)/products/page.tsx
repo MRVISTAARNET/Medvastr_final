@@ -135,6 +135,7 @@ export default function AdminProducts() {
     seoTitle: '',
     seoDescription: '',
     seoKeywords: '',
+    codDisabled: false,
   });
 
   useEffect(() => {
@@ -177,6 +178,7 @@ export default function AdminProducts() {
         seoKeywords: editingProduct.seoKeywords || '',
         weightValue: wv,
         weightUnit: wu,
+        codDisabled: editingProduct.codDisabled ?? false,
       });
     } else {
       setForm({
@@ -184,7 +186,7 @@ export default function AdminProducts() {
         price: 0, origPrice: 0, tax: 0, type: 'scrubs', description: '', fabric: '',
         sizes: 'S, M, L, XL', clrs: '', imgs: [], videoUrl: '', active: true, imgsByColor: {},
         badge: 'None', fit: 'Classic Fit', pocketCount: 0, weightValue: '0.5', weightUnit: 'kg', careInstructions: 'Machine Wash Cold', shortDescription: '',
-        material: '', sku: '', stock: 100, seoTitle: '', seoDescription: '', seoKeywords: ''
+        material: '', sku: '', stock: 100, seoTitle: '', seoDescription: '', seoKeywords: '', codDisabled: false
       });
     }
   }, [editingProduct, isModalOpen]);
@@ -558,9 +560,16 @@ export default function AdminProducts() {
                   <div className="fg"><label>Fabric / Composition <span style={{ color: 'red' }}>*</span></label><input id="p-fabric" value={form.fabric} onChange={handleInputChange} placeholder="e.g. Polyester Blend" /></div>
                   <div className="fg"><label>Fabric Composition Detail (Material) <span style={{ color: 'red' }}>*</span></label><input id="p-material" value={form.material} onChange={handleInputChange} placeholder="e.g. 72% Polyester, 21% Rayon, 7% Spandex" /></div>
                   <div className="fg"><label>Performance Description <span style={{ color: 'red' }}>*</span></label><textarea id="p-description" value={form.description} onChange={handleInputChange} rows={3} placeholder="Full technical description..." /></div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
                     <div className="fg"><label>Featured Badge</label><select id="p-badge" value={form.badge} onChange={handleInputChange}><option value="None">No Badge</option><option value="Bestseller">Bestseller</option><option value="New Arrival">New Arrival</option><option value="Trending">Trending</option></select></div>
                     <div className="fg"><label>Status</label><select id="p-active" value={String(form.active)} onChange={(e) => setForm((p: any) => ({ ...p, active: e.target.value === 'true' }))}><option value="true">Active</option><option value="false">Inactive</option></select></div>
+                    <div className="fg">
+                      <label>COD Settings</label>
+                      <select id="p-codDisabled" value={String(form.codDisabled)} onChange={(e) => setForm((p: any) => ({ ...p, codDisabled: e.target.value === 'true' }))}>
+                        <option value="false">Enable COD</option>
+                        <option value="true">Disable COD</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               )}

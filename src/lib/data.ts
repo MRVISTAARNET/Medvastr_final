@@ -76,6 +76,7 @@ export interface Product {
   shortDescription?: string;
   material?: string;
   tags?: string;
+  codDisabled?: boolean;
 }
 
 

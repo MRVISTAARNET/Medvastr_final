@@ -473,7 +473,7 @@ function ProductsContent() {
             {cats.map((c) => (
               <button
                 key={c.id}
-                onClick={() => { updateURL({ cat: c.id, pg: "1" }); }}
+                onClick={() => { updateURL({ cat: c.id, type: null, pg: "1" }); }}
                 style={{
                   whiteSpace: 'nowrap',
                   padding: '8px 18px',
@@ -551,7 +551,7 @@ function ProductsContent() {
                     <div
                       key={c.id}
                       className={`sb3-item${cat === c.id ? " active" : ""}`}
-                      onClick={() => { updateURL({ cat: c.id, pg: "1" }); if (mobF) setMobF(false); }}
+                      onClick={() => { updateURL({ cat: c.id, type: null, pg: "1" }); if (mobF) setMobF(false); }}
                       style={{ paddingLeft: c.depth * 14 }}
                     >
                       <div className="sb3-check-box" />
