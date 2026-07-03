@@ -279,13 +279,25 @@ export default function AdminProducts() {
     const variants = sizeList.flatMap((s: string) => clrsList.map((c: string) => {
       const hex = getColHex(c);
       const variantSku = generateVariantSku(form.gender, form.style, form.name, c, s);
+      
+      let variantStock = Number(form.stock);
+      if (editingProduct && editingProduct.variants) {
+        const existingVariant = editingProduct.variants.find((v: any) => 
+          v.size?.trim().toUpperCase() === s.trim().toUpperCase() && 
+          v.colorName?.trim().toLowerCase() === c.trim().toLowerCase()
+        );
+        if (existingVariant && existingVariant.stockQuantity !== undefined) {
+          variantStock = existingVariant.stockQuantity;
+        }
+      }
+
       return {
         sku: variantSku,
         barcode: variantSku,
         size: s,
         colorName: c,
         colorHex: hex,
-        stockQuantity: Number(form.stock),
+        stockQuantity: variantStock,
         variantPrice: Number(form.price),
         variantOriginalPrice: Number(form.origPrice) || undefined,
         imageUrl: form.imgsByColor?.[hex]?.[0] || form.imgs?.[0] || '',
@@ -634,7 +646,7 @@ export default function AdminProducts() {
                 <div style={{ display: 'grid', gap: '20px' }}>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                     <div className="fg"><label>Parent SKU <span style={{ color: 'red' }}>*</span></label><input id="p-sku" value={form.sku} onChange={handleInputChange} placeholder="e.g. MVS-SCR-NAV" /></div>
-                    <div className="fg"><label>Initial Stock (Per Variant) <span style={{ color: 'red' }}>*</span></label><input id="p-stock" value={form.stock} onChange={handleInputChange} type="number" min="0" /></div>
+                    <div className="fg"><label>Initial Stock (Per Variant) <span style={{ color: 'red' }}>*</span></label><input id="p-stock" value={form.stock} onChange={handleInputChange} type="number" min="0" disabled={!!editingProduct} title={editingProduct ? "Manage stock in the Inventory tab" : ""} /></div>
                   </div>
                   <div className="fg"><label>Colors (Comma separated)</label><input id="p-clrs" value={form.clrs} onChange={handleInputChange} placeholder="Navy Blue, Wine, Teal" /></div>
                   <div className="fg"><label>Sizes (Comma separated)</label><input id="p-sizes" value={form.sizes} onChange={handleInputChange} /></div>
