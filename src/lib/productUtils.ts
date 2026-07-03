@@ -66,10 +66,34 @@ function buildClrImgs(api: any, normalizedImgs: string[]): Record<string, string
 }
 
 export function mapApiProduct(p: any): Product {
-  const variants = p.variants || [];
+  // Fix old wine color globally in API response
+  const fixColor = (hex: string) => hex?.toLowerCase() === '#722f37' ? '#3D274E' : hex;
+
+  const variants = (p.variants || []).map((v: any) => ({
+    ...v,
+    colorHex: fixColor(v.colorHex)
+  }));
+
+  if (p.images) {
+    p.images = p.images.map((img: any) => ({
+      ...img,
+      colorHex: fixColor(img.colorHex),
+      colorCode: fixColor(img.colorCode)
+    }));
+  }
+
   const colors = uniqueColors(variants);
-  const normalizedImgs = (p.imageUrls || []).map((u: string) => normalizeMediaUrl(u));
-  const clrImgs = buildClrImgs(p, normalizedImgs);
+  
+  const normalizedImgs = (p.imageUrls || []).map((u: string) => {
+    let nu = normalizeMediaUrl(u);
+    if (nu.toLowerCase().includes('%23722f37') || nu.toLowerCase().includes('#722f37')) {
+      nu = nu.replace(/%23722f37/ig, '%233D274E').replace(/#722f37/ig, '#3D274E');
+    }
+    return nu;
+  });
+
+  // Pass the updated variants and images to buildClrImgs via a mock api object
+  const clrImgs = buildClrImgs({ ...p, variants, images: p.images }, normalizedImgs);
   
   // Re-order colors so that the color of the first uploaded image is always first
   if (normalizedImgs.length > 0 && colors.length > 0) {
