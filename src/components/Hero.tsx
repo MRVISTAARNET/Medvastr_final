@@ -39,7 +39,7 @@ export default function Hero({ onShop }: HeroProps) {
     <div className="hero">
       <div className="hero-track" style={{ transform: `translateX(-${cur * 100}%)` }}>
         {dynamicSlides.map((s, i) => (
-          <div className="hero-slide" key={i} style={{ height: '100vh', minHeight: '100vh', display: 'block' }}>
+          <div className="hero-slide" key={i} style={{ width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <SmartSlide base={s.base} />
           </div>
         ))}
@@ -105,12 +105,11 @@ function SmartSlide({ base }: { base: string }) {
   };
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
     <img
       src={src}
       alt="Hero Promotional Banner"
       onError={tryNext}
-      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+      style={{ width: "100%", height: "auto", display: "block" }}
     />
   );
 }

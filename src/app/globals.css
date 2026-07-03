@@ -3092,7 +3092,7 @@ textarea {
   }
 
   .logo .lw {
-    font-size: 26px !important;
+    font-size: 30px !important;
   }
 
   .logo .lt {
@@ -3175,7 +3175,7 @@ textarea {
 
 @media (max-width: 480px) {
   .logo .lw {
-    font-size: 24px !important;
+    font-size: 28px !important;
   }
 
   .pg-3,
