@@ -445,13 +445,13 @@ export default function AdminProducts() {
             @page { size: 2in 1in; margin: 0; }
             body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; background: white; -webkit-print-color-adjust: exact; }
             .grid { display: flex; flex-direction: column; align-items: center; }
-            .label-card { width: 2in; height: 1in; box-sizing: border-box; padding: 6px 6px 2px 6px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center; page-break-after: always; background: white; }
-            .header { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; font-size: 6.5px; font-weight: bold; line-height: 1.1; border-bottom: 1px solid #e2e8f0; padding-bottom: 1px; }
+            .label-card { width: 2in; height: 1in; box-sizing: border-box; padding: 6px 6px 4px 6px; display: flex; flex-direction: column; justify-content: center; gap: 3px; align-items: center; text-align: center; page-break-after: always; background: white; }
+            .header { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; font-size: 8px; font-weight: bold; line-height: 1.1; border-bottom: 1px solid #e2e8f0; padding-bottom: 2px; }
             .header-left { text-align: left; max-width: 65%; word-break: break-word; }
-            .header-right { text-align: right; font-weight: 800; font-size: 6.5px; white-space: nowrap; }
-            .barcode-svg { width: 1.8in !important; height: 0.42in !important; margin: 1px 0; }
-            .footer-info { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 7.5px; font-weight: 600; margin-top: 0px; }
-            .sku-text { font-family: monospace; font-size: 7.5px; }
+            .header-right { text-align: right; font-weight: 800; font-size: 8px; white-space: nowrap; }
+            .barcode-svg { width: 1.8in !important; height: 0.42in !important; margin: 0; }
+            .footer-info { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 9px; font-weight: 600; margin-top: 0px; }
+            .sku-text { font-family: monospace; font-size: 9px; }
           </style>
           <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
         </head>
