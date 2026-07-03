@@ -266,9 +266,9 @@ public class ShiprocketService {
                     order.setCourierName(courier);
                 }
 
-                if ("CANCELED".equalsIgnoreCase(status)) {
+                if (status != null && status.toUpperCase().contains("CANCEL")) {
                     String reason = fetchCancellationReason(srOrderId, token);
-                    order.setShiprocketSyncMessage("CANCELED. Reason: " + reason);
+                    order.setShiprocketSyncMessage("CANCELLED. Reason: " + reason);
                 } else {
                     order.setShiprocketSyncMessage("Synced successfully with status: " + status);
                 }
@@ -336,9 +336,9 @@ public class ShiprocketService {
                         order.setCourierName(courier);
                     }
 
-                    if ("CANCELED".equalsIgnoreCase(status)) {
+                    if (status != null && status.toUpperCase().contains("CANCEL")) {
                         String reason = fetchCancellationReason(srOrderId, token);
-                        order.setShiprocketSyncMessage("CANCELED. Reason: " + reason);
+                        order.setShiprocketSyncMessage("CANCELLED. Reason: " + reason);
                     } else {
                         order.setShiprocketSyncMessage("Synced successfully with status: " + status);
                     }
