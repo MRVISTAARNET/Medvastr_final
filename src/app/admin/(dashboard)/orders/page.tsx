@@ -100,9 +100,9 @@ export default function AdminOrders() {
 
   const statusBadge = (s: string) => {
     const map: any = {
-      DELIVERED: 'b-grn', SHIPPED: 'b-blue',
-      PROCESSING: 'b-warn', PENDING: 'b-purple',
-      CANCELLED: 'b-red', REFUNDED: 'b-gray',
+      DELIVERED: 'b-grn', SHIPPED: 'b-blue', OUT_FOR_DELIVERY: 'b-blue',
+      PROCESSING: 'b-warn', PENDING: 'b-purple', CONFIRMED: 'b-purple', PACKED: 'b-blue',
+      CANCELLED: 'b-red', REFUNDED: 'b-gray', RETURN_REQUESTED: 'b-warn', RETURNED: 'b-red',
     };
     return <span className={`badge ${map[s] || 'b-gray'}`}>{s}</span>;
   };
@@ -263,11 +263,15 @@ export default function AdminOrders() {
                   <label>Order Status</label>
                   <select id="o-status" defaultValue={editingOrder.status}>
                     <option value="PENDING">Pending</option>
+                    <option value="CONFIRMED">Confirmed</option>
                     <option value="PROCESSING">Processing</option>
                     <option value="PACKED">Packed</option>
                     <option value="SHIPPED">Shipped</option>
+                    <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
                     <option value="DELIVERED">Delivered</option>
                     <option value="CANCELLED">Cancelled</option>
+                    <option value="RETURN_REQUESTED">Return Requested</option>
+                    <option value="RETURNED">Returned</option>
                   </select>
                 </div>
                 <div className="fg">
