@@ -4697,7 +4697,7 @@ footer {
 
   .nl {
     width: 100% !important;
-    font-size: 16px !important;
+    font-size: 17px !important;
     padding: 14px 24px !important;
     border-bottom: 1px solid #f1f5f9 !important;
     border-radius: 0 !important;
@@ -5353,15 +5353,15 @@ html {
 
 /* Gallery - Reference Style (e.g. Zara/Nike vertical) */
 .pdp-gallery-wrap {
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 20px;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
 }
 
 @media (min-width: 768px) {
   .pdp-gallery-wrap {
-    flex-direction: row;
-    align-items: flex-start;
+    flex-direction: column !important;
+    align-items: stretch !important;
   }
 }
 
@@ -7260,6 +7260,8 @@ body {
     overflow: visible !important;
     height: auto !important;
     z-index: 10;
+    display: flex !important;
+    flex-direction: column !important;
   }
 
   .pdp-info-sec {

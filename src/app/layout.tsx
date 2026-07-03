@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Plus_Jakarta_Sans, Inter } from "next/font/google";
 import "./globals.css";
 import { SITE_URL } from "@/lib/api";
+import Script from "next/script";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -81,7 +82,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${serif.variable} ${sans.variable} ${inter.variable}`}>
-      <body style={{ fontFamily: "var(--font-sans)" }}>{children}</body>
+      <body style={{ fontFamily: "var(--font-sans)" }}>
+        {children}
+        <Script
+          strategy="afterInteractive"
+          src="https://www.googletagmanager.com/gtag/js?id=G-6W495VS5P5"
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-6W495VS5P5', {
+                page_path: window.location.pathname,
+              });
+            `,
+          }}
+        />
+      </body>
     </html>
   );
 }
