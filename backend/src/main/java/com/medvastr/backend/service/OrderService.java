@@ -605,6 +605,7 @@ public class OrderService {
                                 : (i.getProduct() != null && !i.getProduct().getImages().isEmpty()
                                         ? i.getProduct().getImages().iterator().next().getImageUrl()
                                         : null))
+                        .sku(i.getVariant() != null && i.getVariant().getSku() != null ? i.getVariant().getSku() : (i.getProduct() != null ? i.getProduct().getSku() : ""))
                         .quantity(i.getQuantity())
                         .unitPrice(i.getUnitPrice())
                         .totalPrice(i.getTotalPrice())

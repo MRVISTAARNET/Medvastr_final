@@ -45,6 +45,7 @@ export default function AdminOrders() {
             customer: o.shippingName || 'Unknown',
             phone: o.shippingPhone || '',
             items: o.items?.length || 0,
+            itemsList: o.items || [],
             total: o.totalAmount,
             status: o.status,
             date: o.createdAt,
@@ -293,6 +294,41 @@ export default function AdminOrders() {
                   <button type="button" className="btn-secondary" style={{ width: '100%' }} onClick={() => {
                     alert(`Invoice generated for ${editingOrder.num}. Download started.`);
                   }}>📄 Generate Invoice</button>
+                </div>
+              </div>
+
+              <div style={{ marginTop: '20px', padding: '16px', background: 'var(--bg2)', borderRadius: '8px', border: '1px solid var(--bdr)' }}>
+                <div style={{ fontWeight: 600, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>📦 Ordered Items</span>
+                </div>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid var(--bdr)', textAlign: 'left', color: 'var(--txt2)' }}>
+                        <th style={{ paddingBottom: '8px' }}>Item</th>
+                        <th style={{ paddingBottom: '8px' }}>SKU</th>
+                        <th style={{ paddingBottom: '8px' }}>Variant</th>
+                        <th style={{ paddingBottom: '8px' }}>Qty</th>
+                        <th style={{ paddingBottom: '8px' }}>Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(editingOrder.itemsList || []).map((item: any, idx: number) => (
+                        <tr key={idx} style={{ borderBottom: '1px solid var(--bdr)' }}>
+                          <td style={{ padding: '8px 0', fontWeight: 500 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <img src={item.imageUrl || 'https://via.placeholder.com/40'} alt={item.productName} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
+                              {item.productName}
+                            </div>
+                          </td>
+                          <td style={{ padding: '8px 0', color: 'var(--txt2)' }}>{item.sku || '—'}</td>
+                          <td style={{ padding: '8px 0', color: 'var(--txt2)' }}>{item.size} / {item.colorName}</td>
+                          <td style={{ padding: '8px 0' }}>{item.quantity}</td>
+                          <td style={{ padding: '8px 0', fontWeight: 600 }}>{fmt(item.totalPrice)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
 
