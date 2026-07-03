@@ -194,7 +194,7 @@ export default function AdminProducts() {
   // COLOR UTILS
   const COLOR_MAP: Record<string, string> = {
     'navy blue': '#1a2b4a', 'navy': '#000080', 'royal blue': '#4169e1', 'light blue': '#add8e6',
-    'maroon': '#800000', 'wine': '#722f37', 'black': '#000000', 'white': '#ffffff',
+    'maroon': '#800000', 'wine': '#3D274E', 'black': '#000000', 'white': '#ffffff',
     'green': '#2e7d32', 'olive': '#556b2f', 'teal': '#008080', 'grey': '#808080',
     'pink': '#ffc0cb', 'purple': '#800080', 'burgundy': '#800020', 'lavender': '#e6e6fa'
   };

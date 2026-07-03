@@ -14,7 +14,7 @@ export const COLS = [
   { n: "Dark Blue", h: "#1a2b4a" },
   { n: "Light Blue", h: "#add8e6" },
   { n: "Maroon", h: "#800000" },
-  { n: "Wine", h: "#722f37" },
+  { n: "Wine", h: "#3D274E" },
 ];
 
 export const SIZES = ["XS", "S", "M", "L", "XL", "2XL"];
