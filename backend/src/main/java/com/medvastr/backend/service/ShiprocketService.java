@@ -608,7 +608,9 @@ public class ShiprocketService {
             return;
 
         String s = shiprocketStatus.toLowerCase();
-        if (s.contains("shipped")) {
+        if (s.contains("pickup scheduled") || s.contains("ready to ship") || s.contains("manifested")) {
+            order.setStatus(Order.OrderStatus.PROCESSING); // or PACKED based on your flow
+        } else if (s.contains("shipped") || s.contains("in transit")) {
             order.setStatus(Order.OrderStatus.SHIPPED);
         } else if (s.contains("delivered")) {
             order.setStatus(Order.OrderStatus.DELIVERED);
