@@ -466,7 +466,7 @@ public class ShiprocketService {
             }
             double discountedUnitPrice = itemPrice.doubleValue() / oi.getQuantity();
             discountedUnitPrice = Math.round(discountedUnitPrice * 100.0) / 100.0;
-            item.put("selling_price", discountedUnitPrice);
+            item.put("selling_price", String.format("%.2f", discountedUnitPrice));
 
              // Calculate product specific inclusive GST
              double taxPercent = 5.0;
@@ -477,7 +477,7 @@ public class ShiprocketService {
              double taxAmount = (discountedUnitPrice * taxRate / (1.0 + taxRate)) * oi.getQuantity();
              double roundedTax = Math.round(taxAmount * 100.0) / 100.0;
 
-             item.put("tax", roundedTax);
+             item.put("tax", taxPercent);
 
             boolean isIntrastate = false;
             String buyerState = order.getShippingState();
@@ -487,13 +487,13 @@ public class ShiprocketService {
 
             if (isIntrastate) {
                 double splitTax = Math.round((roundedTax / 2.0) * 100.0) / 100.0;
-                item.put("cgst", splitTax);
-                item.put("sgst", splitTax);
-                item.put("igst", 0.0);
+                item.put("cgst", String.format("%.2f", splitTax));
+                item.put("sgst", String.format("%.2f", splitTax));
+                item.put("igst", "0.00");
             } else {
-                item.put("cgst", 0.0);
-                item.put("sgst", 0.0);
-                item.put("igst", roundedTax);
+                item.put("cgst", "0.00");
+                item.put("sgst", "0.00");
+                item.put("igst", String.format("%.2f", roundedTax));
             }
             items.put(item);
 
@@ -519,7 +519,7 @@ public class ShiprocketService {
 
         shipOrder.put("order_items", items);
         shipOrder.put("payment_method", order.getPaymentMethod().name().equals("COD") ? "COD" : "Prepaid");
-        shipOrder.put("sub_total", order.getTotalAmount().doubleValue());
+        shipOrder.put("sub_total", String.format("%.2f", order.getTotalAmount().doubleValue()));
 
         shipOrder.put("length", 15);
         shipOrder.put("breadth", 15);
