@@ -359,6 +359,15 @@ public class OrderService {
             throw new RuntimeException("Order number already exists: " + newOrderNumber);
         }
         o.setOrderNumber(newOrderNumber);
+        
+        // Reset Shiprocket sync fields so it can be re-synced under the new ID
+        o.setShiprocketOrderId(null);
+        o.setShiprocketShipmentId(null);
+        o.setShiprocketSyncStatus(null);
+        o.setShiprocketSyncMessage(null);
+        o.setTrackingNumber(null);
+        o.setCourierName(null);
+        
         Order saved = orderRepo.save(o);
         return toDTO(saved);
     }
