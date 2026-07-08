@@ -81,4 +81,10 @@ public class OrderController {
     public ResponseEntity<ApiResponse<String>> pushToShiprocketSync(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.ok("Sync push attempted", s.pushToShiprocketSync(id)));
     }
+
+    @PutMapping("/admin/{id}/rename")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<OrderDTO>> rename(@PathVariable Long id, @RequestParam String orderNumber) {
+        return ResponseEntity.ok(ApiResponse.ok("Order number updated", s.renameOrder(id, orderNumber)));
+    }
 }

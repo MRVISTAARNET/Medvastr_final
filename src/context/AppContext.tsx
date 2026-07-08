@@ -205,15 +205,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       } else {
         clearToken();
         setUser(null);
+        dispatch({ type: "CLR" });
       }
     } catch {
       clearToken();
       setUser(null);
+      dispatch({ type: "CLR" });
     }
   }, []);
 
   useEffect(() => {
-    const onUnauthorized = () => setUser(null);
+    const onUnauthorized = () => {
+      setUser(null);
+      dispatch({ type: "CLR" });
+    };
     window.addEventListener(UNAUTHORIZED_EVENT, onUnauthorized);
     return () => window.removeEventListener(UNAUTHORIZED_EVENT, onUnauthorized);
   }, []);

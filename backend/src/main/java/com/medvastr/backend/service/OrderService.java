@@ -216,7 +216,7 @@ public class OrderService {
                 .build();
 
         Order saved = orderRepo.save(o);
-        String orderNum = "MVS-" + LocalDateTime.now().getYear() + "-" + String.format("%06d", saved.getId());
+        String orderNum = "MVS-" + LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")) + "-" + String.format("%06d", saved.getId());
         saved.setOrderNumber(orderNum);
 
         if (saved.getPaymentMethod() == Order.PaymentMethod.ONLINE) {
@@ -305,9 +305,17 @@ public class OrderService {
     public OrderDTO cancel(String num) {
         Order o = orderRepo.findByOrderNumber(num).orElseThrow();
         assertOrderOwner(o);
-        if (o.getStatus() == Order.OrderStatus.DELIVERED) {
-            throw new RuntimeException("Cannot cancel delivered order");
+        
+        // Block cancellation if order is already processed/shipped or courier assigned
+        if (o.getStatus() == Order.OrderStatus.DELIVERED 
+                || o.getStatus() == Order.OrderStatus.SHIPPED 
+                || o.getStatus() == Order.OrderStatus.OUT_FOR_DELIVERY
+                || o.getStatus() == Order.OrderStatus.PROCESSING 
+                || o.getStatus() == Order.OrderStatus.PACKED
+                || (o.getTrackingNumber() != null && !o.getTrackingNumber().trim().isEmpty() && !o.getTrackingNumber().equalsIgnoreCase("null"))) {
+            throw new RuntimeException("Cannot cancel order as it is already being processed or shipped");
         }
+
         if (o.getStatus() == Order.OrderStatus.CANCELLED) {
             return toDTO(o);
         }
@@ -342,6 +350,17 @@ public class OrderService {
     @Transactional
     public String pushToShiprocketSync(Long id) {
         return shiprocketService.createOrderSync(id);
+    }
+
+    @Transactional
+    public OrderDTO renameOrder(Long id, String newOrderNumber) {
+        Order o = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
+        if (orderRepo.findByOrderNumber(newOrderNumber).isPresent()) {
+            throw new RuntimeException("Order number already exists: " + newOrderNumber);
+        }
+        o.setOrderNumber(newOrderNumber);
+        Order saved = orderRepo.save(o);
+        return toDTO(saved);
     }
 
     public TrackingDTO track(String num) {
@@ -566,7 +585,7 @@ public class OrderService {
     }
 
     private String genNum() {
-        return "MVS-" + LocalDateTime.now().getYear() + "-" + String.format("%06d", orderRepo.count() + 1);
+        return "MVS-" + LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")) + "-" + String.format("%06d", orderRepo.count() + 1);
     }
 
     private OrderDTO toDTO(Order o) {

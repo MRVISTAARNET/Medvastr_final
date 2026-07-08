@@ -340,6 +340,37 @@ export default function AdminOrders() {
                 <div style={{ fontWeight: 600, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <span>🚀 Shiprocket Integration</span>
                 </div>
+                
+                <div className="fg-row" style={{ marginBottom: '12px' }}>
+                  <div className="fg">
+                    <label>Order Number (Edit if duplicate error on Shiprocket)</label>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <input type="text" id="o-num-edit" defaultValue={editingOrder.num} style={{ flex: 1 }} />
+                      <button type="button" className="btn-primary" style={{ padding: '0 16px', background: '#008080', border: 'none', color: 'white', borderRadius: '8px', cursor: 'pointer' }} onClick={async () => {
+                        const newNum = (document.getElementById('o-num-edit') as HTMLInputElement).value;
+                        if (!newNum || newNum === editingOrder.num) return alert("Please enter a new order number");
+                        try {
+                          const token = localStorage.getItem('token');
+                          const res = await fetch(`${API_BASE}/orders/admin/${editingOrder.id}/rename?orderNumber=${encodeURIComponent(newNum)}`, {
+                            method: 'PUT',
+                            headers: { 'Authorization': `Bearer ${token}` }
+                          });
+                          const data = await res.json();
+                          if (data.success) {
+                            alert("Order number updated successfully.");
+                            editingOrder.num = newNum;
+                            setOrders(orders.map(o => o.id === editingOrder.id ? { ...o, num: newNum } : o));
+                          } else {
+                            alert(data.message || "Failed to update order number");
+                          }
+                        } catch (e) {
+                          alert("Failed to update order number");
+                        }
+                      }}>Rename</button>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="fg-row">
                   <div className="fg">
                     <label>Courier AWB</label>
