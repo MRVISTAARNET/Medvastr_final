@@ -3116,13 +3116,13 @@ textarea {
   }
 
   .logo .lw {
-    font-size: 34px !important;
+    font-size: 38px !important;
     font-weight: 900 !important;
   }
 
   .logo .lt {
-    font-size: 9px !important;
-    letter-spacing: 2px !important;
+    font-size: 10px !important;
+    letter-spacing: 3px !important;
     margin-left: 2px !important;
   }
 
@@ -3131,43 +3131,43 @@ textarea {
   }
 
   .hdr-row {
-    padding: 8px 12px !important;
+    padding: 8px 16px !important;
     display: flex !important;
     flex-wrap: nowrap !important;
     justify-content: space-between !important;
     align-items: center !important;
-    height: 62px !important;
-    min-height: 62px !important;
-    gap: 6px !important;
+    height: 72px !important;
+    min-height: 72px !important;
+    gap: 8px !important;
   }
 
   .ha {
-    width: 34px !important;
-    height: 34px !important;
-    font-size: 17px !important;
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 20px !important;
   }
 
   .cart-pill {
-    height: 34px !important;
-    padding: 0 10px !important;
-    font-size: 11px !important;
-    gap: 5px !important;
+    height: 40px !important;
+    padding: 0 14px !important;
+    font-size: 13px !important;
+    gap: 6px !important;
     margin-left: 2px !important;
   }
 
   .cart-n {
-    width: 16px !important;
-    height: 16px !important;
-    font-size: 8px !important;
+    width: 18px !important;
+    height: 18px !important;
+    font-size: 10px !important;
   }
 
   .hdr-acts {
-    gap: 2px !important;
+    gap: 6px !important;
   }
 
   .srch-col {
     position: absolute !important;
-    top: 62px !important;
+    top: 72px !important;
     left: 0 !important;
     right: 0 !important;
     width: 100% !important;
@@ -3266,7 +3266,7 @@ textarea {
 
 @media (max-width: 480px) {
   .logo .lw {
-    font-size: 28px !important;
+    font-size: 32px !important;
   }
 
   .pg-3,
@@ -4788,8 +4788,8 @@ footer {
 
   .nl {
     width: 100% !important;
-    font-size: 17px !important;
-    padding: 14px 24px !important;
+    font-size: 20px !important;
+    padding: 18px 24px !important;
     border-bottom: 1px solid #f1f5f9 !important;
     border-radius: 0 !important;
     white-space: normal !important;
@@ -4924,12 +4924,12 @@ footer {
   }
 
   .logo .lw {
-    font-size: 22px;
+    font-size: 34px !important;
   }
 
   .logo .lt {
-    font-size: 7px;
-    letter-spacing: 2px;
+    font-size: 9px !important;
+    letter-spacing: 3px !important;
   }
 
   .cart-pill {

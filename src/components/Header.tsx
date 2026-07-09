@@ -267,7 +267,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             z-index: 1;
           }
           .mob-nav-brand {
-            font-size: 28px;
+            font-size: 34px;
             font-weight: 900;
             color: #0f172a;
             letter-spacing: -1px;
