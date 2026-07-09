@@ -167,7 +167,19 @@ export default function AdminOrders() {
     }
   };
 
-  const statusBadge = (s: string) => {
+  const renderUnifiedStatusBadge = (status: string, srStatus: string) => {
+    if (srStatus) {
+      const s = srStatus.toLowerCase();
+      let cls = 'b-gray';
+      if (s.includes('delivered') && !s.includes('undelivered')) cls = 'b-grn';
+      else if (s.includes('out for delivery')) cls = 'b-blue';
+      else if (s.includes('in transit') || s.includes('reached') || s.includes('shipped')) cls = 'b-blue';
+      else if (s.includes('pickup') || s.includes('manifest') || s.includes('label') || s.includes('delay') || s.includes('schedule')) cls = 'b-warn';
+      else if (s.includes('rto') || s.includes('return') || s.includes('cancel') || s.includes('exception') || s.includes('failed') || s.includes('ndr') || s.includes('undelivered')) cls = 'b-red';
+
+      return <span className={`badge ${cls}`}>🚀 {srStatus}</span>;
+    }
+
     const map: any = {
       DELIVERED: 'b-grn', SHIPPED: 'b-blue', OUT_FOR_DELIVERY: 'b-blue',
       PROCESSING: 'b-warn', PENDING: 'b-purple', CONFIRMED: 'b-purple', PACKED: 'b-warn',
@@ -185,29 +197,7 @@ export default function AdminOrders() {
       RETURNED: 'RTO',
       RETURN_REQUESTED: 'RTO Requested'
     };
-    return <span className={`badge ${map[s] || 'b-gray'}`}>{labels[s] || s}</span>;
-  };
-
-  const srBadge = (srStatus: string) => {
-    if (!srStatus) return null;
-    const s = srStatus.toLowerCase();
-    let cls = 'b-gray';
-    if (s.includes('delivered') && !s.includes('undelivered')) cls = 'b-grn';
-    else if (s.includes('out for delivery')) cls = 'b-blue';
-    else if (s.includes('in transit') || s.includes('reached')) cls = 'b-blue';
-    else if (s.includes('pickup') || s.includes('manifest') || s.includes('label')) cls = 'b-warn';
-    else if (s.includes('rto') || s.includes('return') || s.includes('cancel')) cls = 'b-red';
-    else if (s.includes('ndr') || s.includes('undelivered')) cls = 'b-red';
-
-    return (
-      <span
-        className={`badge ${cls}`}
-        style={{ fontSize: '10px', marginLeft: '4px', opacity: 0.85 }}
-        title={`Shiprocket: ${srStatus}`}
-      >
-        🚀 {srStatus}
-      </span>
-    );
+    return <span className={`badge ${map[status] || 'b-gray'}`}>{labels[status] || status}</span>;
   };
 
   return (
@@ -407,10 +397,7 @@ export default function AdminOrders() {
                     </td>
                     <td>{fmtDateTime(o.date)}</td>
                     <td>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', alignItems: 'flex-start' }}>
-                        {statusBadge(o.status)}
-                        {o.shiprocketStatus && srBadge(o.shiprocketStatus)}
-                      </div>
+                      {renderUnifiedStatusBadge(o.status, o.shiprocketStatus)}
                     </td>
                     <td>
                       <div className="act-btns">
@@ -470,7 +457,7 @@ export default function AdminOrders() {
                       {editingOrder.courier && (
                         <span style={{ fontSize: '12px', color: '#64748b' }}>via {editingOrder.courier}</span>
                       )}
-                      {editingOrder.shiprocketStatus && srBadge(editingOrder.shiprocketStatus)}
+                      {renderUnifiedStatusBadge(editingOrder.status, editingOrder.shiprocketStatus)}
                     </div>
                   </div>
                   <button

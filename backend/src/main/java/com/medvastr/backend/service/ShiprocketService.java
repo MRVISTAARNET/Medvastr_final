@@ -620,7 +620,8 @@ public class ShiprocketService {
         // ── PROCESSING (Pickup / Manifest) ────────────────────────────────
         } else if (s.contains("pickup scheduled") || s.contains("pickup generated")
                 || s.contains("manifested") || s.contains("label generated")
-                || s.contains("processing") || s.contains("pickup queued")) {
+                || s.contains("processing") || s.contains("pickup queued")
+                || s.contains("pickup exception")) {
             order.setStatus(Order.OrderStatus.PROCESSING);
 
         // ── SHIPPED / IN TRANSIT ──────────────────────────────────────────
