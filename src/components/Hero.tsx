@@ -68,7 +68,7 @@ export default function Hero({ onShop }: HeroProps) {
             <img
               src={s.src}
               alt={s.title || "Hero Promotional Banner"}
-              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center bottom", display: "block" }}
+              style={{ width: "100%", height: "auto", objectFit: "contain", objectPosition: "center bottom", display: "block" }}
             />
           ) : (
             <SmartSlide base={s.base} />
@@ -156,7 +156,7 @@ function SmartSlide({ base }: { base: string }) {
       src={src}
       alt="Hero Promotional Banner"
       onError={tryNext}
-      style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center bottom", display: "block" }}
+      style={{ width: "100%", height: "auto", objectFit: "contain", objectPosition: "center bottom", display: "block" }}
     />
   );
 }
