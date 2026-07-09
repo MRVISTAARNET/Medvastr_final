@@ -39,7 +39,7 @@ export default function Hero({ onShop }: HeroProps) {
     <div className="hero">
       <div className="hero-track" style={{ transform: `translateX(-${cur * 100}%)` }}>
         {dynamicSlides.map((s, i) => (
-          <div className="hero-slide" key={i} style={{ width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="hero-slide" key={i}>
             <SmartSlide base={s.base} />
           </div>
         ))}
@@ -109,7 +109,7 @@ function SmartSlide({ base }: { base: string }) {
       src={src}
       alt="Hero Promotional Banner"
       onError={tryNext}
-      style={{ width: "100%", height: "auto", display: "block" }}
+      style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
     />
   );
 }

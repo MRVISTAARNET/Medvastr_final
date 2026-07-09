@@ -1074,6 +1074,9 @@ textarea {
   position: relative;
   overflow: hidden;
   background: var(--ink);
+  height: calc(100vh - 120px);
+  min-height: 520px;
+  max-height: 900px;
 }
 
 .mcol-sub:first-child {
@@ -1268,10 +1271,15 @@ textarea {
   position: relative;
   overflow: hidden;
   background: transparent;
+  /* Fill the full viewport below the header (header ~120px tallest) */
+  height: calc(100vh - 120px);
+  min-height: 520px;
+  max-height: 900px;
 }
 
 .hero-track {
   display: flex;
+  height: 100%;
   transition: transform 0.72s var(--ease);
 }
 
@@ -1279,27 +1287,43 @@ textarea {
   min-width: 100%;
   position: relative;
   display: block;
-  height: auto;
-  min-height: auto;
+  height: 100%;
+}
+
+.hero-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
 }
 
 @media (max-width: 1024px) {
-  .hero-slide {
-    height: auto;
+  .hero {
+    height: calc(100vh - 110px);
+    min-height: 460px;
   }
 }
 
 @media (max-width: 768px) {
+  .hero {
+    height: 100vw !important;
+    min-height: 320px !important;
+    max-height: 520px !important;
+  }
   .hero-slide {
-    height: auto !important;
-    min-height: auto !important;
+    height: 100% !important;
+  }
+  .hero-slide img {
+    object-position: center center !important;
   }
 }
 
 @media (max-width: 480px) {
-  .hero-slide {
-    height: auto !important;
-    min-height: auto !important;
+  .hero {
+    height: 100vw !important;
+    min-height: 300px !important;
+    max-height: 450px !important;
   }
 }
 
@@ -3176,14 +3200,19 @@ textarea {
     font-size: 26px !important;
   }
 
-  .hero-slide {
-    height: 280px !important;
+  .hero {
+    height: 92vw !important;
+    min-height: 300px !important;
+    max-height: 480px !important;
   }
-  
+  .hero-slide {
+    height: 100% !important;
+  }
   .hero-slide img {
     height: 100% !important;
     object-fit: cover !important;
-    object-position: center !important;
+    object-position: center center !important;
+    width: 100% !important;
   }
 
   /* Footer mobile */
@@ -4830,9 +4859,9 @@ footer {
 
 @media (max-width: 768px) {
   .hero-slide {
-    height: auto;
-    min-height: 260px;
-    padding: 40px 20px;
+    height: 100% !important;
+    min-height: unset !important;
+    padding: 0 !important;
   }
 
   .slide-body {
