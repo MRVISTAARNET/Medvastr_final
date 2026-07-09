@@ -20,10 +20,6 @@ function TrackContent() {
   const [orderData, setOrderData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
-  const [feedbackRating, setFeedbackRating] = useState<number | null>(null);
-  const [feedbackRemarks, setFeedbackRemarks] = useState("");
-  const [submittingFeedback, setSubmittingFeedback] = useState(false);
 
   useEffect(() => {
     const q = searchParams.get("order");
@@ -40,9 +36,6 @@ function TrackContent() {
     setError("");
     setTracking(null);
     setOrderData(null);
-    setFeedbackSubmitted(false);
-    setFeedbackRating(null);
-    setFeedbackRemarks("");
     try {
       // Fetch timeline
       const trackJson = await apiJson<any>(`/orders/track/${encodeURIComponent(n)}`);
@@ -80,13 +73,6 @@ function TrackContent() {
         setOrderData(orderJson.data);
       }
 
-      // Check feedback
-      try {
-        const fbCheck = await apiJson<any>(`/orders/feedback/check/${encodeURIComponent(n)}`);
-        if (fbCheck.success) {
-          setFeedbackSubmitted(fbCheck.data === true);
-        }
-      } catch (e) {}
     } catch (err: any) {
       if (err.status === 401 || err.message?.toLowerCase().includes("unauthorized") || err.message?.toLowerCase().includes("login") || err.message?.toLowerCase().includes("access")) {
         setIsAuthOpen(true);
@@ -179,22 +165,67 @@ function TrackContent() {
                 textAlign: "center"
               }}>
                 <div style={{ fontSize: "13px", fontWeight: "700", color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" }}>Current Status</div>
-                <div style={{ 
-                  fontSize: "18px", 
-                  fontWeight: "800", 
-                  color: orderData.status === "DELIVERED" ? "#166534" : 
-                         orderData.status === "CANCELLED" ? "#991b1b" : 
-                         orderData.status === "SHIPPED" || orderData.status === "OUT_FOR_DELIVERY" ? "#1e40af" : "#92400e",
-                  background: orderData.status === "DELIVERED" ? "#dcfce7" : 
-                              orderData.status === "CANCELLED" ? "#fee2e2" : 
-                              orderData.status === "SHIPPED" || orderData.status === "OUT_FOR_DELIVERY" ? "#dbeafe" : "#fef3c7",
-                  padding: "6px 18px",
-                  borderRadius: "999px",
-                  display: "inline-block",
-                  marginBottom: "20px"
-                }}>
-                  {orderData.status || "CONFIRMED"}
-                </div>
+                {(() => {
+                  const s = orderData.status;
+                  const labelMap: any = {
+                    PENDING: "Order Placed",
+                    CONFIRMED: "Ready to Ship",
+                    PROCESSING: "Pickup & Manifest",
+                    PACKED: "Pickup & Manifest",
+                    SHIPPED: "In Transit",
+                    OUT_FOR_DELIVERY: "Out for Delivery",
+                    DELIVERED: "Delivered",
+                    CANCELLED: "Cancelled",
+                    RETURNED: "Returned / RTO",
+                    RETURN_REQUESTED: "Return Requested",
+                  };
+                  const colorMap: any = {
+                    DELIVERED: { color: "#166534", bg: "#dcfce7" },
+                    CANCELLED: { color: "#991b1b", bg: "#fee2e2" },
+                    RETURNED: { color: "#92400e", bg: "#fef3c7" },
+                    RETURN_REQUESTED: { color: "#92400e", bg: "#fef3c7" },
+                    SHIPPED: { color: "#1e40af", bg: "#dbeafe" },
+                    OUT_FOR_DELIVERY: { color: "#1e40af", bg: "#dbeafe" },
+                    PROCESSING: { color: "#7c3aed", bg: "#ede9fe" },
+                    PACKED: { color: "#7c3aed", bg: "#ede9fe" },
+                    CONFIRMED: { color: "#0369a1", bg: "#e0f2fe" },
+                    PENDING: { color: "#0369a1", bg: "#e0f2fe" },
+                  };
+                  const { color, bg } = colorMap[s] || { color: "#334155", bg: "#f1f5f9" };
+                  const label = labelMap[s] || s;
+                  // Live Shiprocket status from orderData
+                  const srStatus = orderData.shiprocketSyncStatus;
+                  return (
+                    <div>
+                      <div style={{
+                        fontSize: "18px",
+                        fontWeight: "800",
+                        color,
+                        background: bg,
+                        padding: "6px 20px",
+                        borderRadius: "999px",
+                        display: "inline-block",
+                        marginBottom: srStatus ? "10px" : "20px"
+                      }}>
+                        {label}
+                      </div>
+                      {srStatus && (
+                        <div style={{
+                          fontSize: "13px",
+                          color: "#475569",
+                          marginBottom: "20px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "6px"
+                        }}>
+                          <span style={{ fontSize: "16px" }}>🚀</span>
+                          <span>Shiprocket: <strong>{srStatus}</strong></span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 {tracking.trackingNumber ? (
                   <div style={{ width: "100%" }}>
