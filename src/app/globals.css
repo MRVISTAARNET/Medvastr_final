@@ -3088,32 +3088,80 @@ textarea {
   }
 
   .logo {
-    margin: 0 auto;
+    margin: 0;
   }
 
   .logo .lw {
-    font-size: 30px !important;
+    font-size: 34px !important;
+    font-weight: 900 !important;
   }
 
   .logo .lt {
-    font-size: 8px !important;
-    letter-spacing: 1px !important;
+    font-size: 9px !important;
+    letter-spacing: 2px !important;
+    margin-left: 2px !important;
+  }
+
+  .hdr-logo-area {
+    gap: 8px !important;
   }
 
   .hdr-row {
-    padding: 10px 16px !important;
+    padding: 8px 12px !important;
     display: flex !important;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    height: auto !important;
-    min-height: 70px;
+    flex-wrap: nowrap !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    height: 62px !important;
+    min-height: 62px !important;
+    gap: 6px !important;
+  }
+
+  .ha {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 17px !important;
+  }
+
+  .cart-pill {
+    height: 34px !important;
+    padding: 0 10px !important;
+    font-size: 11px !important;
+    gap: 5px !important;
+    margin-left: 2px !important;
+  }
+
+  .cart-n {
+    width: 16px !important;
+    height: 16px !important;
+    font-size: 8px !important;
+  }
+
+  .hdr-acts {
+    gap: 2px !important;
   }
 
   .srch-col {
-    order: 3;
-    width: 100%;
-    margin-top: 10px;
-    padding-bottom: 10px;
+    position: absolute !important;
+    top: 62px !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 999 !important;
+    margin: 0 !important;
+    padding: 10px 16px !important;
+    background: white !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08) !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+  }
+
+  .srch-box {
+    max-width: 100% !important;
+  }
+
+  .srch-drop {
+    width: calc(100% - 32px) !important;
+    top: 100% !important;
   }
 
   .srch-col.mob-on {
@@ -3122,6 +3170,20 @@ textarea {
 
   .srch-col:not(.mob-on) {
     display: none !important;
+  }
+
+  .sec-t, .clr-t {
+    font-size: 26px !important;
+  }
+
+  .hero-slide {
+    height: 280px !important;
+  }
+  
+  .hero-slide img {
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
   }
 
   /* Footer mobile */

@@ -33,7 +33,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
   return (
     <div id="hdr">
       <div className="hdr-row">
-        <div style={{ display: "flex", alignItems: "center", gap: 30 }}>
+        <div className="hdr-logo-area" style={{ display: "flex", alignItems: "center", gap: 30 }}>
           <button className="ha mob-only" onClick={() => setMn(true)}>
             ☰
           </button>

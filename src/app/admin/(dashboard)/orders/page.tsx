@@ -67,7 +67,19 @@ export default function AdminOrders() {
 
   const filteredOrders = orders.filter(o => {
     const matchesSearch = !search || o.num.toLowerCase().includes(search.toLowerCase()) || o.customer.toLowerCase().includes(search.toLowerCase());
-    const matchesFilter = filter === 'ALL' || o.status === filter;
+    
+    let matchesFilter = false;
+    if (filter === 'ALL') {
+      matchesFilter = true;
+    } else if (filter === 'PROCESSING') {
+      matchesFilter = o.status === 'PROCESSING' || o.status === 'PACKED';
+    } else if (filter === 'SHIPPED') {
+      matchesFilter = o.status === 'SHIPPED' || o.status === 'OUT_FOR_DELIVERY';
+    } else if (filter === 'RETURNED') {
+      matchesFilter = o.status === 'RETURNED' || o.status === 'RETURN_REQUESTED';
+    } else {
+      matchesFilter = o.status === filter;
+    }
     
     let matchesDate = true;
     if (o.date) {
@@ -101,10 +113,22 @@ export default function AdminOrders() {
   const statusBadge = (s: string) => {
     const map: any = {
       DELIVERED: 'b-grn', SHIPPED: 'b-blue', OUT_FOR_DELIVERY: 'b-blue',
-      PROCESSING: 'b-warn', PENDING: 'b-purple', CONFIRMED: 'b-purple', PACKED: 'b-blue',
+      PROCESSING: 'b-warn', PENDING: 'b-purple', CONFIRMED: 'b-purple', PACKED: 'b-warn',
       CANCELLED: 'b-red', REFUNDED: 'b-gray', RETURN_REQUESTED: 'b-warn', RETURNED: 'b-red',
     };
-    return <span className={`badge ${map[s] || 'b-gray'}`}>{s}</span>;
+    const labels: any = {
+      PENDING: 'New',
+      CONFIRMED: 'Ready to Ship',
+      PROCESSING: 'Pickups & Manifests',
+      PACKED: 'Pickups & Manifests',
+      SHIPPED: 'In Transit',
+      OUT_FOR_DELIVERY: 'In Transit',
+      DELIVERED: 'Delivered',
+      CANCELLED: 'Cancelled',
+      RETURNED: 'RTO',
+      RETURN_REQUESTED: 'RTO'
+    };
+    return <span className={`badge ${map[s] || 'b-gray'}`}>{labels[s] || s}</span>;
   };
 
   return (
@@ -116,19 +140,35 @@ export default function AdminOrders() {
       <div className="admin-content">
         <div className="panel">
           <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', marginBottom: '22px' }}>
-            {['ALL', 'PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED'].map(s => (
-              <div
-                key={s}
-                className="stat-card"
-                style={{ cursor: 'pointer', padding: '14px 16px', borderColor: filter === s ? 'var(--teal)' : '', background: filter === s ? 'var(--teal4)' : '' }}
-                onClick={() => setFilter(s)}
-              >
-                <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: 'var(--txt3)' }}>{s}</div>
-                <div className="stat-n" style={{ fontSize: '22px', marginTop: '6px' }}>
-                  {s === 'ALL' ? fmtNum(orders.length) : fmtNum(orders.filter(o => o.status === s).length)}
+            {['ALL', 'PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED'].map(s => {
+              const labelMap: any = {
+                ALL: 'All Orders',
+                PENDING: 'New',
+                PROCESSING: 'Pickups & Manifests',
+                SHIPPED: 'In Transit',
+                DELIVERED: 'Delivered'
+              };
+              
+              const count = s === 'ALL' ? orders.length : 
+                            s === 'PENDING' ? orders.filter(o => o.status === 'PENDING').length :
+                            s === 'PROCESSING' ? orders.filter(o => o.status === 'PROCESSING' || o.status === 'PACKED').length :
+                            s === 'SHIPPED' ? orders.filter(o => o.status === 'SHIPPED' || o.status === 'OUT_FOR_DELIVERY').length :
+                            orders.filter(o => o.status === 'DELIVERED').length;
+
+              return (
+                <div
+                  key={s}
+                  className="stat-card"
+                  style={{ cursor: 'pointer', padding: '14px 16px', borderColor: filter === s ? 'var(--teal)' : '', background: filter === s ? 'var(--teal4)' : '' }}
+                  onClick={() => setFilter(s)}
+                >
+                  <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: 'var(--txt3)' }}>{labelMap[s]}</div>
+                  <div className="stat-n" style={{ fontSize: '22px', marginTop: '6px' }}>
+                    {fmtNum(count)}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="table-card">
@@ -169,9 +209,14 @@ export default function AdminOrders() {
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
                 >
-                  {['ALL', 'PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'].map(s => (
-                    <option key={s} value={s}>{s}</option>
-                  ))}
+                  <option value="ALL">All Orders</option>
+                  <option value="PENDING">New</option>
+                  <option value="CONFIRMED">Ready to Ship</option>
+                  <option value="PROCESSING">Pickups & Manifests</option>
+                  <option value="SHIPPED">In Transit</option>
+                  <option value="DELIVERED">Delivered</option>
+                  <option value="CANCELLED">Cancelled</option>
+                  <option value="RETURNED">RTO</option>
                 </select>
                 <button
                   type="button"
@@ -262,16 +307,13 @@ export default function AdminOrders() {
                 <div className="fg">
                   <label>Order Status</label>
                   <select id="o-status" defaultValue={editingOrder.status}>
-                    <option value="PENDING">Pending</option>
-                    <option value="CONFIRMED">Confirmed</option>
-                    <option value="PROCESSING">Processing</option>
-                    <option value="PACKED">Packed</option>
-                    <option value="SHIPPED">Shipped</option>
-                    <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
+                    <option value="PENDING">New</option>
+                    <option value="CONFIRMED">Ready to Ship</option>
+                    <option value="PROCESSING">Pickups & Manifests</option>
+                    <option value="SHIPPED">In Transit</option>
                     <option value="DELIVERED">Delivered</option>
                     <option value="CANCELLED">Cancelled</option>
-                    <option value="RETURN_REQUESTED">Return Requested</option>
-                    <option value="RETURNED">Returned</option>
+                    <option value="RETURNED">RTO</option>
                   </select>
                 </div>
                 <div className="fg">

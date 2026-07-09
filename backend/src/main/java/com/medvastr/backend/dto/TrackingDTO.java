@@ -16,6 +16,7 @@ public class TrackingDTO {
     private String status;
     private String trackingNumber;
     private String courierName;
+    private String estimatedDeliveryDate;
     private List<TrackingEvent> timeline;
 }
 

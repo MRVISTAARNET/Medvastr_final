@@ -113,6 +113,9 @@ public class Order {
 
     private String courierName;
 
+    @Column(length = 50)
+    private String estimatedDeliveryDate;
+
     private Long shiprocketOrderId;
 
     private Long shiprocketShipmentId;

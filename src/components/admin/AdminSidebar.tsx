@@ -38,6 +38,7 @@ const AdminSidebar = () => {
       section: 'Customers', items: [
         { name: 'Customers', icon: '👥', href: '/admin/customers' },
         { name: 'Reviews', icon: '⭐', href: '/admin/reviews' },
+        { name: 'Feedback', icon: '💬', href: '/admin/feedback' },
         { name: 'Inquiries', icon: '📩', href: '/admin/inquiries' },
       ]
     },

@@ -65,6 +65,8 @@ public class SecurityConfig {
                                     "/api/shipping/**", "/shipping/**")
                             .permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/orders/track/**", "/orders/track/**", "/api/orders/*", "/orders/*", "/api/orders/shipping-fee", "/orders/shipping-fee").permitAll()
+                            .requestMatchers(HttpMethod.POST, "/api/orders/feedback", "/orders/feedback").permitAll()
+                            .requestMatchers(HttpMethod.GET, "/api/orders/feedback/check/**", "/orders/feedback/check/**").permitAll()
                             .requestMatchers("/api/payments/webhook", "/payments/webhook").permitAll()
                             .requestMatchers("/api/v1/tracking/updates", "/v1/tracking/updates").permitAll()
                             .requestMatchers("/api/newsletter/**", "/newsletter/**").permitAll()

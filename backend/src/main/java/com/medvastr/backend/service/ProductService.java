@@ -104,6 +104,25 @@ public class ProductService {
     }
 
     public Page<ProductDTO> search(String q, Pageable p) {
+        String query = q.trim().toLowerCase();
+        
+        // Match specific gender search patterns
+        boolean isMenSearch = query.equals("men") || query.equals("mens") || query.equals("man") || query.equals("mans")
+                || query.contains(" men ") || query.contains(" mens ") || query.contains(" man ") || query.contains(" mans ")
+                || query.startsWith("men ") || query.startsWith("mens ") || query.startsWith("man ") || query.startsWith("mans ")
+                || query.endsWith(" men") || query.endsWith(" mens") || query.endsWith(" man") || query.endsWith(" mans");
+                
+        boolean isWomenSearch = query.equals("women") || query.equals("womens") || query.equals("woman") || query.equals("womans")
+                || query.contains(" women ") || query.contains(" womens ") || query.contains(" woman ") || query.contains(" womans ")
+                || query.startsWith("women ") || query.startsWith("womens ") || query.startsWith("woman ") || query.startsWith("womans ")
+                || query.endsWith(" women") || query.endsWith(" womens") || query.endsWith(" woman") || query.endsWith(" womans");
+
+        if (isMenSearch && !isWomenSearch) {
+            return productRepo.searchForGender(q, List.of("women"), p).map(this::toDTO);
+        } else if (isWomenSearch && !isMenSearch) {
+            return productRepo.searchForGender(q, List.of("men"), p).map(this::toDTO);
+        }
+
         return productRepo.search(q, p).map(this::toDTO);
     }
 

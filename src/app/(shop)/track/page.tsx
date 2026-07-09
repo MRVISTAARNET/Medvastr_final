@@ -20,6 +20,10 @@ function TrackContent() {
   const [orderData, setOrderData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [feedbackRating, setFeedbackRating] = useState<number | null>(null);
+  const [feedbackRemarks, setFeedbackRemarks] = useState("");
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
 
   useEffect(() => {
     const q = searchParams.get("order");
@@ -36,6 +40,9 @@ function TrackContent() {
     setError("");
     setTracking(null);
     setOrderData(null);
+    setFeedbackSubmitted(false);
+    setFeedbackRating(null);
+    setFeedbackRemarks("");
     try {
       // Fetch timeline
       const trackJson = await apiJson<any>(`/orders/track/${encodeURIComponent(n)}`);
@@ -72,6 +79,14 @@ function TrackContent() {
       if (orderJson.success && orderJson.data) {
         setOrderData(orderJson.data);
       }
+
+      // Check feedback
+      try {
+        const fbCheck = await apiJson<any>(`/orders/feedback/check/${encodeURIComponent(n)}`);
+        if (fbCheck.success) {
+          setFeedbackSubmitted(fbCheck.data === true);
+        }
+      } catch (e) {}
     } catch (err: any) {
       if (err.status === 401 || err.message?.toLowerCase().includes("unauthorized") || err.message?.toLowerCase().includes("login") || err.message?.toLowerCase().includes("access")) {
         setIsAuthOpen(true);
@@ -85,6 +100,15 @@ function TrackContent() {
   };
 
   const getEstimatedDelivery = () => {
+    if (tracking?.estimatedDeliveryDate) {
+      try {
+        const cleanedStr = tracking.estimatedDeliveryDate.replace(" ", "T");
+        const d = new Date(cleanedStr);
+        if (!isNaN(d.getTime())) {
+          return d.toLocaleDateString("en-US", { weekday: 'short', month: 'short', day: 'numeric' });
+        }
+      } catch (e) {}
+    }
     if (!orderData?.createdAt) return "TBD";
     const d = new Date(orderData.createdAt);
     d.setDate(d.getDate() + 5); // Example: 5 days shipping
@@ -187,6 +211,127 @@ function TrackContent() {
                   </div>
                 </div>
               )}
+              {/* FEEDBACK WIDGET */}
+              <div style={{ marginTop: '20px', marginBottom: '40px', padding: '30px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#0f172a', marginBottom: '6px', textAlign: 'center' }}>
+                  Rate Your Experience
+                </h3>
+                <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '24px', textAlign: 'center' }}>
+                  How likely are you to recommend Medvastr to your friends and family?
+                </p>
+
+                {feedbackSubmitted ? (
+                  <div style={{ textAlign: 'center', padding: '10px 0' }}>
+                    <div style={{ fontSize: '40px', marginBottom: '12px' }}>🎉</div>
+                    <h4 style={{ fontSize: '16px', fontWeight: '800', color: '#10b981', margin: '0 0 6px' }}>Thank you for your feedback!</h4>
+                    <p style={{ margin: 0, fontSize: '14px', color: '#64748b' }}>Your response helps us improve the Medvastr shopping experience.</p>
+                  </div>
+                ) : (
+                  <div>
+                    {/* Rating buttons 0-10 */}
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '24px' }}>
+                      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
+                        const isSelected = feedbackRating === num;
+                        return (
+                          <button
+                            key={num}
+                            onClick={() => setFeedbackRating(num)}
+                            style={{
+                              width: '42px',
+                              height: '42px',
+                              borderRadius: '50%',
+                              border: isSelected ? 'none' : '1px solid #cbd5e1',
+                              background: isSelected ? '#008080' : 'white',
+                              color: isSelected ? 'white' : '#0f172a',
+                              fontWeight: '700',
+                              fontSize: '14px',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              transition: 'all 0.2s ease',
+                              boxShadow: isSelected ? '0 4px 10px rgba(0, 128, 128, 0.3)' : 'none'
+                            }}
+                          >
+                            {num}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#64748b', padding: '0 10px', marginTop: '-18px', marginBottom: '24px' }}>
+                      <span>Not likely at all</span>
+                      <span>Extremely likely</span>
+                    </div>
+
+                    <div style={{ marginBottom: '20px' }}>
+                      <label style={{ display: 'block', fontSize: '14px', fontWeight: '700', color: '#0f172a', marginBottom: '8px' }}>
+                        Remarks / Suggestions (Optional)
+                      </label>
+                      <textarea
+                        rows={3}
+                        placeholder="Please tell us about your experience..."
+                        value={feedbackRemarks}
+                        onChange={(e) => setFeedbackRemarks(e.target.value)}
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          borderRadius: '8px',
+                          border: '1px solid #cbd5e1',
+                          outline: 'none',
+                          fontSize: '14px',
+                          resize: 'none',
+                          boxSizing: 'border-box'
+                        }}
+                      />
+                    </div>
+
+                    <button
+                      onClick={async () => {
+                        if (feedbackRating === null) {
+                          alert('Please select a rating score first.');
+                          return;
+                        }
+                        setSubmittingFeedback(true);
+                        try {
+                          const res = await apiJson<any>('/orders/feedback', {
+                            method: 'POST',
+                            body: JSON.stringify({
+                              orderNumber: tracking.orderNumber,
+                              rating: feedbackRating,
+                              remarks: feedbackRemarks
+                            })
+                          });
+                          if (res.success) {
+                            setFeedbackSubmitted(true);
+                          } else {
+                            alert(res.message || 'Failed to submit feedback');
+                          }
+                        } catch (e) {
+                          alert('Failed to submit feedback. Please try again.');
+                        } finally {
+                          setSubmittingFeedback(false);
+                        }
+                      }}
+                      disabled={feedbackRating === null || submittingFeedback}
+                      style={{
+                        width: '100%',
+                        background: '#0f172a',
+                        color: 'white',
+                        padding: '14px',
+                        border: 'none',
+                        borderRadius: '10px',
+                        fontWeight: '700',
+                        fontSize: '15px',
+                        cursor: feedbackRating === null || submittingFeedback ? 'not-allowed' : 'pointer',
+                        opacity: feedbackRating === null ? 0.6 : 1
+                      }}
+                    >
+                      {submittingFeedback ? 'Submitting...' : 'Submit Feedback'}
+                    </button>
+                  </div>
+                )}
+              </div>
 
               {/* Order Details Grid */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "30px", marginBottom: "40px" }}>

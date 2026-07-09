@@ -673,4 +673,49 @@ public class ShiprocketService {
             return "{\"success\": false, \"message\": \"" + e.getMessage() + "\"}";
         }
     }
+
+    @Transactional
+    public void syncTrackingStatus(Order order) {
+        if (order.getTrackingNumber() == null || order.getTrackingNumber().trim().isEmpty() || order.getTrackingNumber().equalsIgnoreCase("null")) {
+            return;
+        }
+        try {
+            String trackingDetails = getTrackingDetails(order.getTrackingNumber());
+            if (trackingDetails != null && !trackingDetails.contains("\"success\":false") && !trackingDetails.contains("\"success\": false")) {
+                JSONObject json = new JSONObject(trackingDetails);
+                if (json.has("tracking_data")) {
+                    JSONObject trackingData = json.getJSONObject("tracking_data");
+                    
+                    // Extract current status
+                    String status = "";
+                    if (trackingData.has("shipment_track")) {
+                        JSONArray trackArr = trackingData.getJSONArray("shipment_track");
+                        if (trackArr.length() > 0) {
+                            JSONObject trackObj = trackArr.getJSONObject(0);
+                            status = trackObj.optString("current_status");
+                            
+                            // Extract EDD (Estimated Delivery Date)
+                            String edd = trackObj.optString("edd");
+                            if (edd != null && !edd.isEmpty() && !edd.equalsIgnoreCase("null")) {
+                                order.setEstimatedDeliveryDate(edd);
+                            }
+                        }
+                    }
+                    
+                    if (status == null || status.isEmpty()) {
+                        status = trackingData.optString("shipment_status");
+                    }
+                    
+                    if (status != null && !status.isEmpty()) {
+                        log.info("[Shiprocket Sync] Updating order {} status from tracking: {}", order.getOrderNumber(), status);
+                        updateOrderStatusMapping(order, status);
+                    }
+                    
+                    orderRepository.save(order);
+                }
+            }
+        } catch (Exception e) {
+            log.error("[Shiprocket Sync] Failed to sync tracking for order {}: {}", order.getOrderNumber(), e.getMessage());
+        }
+    }
 }

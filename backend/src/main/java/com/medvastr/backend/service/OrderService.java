@@ -375,18 +375,33 @@ public class OrderService {
     public TrackingDTO track(String num) {
         Order o = orderRepo.findByOrderNumber(num).orElseThrow(() -> new RuntimeException("Not found: " + num));
         assertOrderOwner(o);
-        List<String> steps = Arrays.asList("PENDING", "CONFIRMED", "PROCESSING", "PACKED", "SHIPPED", "OUT_FOR_DELIVERY",
-                "DELIVERED");
-        Map<String, String> lbl = Map.of(
-                "PENDING", "Order Placed",
-                "CONFIRMED", "Confirmed",
-                "PROCESSING", "Processing",
-                "PACKED", "Packed",
-                "SHIPPED", "Shipped",
-                "OUT_FOR_DELIVERY", "Out for Delivery",
-                "DELIVERED", "Delivered");
 
-        int cur = steps.indexOf(o.getStatus().name());
+        // Sync order status from Shiprocket tracking in real time
+        if (o.getTrackingNumber() != null && !o.getTrackingNumber().trim().isEmpty() && !o.getTrackingNumber().equalsIgnoreCase("null")
+                && o.getStatus() != Order.OrderStatus.DELIVERED
+                && o.getStatus() != Order.OrderStatus.CANCELLED
+                && o.getStatus() != Order.OrderStatus.RETURNED) {
+            shiprocketService.syncTrackingStatus(o);
+            // Refresh order reference to get updated status and estimated delivery date
+            o = orderRepo.findByOrderNumber(num).orElseThrow();
+        }
+
+        List<String> steps = Arrays.asList("PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED");
+        Map<String, String> lbl = new java.util.HashMap<>();
+        lbl.put("PENDING", "New");
+        lbl.put("CONFIRMED", "Ready to Ship");
+        lbl.put("PROCESSING", "Pickups & Manifests");
+        lbl.put("SHIPPED", "In Transit");
+        lbl.put("DELIVERED", "Delivered");
+
+        String displayStatus = o.getStatus().name();
+        if ("PACKED".equals(displayStatus)) {
+            displayStatus = "PROCESSING";
+        } else if ("OUT_FOR_DELIVERY".equals(displayStatus)) {
+            displayStatus = "SHIPPED";
+        }
+
+        int cur = steps.indexOf(displayStatus);
         List<TrackingEvent> tl = new ArrayList<>();
         for (int i = 0; i < steps.size(); i++) {
             tl.add(TrackingEvent.builder()
@@ -402,6 +417,7 @@ public class OrderService {
                 .status(o.getStatus().name())
                 .trackingNumber(o.getTrackingNumber())
                 .courierName(o.getCourierName())
+                .estimatedDeliveryDate(o.getEstimatedDeliveryDate())
                 .timeline(tl)
                 .build();
     }
@@ -617,6 +633,7 @@ public class OrderService {
                 .shippingPhone(o.getShippingPhone())
                 .trackingNumber(o.getTrackingNumber())
                 .courierName(o.getCourierName())
+                .estimatedDeliveryDate(o.getEstimatedDeliveryDate())
                 .createdAt(o.getCreatedAt())
                 .deliveredAt(o.getDeliveredAt())
                 .razorpayOrderId(o.getRazorpayOrderId())

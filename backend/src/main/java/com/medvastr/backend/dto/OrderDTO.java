@@ -32,6 +32,7 @@ public class OrderDTO {
     private String shippingPhone;
     private String trackingNumber;
     private String courierName;
+    private String estimatedDeliveryDate;
     private String promoCode;
     private LocalDateTime createdAt;
     private LocalDateTime deliveredAt;
