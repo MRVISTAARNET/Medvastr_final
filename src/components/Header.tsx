@@ -22,9 +22,77 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
   const [mS, setMs] = useState(false); // Mobile Search
   const [mo, setMo] = useState<string | null>(null); // Mobile Open Group
 
-  const res = q
-    ? products.filter((p) => p.name.toLowerCase().includes(q.toLowerCase())).slice(0, 6)
-    : [];
+  const getSuggestions = () => {
+    if (!q) return [];
+    const query = q.trim().toLowerCase();
+    
+    // Check if query is exactly a gender category
+    const isExactMen = query === "men" || query === "man" || query === "mens" || query === "mans";
+    const isExactWomen = query === "women" || query === "woman" || query === "womens" || query === "womans";
+    
+    if (isExactMen) {
+      return products.filter((p) => {
+        const pGens = (p.gen || "men").toLowerCase().split(',').map((s: string) => s.trim());
+        return pGens.includes("men") || pGens.includes("unisex");
+      }).slice(0, 6);
+    }
+    
+    if (isExactWomen) {
+      return products.filter((p) => {
+        const pGens = (p.gen || "men").toLowerCase().split(',').map((s: string) => s.trim());
+        return pGens.includes("women") || pGens.includes("unisex");
+      }).slice(0, 6);
+    }
+
+    // Determine targeted gender tags
+    const isMenSearch = query.includes(" men ") || query.includes(" mens ") || query.includes(" man ") || query.includes(" mans ")
+        || query.startsWith("men ") || query.startsWith("mens ") || query.startsWith("man ") || query.startsWith("mans ")
+        || query.endsWith(" men") || query.endsWith(" mens") || query.endsWith(" man") || query.endsWith(" mans");
+        
+    const isWomenSearch = query.includes(" women ") || query.includes(" womens ") || query.includes(" woman ") || query.includes(" womans ")
+        || query.startsWith("women ") || query.startsWith("womens ") || query.startsWith("woman ") || query.startsWith("womans ")
+        || query.endsWith(" women") || query.endsWith(" womens") || query.endsWith(" woman") || query.endsWith(" womans");
+
+    // Clean query (strip gender words)
+    let cleanQuery = query;
+    let requiredGender: string | null = null;
+    let excludedGender: string | null = null;
+
+    if (isMenSearch && !isWomenSearch) {
+      requiredGender = "men";
+      excludedGender = "women";
+      cleanQuery = query.replace(/\b(men|man|mens|mans|for)\b/g, "").trim();
+    } else if (isWomenSearch && !isMenSearch) {
+      requiredGender = "women";
+      excludedGender = "men";
+      cleanQuery = query.replace(/\b(women|woman|womens|womans|for)\b/g, "").trim();
+    }
+    
+    if (!cleanQuery) {
+      cleanQuery = query;
+    }
+
+    return products.filter((p) => {
+      const pGens = (p.gen || "men").toLowerCase().split(',').map((s: string) => s.trim());
+      
+      // Exclude opposite gender
+      if (excludedGender && pGens.includes(excludedGender) && !pGens.includes("unisex")) {
+        return false;
+      }
+      
+      // If we require a gender, ensure it matches
+      if (requiredGender && !pGens.includes(requiredGender) && !pGens.includes("unisex")) {
+        return false;
+      }
+
+      // Check text match in name or description
+      const nameMatch = p.name.toLowerCase().includes(cleanQuery);
+      const descMatch = (p.desc || "").toLowerCase().includes(cleanQuery);
+      return nameMatch || descMatch;
+    }).slice(0, 6);
+  };
+
+  const res = getSuggestions();
 
   const resolvedNav = NAV_DATA;
   const cc = cart.reduce((s, i) => s + i.qty, 0);
