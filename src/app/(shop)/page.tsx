@@ -227,7 +227,7 @@ export default function Home() {
           ["🧪", "Lab Tested", "Quality certified"],
           ["⏰", "12-Hour Ready", "Long-shift comfort"],
           ["🛡️", "Anti-Distraction", "Built for focus"],
-          ["👜", "Up to 9 Pockets", "Everything you need"],
+          ["👜", "Up to 5 Pockets", "Everything you need"],
           ["🚀", "200+ Washes", "Colour stays vivid"],
         ].map(([ico, t, s]) => (
           <div className="fit" key={t}>
