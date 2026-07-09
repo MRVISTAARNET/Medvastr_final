@@ -607,21 +607,55 @@ public class ShiprocketService {
         if (shiprocketStatus == null)
             return;
 
-        String s = shiprocketStatus.toLowerCase();
-        if (s.contains("pickup scheduled") || s.contains("ready to ship") || s.contains("manifested")) {
-            order.setStatus(Order.OrderStatus.PROCESSING); // or PACKED based on your flow
-        } else if (s.contains("shipped") || s.contains("in transit")) {
+        // Always save the raw Shiprocket status string so admin can see it
+        order.setShiprocketSyncStatus(shiprocketStatus);
+
+        String s = shiprocketStatus.toLowerCase().trim();
+
+        // ── CONFIRMED / READY TO SHIP ─────────────────────────────────────
+        if (s.equals("new") || s.equals("ready to ship") || s.equals("return order received")
+                || s.equals("pickup pending")) {
+            order.setStatus(Order.OrderStatus.CONFIRMED);
+
+        // ── PROCESSING (Pickup / Manifest) ────────────────────────────────
+        } else if (s.contains("pickup scheduled") || s.contains("pickup generated")
+                || s.contains("manifested") || s.contains("label generated")
+                || s.contains("processing") || s.contains("pickup queued")) {
+            order.setStatus(Order.OrderStatus.PROCESSING);
+
+        // ── SHIPPED / IN TRANSIT ──────────────────────────────────────────
+        } else if (s.contains("shipped") || s.contains("in transit")
+                || s.contains("reached at destination") || s.contains("reached destination")
+                || s.contains("in-transit") || s.contains("forwarded")) {
             order.setStatus(Order.OrderStatus.SHIPPED);
-        } else if (s.contains("delivered")) {
+
+        // ── OUT FOR DELIVERY ──────────────────────────────────────────────
+        } else if (s.contains("out for delivery") || s.contains("out_for_delivery")) {
+            order.setStatus(Order.OrderStatus.OUT_FOR_DELIVERY);
+
+        // ── DELIVERED ─────────────────────────────────────────────────────
+        } else if (s.contains("delivered") && !s.contains("undelivered") && !s.contains("rto")) {
             order.setStatus(Order.OrderStatus.DELIVERED);
             order.setDeliveredAt(java.time.LocalDateTime.now());
+
+        // ── RETURNED / RTO ────────────────────────────────────────────────
+        } else if (s.contains("rto") || s.contains("return") || s.contains("returned")) {
+            order.setStatus(Order.OrderStatus.RETURNED);
+
+        // ── CANCELLED ─────────────────────────────────────────────────────
         } else if (s.contains("cancel")) {
             order.setStatus(Order.OrderStatus.CANCELLED);
-        } else if (s.contains("out for delivery")) {
-            order.setStatus(Order.OrderStatus.OUT_FOR_DELIVERY);
-        } else if (s.contains("return")) {
-            order.setStatus(Order.OrderStatus.RETURNED);
+
+        // ── NDR / UNDELIVERED — keep SHIPPED, just note status ───────────
+        } else if (s.contains("ndr") || s.contains("undelivered") || s.contains("failed delivery")
+                || s.contains("delivery failed")) {
+            // Don't regress status — stay at SHIPPED level so admin can act
+            if (order.getStatus() != Order.OrderStatus.OUT_FOR_DELIVERY
+                    && order.getStatus() != Order.OrderStatus.SHIPPED) {
+                order.setStatus(Order.OrderStatus.SHIPPED);
+            }
         }
+        // Any unrecognised status → leave internal status unchanged
     }
 
     public String getServiceability(String deliveryPincode, double weight, boolean isCod) {

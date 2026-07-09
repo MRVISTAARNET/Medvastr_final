@@ -352,6 +352,54 @@ public class OrderService {
         return shiprocketService.createOrderSync(id);
     }
 
+    /**
+     * Pull the latest tracking status from Shiprocket for a single order and
+     * persist it to the database. Returns the updated OrderDTO.
+     */
+    @Transactional
+    public OrderDTO syncOrderFromShiprocket(Long id) {
+        Order o = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found: " + id));
+        if (o.getTrackingNumber() == null || o.getTrackingNumber().trim().isEmpty()
+                || o.getTrackingNumber().equalsIgnoreCase("null")) {
+            throw new RuntimeException("Order " + o.getOrderNumber() + " has no tracking AWB assigned yet");
+        }
+        shiprocketService.syncTrackingStatus(o);
+        // Reload after sync to pick up the freshly saved status
+        o = orderRepo.findById(id).orElseThrow();
+        return toDTO(o);
+    }
+
+    /**
+     * Bulk-sync all non-terminal orders that have a tracking AWB.
+     * Skips DELIVERED, CANCELLED and RETURNED orders.
+     * Returns the count of orders synced.
+     */
+    @Transactional
+    public int syncAllFromShiprocket() {
+        List<Order> active = orderRepo.findAllByOrderByCreatedAtDesc(
+                org.springframework.data.domain.Pageable.unpaged()).getContent();
+        int synced = 0;
+        for (Order o : active) {
+            if (o.getStatus() == Order.OrderStatus.DELIVERED
+                    || o.getStatus() == Order.OrderStatus.CANCELLED
+                    || o.getStatus() == Order.OrderStatus.RETURNED) {
+                continue;
+            }
+            if (o.getTrackingNumber() == null || o.getTrackingNumber().trim().isEmpty()
+                    || o.getTrackingNumber().equalsIgnoreCase("null")) {
+                continue;
+            }
+            try {
+                shiprocketService.syncTrackingStatus(o);
+                synced++;
+            } catch (Exception e) {
+                log.error("[Sync] Failed for order {}: {}", o.getOrderNumber(), e.getMessage());
+            }
+        }
+        log.info("[Sync] Bulk Shiprocket sync completed: {} orders updated", synced);
+        return synced;
+    }
+
     @Transactional
     public OrderDTO renameOrder(Long id, String newOrderNumber) {
         Order o = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
@@ -639,6 +687,7 @@ public class OrderService {
                 .razorpayOrderId(o.getRazorpayOrderId())
                 .userId(o.getUser() != null ? o.getUser().getId() : null)
                 .userEmail(o.getUser() != null ? o.getUser().getEmail() : null)
+                .shiprocketSyncStatus(o.getShiprocketSyncStatus())
                 .items(o.getItems() != null ? o.getItems().stream().map(i -> OrderItemDTO.builder()
                         .id(i.getId())
                         .productName(i.getProductName())

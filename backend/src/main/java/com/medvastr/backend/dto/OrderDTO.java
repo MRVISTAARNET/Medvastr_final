@@ -39,4 +39,5 @@ public class OrderDTO {
     private String razorpayOrderId;
     private Long userId;
     private String userEmail;
+    private String shiprocketSyncStatus;
 }

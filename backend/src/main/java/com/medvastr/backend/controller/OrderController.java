@@ -87,4 +87,19 @@ public class OrderController {
     public ResponseEntity<ApiResponse<OrderDTO>> rename(@PathVariable Long id, @RequestParam String orderNumber) {
         return ResponseEntity.ok(ApiResponse.ok("Order number updated", s.renameOrder(id, orderNumber)));
     }
+
+    /** Pull latest status from Shiprocket for a single order */
+    @PostMapping("/admin/{id}/sync-status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<OrderDTO>> syncStatus(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok("Synced from Shiprocket", s.syncOrderFromShiprocket(id)));
+    }
+
+    /** Bulk-sync all active orders with an AWB from Shiprocket */
+    @PostMapping("/admin/sync-shiprocket")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<String>> syncAll() {
+        int count = s.syncAllFromShiprocket();
+        return ResponseEntity.ok(ApiResponse.ok("Bulk sync complete", count + " orders synced from Shiprocket"));
+    }
 }
