@@ -87,18 +87,46 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
         return false;
       }
 
-      // Apply strict matching rules for specific keywords
-      if (normClean.includes("tshirt")) {
-        return p.name.toLowerCase().includes("t-shirt") || p.name.toLowerCase().includes("tshirt");
-      }
-      if (normClean.includes("underscrub")) {
-        return p.name.toLowerCase().includes("under scrub") || p.name.toLowerCase().includes("underscrub");
+      // Strict keyword-to-name matching — prevents description false-positives
+      // Each keyword must appear in the product NAME only
+      const strictKeywords = [
+        { key: "tshirt",     match: ["t-shirt", "tshirt"] },
+        { key: "t-shirt",    match: ["t-shirt", "tshirt"] },
+        { key: "underscrub", match: ["under scrub", "underscrub"] },
+        { key: "under scrub",match: ["under scrub", "underscrub"] },
+        { key: "scrub",      match: ["scrub"] },
+        { key: "cap",        match: ["cap"] },
+        { key: "gown",       match: ["gown"] },
+        { key: "surgical",   match: ["surgical"] },
+      ];
+
+      const pNameLower = p.name.toLowerCase();
+
+      // Check if any strict keyword matches the query
+      for (const rule of strictKeywords) {
+        if (normClean === rule.key.replace(/[\s-]/g, "")) {
+          // Strict: product name must contain at least one of the match terms
+          const nameHasMatch = rule.match.some(m => pNameLower.includes(m));
+          // Extra guard for "scrub" alone: must NOT be solely a tshirt result
+          if (rule.key === "scrub") {
+            return nameHasMatch && !(
+              pNameLower.includes("t-shirt") || pNameLower.includes("tshirt")
+            );
+          }
+          return nameHasMatch;
+        }
       }
 
-      // Default check: text match in name or description
-      const nameMatch = p.name.toLowerCase().includes(cleanQuery);
-      const descMatch = (p.desc || "").toLowerCase().includes(cleanQuery);
-      return nameMatch || descMatch;
+      // Check if query contains a strict keyword (partial query like "flexi scrub")
+      for (const rule of strictKeywords) {
+        if (normClean.includes(rule.key.replace(/[\s-]/g, ""))) {
+          return rule.match.some(m => pNameLower.includes(m));
+        }
+      }
+
+      // Default fallback: match product NAME only (not description)
+      // This prevents products with query in their description showing up
+      return pNameLower.includes(cleanQuery);
     }).slice(0, 6);
   };
 

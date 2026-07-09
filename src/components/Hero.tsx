@@ -109,7 +109,7 @@ function SmartSlide({ base }: { base: string }) {
       src={src}
       alt="Hero Promotional Banner"
       onError={tryNext}
-      style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }}
+      style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center bottom", display: "block" }}
     />
   );
 }
