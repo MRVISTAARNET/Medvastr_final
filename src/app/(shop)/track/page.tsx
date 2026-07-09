@@ -166,169 +166,71 @@ function TrackContent() {
                 </div>
               </div>
 
-              {/* TIMELINE */}
-              {tracking.timeline?.length > 0 && (
-                <div style={{ marginBottom: "40px", paddingBottom: "40px", borderBottom: "1px solid #e2e8f0" }}>
-                  <h3 style={{ fontSize: "16px", fontWeight: "700", color: "#0f172a", marginBottom: "24px" }}>Delivery Status</h3>
-                  
-                  <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
-                    {tracking.timeline.map((ev: any, i: number) => {
-                      const isLast = i === tracking.timeline.length - 1;
-                      const isCompleted = ev.completed;
-                      const isCurrent = isCompleted && (!tracking.timeline[i+1] || !tracking.timeline[i+1].completed);
-                      
-                      return (
-                        <div key={i} style={{ display: "flex", gap: "20px" }}>
-                          {/* Node & Line */}
-                          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "24px" }}>
-                            <div style={{ 
-                              width: "24px", height: "24px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 2,
-                              background: isCompleted ? "#10b981" : "#f1f5f9",
-                              color: "white", fontSize: "12px", border: isCompleted ? "none" : "2px solid #e2e8f0",
-                              boxShadow: isCurrent ? "0 0 0 4px rgba(16, 185, 129, 0.2)" : "none"
-                            }}>
-                              {isCompleted && "✓"}
-                            </div>
-                            {!isLast && (
-                              <div style={{ width: "2px", flex: 1, background: isCompleted && !isCurrent ? "#10b981" : "#e2e8f0", margin: "4px 0" }} />
-                            )}
-                          </div>
-                          
-                          {/* Content */}
-                          <div style={{ paddingBottom: isLast ? "0" : "30px", paddingTop: "2px" }}>
-                            <div style={{ fontSize: "15px", fontWeight: isCurrent ? "800" : "600", color: isCompleted ? "#0f172a" : "#94a3b8" }}>
-                              {ev.status || ev.label}
-                            </div>
-                            {ev.timestamp && (
-                              <div style={{ fontSize: "13px", color: "#64748b", marginTop: "2px" }}>
-                                {new Date(ev.timestamp).toLocaleString("en-US", { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+              {/* STATUS & SHIPROCKET REDIRECT */}
+              <div style={{ 
+                background: "#f8fafc", 
+                borderRadius: "12px", 
+                padding: "24px", 
+                border: "1px solid #e2e8f0", 
+                marginBottom: "35px",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                textAlign: "center"
+              }}>
+                <div style={{ fontSize: "13px", fontWeight: "700", color: "#64748b", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" }}>Current Status</div>
+                <div style={{ 
+                  fontSize: "18px", 
+                  fontWeight: "800", 
+                  color: orderData.status === "DELIVERED" ? "#166534" : 
+                         orderData.status === "CANCELLED" ? "#991b1b" : 
+                         orderData.status === "SHIPPED" || orderData.status === "OUT_FOR_DELIVERY" ? "#1e40af" : "#92400e",
+                  background: orderData.status === "DELIVERED" ? "#dcfce7" : 
+                              orderData.status === "CANCELLED" ? "#fee2e2" : 
+                              orderData.status === "SHIPPED" || orderData.status === "OUT_FOR_DELIVERY" ? "#dbeafe" : "#fef3c7",
+                  padding: "6px 18px",
+                  borderRadius: "999px",
+                  display: "inline-block",
+                  marginBottom: "20px"
+                }}>
+                  {orderData.status || "CONFIRMED"}
                 </div>
-              )}
-              {/* FEEDBACK WIDGET */}
-              <div style={{ marginTop: '20px', marginBottom: '40px', padding: '30px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
-                <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#0f172a', marginBottom: '6px', textAlign: 'center' }}>
-                  Rate Your Experience
-                </h3>
-                <p style={{ fontSize: '14px', color: '#64748b', marginBottom: '24px', textAlign: 'center' }}>
-                  How likely are you to recommend Medvastr to your friends and family?
-                </p>
 
-                {feedbackSubmitted ? (
-                  <div style={{ textAlign: 'center', padding: '10px 0' }}>
-                    <div style={{ fontSize: '40px', marginBottom: '12px' }}>🎉</div>
-                    <h4 style={{ fontSize: '16px', fontWeight: '800', color: '#10b981', margin: '0 0 6px' }}>Thank you for your feedback!</h4>
-                    <p style={{ margin: 0, fontSize: '14px', color: '#64748b' }}>Your response helps us improve the Medvastr shopping experience.</p>
+                {tracking.trackingNumber ? (
+                  <div style={{ width: "100%" }}>
+                    <p style={{ fontSize: "15px", color: "#475569", margin: "0 0 20px", fontWeight: "500", lineHeight: "1.6" }}>
+                      Your package is being shipped via <strong>{tracking.courierName || "Courier Partner"}</strong>.<br />
+                      AWB Tracking Number: <span style={{ fontFamily: "monospace", fontWeight: "700", color: "#0f172a", fontSize: "16px" }}>{tracking.trackingNumber}</span>
+                    </p>
+                    <a 
+                      href={`https://shiprocket.co/tracking/${tracking.trackingNumber}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-t"
+                      style={{ 
+                        display: "inline-flex", 
+                        alignItems: "center", 
+                        justifyContent: "center",
+                        gap: "8px",
+                        background: "#008080", 
+                        color: "white", 
+                        padding: "12px 28px", 
+                        borderRadius: "8px", 
+                        fontWeight: "700", 
+                        fontSize: "15px",
+                        textDecoration: "none",
+                        boxShadow: "0 4px 12px rgba(0, 128, 128, 0.2)",
+                        transition: "all 0.2s ease"
+                      }}
+                    >
+                      🚚 Track Live on Shiprocket
+                    </a>
                   </div>
                 ) : (
                   <div>
-                    {/* Rating buttons 0-10 */}
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '6px', flexWrap: 'wrap', marginBottom: '24px' }}>
-                      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => {
-                        const isSelected = feedbackRating === num;
-                        return (
-                          <button
-                            key={num}
-                            onClick={() => setFeedbackRating(num)}
-                            style={{
-                              width: '42px',
-                              height: '42px',
-                              borderRadius: '50%',
-                              border: isSelected ? 'none' : '1px solid #cbd5e1',
-                              background: isSelected ? '#008080' : 'white',
-                              color: isSelected ? 'white' : '#0f172a',
-                              fontWeight: '700',
-                              fontSize: '14px',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              transition: 'all 0.2s ease',
-                              boxShadow: isSelected ? '0 4px 10px rgba(0, 128, 128, 0.3)' : 'none'
-                            }}
-                          >
-                            {num}
-                          </button>
-                        );
-                      })}
-                    </div>
-
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#64748b', padding: '0 10px', marginTop: '-18px', marginBottom: '24px' }}>
-                      <span>Not likely at all</span>
-                      <span>Extremely likely</span>
-                    </div>
-
-                    <div style={{ marginBottom: '20px' }}>
-                      <label style={{ display: 'block', fontSize: '14px', fontWeight: '700', color: '#0f172a', marginBottom: '8px' }}>
-                        Remarks / Suggestions (Optional)
-                      </label>
-                      <textarea
-                        rows={3}
-                        placeholder="Please tell us about your experience..."
-                        value={feedbackRemarks}
-                        onChange={(e) => setFeedbackRemarks(e.target.value)}
-                        style={{
-                          width: '100%',
-                          padding: '12px 16px',
-                          borderRadius: '8px',
-                          border: '1px solid #cbd5e1',
-                          outline: 'none',
-                          fontSize: '14px',
-                          resize: 'none',
-                          boxSizing: 'border-box'
-                        }}
-                      />
-                    </div>
-
-                    <button
-                      onClick={async () => {
-                        if (feedbackRating === null) {
-                          alert('Please select a rating score first.');
-                          return;
-                        }
-                        setSubmittingFeedback(true);
-                        try {
-                          const res = await apiJson<any>('/orders/feedback', {
-                            method: 'POST',
-                            body: JSON.stringify({
-                              orderNumber: tracking.orderNumber,
-                              rating: feedbackRating,
-                              remarks: feedbackRemarks
-                            })
-                          });
-                          if (res.success) {
-                            setFeedbackSubmitted(true);
-                          } else {
-                            alert(res.message || 'Failed to submit feedback');
-                          }
-                        } catch (e) {
-                          alert('Failed to submit feedback. Please try again.');
-                        } finally {
-                          setSubmittingFeedback(false);
-                        }
-                      }}
-                      disabled={feedbackRating === null || submittingFeedback}
-                      style={{
-                        width: '100%',
-                        background: '#0f172a',
-                        color: 'white',
-                        padding: '14px',
-                        border: 'none',
-                        borderRadius: '10px',
-                        fontWeight: '700',
-                        fontSize: '15px',
-                        cursor: feedbackRating === null || submittingFeedback ? 'not-allowed' : 'pointer',
-                        opacity: feedbackRating === null ? 0.6 : 1
-                      }}
-                    >
-                      {submittingFeedback ? 'Submitting...' : 'Submit Feedback'}
-                    </button>
+                    <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
+                      Once your order is handed over to our courier partner, the tracking details and a direct AWB tracking link will appear here.
+                    </p>
                   </div>
                 )}
               </div>

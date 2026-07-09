@@ -294,6 +294,14 @@ export default function AccountPage() {
                           <div><div style={{ fontSize: "12px", color: "#64748b", textTransform: "uppercase", fontWeight: 700 }}>Status</div>
                             <span style={{ display: "inline-block", padding: "4px 10px", borderRadius: "20px", fontSize: "12px", fontWeight: 700, background: o.status === "DELIVERED" ? "#dcfce7" : "#fef3c7", color: o.status === "DELIVERED" ? "#166534" : "#92400e" }}>{o.status}</span>
                           </div>
+                          {o.trackingNumber && (
+                            <div>
+                              <div style={{ fontSize: "12px", color: "#64748b", textTransform: "uppercase", fontWeight: 700 }}>Tracking</div>
+                              <a href={`https://shiprocket.co/tracking/${o.trackingNumber}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: "13px", color: "#3b82f6", fontWeight: "700", display: "inline-flex", alignItems: "center", gap: "4px" }} title="Track on Shiprocket">
+                                AWB: {o.trackingNumber}
+                              </a>
+                            </div>
+                          )}
                           <Link href={`/track?order=${o.orderNumber}`} className="pdp-buy-btn" style={{ height: "36px", padding: "0 20px", fontSize: "13px" }}>Track</Link>
                         </div>
                         <div style={{ borderTop: "1px solid #e2e8f0", paddingTop: "15px", display: "flex", gap: "10px", overflowX: "auto" }}>
