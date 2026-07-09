@@ -1271,15 +1271,14 @@ textarea {
   position: relative;
   overflow: hidden;
   background: transparent;
-  /* Fill the full viewport below the header (header ~120px tallest) */
-  height: calc(100vh - 120px);
-  min-height: 520px;
-  max-height: 900px;
+  height: auto !important;
+  min-height: unset !important;
+  max-height: unset !important;
 }
 
 .hero-track {
   display: flex;
-  height: 100%;
+  height: auto !important;
   transition: transform 0.72s var(--ease);
 }
 
@@ -1287,13 +1286,13 @@ textarea {
   min-width: 100%;
   position: relative;
   display: block;
-  height: 100%;
+  height: auto !important;
 }
 
 .hero-slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 100% !important;
+  height: auto !important;
+  object-fit: contain !important;
   object-position: center bottom;
   display: block;
 }
@@ -1307,12 +1306,12 @@ textarea {
 
 @media (max-width: 768px) {
   .hero {
-    height: 100vw !important;
-    min-height: 320px !important;
-    max-height: 520px !important;
+    height: auto !important;
+    min-height: unset !important;
+    max-height: unset !important;
   }
   .hero-slide {
-    height: 100% !important;
+    height: auto !important;
   }
   .hero-slide img {
     object-position: center bottom !important;
@@ -3206,11 +3205,11 @@ textarea {
     max-height: 480px !important;
   }
   .hero-slide {
-    height: 100% !important;
+    height: auto !important;
   }
   .hero-slide img {
-    height: 100% !important;
-    object-fit: cover !important;
+    height: auto !important;
+    object-fit: contain !important;
     object-position: center bottom !important;
     width: 100% !important;
   }

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 import { useApp } from "@/context/AppContext";
 import { normalizeMediaUrl } from "@/lib/api";
@@ -21,16 +22,40 @@ export default function Hero({ onShop }: HeroProps) {
   ]);
   const t = useRef<NodeJS.Timeout | null>(null);
 
+  const { banners } = useApp();
+  
+  // Filter active banners for the top slot (HOME_TOP)
+  const homeBanners = (banners || []).filter(
+    (b: any) => b.isActive && b.position === "HOME_TOP"
+  );
+
+  // Use dynamic banners if uploaded; otherwise fall back to default slides
+  const slides = homeBanners.length > 0 
+    ? homeBanners.map((b: any) => ({
+        id: b.id,
+        src: b.imageUrl,
+        link: b.linkUrl || null,
+        title: b.title
+      }))
+    : dynamicSlides.map((s, i) => ({
+        id: `fallback-${i}`,
+        src: null,
+        base: s.base,
+        link: "/products",
+        title: "Hero Promotional Banner"
+      }));
+
   useEffect(() => {
-    if (!au) return;
-    t.current = setInterval(() => setCur((c) => (c + 1) % dynamicSlides.length), 6000);
+    if (!au || slides.length <= 1) return;
+    t.current = setInterval(() => setCur((c) => (c + 1) % slides.length), 6000);
     return () => {
       if (t.current) clearInterval(t.current);
     };
-  }, [au, cur, dynamicSlides.length]);
+  }, [au, cur, slides.length]);
 
   const go = (d: number) => {
-    setCur((cur + d + dynamicSlides.length) % dynamicSlides.length);
+    if (slides.length <= 1) return;
+    setCur((cur + d + slides.length) % slides.length);
     setAu(false);
     setTimeout(() => setAu(true), 10000);
   };
@@ -38,18 +63,40 @@ export default function Hero({ onShop }: HeroProps) {
   return (
     <div className="hero">
       <div className="hero-track" style={{ transform: `translateX(-${cur * 100}%)` }}>
-        {dynamicSlides.map((s, i) => (
-          <div className="hero-slide" key={i}>
+        {slides.map((s: any, i: number) => {
+          const content = s.src ? (
+            <img
+              src={s.src}
+              alt={s.title || "Hero Promotional Banner"}
+              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center bottom", display: "block" }}
+            />
+          ) : (
             <SmartSlide base={s.base} />
-          </div>
-        ))}
+          );
+
+          return (
+            <div className="hero-slide" key={s.id}>
+              {s.link ? (
+                <Link href={s.link} style={{ display: "block", width: "100%", height: "100%" }}>
+                  {content}
+                </Link>
+              ) : (
+                content
+              )}
+            </div>
+          );
+        })}
       </div>
-      <button className="hero-arr hero-p" onClick={() => go(-1)}>
-        ‹
-      </button>
-      <button className="hero-arr hero-n" onClick={() => go(1)}>
-        ›
-      </button>
+      {slides.length > 1 && (
+        <>
+          <button className="hero-arr hero-p" onClick={() => go(-1)}>
+            ‹
+          </button>
+          <button className="hero-arr hero-n" onClick={() => go(1)}>
+            ›
+          </button>
+        </>
+      )}
 
       <style jsx>{`
         .slide-stats-glass {
@@ -86,10 +133,10 @@ export default function Hero({ onShop }: HeroProps) {
               max-width: 100%;
               padding: 15px;
               border-radius: 12px;
-           }
-           .sst-n { font-size: 18px; }
-           .sst-l { font-size: 9px; }
-           .slide-h1 { font-size: 32px; line-height: 1.1; }
+            }
+            .sst-n { font-size: 18px; }
+            .sst-l { font-size: 9px; }
+            .slide-h1 { font-size: 32px; line-height: 1.1; }
         }
       `}</style>
     </div>
