@@ -709,8 +709,79 @@ public class ShiprocketService {
         }
     }
 
+    private boolean fetchAndSaveAwbFromShiprocket(Order order, String token) {
+        if (order.getShiprocketOrderId() == null || order.getShiprocketOrderId() <= 0) {
+            return false;
+        }
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(token);
+            HttpEntity<String> entity = new HttpEntity<>(headers);
+
+            ResponseEntity<String> res = restTemplate.exchange(
+                    "https://apiv2.shiprocket.in/v1/external/orders/show/" + order.getShiprocketOrderId(),
+                    HttpMethod.GET,
+                    entity,
+                    String.class);
+
+            if (res.getStatusCode() == HttpStatus.OK && res.getBody() != null) {
+                JSONObject json = new JSONObject(res.getBody());
+                if (json.has("data")) {
+                    JSONObject dataObj = json.getJSONObject("data");
+                    
+                    String awb = dataObj.optString("awb_code");
+                    String courier = dataObj.optString("courier_name");
+                    
+                    if ((awb == null || awb.isEmpty() || awb.equals("null")) && dataObj.has("shipments")) {
+                        Object shipmentsObj = dataObj.get("shipments");
+                        if (shipmentsObj instanceof JSONArray) {
+                            JSONArray shipments = (JSONArray) shipmentsObj;
+                            if (shipments.length() > 0) {
+                                JSONObject firstShipment = shipments.getJSONObject(0);
+                                awb = firstShipment.optString("awb");
+                                courier = firstShipment.optString("courier");
+                            }
+                        } else if (shipmentsObj instanceof JSONObject) {
+                            JSONObject firstShipment = (JSONObject) shipmentsObj;
+                            awb = firstShipment.optString("awb");
+                            courier = firstShipment.optString("courier");
+                        }
+                    }
+                    
+                    if (awb != null && !awb.isEmpty() && !awb.equals("null")) {
+                        order.setTrackingNumber(awb);
+                        if (courier != null && !courier.isEmpty() && !courier.equals("null")) {
+                            order.setCourierName(courier);
+                        }
+                        orderRepository.save(order);
+                        log.info("[Shiprocket Sync] Successfully fetched and saved AWB {} for order {}", awb, order.getOrderNumber());
+                        return true;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("[Shiprocket Sync] Failed to fetch AWB from show API for order {}: {}", order.getOrderNumber(), e.getMessage());
+        }
+        return false;
+    }
+
     @Transactional
     public void syncTrackingStatus(Order order) {
+        // If tracking AWB is empty, try to fetch it dynamically using the Shiprocket Order ID
+        if (order.getTrackingNumber() == null || order.getTrackingNumber().trim().isEmpty() || order.getTrackingNumber().equalsIgnoreCase("null")) {
+            if (order.getShiprocketOrderId() != null && order.getShiprocketOrderId() > 0) {
+                log.info("[Shiprocket Sync] Tracking number empty for order {}. Attempting to fetch AWB via Order ID {}", order.getOrderNumber(), order.getShiprocketOrderId());
+                try {
+                    String token = getValidToken();
+                    if (token != null) {
+                        fetchAndSaveAwbFromShiprocket(order, token);
+                    }
+                } catch (Exception e) {
+                    log.error("[Shiprocket Sync] Failed to get valid token to fetch AWB for order {}: {}", order.getOrderNumber(), e.getMessage());
+                }
+            }
+        }
+
         if (order.getTrackingNumber() == null || order.getTrackingNumber().trim().isEmpty() || order.getTrackingNumber().equalsIgnoreCase("null")) {
             return;
         }

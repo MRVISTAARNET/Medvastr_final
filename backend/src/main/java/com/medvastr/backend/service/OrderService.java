@@ -359,9 +359,9 @@ public class OrderService {
     @Transactional
     public OrderDTO syncOrderFromShiprocket(Long id) {
         Order o = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found: " + id));
-        if (o.getTrackingNumber() == null || o.getTrackingNumber().trim().isEmpty()
-                || o.getTrackingNumber().equalsIgnoreCase("null")) {
-            throw new RuntimeException("Order " + o.getOrderNumber() + " has no tracking AWB assigned yet");
+        if ((o.getTrackingNumber() == null || o.getTrackingNumber().trim().isEmpty() || o.getTrackingNumber().equalsIgnoreCase("null"))
+                && (o.getShiprocketOrderId() == null || o.getShiprocketOrderId() <= 0)) {
+            throw new RuntimeException("Order " + o.getOrderNumber() + " has no tracking AWB or Shiprocket Order ID assigned yet");
         }
         shiprocketService.syncTrackingStatus(o);
         // Reload after sync to pick up the freshly saved status
@@ -385,8 +385,8 @@ public class OrderService {
                     || o.getStatus() == Order.OrderStatus.RETURNED) {
                 continue;
             }
-            if (o.getTrackingNumber() == null || o.getTrackingNumber().trim().isEmpty()
-                    || o.getTrackingNumber().equalsIgnoreCase("null")) {
+            if ((o.getTrackingNumber() == null || o.getTrackingNumber().trim().isEmpty() || o.getTrackingNumber().equalsIgnoreCase("null"))
+                    && (o.getShiprocketOrderId() == null || o.getShiprocketOrderId() <= 0)) {
                 continue;
             }
             try {
@@ -688,6 +688,7 @@ public class OrderService {
                 .userId(o.getUser() != null ? o.getUser().getId() : null)
                 .userEmail(o.getUser() != null ? o.getUser().getEmail() : null)
                 .shiprocketSyncStatus(o.getShiprocketSyncStatus())
+                .shiprocketOrderId(o.getShiprocketOrderId())
                 .items(o.getItems() != null ? o.getItems().stream().map(i -> OrderItemDTO.builder()
                         .id(i.getId())
                         .productName(i.getProductName())

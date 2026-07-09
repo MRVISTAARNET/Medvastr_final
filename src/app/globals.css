@@ -1299,8 +1299,9 @@ textarea {
 
 @media (max-width: 1024px) {
   .hero {
-    height: calc(100vh - 110px);
-    min-height: 460px;
+    height: auto !important;
+    min-height: unset !important;
+    max-height: unset !important;
   }
 }
 
@@ -1320,9 +1321,9 @@ textarea {
 
 @media (max-width: 480px) {
   .hero {
-    height: 100vw !important;
-    min-height: 300px !important;
-    max-height: 450px !important;
+    height: auto !important;
+    min-height: unset !important;
+    max-height: unset !important;
   }
 }
 
@@ -3200,9 +3201,9 @@ textarea {
   }
 
   .hero {
-    height: 92vw !important;
-    min-height: 300px !important;
-    max-height: 480px !important;
+    height: auto !important;
+    min-height: unset !important;
+    max-height: unset !important;
   }
   .hero-slide {
     height: auto !important;

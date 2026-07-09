@@ -40,4 +40,5 @@ public class OrderDTO {
     private Long userId;
     private String userEmail;
     private String shiprocketSyncStatus;
+    private Long shiprocketOrderId;
 }

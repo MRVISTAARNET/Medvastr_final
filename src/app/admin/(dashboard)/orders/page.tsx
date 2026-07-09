@@ -57,7 +57,8 @@ export default function AdminOrders() {
           payment: o.paymentMethod || 'COD',
           razorpayId: o.paymentId || null,
           awb: o.trackingNumber || '',
-          courier: o.courierName || ''
+          courier: o.courierName || '',
+          shiprocketOrderId: o.shiprocketOrderId || null
         })));
       }
     } catch (e) {
@@ -152,10 +153,13 @@ export default function AdminOrders() {
         const updated = data.data;
         const newStatus = updated.status;
         const newSrStatus = updated.shiprocketSyncStatus || '';
+        const newAwb = updated.trackingNumber || '';
+        const newCourier = updated.courierName || '';
+        const newSrOrderId = updated.shiprocketOrderId || null;
         setOrders(orders.map(o => o.id === editingOrder.id
-          ? { ...o, status: newStatus, shiprocketStatus: newSrStatus }
+          ? { ...o, status: newStatus, shiprocketStatus: newSrStatus, awb: newAwb, courier: newCourier, shiprocketOrderId: newSrOrderId }
           : o));
-        setEditingOrder({ ...editingOrder, status: newStatus, shiprocketStatus: newSrStatus });
+        setEditingOrder({ ...editingOrder, status: newStatus, shiprocketStatus: newSrStatus, awb: newAwb, courier: newCourier, shiprocketOrderId: newSrOrderId });
         alert(`✅ Synced! Internal status: ${newStatus}\nShiprocket status: ${newSrStatus || 'N/A'}`);
       } else {
         alert(`❌ ${data.message || 'Sync failed'}`);
@@ -463,16 +467,16 @@ export default function AdminOrders() {
                   <button
                     type="button"
                     onClick={handleSingleSync}
-                    disabled={singleSyncing || !editingOrder.awb}
+                    disabled={singleSyncing || (!editingOrder.awb && !editingOrder.shiprocketOrderId)}
                     style={{
                       padding: '7px 14px',
-                      background: singleSyncing ? '#94a3b8' : '#0f766e',
+                      background: (singleSyncing || (!editingOrder.awb && !editingOrder.shiprocketOrderId)) ? '#94a3b8' : '#0f766e',
                       color: 'white',
                       border: 'none',
                       borderRadius: '7px',
                       fontSize: '12px',
                       fontWeight: 600,
-                      cursor: singleSyncing || !editingOrder.awb ? 'not-allowed' : 'pointer',
+                      cursor: (singleSyncing || (!editingOrder.awb && !editingOrder.shiprocketOrderId)) ? 'not-allowed' : 'pointer',
                       whiteSpace: 'nowrap'
                     }}
                   >
