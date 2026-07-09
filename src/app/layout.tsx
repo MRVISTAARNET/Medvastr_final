@@ -25,7 +25,7 @@ const sans = Plus_Jakarta_Sans({
 
 const siteTitle = "Medvastr | Premium Medical Apparel & Professional Scrubs";
 const siteDescription =
-  "Medvastr offers world-class medical scrubs, lab coats, and hospital linen for healthcare professionals. Superior comfort, performance fabrics, and modern fits designed in India.";
+  "Medvastr offers world-class medical scrubs, surgical wear, and hospital linen for healthcare professionals. Superior comfort, performance fabrics, and modern fits designed in India.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     "nurse uniform",
     "premium scrubs",
     "Medvastr",
-    "lab coats",
+    "surgical gowns",
     "hospital linen",
   ],
   authors: [{ name: "Medvastr" }],

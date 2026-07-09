@@ -63,7 +63,7 @@ function ProductsContent() {
   }, [initCat, initColor, initSize, initFabric, initFit, initGen, initType, searchParams]);
 
   useEffect(() => {
-    let title = "Shop Professional Scrubs & Lab Coats | Medvastr";
+    let title = "Shop Professional Scrubs & Surgical Wear | Medvastr";
     if (gen !== "all" || cat !== "all" || typeFilter) {
       const parts: string[] = [];
       if (gen !== "all") {

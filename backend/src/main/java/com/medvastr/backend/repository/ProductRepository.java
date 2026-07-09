@@ -79,6 +79,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                         ")")
         Page<Product> searchForGender(@Param("q") String q, @Param("excludedGenders") List<String> excludedGenders, Pageable p);
 
+        @Query("SELECT p FROM Product p WHERE p.active=true AND LOWER(p.gender) IN :genders")
+        Page<Product> findByGenderIn(@Param("genders") List<String> genders, Pageable p);
+
 
         @Query("SELECT p.name FROM Product p WHERE p.active=true AND LOWER(p.name) LIKE LOWER(CONCAT('%',:q,'%'))")
         List<String> suggestNames(@Param("q") String q, Pageable p);

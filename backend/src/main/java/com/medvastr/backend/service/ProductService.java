@@ -106,21 +106,43 @@ public class ProductService {
     public Page<ProductDTO> search(String q, Pageable p) {
         String query = q.trim().toLowerCase();
         
-        // Match specific gender search patterns
-        boolean isMenSearch = query.equals("men") || query.equals("mens") || query.equals("man") || query.equals("mans")
-                || query.contains(" men ") || query.contains(" mens ") || query.contains(" man ") || query.contains(" mans ")
+        // Check if search is exactly "men", "man", "mens", "mans"
+        if (query.equals("men") || query.equals("man") || query.equals("mens") || query.equals("mans")) {
+            return productRepo.findByGenderIn(List.of("men", "unisex"), p).map(this::toDTO);
+        }
+        
+        // Check if search is exactly "women", "woman", "womens", "womans"
+        if (query.equals("women") || query.equals("woman") || query.equals("womens") || query.equals("womans")) {
+            return productRepo.findByGenderIn(List.of("women", "unisex"), p).map(this::toDTO);
+        }
+
+        String cleanQuery = q;
+        List<String> excludedGenders = null;
+        
+        boolean isMenSearch = query.contains(" men ") || query.contains(" mens ") || query.contains(" man ") || query.contains(" mans ")
                 || query.startsWith("men ") || query.startsWith("mens ") || query.startsWith("man ") || query.startsWith("mans ")
                 || query.endsWith(" men") || query.endsWith(" mens") || query.endsWith(" man") || query.endsWith(" mans");
                 
-        boolean isWomenSearch = query.equals("women") || query.equals("womens") || query.equals("woman") || query.equals("womans")
-                || query.contains(" women ") || query.contains(" womens ") || query.contains(" woman ") || query.contains(" womans ")
+        boolean isWomenSearch = query.contains(" women ") || query.contains(" womens ") || query.contains(" woman ") || query.contains(" womans ")
                 || query.startsWith("women ") || query.startsWith("womens ") || query.startsWith("woman ") || query.startsWith("womans ")
                 || query.endsWith(" women") || query.endsWith(" womens") || query.endsWith(" woman") || query.endsWith(" womans");
 
         if (isMenSearch && !isWomenSearch) {
-            return productRepo.searchForGender(q, List.of("women"), p).map(this::toDTO);
+            excludedGenders = List.of("women");
+            cleanQuery = query.replaceAll("(?i)\\b(men|man|mens|mans|for)\\b", "").trim();
+            if (cleanQuery.isEmpty()) {
+                cleanQuery = q;
+            }
         } else if (isWomenSearch && !isMenSearch) {
-            return productRepo.searchForGender(q, List.of("men"), p).map(this::toDTO);
+            excludedGenders = List.of("men");
+            cleanQuery = query.replaceAll("(?i)\\b(women|woman|womens|womans|for)\\b", "").trim();
+            if (cleanQuery.isEmpty()) {
+                cleanQuery = q;
+            }
+        }
+
+        if (excludedGenders != null) {
+            return productRepo.searchForGender(cleanQuery, excludedGenders, p).map(this::toDTO);
         }
 
         return productRepo.search(q, p).map(this::toDTO);

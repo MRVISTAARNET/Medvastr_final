@@ -47,7 +47,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
           <div className="srch-box">
             <span className="srch-ico">🔍</span>
             <input
-              placeholder="Search scrubs, lab coats, gowns..."
+              placeholder="Search scrubs, surgical wear, caps..."
               value={q}
               onChange={(e) => {
                 setQ(e.target.value);

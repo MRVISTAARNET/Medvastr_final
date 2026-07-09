@@ -12,59 +12,34 @@ export default function AboutHomeSection() {
         <div style={{ width: "100%" }}>
           <div className="about-tag">⚕ Introduction</div>
           <h2 className="about-h">
-            Medvastr: Stylish & Functional Medical Scrubs and Lab Coats for Men & Women!
+            Medvastr: Stylish & Functional Medical Scrubs and Surgical Wear for Men & Women!
           </h2>
           
           <div className={`about-rich-text ${showAll ? "expanded" : ""}`}>
             <p className="about-p">
-              Medvastr is your one-stop shop for top-quality medical scrubs, lab coats, and underscrubs for men and women. We believe every medical professional deserves comfortable, flexible, and breathable apparel that also projects a highly professional image.
+              Medvastr is your one-stop shop for top-quality medical scrubs, surgical wear, and base layers for men and women. We believe every medical professional deserves comfortable, flexible, and breathable apparel that also projects a highly professional image.
             </p>
 
             <div className="about-details">
               <h3>Medical Scrub Suits for Men and Women</h3>
-              <p>Experience the perfect blend of functionality and fashion with our medical scrub suits. Crafted from a premium polyester-viscose blend, our scrubs offer superior comfort and practicality.</p>
-
-              <h4>Types of Scrubs for Men and Women:</h4>
+              <p>Experience the perfect blend of mobility, style, and utility. Crafted with premium, durable fabric, our scrubs are tailored to support you through long, demanding shifts.</p>
               <ul>
-                <li><strong>V-neck Scrubs:</strong> Embrace a modern and stylish look with our flattering V-neck scrubs, available for both men and women.</li>
-                <li><strong>Mandarin Collar Scrubs:</strong> Revamp your professional appearance with our sophisticated Mandarin collar scrubs.</li>
-                <li><strong>Full-Sleeve Scrubs:</strong> Experience superior coverage and protection with our practical full-sleeve scrubs.</li>
-                <li><strong>Short-Sleeve Scrubs:</strong> Stay cool and comfortable in our breathable short-sleeve scrubs, ideal for any medical setting.</li>
+                <li><strong>Flexi Fit V Scrub:</strong> Embrace a modern, comfortable, and highly professional look with our signature Flexi Fit V Scrub, tailored to fit healthcare workers perfectly.</li>
               </ul>
 
-              <h3>Lab Coat Aprons for Men and Women</h3>
-              <p>Our lab coat aprons blend functionality and sophistication. Meticulously crafted from high-quality polyester, they offer the perfect combination of durability and comfort, ensuring you make a lasting impression.</p>
-
-              <h4>Types of Lab Coats:</h4>
+              <h3>Under Scrubs & Tops for Men and Women</h3>
+              <p>Elevate your medical attire with base layers and tops designed to prioritize your well-being and temperature control.</p>
               <ul>
-                <li><strong>Chief Lab Coat:</strong> Command attention and exude authority with this distinguished design.</li>
-                <li><strong>Focus Lab Coat:</strong> Stay sharp and focused in this versatile lab coat, perfect for the dynamic medical environment.</li>
-                <li><strong>Everyday Lab Coat:</strong> Embrace the practicality and comfort of this staple lab coat for daily wear.</li>
+                <li><strong>Full Sleeve Underscrub:</strong> Experience all-day comfort, warmth, and compression with extra coverage and breathability under your scrubs.</li>
+                <li><strong>Cotton T-Shirt:</strong> A classic, breathable short-sleeve top designed from premium cotton for ultimate daily comfort and durability.</li>
               </ul>
 
-              <h3>Long-Sleeve and Short-Sleeve Underscrubs for Men and Women</h3>
-              <p>Discover ultimate comfort with Medvastr's underscrubs, crafted from supersoft Pima cotton. Elevate your medical attire with underscrubs that prioritize your well-being and redefine style in healthcare.</p>
-
-              <h4>Types of Underscrubs:</h4>
+              <h3>Surgical Wear for Men and Women</h3>
+              <p>Critical barrier protection designed to keep you and your patients safe without sacrificing comfort.</p>
               <ul>
-                <li><strong>Long-Sleeve Underscrubs:</strong> Experience all-day comfort and warmth with extra coverage and breathability. Available in grey and white.</li>
-                <li><strong>Short-Sleeve Underscrubs:</strong> Stay cool and stylish in this lighter, comfortable option. Available in grey and white.</li>
+                <li><strong>Surgical Gown:</strong> High-performance, fluid-resistant gowns engineered to provide reliable barrier protection during clinical procedures.</li>
+                <li><strong>Surgical Cap:</strong> Lightweight, secure-fit caps designed to keep you comfortable and compliant throughout your shift.</li>
               </ul>
-
-              <h3>Ecoflex Scrubs - Sustainable Medical Scrubs</h3>
-              <ul>
-                <li><strong>Made from PET Bottles:</strong> Each scrub embodies our commitment to environmental safety.</li>
-                <li><strong>Reduced Carbon Footprint:</strong> One Ecoflex scrub reduces 0.50 tons of carbon footprint. Each scrub represents the recycling of six PET bottles.</li>
-                <li><strong>4-Way Stretch:</strong> Designed for comfort and flexibility in the fast-paced medical environment.</li>
-              </ul>
-
-              <h3>Surgical Caps for Men and Women</h3>
-              <h4>Types of Scrub Caps:</h4>
-              <ul>
-                <li><strong>Designer Scrub Caps:</strong> Express your individuality with our vibrant range of printed caps, including designs like Camouflage, Smiley, and Evil Eye.</li>
-                <li><strong>Plain Scrub Caps:</strong> Opt for a classic and understated look with our plain caps in various colors.</li>
-              </ul>
-
 
               <div className="about-faqs">
                 <h3>Frequently Asked Questions</h3>
