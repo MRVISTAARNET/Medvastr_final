@@ -131,14 +131,32 @@ public class ProductService {
             excludedGenders = List.of("women");
             cleanQuery = query.replaceAll("(?i)\\b(men|man|mens|mans|for)\\b", "").trim();
             if (cleanQuery.isEmpty()) {
-                cleanQuery = q;
+                cleanQuery = q.trim().toLowerCase();
             }
         } else if (isWomenSearch && !isMenSearch) {
             excludedGenders = List.of("men");
             cleanQuery = query.replaceAll("(?i)\\b(women|woman|womens|womans|for)\\b", "").trim();
             if (cleanQuery.isEmpty()) {
-                cleanQuery = q;
+                cleanQuery = q.trim().toLowerCase();
             }
+        } else {
+            cleanQuery = query;
+        }
+
+        // Apply strict name-based routing for specific keywords
+        String normClean = cleanQuery.replaceAll("[\\s-]", "");
+        if (normClean.contains("tshirt")) {
+            if (excludedGenders != null) {
+                return productRepo.searchByNameOnlyForGender("t-shirt", "tshirt", excludedGenders, p).map(this::toDTO);
+            }
+            return productRepo.searchByNameOnly("t-shirt", "tshirt", p).map(this::toDTO);
+        }
+        
+        if (normClean.contains("underscrub")) {
+            if (excludedGenders != null) {
+                return productRepo.searchByNameOnlyForGender("under scrub", "underscrub", excludedGenders, p).map(this::toDTO);
+            }
+            return productRepo.searchByNameOnly("under scrub", "underscrub", p).map(this::toDTO);
         }
 
         if (excludedGenders != null) {

@@ -72,6 +72,8 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
       cleanQuery = query;
     }
 
+    const normClean = cleanQuery.replace(/[\s-]/g, "");
+
     return products.filter((p) => {
       const pGens = (p.gen || "men").toLowerCase().split(',').map((s: string) => s.trim());
       
@@ -85,7 +87,15 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
         return false;
       }
 
-      // Check text match in name or description
+      // Apply strict matching rules for specific keywords
+      if (normClean.includes("tshirt")) {
+        return p.name.toLowerCase().includes("t-shirt") || p.name.toLowerCase().includes("tshirt");
+      }
+      if (normClean.includes("underscrub")) {
+        return p.name.toLowerCase().includes("under scrub") || p.name.toLowerCase().includes("underscrub");
+      }
+
+      // Default check: text match in name or description
       const nameMatch = p.name.toLowerCase().includes(cleanQuery);
       const descMatch = (p.desc || "").toLowerCase().includes(cleanQuery);
       return nameMatch || descMatch;

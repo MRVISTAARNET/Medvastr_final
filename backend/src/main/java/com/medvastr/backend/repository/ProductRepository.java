@@ -82,7 +82,17 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
         @Query("SELECT p FROM Product p WHERE p.active=true AND LOWER(p.gender) IN :genders")
         Page<Product> findByGenderIn(@Param("genders") List<String> genders, Pageable p);
 
-
         @Query("SELECT p.name FROM Product p WHERE p.active=true AND LOWER(p.name) LIKE LOWER(CONCAT('%',:q,'%'))")
         List<String> suggestNames(@Param("q") String q, Pageable p);
+
+        @Query("SELECT DISTINCT p FROM Product p " +
+                        "WHERE p.active=true " +
+                        "AND (p.gender IS NULL OR LOWER(p.gender) NOT IN :excludedGenders) " +
+                        "AND (LOWER(p.name) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(p.name) LIKE LOWER(CONCAT('%',:q2,'%')))")
+        Page<Product> searchByNameOnlyForGender(@Param("q") String q, @Param("q2") String q2, @Param("excludedGenders") List<String> excludedGenders, Pageable p);
+
+        @Query("SELECT DISTINCT p FROM Product p " +
+                        "WHERE p.active=true " +
+                        "AND (LOWER(p.name) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(p.name) LIKE LOWER(CONCAT('%',:q2,'%')))")
+        Page<Product> searchByNameOnly(@Param("q") String q, @Param("q2") String q2, Pageable p);
 }
