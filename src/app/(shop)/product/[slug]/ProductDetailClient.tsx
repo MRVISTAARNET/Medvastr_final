@@ -710,8 +710,8 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#16a34a', fontWeight: 600 }}>
                         <span style={{ fontSize: '16px' }}>🚚</span> Delivery {pincodeStatus.etd ? `by ${pincodeStatus.etd}` : 'available'}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: pincodeStatus.cod ? '#16a34a' : '#475569', fontWeight: 600 }}>
-                        <span style={{ fontSize: '16px' }}>💵</span> {pincodeStatus.cod ? 'Cash on delivery available' : 'Prepaid payment only'}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: (pincodeStatus.cod && !p.codDisabled) ? '#16a34a' : '#475569', fontWeight: 600 }}>
+                        <span style={{ fontSize: '16px' }}>💵</span> {(pincodeStatus.cod && !p.codDisabled) ? 'Cash on delivery available' : 'Prepaid payment only'}
                       </div>
                     </>
                   ) : (
