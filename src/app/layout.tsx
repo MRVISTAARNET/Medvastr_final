@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Plus_Jakarta_Sans, Inter } from "next/font/google";
 import "./globals.css";
 import { SITE_URL } from "@/lib/api";
 import Script from "next/script";
+import JsonLd from "@/components/JsonLd";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -67,6 +68,9 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true },
   },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || "",
+  },
 };
 
 export const viewport: Viewport = {
@@ -80,9 +84,43 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Medvastr",
+    "url": SITE_URL,
+    "logo": `${SITE_URL}/logo.png`,
+    "sameAs": [
+      "https://www.instagram.com/medvastr/",
+      "https://www.facebook.com/medvastr/",
+      "https://www.linkedin.com/company/medvastr/"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+91-8976488911",
+      "contactType": "customer service",
+      "areaServed": "IN",
+      "availableLanguage": "en"
+    }
+  };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Medvastr",
+    "url": SITE_URL,
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": `${SITE_URL}/products?search={search_term_string}`,
+      "query-input": "required name=search_term_string"
+    }
+  };
+
   return (
     <html lang="en" className={`${serif.variable} ${sans.variable} ${inter.variable}`}>
       <body style={{ fontFamily: "var(--font-sans)" }}>
+        <JsonLd data={organizationSchema as any} />
+        <JsonLd data={websiteSchema as any} />
         {children}
         <Script
           strategy="afterInteractive"

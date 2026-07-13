@@ -6,10 +6,11 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { fmt, cn, Product } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
 import ProductCard from "@/components/ProductCard";
-import { API_BASE } from "@/lib/api";
+import { API_BASE, SITE_URL } from "@/lib/api";
 import { mapApiProduct, getImagesForColor, getSizesForColor } from "@/lib/productUtils";
 import ProductImageZoom from "@/components/ProductImageZoom";
 import ExpandableDescription from "@/components/ExpandableDescription";
+import JsonLd from "@/components/JsonLd";
 
 function DetailAccordion({ title, children, defaultOpen = false }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -440,8 +441,53 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
     }
   }
 
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": p.name,
+    "image": colorImages && colorImages.length > 0 ? colorImages.map(img => img.startsWith("http") ? img : `${SITE_URL}${img}`) : [],
+    "description": p.desc || p.short || "",
+    "sku": p.sku || `MVS-${p.id}`,
+    "mpn": p.styleId || p.sku || `MVS-${p.id}`,
+    "brand": {
+      "@type": "Brand",
+      "name": p.brand || "Medvastr"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": `${SITE_URL}/product/${p.slug || p.id}`,
+      "priceCurrency": "INR",
+      "price": p.price,
+      "priceValidUntil": new Date(new Date().getFullYear() + 1, 0, 1).toISOString().split('T')[0],
+      "itemCondition": "https://schema.org/NewCondition",
+      "availability": isOutOfStock ? "https://schema.org/OutOfStock" : "https://schema.org/InStock"
+    },
+    ...(reviews.length > 0 ? {
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": avgRating,
+        "reviewCount": reviewCount
+      },
+      "review": reviews.slice(0, 5).map((r: any) => ({
+        "@type": "Review",
+        "author": {
+          "@type": "Person",
+          "name": r.userName || "Verified Customer"
+        },
+        "datePublished": r.createdAt ? r.createdAt.split('T')[0] : new Date().toISOString().split('T')[0],
+        "reviewBody": r.body || r.comment || "",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": r.rating || 5,
+          "bestRating": "5"
+        }
+      }))
+    } : {})
+  };
+
   return (
     <div className="pdp-container">
+      <JsonLd data={productSchema as any} />
       {/* PRO LIGHTBOX MODAL */}
       {zoom && mounted && typeof document !== "undefined" && createPortal(
         <div className="zoom-modal" onClick={() => setZoom(false)}>
