@@ -3116,13 +3116,13 @@ textarea {
   }
 
   .logo .lw {
-    font-size: 38px !important;
+    font-size: 24px !important;
     font-weight: 900 !important;
   }
 
   .logo .lt {
-    font-size: 10px !important;
-    letter-spacing: 3px !important;
+    font-size: 8px !important;
+    letter-spacing: 2.2px !important;
     margin-left: 2px !important;
   }
 
@@ -3197,7 +3197,19 @@ textarea {
   }
 
   .sec-t, .clr-t {
-    font-size: 26px !important;
+    font-size: 22px !important;
+  }
+
+  .pdp-title-premium {
+    font-size: 24px !important;
+  }
+
+  .pdp-price-now {
+    font-size: 24px !important;
+  }
+
+  .pdp-price-was {
+    font-size: 16px !important;
   }
 
   .hero {
@@ -3266,7 +3278,23 @@ textarea {
 
 @media (max-width: 480px) {
   .logo .lw {
-    font-size: 32px !important;
+    font-size: 20px !important;
+  }
+
+  .sec-t, .clr-t {
+    font-size: 19px !important;
+  }
+
+  .pdp-title-premium {
+    font-size: 20px !important;
+  }
+
+  .pdp-price-now {
+    font-size: 20px !important;
+  }
+
+  .about-h {
+    font-size: 20px !important;
   }
 
   .pg-3,
