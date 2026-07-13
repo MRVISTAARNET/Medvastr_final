@@ -13,7 +13,9 @@ export const B = {
 export const COLS = [
   { n: "Dark Blue", h: "#1a2b4a" },
   { n: "Light Blue", h: "#add8e6" },
+  { n: "Maroon", h: "#5A1D2B" },
   { n: "Maroon", h: "#800000" },
+  { n: "Maroon", h: "#800020" },
   { n: "Wine", h: "#3D274E" },
 ];
 

@@ -14,7 +14,7 @@ interface MegaMenuProps {
 
 const NAVY = "#0f2044";
 const WINE = "#3D274E";
-const MAROON = "#800020";
+const MAROON = "#5A1D2B";
 const LIGHT_BLUE = "#add8e6";
 
 const MENU_COLORS = [
