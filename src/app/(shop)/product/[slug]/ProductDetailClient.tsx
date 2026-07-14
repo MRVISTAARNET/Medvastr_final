@@ -295,7 +295,17 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   useEffect(() => { setBrokenImages({}); setMainImg(0); }, [p?.id, ci]);
 
   const handleColorChange = (index: number) => {
-    setCi(index); setMainImg(0); setBrokenImages({});
+    setCi(index);
+    setMainImg(0);
+    setBrokenImages({});
+    if (p && typeof window !== "undefined") {
+      const colorName = p.clrNms?.[index] || p.clrs?.[index];
+      if (colorName) {
+        const query = new URLSearchParams(window.location.search);
+        query.set("color", colorName);
+        router.replace(`${window.location.pathname}?${query.toString()}`, { scroll: false });
+      }
+    }
   };
 
   const submitReview = async (e: React.FormEvent) => {
