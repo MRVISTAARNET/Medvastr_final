@@ -19,176 +19,138 @@ export default function ContactPage() {
   ];
 
   return (
-    <div style={{ backgroundColor: "#ffffff", minHeight: "100vh", position: "relative" }}>
+    <div className="ct-page">
 
-      {/* Top Banner Section */}
-      <div className="contact-banner" style={{
-        height: "60vh",
-        minHeight: "450px",
-        background: "url('https://d2tnzshqdaedbc.cloudfront.net/contact-banner.jpg') center/cover",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "0 24px"
-      }}>
-        {/* Banner with no text overlay as requested */}
-      </div>
+      {/* Top Banner */}
+      <div className="ct-banner" />
 
-      <div style={{ maxWidth: "1200px", margin: "-80px auto 0", padding: "0 24px 100px", position: "relative", zIndex: 10 }}>
+      <div className="ct-wrapper">
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: "32px" }}>
+        <div className="ct-grid">
 
-          {/* LEFT SIDE: Information */}
-          <div style={{
-            background: "#0f172a",
-            padding: "54px 44px",
-            borderRadius: "32px",
-            color: "white",
-            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
-          }}>
-            <h3 style={{ fontSize: "1.75rem", fontWeight: 800, marginBottom: "12px" }}>Let's Connect</h3>
-            <p style={{ color: "rgba(255,255,255,0.6)", marginBottom: "48px", lineHeight: 1.6 }}>
+          {/* LEFT: Info Panel */}
+          <div className="ct-info-panel">
+            <h1 className="ct-info-heading">Let's Connect</h1>
+            <p className="ct-info-sub">
               Our dedicated support team understands the unique needs of healthcare professionals. Reach out anytime.
             </p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "36px" }}>
+            <div className="ct-info-list">
               {[
-                { ico: "📞", l: "Speak with us", v: `${B.phone1}\n${B.phone2}`, href: `tel:${B.phone1}` },
-                { ico: "✉️", l: "Write to us", v: B.email, href: `mailto:${B.email}` },
-                { ico: "📍", l: "Visit our office", v: B.addr },
-              ].map((i) => (
-                <div key={i.l} className="contact-info-row" style={{ display: "flex", gap: "24px", alignItems: "flex-start" }}>
-                  <div style={{
-                    width: "60px",
-                    height: "60px",
-                    borderRadius: "20px",
-                    background: "rgba(255,255,255,0.05)",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "26px",
-                    flexShrink: 0
-                  }}>
-                    {i.ico}
-                  </div>
-                  <div>
-                    <div style={{ fontSize: "13px", fontWeight: 700, color: "#7FA5E6", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" }}>{i.l}</div>
-                    {i.href ? (
-                      <a href={i.href} style={{ fontSize: "17px", fontWeight: 600, color: "white", textDecoration: "none", whiteSpace: "pre-line", lineHeight: "1.5" }}>
-                        {i.v}
-                      </a>
+                { ico: "📞", label: "Speak with us", value: `${B.phone1}\n${B.phone2}`, href: `tel:${B.phone1}` },
+                { ico: "✉️", label: "Write to us", value: B.email, href: `mailto:${B.email}` },
+                { ico: "📍", label: "Visit our office", value: B.addr, href: undefined },
+              ].map((item) => (
+                <div key={item.label} className="ct-info-row">
+                  <div className="ct-info-icon">{item.ico}</div>
+                  <div className="ct-info-text">
+                    <div className="ct-info-label">{item.label}</div>
+                    {item.href ? (
+                      <a href={item.href} className="ct-info-value">{item.value}</a>
                     ) : (
-                      <div style={{ fontSize: "17px", fontWeight: 500, color: "white", whiteSpace: "pre-line", lineHeight: "1.5" }}>{i.v}</div>
+                      <div className="ct-info-value">{item.value}</div>
                     )}
                   </div>
                 </div>
               ))}
             </div>
 
-            <div style={{ marginTop: "64px", paddingTop: "40px", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
-              <h3 style={{ fontSize: "14px", fontWeight: 700, color: "rgba(255,255,255,0.4)", marginBottom: "24px", textTransform: "uppercase", letterSpacing: "1.5px" }}>Follow Medvastr</h3>
-              <div style={{ display: "flex", gap: "16px" }}>
+            <div className="ct-socials-wrap">
+              <div className="ct-socials-title">Follow Medvastr</div>
+              <div className="ct-socials">
                 {socials.map(([ico, nm, url]) => (
-                  <a key={nm} href={url} target="_blank" rel="noopener" className="social-icon">
-                    {ico}
-                  </a>
+                  <a key={nm} href={url} target="_blank" rel="noopener" className="ct-social-btn">{ico}</a>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* RIGHT SIDE: The Form */}
-          <div style={{
-            background: "white",
-            padding: "54px 44px",
-            borderRadius: "32px",
-            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.08)",
-            border: "1px solid #f1f5f9"
-          }}>
+          {/* RIGHT: Form */}
+          <div className="ct-form-panel">
             {sent ? (
-              <div style={{ textAlign: "center", padding: "60px 20px" }}>
-                <div style={{ fontSize: "72px", marginBottom: "32px", background: "#f0fdf4", width: "140px", height: "140px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 32px", border: "1px solid #dcfce7" }}>✨</div>
-                <h3 style={{ fontSize: "2rem", color: "#0f172a", marginBottom: "16px", fontWeight: 800 }}>Message Sent!</h3>
-                <p style={{ color: "#64748b", fontSize: "17px", lineHeight: "1.7", marginBottom: "40px" }}>
-                  We've received your query. Our operations manager will reach out to you personally within the next 24 hours.
+              <div className="ct-success">
+                <div className="ct-success-icon">✨</div>
+                <h2 className="ct-success-heading">Message Sent!</h2>
+                <p className="ct-success-text">
+                  We've received your query. Our team will reach out within 24 hours.
                 </p>
-                <button onClick={() => setSent(false)} style={{ background: "var(--primary-navy)", color: "white", border: "none", padding: "16px 32px", borderRadius: "14px", fontWeight: 700, cursor: "pointer", transition: "all 0.3s" }}>
+                <button onClick={() => setSent(false)} className="ct-again-btn">
                   Send another message
                 </button>
               </div>
             ) : (
               <>
-                <h3 style={{ fontSize: "2rem", color: "#0f172a", marginBottom: "10px", fontWeight: 800 }}>Send a Message</h3>
-                <p style={{ color: "#64748b", fontSize: "16px", marginBottom: "40px", lineHeight: 1.6 }}>Have a specific requirement or just want to say hi? We're all ears.</p>
+                <h2 className="ct-form-heading">Send a Message</h2>
+                <p className="ct-form-sub">Have a specific requirement or just want to say hi? We're all ears.</p>
 
-                <form onSubmit={async (e) => {
-                  e.preventDefault();
-                  setLoading(true);
-                  const form = new FormData(e.currentTarget);
-                  try {
-                    await fetch(`${API_BASE}/inquiries`, {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({
-                        name: form.get("name"),
-                        email: form.get("email"),
-                        phone: form.get("phone"),
-                        type: form.get("subject") === "Bulk Order Inquiry" ? "BULK_ORDER" : "CONTACT",
-                        message: `Subj: ${form.get("subject")} - Msg: ${form.get("message")}`
-                      })
-                    });
-                  } catch (err) { }
-                  setLoading(false);
-                  setSent(true);
-                }} style={{ display: "flex", flexDirection: "column", gap: "28px" }}>
-
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }} className="responsive-grid">
-                    <div className="input-group">
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    setLoading(true);
+                    const form = new FormData(e.currentTarget);
+                    try {
+                      await fetch(`${API_BASE}/inquiries`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          name: form.get("name"),
+                          email: form.get("email"),
+                          phone: form.get("phone"),
+                          type: form.get("subject") === "Bulk/Hospital Orders" ? "BULK_ORDER" : "CONTACT",
+                          message: `Subj: ${form.get("subject")} - Msg: ${form.get("message")}`
+                        })
+                      });
+                    } catch (err) {}
+                    setLoading(false);
+                    setSent(true);
+                  }}
+                  className="ct-form"
+                >
+                  <div className="ct-row">
+                    <div className="ct-field">
                       <label>Your Name</label>
-                      <input name="name" required placeholder="Enter your full name" style={{ height: "48px", borderRadius: "12px" }} />
+                      <input name="name" required placeholder="Enter your full name" />
                     </div>
-                    <div className="input-group">
+                    <div className="ct-field">
                       <label>Mobile Number</label>
-                      <input name="phone" required type="tel" placeholder="Enter your phone number" style={{ height: "48px", borderRadius: "12px" }} />
+                      <input name="phone" required type="tel" placeholder="Enter your phone number" />
                     </div>
                   </div>
 
-                  <div className="input-group">
+                  <div className="ct-field">
                     <label>Email Address</label>
-                    <input name="email" required type="email" placeholder="Enter your email address" style={{ height: "48px", borderRadius: "12px" }} />
+                    <input name="email" required type="email" placeholder="Enter your email address" />
                   </div>
 
-                  <div className="input-group">
+                  <div className="ct-field">
                     <label>What can we help with?</label>
-                    <select name="subject" required style={{ height: "48px", borderRadius: "12px" }}>
+                    <select name="subject" required>
                       <option>General Inquiry</option>
                       <option>Bulk/Hospital Orders</option>
-                      <option>Sizing & Customization</option>
-                      <option>Shipping & Logistics</option>
+                      <option>Sizing &amp; Customization</option>
+                      <option>Shipping &amp; Logistics</option>
                     </select>
                   </div>
 
-                  <div className="input-group">
+                  <div className="ct-field">
                     <label>Your Message</label>
-                    <textarea name="message" required placeholder="Tell us more about your needs..." rows={5} style={{ borderRadius: "12px" }} />
+                    <textarea name="message" required placeholder="Tell us more about your needs..." rows={5} />
                   </div>
 
-                  <button type="submit" disabled={loading} className="submit-btn">
-                    {loading ? "Sending..." : "Submit Inquiry —"}
+                  <button type="submit" disabled={loading} className="ct-submit">
+                    {loading ? "Sending..." : "Submit Inquiry →"}
                   </button>
                 </form>
               </>
             )}
           </div>
+
         </div>
 
-        {/* Map Section */}
-        <div className="map-card">
-          <h3 style={{ fontSize: "2rem", color: "#0f172a", marginBottom: "24px", fontWeight: 800, display: "flex", alignItems: "center", gap: "12px" }}>
-            <span style={{ filter: "drop-shadow(0 4px 6px rgba(0,0,0,0.1))" }}>📍</span> Find Us Here
-          </h3>
-          <div className="map-iframe-container">
+        {/* Map */}
+        <div className="ct-map-card">
+          <h3 className="ct-map-heading">📍 Find Us Here</h3>
+          <div className="ct-map-wrap">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3769.308298715783!2d72.85501867595304!3d19.143542282071665!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7b71329c97b83%3A0x6b801a6104d538c2!2sExpress%20Zone!5e0!3m2!1sen!2sin!4v1719120000000!5m2!1sen!2sin"
               width="100%"
@@ -200,111 +162,321 @@ export default function ContactPage() {
             ></iframe>
           </div>
         </div>
+
       </div>
 
       <style jsx>{`
-        .contact-info-row:hover { transform: translateX(10px); }
-        .contact-info-row { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .ct-page {
+          background: #f8fafc;
+          min-height: 100vh;
+          font-family: var(--sans), sans-serif;
+        }
 
-        .social-icon {
-          width: 50px;
-          height: 50px;
-          border-radius: 15px;
-          background: rgba(255,255,255,0.05);
+        /* Banner */
+        .ct-banner {
+          height: 55vh;
+          min-height: 300px;
+          max-height: 450px;
+          background: url('https://d2tnzshqdaedbc.cloudfront.net/contact-banner.jpg') center/cover no-repeat;
+        }
+
+        /* Wrapper */
+        .ct-wrapper {
+          max-width: 1160px;
+          margin: -80px auto 0;
+          padding: 0 20px 80px;
+          position: relative;
+          z-index: 10;
+        }
+
+        /* Two-column grid */
+        .ct-grid {
+          display: grid;
+          grid-template-columns: 1fr 1.4fr;
+          gap: 28px;
+          align-items: start;
+        }
+
+        /* Left info panel */
+        .ct-info-panel {
+          background: #0f172a;
+          border-radius: 24px;
+          padding: 44px 36px;
+          color: white;
+          box-shadow: 0 20px 48px rgba(0,0,0,0.18);
+        }
+        .ct-info-heading {
+          font-size: 24px;
+          font-weight: 700;
+          color: white;
+          margin: 0 0 10px;
+        }
+        .ct-info-sub {
+          font-size: 13px;
+          color: rgba(255,255,255,0.6);
+          line-height: 1.65;
+          margin: 0 0 36px;
+        }
+        .ct-info-list {
+          display: flex;
+          flex-direction: column;
+          gap: 28px;
+        }
+        .ct-info-row {
+          display: flex;
+          gap: 18px;
+          align-items: flex-start;
+          transition: transform 0.3s;
+        }
+        .ct-info-row:hover {
+          transform: translateX(6px);
+        }
+        .ct-info-icon {
+          width: 48px;
+          height: 48px;
+          border-radius: 14px;
+          background: rgba(255,255,255,0.06);
           border: 1px solid rgba(255,255,255,0.1);
           display: flex;
           align-items: center;
           justify-content: center;
           font-size: 22px;
-          transition: all 0.3s ease;
-          text-decoration: none;
-          color: white;
+          flex-shrink: 0;
         }
-        .social-icon:hover {
-          background: var(--accent-blue);
-          border-color: var(--accent-blue);
-          transform: translateY(-5px);
-          box-shadow: 0 10px 20px rgba(79, 123, 196, 0.2);
+        .ct-info-text {
+          padding-top: 2px;
         }
-
-        .input-group label {
-          display: block;
+        .ct-info-label {
           font-size: 11px;
-          font-weight: 800;
-          color: #94a3b8;
+          font-weight: 700;
+          color: #7FA5E6;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 6px;
+        }
+        .ct-info-value {
+          font-size: 15px;
+          font-weight: 500;
+          color: white;
+          text-decoration: none;
+          white-space: pre-line;
+          line-height: 1.55;
+        }
+        a.ct-info-value:hover {
+          text-decoration: underline;
+        }
+        .ct-socials-wrap {
+          margin-top: 36px;
+          padding-top: 28px;
+          border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .ct-socials-title {
+          font-size: 11px;
+          font-weight: 700;
+          color: rgba(255,255,255,0.4);
           text-transform: uppercase;
           letter-spacing: 1.5px;
-          margin-bottom: 10px;
+          margin-bottom: 18px;
         }
-        .input-group input, .input-group select, .input-group textarea {
-          width: 100%;
-          padding: 18px 20px;
-          background: #f8fafc;
-          border: 1.5px solid #e2e8f0;
-          border-radius: 14px;
-          font-size: 16px;
-          color: #0f172a;
-          font-family: inherit;
-          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-          outline: none;
-          box-sizing: border-box;
+        .ct-socials {
+          display: flex;
+          gap: 12px;
         }
-        .input-group textarea { resize: none; }
-        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
-          border-color: var(--accent-blue);
-          background: #fff;
-          box-shadow: 0 0 0 4px rgba(79, 123, 196, 0.05);
-        }
-
-        .submit-btn {
-          width: 100%;
-          padding: 20px;
-          background: var(--primary-navy);
-          color: #fff;
-          border: none;
-          border-radius: 14px;
-          font-size: 17px;
-          font-weight: 800;
-          cursor: pointer;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          margin-top: 10px;
+        .ct-social-btn {
+          width: 44px;
+          height: 44px;
+          border-radius: 12px;
+          background: rgba(255,255,255,0.05);
+          border: 1px solid rgba(255,255,255,0.1);
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 12px;
-          letter-spacing: 0.5px;
+          font-size: 20px;
+          text-decoration: none;
+          transition: all 0.25s;
+          color: white;
         }
-        .submit-btn:hover:not(:disabled) {
+        .ct-social-btn:hover {
+          background: var(--accent-blue);
+          border-color: var(--accent-blue);
+          transform: translateY(-4px);
+        }
+
+        /* Right form panel */
+        .ct-form-panel {
+          background: white;
+          border-radius: 24px;
+          padding: 40px 36px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+          border: 1px solid #f1f5f9;
+        }
+        .ct-form-heading {
+          font-size: 22px;
+          font-weight: 700;
+          color: #0f172a;
+          margin: 0 0 6px;
+        }
+        .ct-form-sub {
+          font-size: 13px;
+          color: #64748b;
+          margin: 0 0 28px;
+          line-height: 1.6;
+        }
+        .ct-form {
+          display: flex;
+          flex-direction: column;
+          gap: 18px;
+        }
+        .ct-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 16px;
+        }
+        .ct-field {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+        .ct-field label {
+          font-size: 11px;
+          font-weight: 700;
+          color: #64748b;
+          text-transform: uppercase;
+          letter-spacing: 0.8px;
+        }
+        .ct-field input,
+        .ct-field select,
+        .ct-field textarea {
+          width: 100%;
+          padding: 11px 14px;
+          background: #f8fafc;
+          border: 1.5px solid #e2e8f0;
+          border-radius: 10px;
+          font-size: 14px;
+          color: #0f172a;
+          font-family: inherit;
+          outline: none;
+          transition: all 0.2s;
+          box-sizing: border-box;
+          height: 44px;
+        }
+        .ct-field textarea {
+          height: auto;
+          resize: none;
+        }
+        .ct-field input:focus,
+        .ct-field select:focus,
+        .ct-field textarea:focus {
+          border-color: var(--accent-blue);
+          background: white;
+          box-shadow: 0 0 0 3px rgba(79, 123, 196, 0.06);
+        }
+        .ct-submit {
+          width: 100%;
+          padding: 14px;
+          background: var(--primary-navy);
+          color: white;
+          border: none;
+          border-radius: 12px;
+          font-size: 15px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+          margin-top: 4px;
+        }
+        .ct-submit:hover:not(:disabled) {
           background: var(--secondary-blue);
-          transform: translateY(-3px);
-          box-shadow: 0 15px 30px rgba(32, 58, 95, 0.25);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(32, 58, 95, 0.2);
         }
-        .submit-btn:disabled {
-          opacity: 0.7;
+        .ct-submit:disabled {
+          opacity: 0.6;
           cursor: not-allowed;
         }
 
-        .map-card {
-          margin-top: 40px;
+        /* Success state */
+        .ct-success {
+          text-align: center;
+          padding: 48px 20px;
+        }
+        .ct-success-icon {
+          font-size: 56px;
+          margin-bottom: 20px;
+        }
+        .ct-success-heading {
+          font-size: 22px;
+          font-weight: 700;
+          color: #0f172a;
+          margin: 0 0 12px;
+        }
+        .ct-success-text {
+          font-size: 14px;
+          color: #64748b;
+          line-height: 1.65;
+          margin: 0 0 28px;
+        }
+        .ct-again-btn {
+          background: var(--primary-navy);
+          color: white;
+          border: none;
+          padding: 12px 28px;
+          border-radius: 10px;
+          font-weight: 600;
+          font-size: 14px;
+          cursor: pointer;
+        }
+
+        /* Map */
+        .ct-map-card {
+          margin-top: 28px;
           background: white;
-          padding: 44px;
-          border-radius: 32px;
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+          padding: 36px;
+          border-radius: 24px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.05);
           border: 1px solid #f1f5f9;
         }
-        .map-iframe-container {
+        .ct-map-heading {
+          font-size: 20px;
+          font-weight: 600;
+          color: #0f172a;
+          margin: 0 0 20px;
+        }
+        .ct-map-wrap {
           width: 100%;
-          height: 450px;
-          border-radius: 20px;
+          height: 380px;
+          border-radius: 14px;
           overflow: hidden;
           border: 1px solid #e2e8f0;
         }
 
-        @media (max-width: 768px) {
-          .responsive-grid { grid-template-columns: 1fr !important; gap: 28px !important; }
-          .contact-banner { height: 220px !important; min-height: auto !important; }
-          .map-card { padding: 32px 20px; margin-top: 32px; }
-          .map-iframe-container { height: 350px; }
+        /* Responsive */
+        @media (max-width: 900px) {
+          .ct-grid {
+            grid-template-columns: 1fr;
+          }
+          .ct-banner {
+            height: 220px;
+            min-height: auto;
+          }
+          .ct-wrapper {
+            margin-top: -40px;
+          }
+          .ct-map-wrap {
+            height: 280px;
+          }
+        }
+        @media (max-width: 540px) {
+          .ct-row {
+            grid-template-columns: 1fr;
+          }
+          .ct-info-panel,
+          .ct-form-panel,
+          .ct-map-card {
+            padding: 28px 20px;
+          }
+          .ct-map-wrap {
+            height: 240px;
+          }
         }
       `}</style>
     </div>

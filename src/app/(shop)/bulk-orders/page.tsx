@@ -1,53 +1,13 @@
 "use client";
 import React, { useState, useRef } from "react";
 import Link from "next/link";
-import { API_BASE } from "@/lib/api";
 
 export default function BulkOrderPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [name, setName] = useState("");
-  const [institution, setInstitution] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [qty, setQty] = useState("");
-  const [msg, setMsg] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-
   const formRef = useRef<HTMLDivElement>(null);
 
   const handleScrollToForm = () => {
     formRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await fetch(`${API_BASE}/inquiries`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          institution,
-          email,
-          phone,
-          quantity: qty,
-          message: msg,
-          subject: "Bulk Order Request"
-        })
-      });
-      const data = await res.json();
-      if (data.success) {
-        setSuccess(true);
-        setName(""); setInstitution(""); setEmail("");
-        setPhone(""); setQty(""); setMsg("");
-      }
-    } catch (e) {
-      // Ignored
-    } finally {
-      setLoading(false);
-    }
   };
 
   const steps = [
@@ -200,50 +160,15 @@ export default function BulkOrderPage() {
           </div>
         </section>
 
-        {/* ── ENQUIRY FORM ── */}
-        <div ref={formRef} className="form-card">
-          <h2 className="form-title">Bulk Order Enquiry</h2>
-          <p className="form-sub">Fill in the form below and our team will contact you within 24 hours.</p>
-
-          {success ? (
-            <div className="form-success">
-              ✓ Inquiry submitted! Our manager will call you within 24 hours.
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="enq-form">
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Full Name *</label>
-                  <input type="text" required value={name} onChange={e => setName(e.target.value)} placeholder="Enter your name" />
-                </div>
-                <div className="form-group">
-                  <label>Hospital / Institution *</label>
-                  <input type="text" required value={institution} onChange={e => setInstitution(e.target.value)} placeholder="AIIMS, Apollo, etc." />
-                </div>
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Email Address *</label>
-                  <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="name@hospital.com" />
-                </div>
-                <div className="form-group">
-                  <label>Phone Number *</label>
-                  <input type="tel" required value={phone} onChange={e => setPhone(e.target.value)} placeholder="+91 XXXXX XXXXX" />
-                </div>
-              </div>
-              <div className="form-group">
-                <label>Estimated Quantity *</label>
-                <input type="number" min="50" required value={qty} onChange={e => setQty(e.target.value)} placeholder="Minimum 50 items" />
-              </div>
-              <div className="form-group">
-                <label>Customization Requirements</label>
-                <textarea rows={4} value={msg} onChange={e => setMsg(e.target.value)} placeholder="E.g., logo embroidery, custom hospital colors..." />
-              </div>
-              <button type="submit" disabled={loading} className="btn-submit">
-                {loading ? "Submitting..." : "Submit Inquiry"}
-              </button>
-            </form>
-          )}
+        {/* ── CONTACT CTA ── */}
+        <div ref={formRef} className="contact-cta">
+          <div className="cta-icon">💬</div>
+          <h2 className="cta-heading">Ready to place a bulk order?</h2>
+          <p className="cta-sub">Get institutional pricing, custom branding, and dedicated support. Our team responds within 24 hours.</p>
+          <div className="cta-actions">
+            <Link href="/contact" className="btn-cta-primary">Send Us an Enquiry</Link>
+            <a href="tel:+918976488911" className="btn-cta-outline">📞 Call Now</a>
+          </div>
         </div>
 
       </div>
@@ -530,92 +455,70 @@ export default function BulkOrderPage() {
           line-height: 1.65;
         }
 
-        /* Enquiry Form */
-        .form-card {
+        /* Contact CTA */
+        .contact-cta {
           background: white;
           border-radius: 20px;
           border: 1px solid #e2e8f0;
           box-shadow: 0 4px 24px rgba(0,0,0,0.04);
-          padding: 36px;
-          max-width: 780px;
+          padding: 48px 40px;
+          text-align: center;
           margin: 0 auto 60px;
+          max-width: 680px;
         }
-        .form-title {
-          font-size: 20px;
+        .cta-icon {
+          font-size: 40px;
+          margin-bottom: 16px;
+        }
+        .cta-heading {
+          font-size: 22px;
           font-weight: 600;
           color: var(--primary-navy);
-          margin: 0 0 6px 0;
+          margin: 0 0 10px;
         }
-        .form-sub {
-          font-size: 13px;
-          color: #64748b;
-          margin: 0 0 24px 0;
-        }
-        .enq-form {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-        .form-row {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 16px;
-        }
-        .form-group {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-        }
-        .form-group label {
-          font-size: 12px;
-          font-weight: 600;
-          color: #374151;
-        }
-        .form-group input,
-        .form-group textarea {
-          border: 1.5px solid #e2e8f0;
-          border-radius: 10px;
-          padding: 10px 14px;
+        .cta-sub {
           font-size: 14px;
-          outline: none;
-          transition: border-color 0.2s;
-          height: 44px;
-          color: #1e293b;
-          background: #fafafa;
+          color: #64748b;
+          line-height: 1.6;
+          margin: 0 0 28px;
+          max-width: 480px;
+          margin-left: auto;
+          margin-right: auto;
         }
-        .form-group textarea {
-          height: auto;
-          resize: vertical;
+        .cta-actions {
+          display: flex;
+          gap: 12px;
+          justify-content: center;
+          flex-wrap: wrap;
         }
-        .form-group input:focus,
-        .form-group textarea:focus {
-          border-color: var(--accent-blue);
-          background: white;
-        }
-        .btn-submit {
+        .btn-cta-primary {
           background: var(--primary-navy);
           color: white;
-          border: none;
-          height: 46px;
+          padding: 12px 28px;
           border-radius: 10px;
           font-size: 14px;
           font-weight: 600;
-          cursor: pointer;
+          text-decoration: none;
           transition: all 0.2s;
         }
-        .btn-submit:hover {
+        .btn-cta-primary:hover {
           background: var(--secondary-blue);
           transform: translateY(-1px);
         }
-        .form-success {
-          background: #ecfdf5;
-          border: 1px solid #10b981;
-          color: #065f46;
-          padding: 18px;
+        .btn-cta-outline {
+          background: transparent;
+          color: var(--primary-navy);
+          border: 1.5px solid var(--primary-navy);
+          padding: 12px 28px;
           border-radius: 10px;
-          font-weight: 600;
           font-size: 14px;
-          text-align: center;
+          font-weight: 600;
+          text-decoration: none;
+          transition: all 0.2s;
+        }
+        .btn-cta-outline:hover {
+          background: var(--primary-navy);
+          color: white;
         }
 
         /* Smart Banner */
