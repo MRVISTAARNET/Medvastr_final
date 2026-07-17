@@ -644,16 +644,19 @@ function ProductsContent() {
                 Showing <strong>{paged.length}</strong> of <strong>{f.length}</strong> products
               </div>
               <div className="prod-sort-wrapper">
-                <span className="sort-label">SORT BY:</span>
-                <select className="sort-sel" value={sort} onChange={(e) => setSort(e.target.value)}>
-                  <option value="default">Featured</option>
-                  <option value="pa">Price: Low to High</option>
-                  <option value="pd">Price: High to Low</option>
-                  <option value="rt">Ratings</option>
-                  <option value="az">Alphabetically, A-Z</option>
-                  <option value="za">Alphabetically, Z-A</option>
-                  <option value="nw">Newest Arrival</option>
-                </select>
+                <span className="sort-label">✓ SORT BY :</span>
+                <div className="sort-sel-wrap">
+                  <select className="sort-sel" value={sort} onChange={(e) => setSort(e.target.value)}>
+                    <option value="default">MOST POPULAR</option>
+                    <option value="pa">PRICE: LOW TO HIGH</option>
+                    <option value="pd">PRICE: HIGH TO LOW</option>
+                    <option value="rt">RATINGS</option>
+                    <option value="az">A TO Z</option>
+                    <option value="za">Z TO A</option>
+                    <option value="nw">NEWEST FIRST</option>
+                  </select>
+                  <span className="sort-chevron">›</span>
+                </div>
               </div>
               {hasFilters && (
                 <div className="active-filters">

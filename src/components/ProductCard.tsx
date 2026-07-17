@@ -165,7 +165,7 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
             {p.origPrice && <span className="pc-was-price">{fmt(p.origPrice)}</span>}
           </div>
 
-          {/* Dynamic Color Swatches */}
+          {/* Dynamic Color Swatches with Name Tooltip */}
           {p.clrs && p.clrs.length > 0 && (
             <div className="pc-swatches">
               {p.clrs.slice(0, 5).map((c, i) => (
@@ -174,7 +174,12 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
                   className={`pc-swatch ${ci === i ? "active" : ""}`}
                   style={{ background: c }}
                   onClick={(e) => handleColorChange(e, i)}
-                />
+                  title={p.clrNms?.[i] || ""}
+                >
+                  {p.clrNms?.[i] && (
+                    <span className="pc-swatch-name">{p.clrNms[i]}</span>
+                  )}
+                </div>
               ))}
               {p.clrs.length > 5 && (
                 <span className="pc-swatch-more">

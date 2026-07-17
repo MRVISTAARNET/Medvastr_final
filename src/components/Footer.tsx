@@ -81,7 +81,7 @@ export default function Footer() {
 
         {/* Company */}
         <div className="ft-col">
-          <h4>Company</h4>
+          <div className="ft-col-heading">Company</div>
           <ul className="ft-lnks">
             <li><Link href="/about">About Us</Link></li>
             <li><Link href="/blog">Blog</Link></li>
@@ -92,7 +92,7 @@ export default function Footer() {
 
         {/* Support */}
         <div className="ft-col">
-          <h4>Support</h4>
+          <div className="ft-col-heading">Support</div>
           <ul className="ft-lnks">
             <li><Link href="/contact">Contact Us</Link></li>
             <li><Link href="/track">Track Order</Link></li>
@@ -103,7 +103,7 @@ export default function Footer() {
 
         {/* Quick Links */}
         <div className="ft-col">
-          <h4>Quick Links</h4>
+          <div className="ft-col-heading">Quick Links</div>
           <ul className="ft-lnks">
             <li><Link href="/products?type=scrubs">Scrub Suit</Link></li>
             <li><Link href="/products?type=tshirts">Cotton Crew T-Shirt</Link></li>
@@ -115,7 +115,7 @@ export default function Footer() {
 
         {/* Connect With Us */}
         <div className="ft-col">
-          <h4>Connect With Us</h4>
+          <div className="ft-col-heading">Connect With Us</div>
           <ul className="ft-lnks connect-info">
             <li>
               <span className="connect-icon">📞</span>
@@ -279,7 +279,7 @@ export default function Footer() {
         }
         
         /* Columns */
-        h4 { 
+        .ft-col-heading {
           font-size: 14px;
           font-weight: 700; 
           text-transform: capitalize; 
@@ -288,8 +288,9 @@ export default function Footer() {
           letter-spacing: 0.02em;
           position: relative;
           padding-bottom: 8px;
+          display: block;
         }
-        h4::after {
+        .ft-col-heading::after {
           content: '';
           position: absolute;
           left: 0;
@@ -299,10 +300,18 @@ export default function Footer() {
           background: rgba(255, 255, 255, 0.4);
         }
         
-        ul { list-style: none; padding: 0; }
-        li { margin-bottom: 10px; }
-        li a { font-size: 13px; color: rgba(255, 255, 255, 0.72); transition: all 0.2s; text-decoration: none; font-weight: 400; letter-spacing: 0.01em; }
-        li a:hover { color: #ffffff; }
+        .ft-lnks { list-style: none; padding: 0; margin: 0; }
+        .ft-lnks li { margin-bottom: 10px; }
+        .ft-lnks li a {
+          font-size: 13px;
+          color: rgba(255, 255, 255, 0.75) !important;
+          transition: color 0.2s;
+          text-decoration: none !important;
+          font-weight: 400;
+          letter-spacing: 0.01em;
+          -webkit-font-smoothing: antialiased;
+        }
+        .ft-lnks li a:hover { color: #ffffff !important; }
         
         /* Connect Info */
         .connect-info li {

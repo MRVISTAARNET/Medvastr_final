@@ -306,14 +306,15 @@ export default function BulkOrderPage() {
           border-color: var(--primary-navy);
         }
         .cat-img-wrap {
-          aspect-ratio: 16 / 10;
+          width: 100%;
           overflow: hidden;
           background: #f1f5f9;
         }
         .cat-img {
           width: 100%;
-          height: 100%;
-          object-fit: cover;
+          height: auto;
+          display: block;
+          object-fit: contain;
           transition: transform 0.35s;
         }
         .cat-card:hover .cat-img {
