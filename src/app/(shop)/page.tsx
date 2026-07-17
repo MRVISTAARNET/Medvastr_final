@@ -199,24 +199,7 @@ export default function Home() {
       )}
 
 
-      {/* FEATURE STRIP */}
-      <div className="feat-strip">
-        {[
-          ["🧪", "Lab Tested", "Quality certified"],
-          ["⏰", "12-Hour Ready", "Long-shift comfort"],
-          ["🛡️", "Anti-Distraction", "Built for focus"],
-          ["👜", "Up to 5 Pockets", "Everything you need"],
-          ["🚀", "Premium Fabric", "Looks new, wash after wash"],
-        ].map(([ico, t, s]) => (
-          <div className="fit" key={t}>
-            <span className="fit-ico">{ico}</span>
-            <span>
-              <span className="fit-t">{t}</span>
-              <span className="fit-s">{s}</span>
-            </span>
-          </div>
-        ))}
-      </div>
+
 
       {/* NEW ARRIVALS */}
       {newArr.length > 0 && (
@@ -301,44 +284,7 @@ export default function Home() {
 
       <AboutHomeSection />
 
-      <div className="nl-sec">
-        <div style={{ maxWidth: 1560, margin: "0 auto" }}>
-          <div className="nl-t">Get 10% Off Your First Order</div>
-          <div className="nl-s">Subscribe for exclusive deals, new arrivals and healthcare style tips.</div>
-          <form
-            className="nl-form"
-            onSubmit={async (e) => {
-              e.preventDefault();
-              const input = (e.currentTarget.querySelector('.nl-inp') as HTMLInputElement);
-              const email = input.value;
-              if (!email) return;
 
-              try {
-                const res = await fetch(`${API_BASE}/newsletter/subscribe`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ email })
-                });
-                const data = await res.json();
-                if (data.success) {
-                  toast("Thank you! Check your email for your discount code.", "ok");
-                  input.value = "";
-                } else {
-                  toast(data.message || "Failed to subscribe", "bad");
-                }
-              } catch (e) {
-                toast("Something went wrong. Please try again later.", "bad");
-              }
-            }}
-          >
-            <input className="nl-inp" type="email" placeholder="Enter your email address" required />
-            <button className="nl-go" type="submit">Subscribe</button>
-          </form>
-          <div style={{ fontSize: 12, color: "rgba(255,255,255,.45)", marginTop: 13 }}>
-            Use code <strong style={{ color: "#7FA5E6" }}>MEDVASTR10</strong> at checkout.
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

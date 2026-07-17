@@ -149,7 +149,6 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
           <div className="pc-top-meta">
             <div className="pc-brand-box">
               <span className="pc-brand-name">Medvastr</span>
-              <span className="pc-info-icon">ⓘ</span>
             </div>
             <div className="pc-rating-box">
               <span className="pc-star-avg">★</span>
