@@ -2480,36 +2480,37 @@ p {
 }
 
 .badge-simple {
-  background: rgba(255, 255, 255, 0.92) !important;
-  color: #334155 !important;
-  border: none !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  color: #1e293b !important;
+  border: 1px solid rgba(15, 23, 42, 0.14) !important;
   backdrop-filter: none !important;
 }
 
-/* Swatch color name tooltip */
-.pc-swatch {
-  position: relative;
+/* Swatch layout */
+.pc-swatches {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 8px;
 }
-.pc-swatch-name {
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
-  background: #1e293b;
-  color: white;
-  font-size: 10px;
+.pc-swatch-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+/* Inline color name shown on hover / active */
+.pc-color-label {
+  font-size: 11px;
   font-weight: 500;
-  padding: 3px 7px;
-  border-radius: 4px;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.15s;
-  z-index: 20;
+  color: #64748b;
   letter-spacing: 0.02em;
-}
-.pc-swatch:hover .pc-swatch-name {
-  opacity: 1;
+  min-height: 14px;
+  transition: color 0.15s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 /* ============================================================
@@ -2945,20 +2946,27 @@ p {
 
 .pc-swatches {
   display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.pc-swatch-row {
+  display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 10px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
 .pc-swatch {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border: 1.5px solid rgba(0, 0, 0, 0.12);
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.2, 1, 0.3, 1);
+  transition: all 0.2s;
   position: relative;
+  flex-shrink: 0;
 }
 
 .pc-swatch:hover {
@@ -3715,6 +3723,75 @@ p {
 
 .sort-sel:focus {
   outline: none;
+}
+
+/* Custom Sort Dropdown */
+.sort-custom {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.sort-current {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.sort-chevron-icon {
+  color: #64748b;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.sort-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  min-width: 180px;
+  overflow: hidden;
+  animation: dropIn 0.15s ease;
+}
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.sort-option {
+  padding: 11px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.12s;
+}
+
+.sort-option:hover {
+  background: #f8fafc;
+}
+
+.sort-option.active {
+  color: #008080;
+  font-weight: 600;
+  background: #f0fdfa;
+}
+
+.sort-tick {
+  font-size: 11px;
+  color: #008080;
+  font-weight: 700;
 }
 
 .active-filters {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -33,8 +33,19 @@ function ProductsContent() {
   const [fitFilter, setFitFilter] = useState(initFit);
   const [pg, setPg] = useState(1);
   const [mobF, setMobF] = useState(false);
+  const [sortOpen, setSortOpen] = useState(false);
+  const sortRef = useRef<HTMLDivElement>(null);
 
   const router = useRouter();
+
+  // Close sort dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (sortRef.current && !sortRef.current.contains(e.target as Node)) setSortOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   // Extract unique fabrics and fits respecting gender boundaries
   const genderFilteredProducts = products.filter(p => {
@@ -640,16 +651,39 @@ function ProductsContent() {
           {/* PRODUCTS AREA */}
           <div className="products-right">
             <div className="prod-top">
-              <div className="prod-sort-wrapper">
+              <div className="prod-sort-wrapper" ref={sortRef}>
                 <span className="sort-label">Sort by:</span>
-                <div className="sort-sel-wrap">
-                  <select className="sort-sel" value={sort} onChange={(e) => setSort(e.target.value)}>
-                    <option value="default">Most popular</option>
-                    <option value="pa">Price: Low to High</option>
-                    <option value="pd">Price: High to Low</option>
-                    <option value="nw">Newest first</option>
-                  </select>
-                  <span className="sort-chevron">›</span>
+                <div className="sort-custom" onClick={() => setSortOpen(!sortOpen)}>
+                  <span className="sort-current">
+                    {[
+                      { value: "default", label: "Most popular" },
+                      { value: "pa", label: "Price: Low to High" },
+                      { value: "pd", label: "Price: High to Low" },
+                      { value: "nw", label: "Newest first" },
+                    ].find(o => o.value === sort)?.label || "Most popular"}
+                  </span>
+                  <svg className="sort-chevron-icon" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M2 4l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  {sortOpen && (
+                    <div className="sort-dropdown">
+                      {[
+                        { value: "default", label: "Most popular" },
+                        { value: "pa", label: "Price: Low to High" },
+                        { value: "pd", label: "Price: High to Low" },
+                        { value: "nw", label: "Newest first" },
+                      ].map(o => (
+                        <div
+                          key={o.value}
+                          className={`sort-option${sort === o.value ? " active" : ""}`}
+                          onClick={(e) => { e.stopPropagation(); setSort(o.value); setSortOpen(false); }}
+                        >
+                          {sort === o.value && <span className="sort-tick">✓</span>}
+                          {o.label}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
