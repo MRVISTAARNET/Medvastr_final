@@ -203,9 +203,14 @@ export default function BulkProductPage() {
 
             <div className="cta-box">
               <p className="cta-text">Looking for bulk pricing? Send us an enquiry today!</p>
-              <a href={`/contact?subject=Bulk Enquiry: ${item.name}`} className="enquiry-btn">
-                ✉️ Send Enquiry for {item.name}
-              </a>
+              <div className="cta-actions">
+                <a href={`/contact?subject=Bulk Enquiry: ${item.name}`} className="btn-cta-primary">
+                  Send Enquiry
+                </a>
+                <a href="tel:+918976488911" className="btn-cta-outline">
+                  📞 Call Now
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -213,11 +218,17 @@ export default function BulkProductPage() {
         {/* BOTTOM CTA - WIDE BUTTON */}
         <div className="bottom-cta-section">
           <div className="bottom-cta-card">
+            <div className="cta-icon">💬</div>
             <h2>Ready to place a bulk order?</h2>
             <p>Get the best institutional pricing for {item.name}. Our team will get back to you within 24 hours.</p>
-            <a href={`/contact?subject=Bulk Enquiry: ${item.name}`} className="enquiry-btn-wide">
-              ✉️ Send Enquiry for {item.name}
-            </a>
+            <div className="cta-actions">
+              <a href={`/contact?subject=Bulk Enquiry: ${item.name}`} className="btn-cta-primary">
+                Send Enquiry for {item.name}
+              </a>
+              <a href="tel:+918976488911" className="btn-cta-outline">
+                📞 Call Now
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -333,95 +344,95 @@ export default function BulkProductPage() {
         }
 
         .cta-box {
-          margin-top: 50px;
-          padding: 30px;
-          background: #f0fdf4;
-          border-radius: 24px;
-          border: 2px dashed #008080;
+          margin-top: 40px;
+          padding: 24px;
+          background: #f8fafc;
+          border-radius: 16px;
+          border: 1px solid #e2e8f0;
           text-align: center;
         }
 
         .cta-text {
-          font-size: 16px;
+          font-size: 15px;
           font-weight: 700;
-          color: #0f172a;
-          margin-bottom: 20px;
+          color: #0f2044;
+          margin-bottom: 16px;
         }
 
-        .enquiry-btn {
-          display: inline-block;
-          background: linear-gradient(135deg, #ff4c29 0%, #ff1e56 100%);
+        .cta-actions {
+          display: flex;
+          gap: 12px;
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+
+        .btn-cta-primary {
+          background: #0f2044;
           color: white;
-          text-align: center;
-          padding: 20px 50px;
-          border-radius: 100px;
-          font-size: 20px;
-          font-weight: 900;
+          padding: 12px 28px;
+          border-radius: 10px;
+          font-size: 14px;
+          font-weight: 600;
           text-decoration: none;
-          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          box-shadow: 0 12px 35px rgba(255, 30, 86, 0.35);
-          text-transform: uppercase;
-          letter-spacing: 1px;
+          transition: all 0.2s;
         }
 
-        .enquiry-btn:hover {
-          transform: translateY(-8px) scale(1.03);
-          box-shadow: 0 22px 50px rgba(255, 30, 86, 0.45);
-          filter: brightness(1.1);
+        .btn-cta-primary:hover {
+          background: #2563eb;
+          transform: translateY(-1px);
+        }
+
+        .btn-cta-outline {
+          background: transparent;
+          color: #0f2044;
+          border: 1.5px solid #0f2044;
+          padding: 12px 28px;
+          border-radius: 10px;
+          font-size: 14px;
+          font-weight: 600;
+          text-decoration: none;
+          transition: all 0.2s;
+        }
+
+        .btn-cta-outline:hover {
+          background: rgba(15, 32, 68, 0.05);
+          transform: translateY(-1px);
         }
 
         .bottom-cta-section {
-          margin-top: 80px;
-          padding: 60px 0;
+          margin-top: 60px;
+          padding: 40px 0 0;
           border-top: 1px solid #e2e8f0;
           text-align: center;
         }
 
         .bottom-cta-card {
           background: #f8fafc;
-          padding: 60px 40px;
-          border-radius: 40px;
+          padding: 40px 24px;
+          border-radius: 24px;
           border: 1px solid #e2e8f0;
-          max-width: 900px;
+          max-width: 680px;
           margin: 0 auto;
         }
 
         .bottom-cta-card h2 {
-          font-size: 40px;
-          font-weight: 950;
-          color: #0f172a;
-          margin-bottom: 12px;
-          letter-spacing: -1.5px;
+          font-size: 24px;
+          font-weight: 700;
+          color: #0f2044;
+          margin-bottom: 10px;
+          letter-spacing: -0.01em;
         }
 
         .bottom-cta-card p {
-          font-size: 18px;
+          font-size: 14px;
           color: #64748b;
-          margin-bottom: 40px;
+          margin-bottom: 24px;
+          line-height: 1.6;
         }
 
-        .enquiry-btn-wide {
-          display: inline-block;
-          width: 100%;
-          max-width: 500px;
-          background: linear-gradient(135deg, #ff4c29 0%, #ff1e56 100%);
-          color: white;
-          text-align: center;
-          padding: 24px 50px;
-          border-radius: 100px;
-          font-size: 20px;
-          font-weight: 900;
-          text-decoration: none;
-          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          box-shadow: 0 15px 45px rgba(255, 30, 86, 0.4);
-          text-transform: uppercase;
-          letter-spacing: 1.5px;
-        }
-
-        .enquiry-btn-wide:hover {
-          transform: translateY(-8px) scale(1.02);
-          box-shadow: 0 25px 60px rgba(255, 30, 86, 0.5);
-          filter: brightness(1.1);
+        .cta-icon {
+          font-size: 32px;
+          margin-bottom: 12px;
         }
 
         @media (max-width: 1024px) {

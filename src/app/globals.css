@@ -1157,19 +1157,19 @@ p {
   display: inline-flex;
   align-items: center;
   background: transparent;
-  color: white;
+  color: #0f2044;
   height: 46px;
   padding: 0 28px;
   border-radius: 4px;
-  border: 1.5px solid rgba(255, 255, 255, 0.32);
+  border: 1.5px solid #0f2044;
   font-size: 14px;
   font-weight: 500;
   transition: border-color 0.2s, background 0.2s;
 }
 
 .btn-g:hover {
-  border-color: white;
-  background: rgba(255, 255, 255, 0.09);
+  border-color: #0f2044;
+  background: rgba(15, 32, 68, 0.05);
 }
 
 .btn-d {
@@ -1354,19 +1354,19 @@ p {
   display: inline-flex;
   align-items: center;
   background: transparent;
-  color: white;
+  color: #0f2044;
   height: 46px;
   padding: 0 28px;
   border-radius: 4px;
-  border: 1.5px solid rgba(255, 255, 255, 0.32);
+  border: 1.5px solid #0f2044;
   font-size: 14px;
   font-weight: 500;
   transition: border-color 0.2s, background 0.2s;
 }
 
 .btn-g:hover {
-  border-color: white;
-  background: rgba(255, 255, 255, 0.09);
+  border-color: #0f2044;
+  background: rgba(15, 32, 68, 0.05);
 }
 
 .btn-d {
@@ -1823,7 +1823,7 @@ p {
 }
 
 .cat-c:hover {
-  transform: translateY(-6px);
+  transform: none;
 }
 
 .cat-img-box {
@@ -1841,22 +1841,22 @@ p {
 }
 
 .cat-c:hover .cat-img-box {
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  border-color: var(--t);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.05);
 }
 
 .cat-img-box img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center top !important;
+  object-position: center !important;
   padding: 0;
   border-radius: 50%;
   transition: transform 1.2s cubic-bezier(0.2, 1, 0.3, 1);
 }
 
 .cat-c:hover img {
-  transform: scale(1.1);
+  transform: none;
 }
 
 .cat-l {
@@ -2461,8 +2461,8 @@ p {
 /* CLEAN PRODUCT BADGES — knyamed style */
 .pc-badges {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 6px;
+  left: 6px;
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -2473,9 +2473,9 @@ p {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 4px 8px !important;
-  border-radius: 4px !important;
-  font-size: 10px !important;
+  padding: 2.5px 6px !important;
+  border-radius: 2px !important;
+  font-size: 8.5px !important;
   font-weight: 600 !important;
   line-height: 1 !important;
   letter-spacing: 0.02em !important;
@@ -3103,8 +3103,9 @@ p {
   }
 
   .pc-badge {
-    padding: 2px 6px;
-    font-size: 8px;
+    padding: 1.5px 4px !important;
+    font-size: 7.5px !important;
+    border-radius: 2px !important;
   }
 }
 
@@ -4102,11 +4103,16 @@ p {
 
 .about-p {
   font-size: 15px;
+  font-weight: 400 !important;
   color: var(--lt);
   line-height: 1.9;
   margin-bottom: 30px;
   text-align: left;
   width: 100%;
+}
+
+.about-details p {
+  font-weight: 400 !important;
 }
 
 .about-facts {
@@ -8089,5 +8095,70 @@ body {
 h1, h2, h3, h4 {
   letter-spacing: -0.01em;
 }
+
+/* KNYAMED STYLE FEATURE HIGHLIGHTS STRIP */
+.pdp-highlights-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: #82a4cf !important; /* Authentic Knyamed blue background */
+  padding: 36px 20px;
+  margin: 40px 0;
+  border-radius: 12px;
+  align-items: center;
+  justify-items: center;
+}
+
+.pdp-hl-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+}
+
+/* Thin vertical borders dividing the columns */
+.pdp-hl-col:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 10%;
+  height: 80%;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.pdp-hl-icon {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  mix-blend-mode: multiply; /* Eliminates the white background of the icons seamlessly */
+  filter: contrast(1.05);
+}
+
+.pdp-hl-label {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #0f2044 !important; /* Sleek brand navy text color */
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 768px) {
+  .pdp-highlights-strip {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    padding: 24px 16px;
+  }
+  .pdp-hl-col:not(:last-child)::after {
+    display: none; /* Hide vertical dividers on mobile grid layout */
+  }
+  .pdp-hl-icon {
+    width: 64px;
+    height: 64px;
+  }
+}
+
 
 

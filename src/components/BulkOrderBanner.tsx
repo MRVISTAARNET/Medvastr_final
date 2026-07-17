@@ -4,8 +4,8 @@ import React from "react";
 import Link from "next/link";
 
 export default function BulkOrderBanner() {
-  const srcDesk = "https://d2tnzshqdaedbc.cloudfront.net/home-bulk-banner.jpg";
-  const srcMob = "https://d2tnzshqdaedbc.cloudfront.net/home-bulk-banner-mob.jpg";
+  const srcDesk = "/home-bulk-banner.jpg";
+  const srcMob = "/home-bulk-banner-mob.jpg";
 
   return (
     <div className="bulk-banner-sec">

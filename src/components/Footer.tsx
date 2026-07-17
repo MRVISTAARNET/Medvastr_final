@@ -195,7 +195,7 @@ export default function Footer() {
         }
         .ft-ns-text {
           font-size: 20px;
-          font-weight: 600;
+          font-weight: 400;
           color: #ffffff;
           letter-spacing: -0.01em;
         }
