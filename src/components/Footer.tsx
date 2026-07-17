@@ -148,10 +148,12 @@ export default function Footer() {
       <style jsx>{`
         footer {
           background: var(--primary-navy);
-          color: #CBD5E1;
+          color: rgba(255, 255, 255, 0.82);
           padding: 0 0 40px;
           border-top: 1px solid var(--border-color);
           font-family: var(--sans), sans-serif;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
         }
 
         /* 1. Newsletter Strip */
@@ -257,31 +259,33 @@ export default function Footer() {
         }
         .ft-desc { 
           font-size: 13px; 
-          color: #CBD5E1; 
-          line-height: 1.6; 
+          color: rgba(255, 255, 255, 0.72);
+          line-height: 1.65; 
           max-width: 320px; 
           margin-bottom: 5px;
         }
         .ft-office-info {
           font-size: 13px;
-          line-height: 1.5;
+          line-height: 1.6;
         }
         .ft-office-info strong {
-          color: #ffffff;
+          color: rgba(255, 255, 255, 0.95);
           display: block;
           margin-bottom: 4px;
+          font-weight: 600;
         }
         .addr-text {
-          color: #CBD5E1;
+          color: rgba(255, 255, 255, 0.65);
         }
         
         /* Columns */
         h4 { 
-          font-size: 14px; 
-          font-weight: 600; 
+          font-size: 14px;
+          font-weight: 700; 
           text-transform: capitalize; 
           margin-bottom: 20px; 
-          color: #ffffff; 
+          color: #ffffff;
+          letter-spacing: 0.02em;
           position: relative;
           padding-bottom: 8px;
         }
@@ -292,12 +296,12 @@ export default function Footer() {
           bottom: 0;
           width: 24px;
           height: 2px;
-          background: var(--secondary-blue);
+          background: rgba(255, 255, 255, 0.4);
         }
         
         ul { list-style: none; padding: 0; }
-        li { margin-bottom: 12px; }
-        li a { font-size: 13px; color: #CBD5E1; transition: all 0.2s; text-decoration: none; font-weight: 500; }
+        li { margin-bottom: 10px; }
+        li a { font-size: 13px; color: rgba(255, 255, 255, 0.72); transition: all 0.2s; text-decoration: none; font-weight: 400; letter-spacing: 0.01em; }
         li a:hover { color: #ffffff; }
         
         /* Connect Info */
@@ -306,11 +310,11 @@ export default function Footer() {
           align-items: flex-start;
           gap: 10px;
           font-size: 13px;
-          color: #CBD5E1;
+          color: rgba(255, 255, 255, 0.72);
         }
         .connect-icon {
           font-size: 13px;
-          opacity: 0.8;
+          opacity: 0.85;
         }
         .connect-details {
           display: flex;
@@ -318,9 +322,9 @@ export default function Footer() {
           flex-wrap: wrap;
         }
         .connect-info a {
-          color: #CBD5E1;
+          color: rgba(255, 255, 255, 0.82);
           text-decoration: none;
-          font-weight: 600;
+          font-weight: 500;
         }
         .connect-info a:hover {
           color: #ffffff;
@@ -358,20 +362,21 @@ export default function Footer() {
           justify-content: space-between; 
           align-items: center; 
         }
-        .ft-copy { font-size: 13px; color: #CBD5E1; font-weight: 500; line-height: 1.6; }
-        .ft-credit a { color: #CBD5E1; font-weight: 700; text-decoration: none; }
+        .ft-copy { font-size: 13px; color: rgba(255, 255, 255, 0.6); font-weight: 400; line-height: 1.65; }
+        .ft-credit a { color: rgba(255, 255, 255, 0.7); font-weight: 600; text-decoration: none; }
         .ft-credit a:hover { color: white; }
         
         .ft-pay { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
         .pay-p { 
           font-size: 10px; 
-          font-weight: 700; 
+          font-weight: 600; 
           padding: 4px 10px; 
-          background: rgba(255,255,255,0.02); 
+          background: rgba(255,255,255,0.04); 
           border-radius: 4px; 
-          color: #CBD5E1; 
-          border: 1px solid rgba(255,255,255,0.06); 
+          color: rgba(255, 255, 255, 0.6); 
+          border: 1px solid rgba(255,255,255,0.1); 
           text-transform: uppercase;
+          letter-spacing: 0.05em;
         }
 
         @media(max-width: 1024px) {
