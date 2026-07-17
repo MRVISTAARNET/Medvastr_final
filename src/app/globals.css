@@ -2591,49 +2591,49 @@ p {
 }
 
 .pdp-brand {
-  font-size: 10px;
-  font-weight: 800;
-  color: #94a3b8;
-  text-transform: uppercase;
-  letter-spacing: 2px;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: var(--secondary-text) !important;
+  text-transform: capitalize !important;
+  letter-spacing: 0 !important;
   margin-bottom: 8px;
   display: block;
 }
 
 .pdp-title {
-  font-size: 32px;
-  font-weight: 800;
-  color: #0f172a;
-  line-height: 1.1;
-  margin-bottom: 16px;
-  letter-spacing: -0.02em;
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  color: var(--primary-navy) !important;
+  line-height: 1.25 !important;
+  margin-bottom: 12px;
+  letter-spacing: -0.01em !important;
 }
 
 .pdp-rating {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
+  font-size: 13px !important;
   color: #f59e0b;
-  font-weight: 700;
+  font-weight: 500 !important;
 }
 
 .pdp-price-box {
   display: flex;
   align-items: baseline;
   gap: 12px;
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .pdp-price {
-  font-size: 28px;
-  font-weight: 900;
-  color: #0f172a;
+  font-size: 22px !important;
+  font-weight: 600 !important;
+  color: var(--dark-text) !important;
 }
 
 .pdp-orig-price {
-  font-size: 18px;
-  color: #cbd5e1;
+  font-size: 15px !important;
+  color: var(--secondary-text) !important;
   text-decoration: line-through;
 }
 
@@ -2645,11 +2645,11 @@ p {
 }
 
 .pdp-opt-label {
-  font-size: 11px;
-  font-weight: 800;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: var(--secondary-text) !important;
+  text-transform: capitalize !important;
+  letter-spacing: 0 !important;
 }
 
 .pdp-clr-grid {
