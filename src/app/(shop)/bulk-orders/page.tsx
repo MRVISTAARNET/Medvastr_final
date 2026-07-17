@@ -1,7 +1,6 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { API_BASE } from "@/lib/api";
 
 export default function BulkOrderPage() {
@@ -16,10 +15,6 @@ export default function BulkOrderPage() {
   const [success, setSuccess] = useState(false);
 
   const formRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    document.title = "Bulk Orders & Custom Hospital Uniforms | Medvastr";
-  }, []);
 
   const handleScrollToForm = () => {
     formRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -45,12 +40,8 @@ export default function BulkOrderPage() {
       const data = await res.json();
       if (data.success) {
         setSuccess(true);
-        setName("");
-        setInstitution("");
-        setEmail("");
-        setPhone("");
-        setQty("");
-        setMsg("");
+        setName(""); setInstitution(""); setEmail("");
+        setPhone(""); setQty(""); setMsg("");
       }
     } catch (e) {
       // Ignored
@@ -60,82 +51,93 @@ export default function BulkOrderPage() {
   };
 
   const steps = [
-    { num: "01", t: "Fill out the form", d: "with details" },
+    { num: "01", t: "Fill out the form", d: "with your requirements" },
     { num: "02", t: "Receive a call", d: "within 24 hours" },
-    { num: "03", t: "Build your", d: "custom order with us" },
-    { num: "04", t: "Get seamless,", d: "end-to-end delivery" }
+    { num: "03", t: "Build your order", d: "with our team" },
+    { num: "04", t: "Seamless delivery", d: "end-to-end fulfilment" }
   ];
 
   const categories = [
-    { t: "Scrub Suits", slug: "scrub-suit", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-scrub-suit.jpg", d: "High-performance medical scrubs designed for maximum comfort and flexibility during long clinical shifts." },
-    { t: "Linen & Bedding", slug: "linen-and-bedding", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-linen.jpg", d: "High-performance institutional linens designed for over 200+ industrial washes." },
-    { t: "Maternity Gown", slug: "maternity-gown", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-maternity.jpg", d: "Breathable, ergonomic maternity wear optimized for patient comfort and ease of care." },
-    { t: "Patient Dress", slug: "patient-dress", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-patient.jpg", d: "Soft, durable patient gowns and pajamas designed for clinical accessibility." },
-    { t: "Brown Blanket", slug: "brown-blankets", img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-blanket.jpg", d: "Professional grade ward blankets offering supreme warmth and infection control compliance." }
+    {
+      t: "Scrub Suits", slug: "scrub-suit",
+      img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-scrub-suit.jpg",
+      d: "High-performance medical scrubs designed for maximum comfort during long clinical shifts."
+    },
+    {
+      t: "Linen & Bedding", slug: "linen-and-bedding",
+      img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-linen.jpg",
+      d: "Institutional linens designed for 200+ industrial wash cycles without fading."
+    },
+    {
+      t: "Maternity Gown", slug: "maternity-gown",
+      img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-maternity.jpg",
+      d: "Breathable, ergonomic maternity wear optimized for patient comfort and clinical ease."
+    },
+    {
+      t: "Patient Dress", slug: "patient-dress",
+      img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-patient.jpg",
+      d: "Soft, durable patient gowns and pajamas designed for clinical accessibility."
+    },
+    {
+      t: "Brown Blanket", slug: "brown-blankets",
+      img: "https://d2tnzshqdaedbc.cloudfront.net/bulk-blanket.jpg",
+      d: "Professional grade ward blankets with supreme warmth and infection control compliance."
+    }
   ];
 
   const faqs = [
     {
-      q: "What is the minimum quantity required for a bulk medical scrubs order?",
-      a: "The minimum quantity starts at 50 items for institutional orders to qualify for customization and bulk discount pricing."
+      q: "What is the minimum quantity for a bulk order?",
+      a: "Minimum 50 items for institutional orders to qualify for customization and bulk discount pricing."
     },
     {
-      q: "Can we mix colours or styles in a single bulk scrubs order?",
-      a: "Yes! You can mix and match sizes, colors, and designs across the total order volume to fit your clinic's needs."
+      q: "Can we mix colours or styles in a single bulk order?",
+      a: "Yes! You can mix and match sizes, colors, and designs across the total order volume."
     },
     {
-      q: "How long does it take to deliver bulk medical scrubs orders?",
-      a: "Standard bulk delivery takes 7 to 10 business days. Express shipping configurations are available on request."
+      q: "How long does bulk delivery take?",
+      a: "Standard bulk delivery takes 7–10 business days. Express shipping is available on request."
     },
     {
-      q: "Are exchanges allowed for bulk scrubs orders?",
-      a: "Since bulk orders are customized with embroidery, logos, or sizing, we do not accept size or color exchanges once processing has started."
+      q: "Are exchanges allowed for bulk orders?",
+      a: "Since bulk orders are customized with embroidery or logos, we don't accept exchanges once processing starts."
     },
     {
-      q: "Can I return a scrubs order in bulk?",
-      a: "Returns are only accepted in cases of manufacturing defects or stitching issues within 7 days of delivery."
+      q: "Can I return a bulk order?",
+      a: "Returns are accepted only for manufacturing defects or stitching issues within 7 days of delivery."
     },
     {
-      q: "Can I order only scrub tops, only scrub bottoms, or different quantities in a bulk order?",
-      a: "Yes, we support separate top or bottom purchases, as well as unequal quantity ratios (e.g. 50 tops and 30 bottoms)."
+      q: "Can I order only scrub tops or bottoms in different quantities?",
+      a: "Yes, we support separate top/bottom purchases and unequal quantity ratios (e.g. 50 tops + 30 bottoms)."
     },
     {
-      q: "Do you offer discounts for bulk medical scrubs orders?",
-      a: "Yes! We offer tiered volume discounts. The higher your quantity, the larger the discount per unit."
+      q: "Do you offer discounts for bulk orders?",
+      a: "Yes! Tiered volume discounts — the higher your quantity, the larger the discount per unit."
     },
     {
-      q: "Are you a bulk medical scrubs supplier in India?",
-      a: "Yes, Medvastr is a leading direct-to-hospital manufacturer and supplier of medical apparel across India."
-    },
-    {
-      q: "Can I customise my scrubs order in bulk with logos or embroidery?",
+      q: "Can I customise with logos or embroidery?",
       a: "Yes! We provide custom hospital embroidery, screen-printing, and department labelling services."
-    },
-    {
-      q: "How do I place a scrubs order in bulk?",
-      a: "Simply fill out the enquiry form at the bottom of this page, or contact us directly via phone or WhatsApp!"
     }
   ];
 
   const S3 = "https://d2tnzshqdaedbc.cloudfront.net";
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f8fafc", paddingBottom: "80px" }}>
+    <div className="bulk-page">
       {/* ── HERO BANNER ── */}
       <SmartBanner base={`${S3}/bulk-order-banner`} title="Bulk Orders for Healthcare" />
 
-      <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px" }}>
-        
-        {/* ── PROCESS STEPS ── */}
-        <div className="process-sec">
-          <h2 className="section-title">Bulk Ordering Made Simple</h2>
-          <p className="section-subtitle">Fill out the form, and we'll take care of the rest.</p>
+      <div className="bulk-inner">
 
+        {/* ── PROCESS STEPS ── */}
+        <section className="process-sec">
+          <h2 className="sec-heading">Bulk Ordering Made Simple</h2>
+          <p className="sec-sub">Fill out the form and we'll take care of the rest.</p>
           <div className="steps-flow">
             <div className="steps-line"></div>
             {steps.map((s, idx) => (
               <div className="step-card" key={idx}>
-                <div className="step-badge">{s.num}</div>
+                <div className={`step-badge${idx === 1 || idx === 2 ? " active" : ""}`}>{s.num}</div>
                 <div className="step-text">
                   <strong>{s.t}</strong>
                   <span>{s.d}</span>
@@ -143,82 +145,79 @@ export default function BulkOrderPage() {
               </div>
             ))}
           </div>
-
-          <button onClick={handleScrollToForm} className="btn-start-order">
-            Start Your Order Now
+          <button onClick={handleScrollToForm} className="btn-primary">
+            Start Your Order
           </button>
-        </div>
+        </section>
 
-        {/* ── PRODUCTS SECTION ── */}
-        <div style={{ margin: "80px 0" }}>
-          <div style={{ textAlign: "center", marginBottom: "50px" }}>
-            <h2 className="section-title">Bulk Product Categories</h2>
-            <p className="section-subtitle">Premium medical textiles and apparel supplied directly to top hospitals nationwide.</p>
-          </div>
-
-          <div className="categories-grid">
+        {/* ── PRODUCT CATEGORIES ── */}
+        <section className="cats-sec">
+          <h2 className="sec-heading">Bulk Product Categories</h2>
+          <p className="sec-sub">Premium medical textiles supplied directly to hospitals nationwide.</p>
+          <div className="cats-grid">
             {categories.map((c) => (
               <Link href={`/bulk-orders/${c.slug}`} key={c.slug} className="cat-card">
                 <div className="cat-img-wrap">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={c.img} alt={c.t} className="cat-img" />
+                  <img src={c.img} alt={c.t} className="cat-img"
+                    onError={(e) => { (e.target as any).style.display = "none"; }} />
                 </div>
                 <div className="cat-info">
-                  <h4 className="cat-title">{c.t}</h4>
+                  <h3 className="cat-title">{c.t}</h3>
                   <p className="cat-desc">{c.d}</p>
                   <div className="cat-btn">View Details →</div>
                 </div>
               </Link>
             ))}
           </div>
-        </div>
+        </section>
 
-        {/* ── PURPLE HELP BANNER ── */}
+        {/* ── HELP BANNER ── */}
         <div className="help-banner">
-          <div className="help-title">Planning a bulk order? We're here to help.</div>
-          <div className="help-buttons">
-            <button onClick={handleScrollToForm} className="btn-help-quote">Get a Quote</button>
-            <a href="tel:+918976488911" className="btn-help-call">Call Now</a>
+          <div className="help-text">Planning a bulk order? We're here to help.</div>
+          <div className="help-btns">
+            <button onClick={handleScrollToForm} className="btn-outline">Get a Quote</button>
+            <a href="tel:+918976488911" className="btn-solid">Call Now</a>
           </div>
         </div>
 
-        {/* ── FAQS ACCORDION ── */}
-        <div style={{ margin: "60px 0" }}>
-          <h2 className="section-title">FAQs</h2>
+        {/* ── FAQs ── */}
+        <section className="faq-sec">
+          <h2 className="sec-heading">Frequently Asked Questions</h2>
           <div className="faq-list">
             {faqs.map((f, idx) => {
               const isOpen = openFaq === idx;
               return (
-                <div key={idx} className="faq-item">
-                  <button onClick={() => setOpenFaq(isOpen ? null : idx)} className="faq-question">
+                <div key={idx} className={`faq-item${isOpen ? " open" : ""}`}>
+                  <button onClick={() => setOpenFaq(isOpen ? null : idx)} className="faq-q">
                     <span>{f.q}</span>
-                    <span className="faq-toggle">{isOpen ? "−" : "+"}</span>
+                    <span className="faq-icon">{isOpen ? "−" : "+"}</span>
                   </button>
-                  {isOpen && <div className="faq-answer">{f.a}</div>}
+                  {isOpen && <div className="faq-a">{f.a}</div>}
                 </div>
               );
             })}
           </div>
-        </div>
+        </section>
 
         {/* ── ENQUIRY FORM ── */}
         <div ref={formRef} className="form-card">
-          <h2 className="form-title">📧 Bulk Order Enquiry</h2>
-          <p className="form-subtitle">Fill in the institutional request form below and our manager will contact you.</p>
+          <h2 className="form-title">Bulk Order Enquiry</h2>
+          <p className="form-sub">Fill in the form below and our team will contact you within 24 hours.</p>
 
           {success ? (
             <div className="form-success">
-              ✓ Inquiry submitted successfully! Our manager will call you within 24 hours.
+              ✓ Inquiry submitted! Our manager will call you within 24 hours.
             </div>
           ) : (
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            <form onSubmit={handleSubmit} className="enq-form">
               <div className="form-row">
                 <div className="form-group">
                   <label>Full Name *</label>
                   <input type="text" required value={name} onChange={e => setName(e.target.value)} placeholder="Enter your name" />
                 </div>
                 <div className="form-group">
-                  <label>Hospital/Institution Name *</label>
+                  <label>Hospital / Institution *</label>
                   <input type="text" required value={institution} onChange={e => setInstitution(e.target.value)} placeholder="AIIMS, Apollo, etc." />
                 </div>
               </div>
@@ -233,16 +232,15 @@ export default function BulkOrderPage() {
                 </div>
               </div>
               <div className="form-group">
-                <label>Estimated Quantity Required *</label>
+                <label>Estimated Quantity *</label>
                 <input type="number" min="50" required value={qty} onChange={e => setQty(e.target.value)} placeholder="Minimum 50 items" />
               </div>
               <div className="form-group">
-                <label>Specific Customizations or Requirements</label>
+                <label>Customization Requirements</label>
                 <textarea rows={4} value={msg} onChange={e => setMsg(e.target.value)} placeholder="E.g., logo embroidery, custom hospital colors..." />
               </div>
-
               <button type="submit" disabled={loading} className="btn-submit">
-                {loading ? "Submitting Inquiry..." : "Submit Inquiry"}
+                {loading ? "Submitting..." : "Submit Inquiry"}
               </button>
             </form>
           )}
@@ -251,21 +249,35 @@ export default function BulkOrderPage() {
       </div>
 
       <style jsx>{`
-        .section-title {
-          font-size: 32px;
-          fontWeight: 800;
-          color: #0f172a;
-          text-align: center;
-          margin-bottom: 8px;
+        .bulk-page {
+          min-height: 100vh;
+          background: #f8fafc;
+          padding-bottom: 80px;
+          font-family: var(--sans), sans-serif;
         }
-        .section-subtitle {
-          font-size: 16px;
-          color: #64748b;
-          text-align: center;
-          margin-bottom: 40px;
+        .bulk-inner {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 24px;
         }
 
-        /* Steps Flow */
+        /* Section headings */
+        .sec-heading {
+          font-size: 24px;
+          font-weight: 600;
+          color: var(--primary-navy);
+          text-align: center;
+          margin-bottom: 6px;
+          letter-spacing: -0.01em;
+        }
+        .sec-sub {
+          font-size: 13px;
+          color: #64748b;
+          text-align: center;
+          margin-bottom: 36px;
+        }
+
+        /* Steps */
         .process-sec {
           text-align: center;
           margin-top: 50px;
@@ -274,15 +286,15 @@ export default function BulkOrderPage() {
           display: flex;
           justify-content: space-between;
           position: relative;
-          max-width: 1000px;
-          margin: 40px auto;
+          max-width: 900px;
+          margin: 36px auto;
           gap: 20px;
         }
         .steps-line {
           position: absolute;
-          top: 25px;
-          left: 5%;
-          right: 5%;
+          top: 24px;
+          left: 6%;
+          right: 6%;
           height: 2px;
           border-top: 2px dashed #cbd5e1;
           z-index: 1;
@@ -295,337 +307,355 @@ export default function BulkOrderPage() {
           z-index: 2;
         }
         .step-badge {
-          width: 50px;
-          height: 50px;
-          border-radius: 6px;
+          width: 48px;
+          height: 48px;
+          border-radius: 8px;
           background: white;
           border: 2px solid #e2e8f0;
           color: #64748b;
           font-weight: 700;
-          font-size: 18px;
+          font-size: 16px;
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: all 0.3s;
-          box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
-        .step-card:nth-child(2) .step-badge,
-        .step-card:nth-child(3) .step-badge {
-          background: #709fdc;
-          border-color: #709fdc;
+        .step-badge.active {
+          background: var(--primary-navy);
+          border-color: var(--primary-navy);
           color: white;
         }
         .step-text {
-          margin-top: 15px;
+          margin-top: 12px;
           text-align: center;
-          font-size: 14px;
+          font-size: 13px;
         }
         .step-text strong {
           display: block;
           color: #1e293b;
+          font-weight: 600;
           margin-bottom: 2px;
         }
         .step-text span {
           color: #64748b;
         }
-        .btn-start-order {
-          background: #482f8f;
+        .btn-primary {
+          background: var(--primary-navy);
           color: white;
           border: none;
-          padding: 14px 32px;
-          font-size: 15px;
-          font-weight: 700;
+          padding: 12px 28px;
+          font-size: 14px;
+          font-weight: 600;
           border-radius: 8px;
           cursor: pointer;
           transition: background 0.2s;
-          margin-top: 20px;
+          margin-top: 16px;
         }
-        .btn-start-order:hover {
-          background: #392473;
+        .btn-primary:hover {
+          background: var(--secondary-blue);
         }
 
         /* Categories */
-        .categories-grid {
+        .cats-sec {
+          margin: 70px 0;
+        }
+        .cats-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-          gap: 32px;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 28px;
         }
         .cat-card {
           background: white;
-          border-radius: 20px;
+          border-radius: 16px;
           overflow: hidden;
           border: 1px solid #e2e8f0;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-          transition: transform 0.3s, border-color 0.3s;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+          transition: transform 0.25s, box-shadow 0.25s;
           display: flex;
           flex-direction: column;
           text-decoration: none;
         }
         .cat-card:hover {
-          transform: translateY(-8px);
-          border-color: #008080;
+          transform: translateY(-6px);
+          box-shadow: 0 8px 28px rgba(0,0,0,0.08);
+          border-color: var(--primary-navy);
         }
         .cat-img-wrap {
-          aspect-ratio: 1.1 / 1;
+          aspect-ratio: 16 / 10;
           overflow: hidden;
+          background: #f1f5f9;
         }
         .cat-img {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          transition: transform 0.4s;
+          transition: transform 0.35s;
         }
         .cat-card:hover .cat-img {
-          transform: scale(1.05);
+          transform: scale(1.04);
         }
         .cat-info {
-          padding: 24px;
+          padding: 20px;
           display: flex;
           flex-direction: column;
           flex: 1;
         }
         .cat-title {
-          font-size: 20px;
-          font-weight: 800;
-          color: #0f172a;
-          margin: 0 0 10px 0;
+          font-size: 16px;
+          font-weight: 600;
+          color: var(--primary-navy);
+          margin: 0 0 8px 0;
         }
         .cat-desc {
-          font-size: 14px;
+          font-size: 13px;
           color: #64748b;
-          line-height: 1.6;
-          margin: 0 0 20px 0;
+          line-height: 1.55;
+          margin: 0 0 16px 0;
           flex: 1;
         }
         .cat-btn {
           background: #f1f5f9;
-          color: #0f172a;
-          padding: 10px;
+          color: var(--primary-navy);
+          padding: 9px 16px;
           border-radius: 8px;
           font-size: 13px;
-          font-weight: 700;
+          font-weight: 600;
           text-align: center;
-          text-transform: uppercase;
           transition: all 0.2s;
+          margin-top: auto;
         }
         .cat-card:hover .cat-btn {
-          background: #008080;
+          background: var(--primary-navy);
           color: white;
         }
 
         /* Help Banner */
         .help-banner {
-          background: #482f8f;
+          background: var(--primary-navy);
           border-radius: 12px;
-          padding: 24px 36px;
+          padding: 22px 32px;
           display: flex;
           align-items: center;
           justify-content: space-between;
           flex-wrap: wrap;
-          gap: 20px;
-          margin: 60px 0;
+          gap: 16px;
+          margin: 0 0 60px;
         }
-        .help-title {
-          font-size: 18px;
-          font-weight: 700;
+        .help-text {
+          font-size: 16px;
+          font-weight: 600;
           color: white;
         }
-        .help-buttons {
+        .help-btns {
           display: flex;
           align-items: center;
-          gap: 15px;
+          gap: 12px;
         }
-        .btn-help-quote {
+        .btn-outline {
           background: transparent;
           color: white;
-          border: 1.5px solid white;
-          padding: 10px 24px;
-          font-size: 14px;
+          border: 1.5px solid rgba(255,255,255,0.6);
+          padding: 9px 22px;
+          font-size: 13px;
           font-weight: 600;
           border-radius: 6px;
           cursor: pointer;
-          transition: background 0.2s, color 0.2s;
+          transition: all 0.2s;
         }
-        .btn-help-quote:hover {
+        .btn-outline:hover {
           background: white;
-          color: #482f8f;
+          color: var(--primary-navy);
+          border-color: white;
         }
-        .btn-help-call {
+        .btn-solid {
           background: white;
-          color: #482f8f;
-          padding: 10px 24px;
-          font-size: 14px;
+          color: var(--primary-navy);
+          padding: 9px 22px;
+          font-size: 13px;
           font-weight: 600;
           border-radius: 6px;
           text-decoration: none;
           transition: opacity 0.2s;
         }
-        .btn-help-call:hover {
+        .btn-solid:hover {
           opacity: 0.9;
         }
 
         /* FAQs */
+        .faq-sec {
+          margin: 0 0 60px;
+        }
         .faq-list {
           display: flex;
           flex-direction: column;
-          gap: 10px;
-          max-width: 900px;
+          gap: 8px;
+          max-width: 860px;
           margin: 0 auto;
         }
         .faq-item {
-          background: #f1f5f9;
-          border-radius: 8px;
+          background: white;
+          border: 1px solid #e2e8f0;
+          border-radius: 10px;
           overflow: hidden;
-          transition: all 0.2s;
+          transition: border-color 0.2s;
         }
-        .faq-question {
+        .faq-item.open {
+          border-color: var(--primary-navy);
+        }
+        .faq-q {
           width: 100%;
           background: transparent;
           border: none;
-          padding: 18px 24px;
+          padding: 16px 20px;
           display: flex;
           justify-content: space-between;
           align-items: center;
           font-size: 14px;
-          font-weight: 700;
-          color: #0f172a;
+          font-weight: 600;
+          color: var(--primary-navy);
           cursor: pointer;
           text-align: left;
+          gap: 12px;
         }
-        .faq-toggle {
+        .faq-icon {
           font-size: 18px;
-          color: #64748b;
+          color: #94a3b8;
           font-weight: 400;
+          flex-shrink: 0;
         }
-        .faq-answer {
-          padding: 0 24px 20px 24px;
-          font-size: 14px;
+        .faq-a {
+          padding: 0 20px 16px 20px;
+          font-size: 13px;
           color: #475569;
-          line-height: 1.6;
+          line-height: 1.65;
         }
 
-        /* Form Card */
+        /* Enquiry Form */
         .form-card {
           background: white;
-          border-radius: 24px;
+          border-radius: 20px;
           border: 1px solid #e2e8f0;
-          box-shadow: 0 10px 40px rgba(0,0,0,0.04);
-          padding: 40px;
-          max-width: 800px;
-          margin: 60px auto 0 auto;
+          box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+          padding: 36px;
+          max-width: 780px;
+          margin: 0 auto 60px;
         }
         .form-title {
-          font-size: 24px;
-          font-weight: 800;
-          color: #0f172a;
-          margin: 0 0 8px 0;
+          font-size: 20px;
+          font-weight: 600;
+          color: var(--primary-navy);
+          margin: 0 0 6px 0;
         }
-        .form-subtitle {
-          font-size: 14px;
+        .form-sub {
+          font-size: 13px;
           color: #64748b;
-          margin: 0 0 30px 0;
+          margin: 0 0 24px 0;
+        }
+        .enq-form {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
         }
         .form-row {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 20px;
+          gap: 16px;
         }
         .form-group {
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 6px;
         }
         .form-group label {
-          font-size: 13px;
-          font-weight: 700;
-          color: #1e293b;
+          font-size: 12px;
+          font-weight: 600;
+          color: #374151;
         }
         .form-group input,
         .form-group textarea {
-          border: 1.5px solid #cbd5e1;
-          border-radius: 12px;
-          padding: 12px 16px;
-          font-size: 15px;
+          border: 1.5px solid #e2e8f0;
+          border-radius: 10px;
+          padding: 10px 14px;
+          font-size: 14px;
           outline: none;
           transition: border-color 0.2s;
-          height: 48px;
+          height: 44px;
+          color: #1e293b;
+          background: #fafafa;
         }
         .form-group textarea {
           height: auto;
+          resize: vertical;
         }
         .form-group input:focus,
         .form-group textarea:focus {
           border-color: var(--accent-blue);
+          background: white;
         }
         .btn-submit {
           background: var(--primary-navy);
           color: white;
           border: none;
-          height: 48px;
+          height: 46px;
           border-radius: 10px;
-          font-size: 16px;
+          font-size: 14px;
           font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
           cursor: pointer;
-          box-shadow: 0 4px 15px rgba(32, 58, 95, 0.15);
-          transition: all 0.22s;
+          transition: all 0.2s;
         }
         .btn-submit:hover {
-          transform: translateY(-2px);
           background: var(--secondary-blue);
-          box-shadow: 0 6px 20px rgba(32, 58, 95, 0.25);
+          transform: translateY(-1px);
         }
         .form-success {
           background: #ecfdf5;
           border: 1px solid #10b981;
           color: #065f46;
-          padding: 20px;
-          border-radius: 12px;
-          font-weight: 700;
+          padding: 18px;
+          border-radius: 10px;
+          font-weight: 600;
+          font-size: 14px;
           text-align: center;
         }
 
+        /* Smart Banner */
+        .bulk-smart-banner {
+          width: 100%;
+          margin-bottom: 40px;
+          overflow: hidden;
+        }
+        .bulk-banner-img {
+          width: 100%;
+          height: auto;
+          display: block;
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
           .steps-flow {
             flex-direction: column;
-            gap: 30px;
+            gap: 24px;
             align-items: flex-start;
             padding-left: 20px;
           }
           .steps-line {
-            top: 0;
-            bottom: 0;
-            left: 45px;
-            width: 2px;
-            height: 80%;
+            top: 0; bottom: 0;
+            left: 44px;
+            width: 2px; height: 80%;
             border-top: none;
             border-left: 2px dashed #cbd5e1;
           }
           .step-card {
             flex-direction: row;
-            gap: 20px;
+            gap: 16px;
             align-items: center;
           }
-          .step-text {
-            margin-top: 0;
-            text-align: left;
-          }
-          .help-banner {
-            padding: 24px;
-            text-align: center;
-            justify-content: center;
-          }
-          .help-buttons {
-            width: 100%;
-            justify-content: center;
-          }
-          .form-row {
-            grid-template-columns: 1fr;
-          }
-          .form-card {
-            padding: 24px;
-          }
+          .step-text { margin-top: 0; text-align: left; }
+          .help-banner { padding: 20px 24px; text-align: center; justify-content: center; }
+          .help-btns { width: 100%; justify-content: center; }
+          .form-row { grid-template-columns: 1fr; }
+          .form-card { padding: 24px; }
+          .cats-grid { grid-template-columns: 1fr; }
         }
       `}</style>
     </div>
@@ -648,7 +678,6 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
     else if (src.endsWith(".png")) { setSrc(base + ".webp"); }
     else { setFailed(true); }
   };
-
   const tryNextMob = () => {
     if (srcMob.endsWith(".jpg")) { setSrcMob(base + "-mob.png"); }
     else if (srcMob.endsWith(".png")) { setSrcMob(base + "-mob.webp"); }
@@ -659,42 +688,15 @@ function SmartBanner({ base, title }: { base: string; title: string }) {
   return (
     <div className="bulk-smart-banner">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={src}
-        alt={title}
-        onError={tryNext}
-        className="bulk-banner-img hero-image-desktop"
-      />
+      <img src={src} alt={title} onError={tryNext} className="bulk-banner-img hero-image-desktop" />
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={srcMob}
-        alt={title + " Mobile"}
-        onError={tryNextMob}
-        className="bulk-banner-img hero-image-mobile"
-      />
+      <img src={srcMob} alt={title + " Mobile"} onError={tryNextMob} className="bulk-banner-img hero-image-mobile" />
       <style jsx>{`
-        .bulk-smart-banner {
-          width: 100%;
-          margin-bottom: 36px;
-          overflow: hidden;
-        }
-        .bulk-banner-img {
-          width: 100%;
-          height: auto;
-          display: block;
-        }
+        .bulk-smart-banner { width: 100%; margin-bottom: 0; overflow: hidden; }
+        .bulk-banner-img { width: 100%; height: auto; display: block; }
         @media (max-width: 768px) {
-          .bulk-smart-banner {
-            min-height: 140px;
-            margin-bottom: 36px;
-            display: flex;
-            align-items: center;
-          }
-          .bulk-banner-img {
-            min-height: 140px;
-            object-fit: cover;
-            object-position: center;
-          }
+          .bulk-smart-banner { min-height: 140px; display: flex; align-items: center; }
+          .bulk-banner-img { min-height: 140px; object-fit: cover; object-position: center; }
         }
       `}</style>
     </div>
