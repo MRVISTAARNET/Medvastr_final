@@ -5218,11 +5218,13 @@ footer {
 
   .nl {
     width: 100% !important;
-    font-size: 20px !important;
-    padding: 18px 24px !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    padding: 13px 20px !important;
     border-bottom: 1px solid #f1f5f9 !important;
     border-radius: 0 !important;
     white-space: normal !important;
+    color: #1e293b !important;
   }
 
   .nl:active {
@@ -5238,7 +5240,6 @@ footer {
     width: 100% !important;
   }
 
-  /* Mega submenu — collapsed by default, expanded on tap */
   .mega {
     position: static !important;
     display: none !important;
@@ -5250,7 +5251,7 @@ footer {
     border: none !important;
     border-top: none !important;
     background: #f8fafc !important;
-    padding: 8px 0 16px 24px !important;
+    padding: 4px 0 12px 20px !important;
   }
 
   .nav-group.mob-open > .nl {

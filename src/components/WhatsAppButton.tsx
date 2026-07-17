@@ -68,8 +68,8 @@ export default function WhatsAppButton() {
 
         @media (max-width: 768px) {
           .whatsapp-float-btn {
-            bottom: 20px;
-            right: 20px;
+            bottom: 88px;
+            right: 16px;
             width: 44px;
             height: 44px;
           }

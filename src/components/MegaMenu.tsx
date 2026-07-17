@@ -91,18 +91,18 @@ export default function MegaMenu({ items, label, onNavigate }: MegaMenuProps) {
 
       <style jsx>{`
         .m-deep-list { list-style: none; padding: 0; margin: 0; }
-        .m-parent-li { margin-bottom: 12px; }
-        .m-sub-a { font-size: 14px !important; color: #64748b !important; font-weight: 600 !important; transition: all 0.2s; text-decoration: none; display: block; }
-        .m-sub-a:hover { color: #008080 !important; padding-left: 5px; }
+        .m-parent-li { margin-bottom: 8px; }
+        .m-sub-a { font-size: 13px !important; color: #64748b !important; font-weight: 500 !important; transition: all 0.2s; text-decoration: none; display: block; }
+        .m-sub-a:hover { color: #008080 !important; padding-left: 4px; }
         
-        .m-clr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .m-clr-card { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px; border: 1px solid #f1f5f9; border-radius: 8px; text-decoration: none; transition: background 0.2s; }
+        .m-clr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+        .m-clr-card { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px; border: 1px solid #f1f5f9; border-radius: 8px; text-decoration: none; transition: background 0.2s; }
         .m-clr-card:hover { background: #f8fafc; border-color: #e2e8f0; }
-        .m-clr-dot { width: 30px; height: 30px; border-radius: 50%; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
-        .m-clr-nm { font-size: 11px; font-weight: 700; color: #1e293b; text-align: center; }
+        .m-clr-dot { width: 26px; height: 26px; border-radius: 50%; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+        .m-clr-nm { font-size: 10px; font-weight: 700; color: #1e293b; text-align: center; }
 
         .m-desc-box { font-size: 13px; line-height: 1.6; color: #64748b; margin-top: 5px; }
-        .m-contact-btn { display: inline-block; margin-top: 20px; padding: 10px 18px; background: #008080; color: white !important; border-radius: 30px; font-weight: 700; font-size: 12px; text-decoration: none; transition: opacity 0.2s; }
+        .m-contact-btn { display: inline-block; margin-top: 16px; padding: 9px 16px; background: #008080; color: white !important; border-radius: 30px; font-weight: 700; font-size: 12px; text-decoration: none; transition: opacity 0.2s; }
         .m-contact-btn:hover { opacity: 0.9; }
       `}</style>
     </div>

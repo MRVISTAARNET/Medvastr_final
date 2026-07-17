@@ -901,7 +901,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                 setShowReviewForm(!showReviewForm);
               }}
               className="pdp-buy-btn"
-              style={{ height: '44px', width: 'auto', padding: '0 24px', marginLeft: '24px', fontSize: '13px', letterSpacing: '1px' }}
+              style={{ height: '40px', width: 'auto', padding: '0 18px', marginLeft: '16px', fontSize: '12px', letterSpacing: '0', textTransform: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}
             >
               {showReviewForm ? 'Cancel' : user ? 'Write a Review' : '🔒 Login to Review'}
             </button>
@@ -970,9 +970,21 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
       {/* Sticky Bottom Bar on Mobile */}
       <div className="pdp-sticky-bar-mobile">
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'flex-start' }}>
-          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--secondary-text)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{p.name.split(" ").slice(-2).join(" ")}</span>
-          <span style={{ fontSize: '16px', fontWeight: 700, color: 'var(--dark-text)' }}>{fmt(p.price * qty)}</span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', alignItems: 'flex-start', minWidth: 0, flex: 1, paddingRight: 12 }}>
+          <span style={{
+            fontSize: '11px',
+            fontWeight: 600,
+            color: '#64748b',
+            letterSpacing: '0',
+            textTransform: 'none',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+            maxWidth: '100%',
+          }}>
+            {p.name.length > 26 ? p.name.slice(0, 26) + '…' : p.name}
+          </span>
+          <span style={{ fontSize: '15px', fontWeight: 700, color: '#1e293b' }}>{fmt(p.price * qty)}</span>
         </div>
         <button
           onClick={async (e) => {
@@ -1037,7 +1049,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
           }}
           disabled={isOutOfStock || isAdding}
           className={`pdp-buy-btn ${addedSuccess ? 'success-state' : ''}`}
-          style={{ height: '44px', background: addedSuccess ? '#16a34a' : 'var(--primary-navy)', border: 'none', color: '#fff', padding: '0 20px', borderRadius: '8px', fontWeight: 700, fontSize: '14px', textTransform: 'uppercase', cursor: 'pointer' }}
+          style={{ flexShrink: 0, height: '44px', background: addedSuccess ? '#16a34a' : 'var(--primary-navy)', border: 'none', color: '#fff', padding: '0 22px', borderRadius: '8px', fontWeight: 600, fontSize: '13px', textTransform: 'none', whiteSpace: 'nowrap', cursor: 'pointer' }}
         >
           {isOutOfStock ? 'Out of Stock' : isAdding ? 'Adding...' : addedSuccess ? '✓ Added' : 'Add to Bag'}
         </button>
