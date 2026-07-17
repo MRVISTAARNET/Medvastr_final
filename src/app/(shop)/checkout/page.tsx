@@ -243,7 +243,7 @@ export default function CheckoutPage() {
           email: user?.email,
           contact: form.phone,
         },
-        theme: { color: "#008080" },
+        theme: { color: "#203A5F" },
         modal: {
           ondismiss: () => {
             setSubmitting(false);
@@ -261,7 +261,7 @@ export default function CheckoutPage() {
       });
       rzp.open();
     },
-    [form.firstName, form.lastName, form.phone, user?.email, toast, verifyPayment]
+    [form.firstName, form.lastName, form.phone, user?.email, toast, verifyPayment, storeSettings?.razorpay_key]
   );
 
   const placeOrder = async () => {
@@ -362,7 +362,7 @@ export default function CheckoutPage() {
               {!user && (
                 <div style={{ fontSize: '13px', color: '#64748b' }}>
                   Already have an account?{' '}
-                  <button onClick={() => setIsAuthOpen(true)} style={{ color: '#008080', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontWeight: 600 }}>
+                  <button onClick={() => setIsAuthOpen(true)} style={{ color: 'var(--accent-blue)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', fontWeight: 600 }}>
                     Log in
                   </button>
                 </div>
@@ -427,44 +427,44 @@ export default function CheckoutPage() {
                 <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
                   First Name <span style={{ color: '#e11d48' }}>*</span>
                 </label>
-                <input name="firstName" className="co-input-field" placeholder="First Name" value={form.firstName} onChange={handleInputChange} />
+                <input name="firstName" className="co-input-field" placeholder="First Name" value={form.firstName} onChange={handleInputChange} style={{ height: "48px", borderRadius: "12px" }} />
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
                   Last Name <span style={{ color: '#e11d48' }}>*</span>
                 </label>
-                <input name="lastName" className="co-input-field" placeholder="Last Name" value={form.lastName} onChange={handleInputChange} />
+                <input name="lastName" className="co-input-field" placeholder="Last Name" value={form.lastName} onChange={handleInputChange} style={{ height: "48px", borderRadius: "12px" }} />
               </div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
               <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
                 Full Address / Street / Floor <span style={{ color: '#e11d48' }}>*</span>
               </label>
-              <input name="address" className="co-input-field" placeholder="Full Address / Street / Floor" value={form.address} onChange={handleInputChange} />
+              <input name="address" className="co-input-field" placeholder="Full Address / Street / Floor" value={form.address} onChange={handleInputChange} style={{ height: "48px", borderRadius: "12px" }} />
             </div>
             <div className="co-input-row-3">
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
                   City <span style={{ color: '#e11d48' }}>*</span>
                 </label>
-                <input name="city" className="co-input-field" placeholder="City" value={form.city} onChange={handleInputChange} />
+                <input name="city" className="co-input-field" placeholder="City" value={form.city} onChange={handleInputChange} style={{ height: "48px", borderRadius: "12px" }} />
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
                   State <span style={{ color: '#e11d48' }}>*</span>
                 </label>
-                <input name="state" className="co-input-field" placeholder="State" value={form.state} onChange={handleInputChange} />
+                <input name="state" className="co-input-field" placeholder="State" value={form.state} onChange={handleInputChange} style={{ height: "48px", borderRadius: "12px" }} />
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
                   Pincode <span style={{ color: '#e11d48' }}>*</span>
                 </label>
-                <input name="pincode" className="co-input-field" placeholder="Pincode" maxLength={6} value={form.pincode} onChange={e => setForm({...form, pincode: e.target.value.replace(/[^0-9]/g, '')})} />
+                <input name="pincode" className="co-input-field" placeholder="Pincode" maxLength={6} value={form.pincode} onChange={e => setForm({...form, pincode: e.target.value.replace(/[^0-9]/g, '')})} style={{ height: "48px", borderRadius: "12px" }} />
               </div>
             </div>
             {shippingError && <p style={{ color: '#e11d48', fontSize: '13px', fontWeight: 600, marginBottom: '20px' }}>{shippingError}</p>}
-            {shippingSuccess && <p style={{ color: '#10b981', fontSize: '13px', fontWeight: 600, marginBottom: '20px' }}>{shippingSuccess}</p>}
-            {shippingLoading && <p style={{ color: '#008080', fontSize: '13px', fontWeight: 600, marginBottom: '20px' }}>Calculating live shipping rates...</p>}
+            {shippingSuccess && <p style={{ color: 'var(--success)', fontSize: '13px', fontWeight: 600, marginBottom: '20px' }}>{shippingSuccess}</p>}
+            {shippingLoading && <p style={{ color: 'var(--accent-blue)', fontSize: '13px', fontWeight: 600, marginBottom: '20px' }}>Calculating live shipping rates...</p>}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '20px' }}>
               <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
                 Mobile Number <span style={{ color: '#e11d48' }}>*</span>

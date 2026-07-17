@@ -6,10 +6,21 @@ import { B } from "@/lib/data";
 
 export default function Footer() {
   const [openCol, setOpenCol] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
 
   const toggle = (col: string) => {
     if (window.innerWidth <= 768) {
       setOpenCol(openCol === col ? null : col);
+    }
+  };
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.trim()) {
+      setSubscribed(true);
+      setEmail("");
+      setTimeout(() => setSubscribed(false), 4000);
     }
   };
 
@@ -18,7 +29,7 @@ export default function Footer() {
       <div className="ft-g">
         <div className="ft-brand">
           <div className="ft-logo">medvastr</div>
-          <span className="ft-tag">Wear Wellness - Premium Medical Apparel</span>
+          <span className="ft-tag">Wear Wellness</span>
           <p className="ft-desc">
             India's leading medical apparel brand. Built specifically for the modern healthcare professional who demands style and comfort.
           </p>
@@ -61,8 +72,6 @@ export default function Footer() {
           </div>
         </div>
 
-
-
         <div className={`ft-col${openCol === 'links' ? ' open' : ''}`}>
           <h4 onClick={() => toggle('links')}>
             Quick Links <span className="ft-arr">▾</span>
@@ -99,17 +108,37 @@ export default function Footer() {
           </ul>
         </div>
 
-        <div className={`ft-col${openCol === 'help' ? ' open' : ''}`}>
-          <h4 onClick={() => toggle('help')}>
-            Support <span className="ft-arr">▾</span>
-          </h4>
-          <ul className="ft-lnks">
-            {[
-              ["Contact Us", "contact"], ["Track Order", "track"], ["Size Guide", "sizeguide"], ["Bulk Orders", "bulk-orders"]
-            ].map(([l, p]) => (
-              <li key={l}><Link href={`/${p}`}>{l}</Link></li>
-            ))}
-          </ul>
+        <div className="ft-col ft-newsletter">
+          <h4>Newsletter</h4>
+          <div className="ft-lnks">
+            <p className="newsletter-text" style={{ color: "#CBD5E1", fontSize: "14px", lineHeight: "1.6", marginBottom: "16px" }}>
+              Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.
+            </p>
+            {subscribed ? (
+              <div className="newsletter-success" style={{ color: "#22C55E", fontWeight: "600", fontSize: "14px", padding: "12px", background: "rgba(34, 197, 94, 0.1)", borderRadius: "8px" }}>
+                ✓ Subscribed successfully!
+              </div>
+            ) : (
+              <form onSubmit={handleSubscribe} className="newsletter-form" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                <input
+                  type="email"
+                  placeholder="Enter email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  style={{ height: "48px", borderRadius: "12px", background: "rgba(255, 255, 255, 0.08)", border: "1.5px solid rgba(255,255,255,0.15)", padding: "0 16px", color: "#FFFFFF", outline: "none", fontSize: "14px" }}
+                />
+                <button
+                  type="submit"
+                  style={{ height: "48px", borderRadius: "12px", background: "#FFFFFF", color: "var(--primary-navy)", fontWeight: "600", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "opacity 0.2s", border: "none" }}
+                  onMouseEnter={(e) => e.currentTarget.style.opacity = "0.9"}
+                  onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
+                >
+                  Subscribe
+                </button>
+              </form>
+            )}
+          </div>
         </div>
       </div>
 
@@ -127,17 +156,17 @@ export default function Footer() {
 
       <style jsx>{`
         footer {
-          background: #0a0f1c;
-          color: white;
+          background: var(--primary-navy);
+          color: #CBD5E1;
           padding: 80px 40px 40px;
-          border-top: 1px solid rgba(255,255,255,0.03);
+          border-top: 1px solid var(--border-color);
           font-family: var(--sans), sans-serif;
         }
         .ft-g {
           max-width: 1400px;
           margin: 0 auto;
           display: grid;
-          grid-template-columns: 2.5fr 1fr 1fr 1fr;
+          grid-template-columns: 2.5fr 1fr 1fr 2fr;
           gap: 45px;
           align-items: start;
         }
@@ -158,14 +187,14 @@ export default function Footer() {
         .ft-tag { 
           font-size: 11px; 
           letter-spacing: 3px; 
-          color: #94a3b8; 
+          color: #FFFFFF; 
           text-transform: uppercase; 
           font-weight: 700; 
-          opacity: 0.8;
+          opacity: 0.9;
         }
         .ft-desc { 
           font-size: 14px; 
-          color: #94a3b8; 
+          color: #CBD5E1; 
           line-height: 1.7; 
           max-width: 380px; 
           margin-bottom: 5px;
@@ -182,12 +211,12 @@ export default function Footer() {
           align-items: flex-start;
           gap: 12px;
           font-size: 14px;
-          color: #f1f5f9;
+          color: #CBD5E1;
         }
         .contact-icon {
           width: 32px;
           height: 32px;
-          background: rgba(255,255,255,0.05);
+          background: rgba(255,255,255,0.08);
           border-radius: 8px;
           display: flex;
           align-items: center;
@@ -200,10 +229,10 @@ export default function Footer() {
            gap: 8px;
            flex-wrap: wrap;
         }
-        .contact-item a { color: #f1f5f9; text-decoration: none; border-bottom: 1px solid transparent; transition: all 0.2s; font-weight: 600; }
+        .contact-item a { color: #CBD5E1; text-decoration: none; border-bottom: 1px solid transparent; transition: all 0.2s; font-weight: 600; }
         .contact-item a:hover { border-bottom-color: #ffffff; color: white; }
         .sep { opacity: 0.3; }
-        .addr-text { line-height: 1.5; color: #cbd5e1; }
+        .addr-text { line-height: 1.5; color: #CBD5E1; }
 
         .ft-soc-v2 { 
           display: flex; 
@@ -218,17 +247,17 @@ export default function Footer() {
           align-items: center;
           justify-content: center;
           color: white;
-          background: rgba(255,255,255,0.05);
+          background: rgba(255,255,255,0.08);
           transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          border: 1px solid rgba(255,255,255,0.05);
+          border: 1px solid rgba(255,255,255,0.08);
         }
         .social-circle:hover {
           transform: translateY(-5px);
           box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
-        .social-circle.ig:hover { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%); border-color: transparent; }
-        .social-circle.fb:hover { background: #1877f2; border-color: #1877f2; }
-        .social-circle.wa:hover { background: #25d366; border-color: #25d366; }
+        .social-circle.ig:hover { background: #7FA5E6; border-color: #7FA5E6; }
+        .social-circle.fb:hover { background: #3F5F92; border-color: #3F5F92; }
+        .social-circle.wa:hover { background: #22C55E; border-color: #22C55E; }
 
         h4 { 
           font-size: 14px; 
@@ -247,25 +276,25 @@ export default function Footer() {
           bottom: 0;
           width: 30px;
           height: 2px;
-          background: rgba(255,255,255,0.2);
+          background: #7FA5E6;
         }
         
         ul { list-style: none; padding: 0; }
         li { margin-bottom: 12px; }
-        li a { font-size: 14px; color: #94a3b8; transition: all 0.2s; text-decoration: none; font-weight: 500; }
+        li a { font-size: 14px; color: #CBD5E1; transition: all 0.2s; text-decoration: none; font-weight: 500; }
         li a:hover { color: #ffffff; transform: translateX(5px); display: inline-block; }
 
         .ft-btm { 
           max-width: 1400px; 
           margin: 60px auto 0; 
           padding-top: 30px; 
-          border-top: 1px solid rgba(255,255,255,0.05); 
+          border-top: 1px solid rgba(255,255,255,0.08); 
           display: flex; 
           justify-content: space-between; 
           align-items: center; 
         }
-        .ft-copy { font-size: 13.5px; color: #64748b; font-weight: 500; line-height: 1.6; }
-        .ft-credit a { color: #94a3b8; font-weight: 700; text-decoration: none; }
+        .ft-copy { font-size: 13.5px; color: #CBD5E1; font-weight: 500; line-height: 1.6; }
+        .ft-credit a { color: #CBD5E1; font-weight: 700; text-decoration: none; }
         .ft-credit a:hover { color: white; }
         
         .ft-pay { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
@@ -275,14 +304,15 @@ export default function Footer() {
           padding: 6px 12px; 
           background: rgba(255,255,255,0.02); 
           border-radius: 6px; 
-          color: #94a3b8; 
-          border: 1px solid rgba(255,255,255,0.05); 
+          color: #CBD5E1; 
+          border: 1px solid rgba(255,255,255,0.08); 
           text-transform: uppercase;
           letter-spacing: 1px;
         }
 
         @media(max-width: 1024px) {
           .ft-g { gap: 30px; grid-template-columns: 2fr 1fr 1fr; }
+          .ft-newsletter { grid-column: span 3; margin-top: 20px; }
         }
 
         @media(max-width: 768px) {
@@ -294,11 +324,12 @@ export default function Footer() {
           .contact-item { justify-content: center; }
           .ft-soc-v2 { justify-content: center; }
           
-          .ft-col { border-bottom: 1px solid rgba(255,255,255,0.05); }
+          .ft-col { border-bottom: 1px solid rgba(255,255,255,0.08); }
           .ft-col h4 { margin-bottom: 0; padding: 22px 0; font-size: 13px; }
           .ft-col h4::after { display: none; }
           .ft-lnks { display: none; padding-bottom: 25px; }
           .ft-col.open .ft-lnks { display: block; }
+          .ft-newsletter { grid-column: span 1; }
           
           .ft-btm { flex-direction: column; text-align: center; gap: 30px; margin-top: 40px; }
           .ft-pay { justify-content: center; }

@@ -73,7 +73,7 @@ export default function ContactPage() {
                     {i.ico}
                   </div>
                   <div>
-                    <div style={{ fontSize: "13px", fontWeight: 700, color: "#10b981", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" }}>{i.l}</div>
+                    <div style={{ fontSize: "13px", fontWeight: 700, color: "#7FA5E6", textTransform: "uppercase", letterSpacing: "1px", marginBottom: "8px" }}>{i.l}</div>
                     {i.href ? (
                       <a href={i.href} style={{ fontSize: "17px", fontWeight: 600, color: "white", textDecoration: "none", whiteSpace: "pre-line", lineHeight: "1.5" }}>
                         {i.v}
@@ -113,7 +113,7 @@ export default function ContactPage() {
                 <p style={{ color: "#64748b", fontSize: "17px", lineHeight: "1.7", marginBottom: "40px" }}>
                   We've received your query. Our operations manager will reach out to you personally within the next 24 hours.
                 </p>
-                <button onClick={() => setSent(false)} style={{ background: "#0f172a", color: "white", border: "none", padding: "16px 32px", borderRadius: "14px", fontWeight: 700, cursor: "pointer", transition: "all 0.3s" }}>
+                <button onClick={() => setSent(false)} style={{ background: "var(--primary-navy)", color: "white", border: "none", padding: "16px 32px", borderRadius: "14px", fontWeight: 700, cursor: "pointer", transition: "all 0.3s" }}>
                   Send another message
                 </button>
               </div>
@@ -146,22 +146,22 @@ export default function ContactPage() {
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "28px" }} className="responsive-grid">
                     <div className="input-group">
                       <label>Your Name</label>
-                      <input name="name" required placeholder="Enter your full name" />
+                      <input name="name" required placeholder="Enter your full name" style={{ height: "48px", borderRadius: "12px" }} />
                     </div>
                     <div className="input-group">
                       <label>Mobile Number</label>
-                      <input name="phone" required type="tel" placeholder="Enter your phone number" />
+                      <input name="phone" required type="tel" placeholder="Enter your phone number" style={{ height: "48px", borderRadius: "12px" }} />
                     </div>
                   </div>
 
                   <div className="input-group">
                     <label>Email Address</label>
-                    <input name="email" required type="email" placeholder="Enter your email address" />
+                    <input name="email" required type="email" placeholder="Enter your email address" style={{ height: "48px", borderRadius: "12px" }} />
                   </div>
 
                   <div className="input-group">
                     <label>What can we help with?</label>
-                    <select name="subject" required>
+                    <select name="subject" required style={{ height: "48px", borderRadius: "12px" }}>
                       <option>General Inquiry</option>
                       <option>Bulk/Hospital Orders</option>
                       <option>Sizing & Customization</option>
@@ -171,7 +171,7 @@ export default function ContactPage() {
 
                   <div className="input-group">
                     <label>Your Message</label>
-                    <textarea name="message" required placeholder="Tell us more about your needs..." rows={5} />
+                    <textarea name="message" required placeholder="Tell us more about your needs..." rows={5} style={{ borderRadius: "12px" }} />
                   </div>
 
                   <button type="submit" disabled={loading} className="submit-btn">
@@ -221,10 +221,10 @@ export default function ContactPage() {
           color: white;
         }
         .social-icon:hover {
-          background: #10b981;
-          border-color: #10b981;
+          background: var(--accent-blue);
+          border-color: var(--accent-blue);
           transform: translateY(-5px);
-          box-shadow: 0 10px 20px rgba(16, 185, 129, 0.2);
+          box-shadow: 0 10px 20px rgba(79, 123, 196, 0.2);
         }
 
         .input-group label {
@@ -251,15 +251,15 @@ export default function ContactPage() {
         }
         .input-group textarea { resize: none; }
         .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
-          border-color: #0f172a;
+          border-color: var(--accent-blue);
           background: #fff;
-          box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.05);
+          box-shadow: 0 0 0 4px rgba(79, 123, 196, 0.05);
         }
 
         .submit-btn {
           width: 100%;
           padding: 20px;
-          background: #10b981;
+          background: var(--primary-navy);
           color: #fff;
           border: none;
           border-radius: 14px;
@@ -275,9 +275,9 @@ export default function ContactPage() {
           letter-spacing: 0.5px;
         }
         .submit-btn:hover:not(:disabled) {
-          background: #059669;
+          background: var(--secondary-blue);
           transform: translateY(-3px);
-          box-shadow: 0 15px 30px rgba(16, 185, 129, 0.25);
+          box-shadow: 0 15px 30px rgba(32, 58, 95, 0.25);
         }
         .submit-btn:disabled {
           opacity: 0.7;

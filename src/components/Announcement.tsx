@@ -21,7 +21,6 @@ export default function Announcement() {
   const ITEMS: AnnItem[] = [
     promoItem,
     { text: "Bulk discounts for hospitals & clinics" },
-    { text: "200+ wash guarantee" },
     { text: `Call us: ${B.phone1}` },
     { text: "Code MEDVASTR10 — 10% off first order" },
   ];

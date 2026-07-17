@@ -99,10 +99,10 @@ export default function AdminDashboard() {
               <div className="qa-s">Expand catalogue</div>
             </Link>
 
-            <Link href="/admin/bulk-orders" className="qa-btn">
-              <div className="qa-ico">🛒</div>
-              <div className="qa-t">Bulk Orders</div>
-              <div className="qa-s">Set discounts</div>
+            <Link href="/admin/settings" className="qa-btn">
+              <div className="qa-ico">⚙️</div>
+              <div className="qa-t">Settings</div>
+              <div className="qa-s">Store preferences</div>
             </Link>
             <Link href="/admin/customers" className="qa-btn">
               <div className="qa-ico">👥</div>

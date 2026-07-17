@@ -5,7 +5,6 @@ import React from "react";
 const items = [
     "LONG-SHIFT VERIFIED",
     "ANTI-MICROBIAL FABRIC",
-    "200+ INDUSTRIAL WASHES",
     "LAB TESTED QUALITY",
     "UP TO 5 POCKETS",
     "MADE FOR HEALTHCARE",

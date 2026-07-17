@@ -115,7 +115,10 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const router = useRouter();
   const searchParams = useSearchParams();
   const colorParam = searchParams ? searchParams.get("color") : null;
-  const { products, addToCart, wishlist, toggleWishlist, toast, user, setIsAuthOpen, storeSettings } = useApp();
+  const { products, addToCart, toast, user, setIsAuthOpen, storeSettings, setIsCartOpen } = useApp();
+
+  const [isAdding, setIsAdding] = useState(false);
+  const [addedSuccess, setAddedSuccess] = useState(false);
 
   const idOrSlug = String(slug || "");
   const numericId = Number(idOrSlug);
@@ -422,7 +425,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   }
 
   const currentVariantId = (p as any).variantId || `${p.id}-${ci || 0}`;
-  const wished = wishlist.includes(currentVariantId);
+  const wished = false;
   const relatedPool = products.filter((x) => x.id !== p.id && x.active !== false);
   const related = relatedPool.slice(0, 4);
 
@@ -599,28 +602,36 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
           </div>
         </div>
 
-
         {/* INFO */}
         <div className="pdp-info-sec">
           <div>
             <span className="pdp-badge-premium">Premium Medical Wear</span>
-            <h1 className="pdp-title-premium">{p.name}</h1>
-
-            <div className="pdp-rating-row">
-              <div className="pdp-rating-stars">
-                <span>★</span> {avgRating}
-              </div>
-              <span className="pdp-review-count">({reviewCount} Verified Reviews)</span>
+            
+            <div className="product-title__share-group-container" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', width: '100%', gap: '16px' }}>
+              <h1 className="pdp-title-premium" style={{ margin: 0, flex: 1 }}>{p.name}</h1>
+              <button type="button" onClick={handleShare} className="product-share-button" aria-label="Share product" style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#482f8f', padding: 0, marginTop: '8px' }}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="22" viewBox="0 0 20 22" fill="none">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M14.4111 16.291C14.9999 15.741 15.7888 15.4 16.6666 15.4C18.5111 15.4 20 16.874 20 18.7C20 20.526 18.5111 22 16.6666 22C14.8222 22 13.3333 20.526 13.3333 18.7C13.3333 18.436 13.3777 18.183 13.4333 17.941L5.60002 13.4091C4.99996 13.959 4.21108 14.2999 3.33336 14.2999C1.48892 14.2999 0 12.8261 0 11.0001C0 9.17408 1.48892 7.70005 3.33336 7.70005C4.21108 7.70005 4.99996 8.04098 5.60002 8.59106L13.4333 4.06998C13.3777 3.82804 13.3333 3.56403 13.3333 3.30002C13.3333 1.47403 14.8222 0 16.6666 0C18.5111 0 20 1.47403 20 3.30002C20 5.12601 18.5111 6.60004 16.6666 6.60004C15.7888 6.60004 14.9889 6.25911 14.4 5.70904L6.56658 10.23C6.62215 10.4831 6.66657 10.7361 6.66657 11.0001C6.66657 11.2641 6.62215 11.5171 6.56658 11.77L14.4111 16.291ZM17.7776 3.30016C17.7776 2.69522 17.2777 2.20016 16.6665 2.20016C16.0554 2.20016 15.5554 2.69522 15.5554 3.30016C15.5554 3.90525 16.0554 4.40017 16.6665 4.40017C17.2777 4.40017 17.7776 3.90525 17.7776 3.30016ZM3.33321 12.1002C2.72216 12.1002 2.22209 11.6052 2.22209 11.0002C2.22209 10.3951 2.72216 9.90021 3.33321 9.90021C3.94441 9.90021 4.44433 10.3951 4.44433 11.0002C4.44433 11.6052 3.94441 12.1002 3.33321 12.1002ZM15.5554 18.7001C15.5554 19.3052 16.0554 19.8001 16.6665 19.8001C17.2777 19.8001 17.7776 19.3052 17.7776 18.7001C17.7776 18.0952 17.2777 17.6001 16.6665 17.6001C16.0554 17.6001 15.5554 18.0952 15.5554 18.7001Z" fill="#482F8F"></path>
+                </svg>
+              </button>
             </div>
 
-            <div className="pdp-price-wrap">
-              <span className="pdp-price-now">{fmt(p.price)}</span>
-              {p.origPrice && (
-                <>
-                  <span className="pdp-price-was">{fmt(p.origPrice)}</span>
-                  <div className="pdp-discount-tag">-{discount}%</div>
-                </>
-              )}
+            <div className="container-price__review" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '16px', marginBottom: '8px' }}>
+              <div className="pdp-price-wrap" id="priceMainContainer" style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: 0 }}>
+                <span className="pdp-price-now" style={{ fontSize: '24px', fontWeight: 800, color: 'var(--ink)' }}>{fmt(p.price)}</span>
+                {p.origPrice && (
+                  <>
+                    <span className="pdp-price-was" style={{ fontSize: '20px', textDecoration: 'line-through', color: '#707070' }}>{fmt(p.origPrice)}</span>
+                    <span className="discount-percentage" style={{ fontSize: '13px', fontWeight: 700, color: '#14ae5c', background: 'rgba(20, 174, 92, 0.12)', padding: '2px 8px', borderRadius: '6px' }}>-{discount}% Off</span>
+                  </>
+                )}
+              </div>
+              <div className="pdp-rating-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+                <div className="pdp-rating-stars" style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#fef08a', color: '#ca8a04', padding: '4px 10px', borderRadius: '20px', fontSize: '14px', fontWeight: 700 }}>
+                  <span style={{ fontSize: '16px', color: '#eab308' }}>★</span> {avgRating}
+                </div>
+                <a href="#pdp-reviews-sec" className="pdp-review-count" style={{ fontSize: '13px', color: '#64748b', fontWeight: 600, textDecoration: 'underline' }}>({reviewCount} Reviews)</a>
+              </div>
             </div>
             <span className="pdp-tax-msg">Includes all applicable taxes and handling</span>
           </div>
@@ -693,52 +704,85 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
           {/* ACTIONS */}
           <div className="pdp-main-actions">
-            <div className="pdp-qty-wish-row" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-              <div className="pdp-qty-stepper">
-                <button className="pdp-step-btn" onClick={() => setQty(q => Math.max(1, q - 1))}>−</button>
-                <div className="pdp-qty-display">{qty}</div>
-                <button className="pdp-step-btn" onClick={() => setQty(q => q + 1)}>+</button>
+            <div className="pdp-qty-wish-row" style={{ display: 'flex', gap: '10px', alignItems: 'center', width: '100%' }}>
+              <div className="pdp-qty-stepper" style={{ height: '52px', border: '1.5px solid #cbd5e1', borderRadius: '8px', padding: '0 8px', width: '120px', background: '#fff' }}>
+                <button className="pdp-step-btn" style={{ width: '32px', height: '32px', border: 'none', background: 'none', cursor: 'pointer', fontSize: '18px' }} onClick={() => setQty(q => Math.max(1, q - 1))}>−</button>
+                <div className="pdp-qty-display" style={{ fontWeight: 700 }}>{qty}</div>
+                <button className="pdp-step-btn" style={{ width: '32px', height: '32px', border: 'none', background: 'none', cursor: 'pointer', fontSize: '18px' }} onClick={() => setQty(q => q + 1)}>+</button>
               </div>
-              <button onClick={() => toggleWishlist(currentVariantId)} className={`pdp-heart-btn ${wished ? 'on' : ''}`} style={{ flex: 1 }}>
-                {wished ? '❤️ WISHLISTED' : '♡ WISHLIST'}
-              </button>
-              <button onClick={handleShare} className="pdp-heart-btn" title="Share Product" style={{ minWidth: '44px', padding: '0 10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                🔗
+              <button
+                onClick={async (e) => {
+                  let firstErrorElementId: string | null = null;
+                  // Validate color selection
+                  if (p.clrs && p.clrs.length > 0 && ci === null) {
+                    setColorError(true);
+                    if (!firstErrorElementId) firstErrorElementId = "pdp-color-select";
+                  }
+                  // Validate top size
+                  if (productSizes.length > 0 && !sz) {
+                    setSizeError(true);
+                    if (!firstErrorElementId) firstErrorElementId = "pdp-size-select";
+                  }
+                  // For sets: validate bottom size too
+                  if (isSet && productSizes.length > 0 && !btmSz) {
+                    setBottomSizeError(true);
+                    if (!firstErrorElementId) firstErrorElementId = "pdp-bottom-size-select";
+                  }
+                  if (firstErrorElementId) {
+                    const element = document.getElementById(firstErrorElementId);
+                    if (element) {
+                      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    return;
+                  }
+
+                  setIsAdding(true);
+
+                  // Create fly-to-cart particle animation
+                  try {
+                    const cartIcon = document.querySelector('.cart-pill');
+                    if (cartIcon && e.currentTarget) {
+                      const btnRect = e.currentTarget.getBoundingClientRect();
+                      const cartRect = cartIcon.getBoundingClientRect();
+
+                      const flyEl = document.createElement('div');
+                      flyEl.className = 'fly-to-cart-particle';
+                      flyEl.style.left = `${btnRect.left + btnRect.width / 2 - 12}px`;
+                      flyEl.style.top = `${btnRect.top + btnRect.height / 2 - 12}px`;
+                      document.body.appendChild(flyEl);
+
+                      requestAnimationFrame(() => {
+                        flyEl.style.transform = `translate(${cartRect.left - btnRect.left}px, ${cartRect.top - btnRect.top}px) scale(0.1)`;
+                        flyEl.style.opacity = '0';
+                      });
+
+                      setTimeout(() => {
+                        flyEl.remove();
+                      }, 700);
+                    }
+                  } catch (err) {
+                    console.error(err);
+                  }
+
+                  setTimeout(() => {
+                    const finalSize = isSet ? `Top: ${sz} / Bot: ${btmSz}` : sz;
+                    addToCart(p, ci ?? 0, finalSize || 'M', qty);
+                    setIsAdding(false);
+                    setAddedSuccess(true);
+                    setIsCartOpen(true); // Auto-open cart drawer!
+                    
+                    setTimeout(() => {
+                      setAddedSuccess(false);
+                    }, 2000);
+                  }, 600);
+                }}
+                disabled={isOutOfStock || isAdding}
+                className={`pdp-buy-btn ${addedSuccess ? 'success-state' : ''}`}
+                style={{ flex: 1, height: '52px', border: 'none', background: addedSuccess ? '#16a34a' : '#482f8f', color: '#fff', borderRadius: '8px', fontWeight: 700, fontSize: '15px', textTransform: 'uppercase', cursor: 'pointer', transition: 'background 0.3s' }}
+              >
+                {isOutOfStock ? 'Currently Out of Stock' : isAdding ? 'Adding...' : addedSuccess ? '✓ Added to Bag!' : `Add to Bag • ${fmt(p.price * qty)}`}
               </button>
             </div>
-            <button
-              onClick={() => {
-                let firstErrorElementId: string | null = null;
-                // Validate color selection
-                if (p.clrs && p.clrs.length > 0 && ci === null) {
-                  setColorError(true);
-                  if (!firstErrorElementId) firstErrorElementId = "pdp-color-select";
-                }
-                // Validate top size
-                if (productSizes.length > 0 && !sz) {
-                  setSizeError(true);
-                  if (!firstErrorElementId) firstErrorElementId = "pdp-size-select";
-                }
-                // For sets: validate bottom size too
-                if (isSet && productSizes.length > 0 && !btmSz) {
-                  setBottomSizeError(true);
-                  if (!firstErrorElementId) firstErrorElementId = "pdp-bottom-size-select";
-                }
-                if (firstErrorElementId) {
-                  const element = document.getElementById(firstErrorElementId);
-                  if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                  }
-                  return;
-                }
-                const finalSize = isSet ? `Top: ${sz} / Bot: ${btmSz}` : sz;
-                addToCart(p, ci ?? 0, finalSize || 'M', qty);
-              }}
-              disabled={isOutOfStock}
-              className="pdp-buy-btn"
-            >
-              {isOutOfStock ? 'Currently Out of Stock' : `Add to Bag • ${fmt(p.price * qty)}`}
-            </button>
             <div style={{ marginTop: '20px', padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
               <div style={{ fontSize: '15px', fontWeight: 700, color: '#1e293b', marginBottom: '10px' }}>Delivery Details</div>
               <div style={{ display: 'flex', gap: '8px' }}>
@@ -786,7 +830,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
           {/* ACCORDIONS */}
           <div className="pdp-details-wrap">
-            <DetailAccordion title="Performance & Fabric" defaultOpen={true}>
+            <DetailAccordion title="Performance & Fabric" defaultOpen={false}>
               <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '12px', marginBottom: '24px', border: '1px solid #e2e8f0' }}>
                 <ExpandableDescription
                   text={p.desc}
@@ -923,6 +967,81 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
           </div>
         </section>
       )}
+
+      {/* Sticky Bottom Bar on Mobile */}
+      <div className="pdp-sticky-bar-mobile">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', alignItems: 'flex-start' }}>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--secondary-text)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{p.name.split(" ").slice(-2).join(" ")}</span>
+          <span style={{ fontSize: '16px', fontWeight: 700, color: 'var(--dark-text)' }}>{fmt(p.price * qty)}</span>
+        </div>
+        <button
+          onClick={async (e) => {
+            let firstErrorElementId: string | null = null;
+            // Validate color selection
+            if (p.clrs && p.clrs.length > 0 && ci === null) {
+              setColorError(true);
+              if (!firstErrorElementId) firstErrorElementId = "pdp-color-select";
+            }
+            // Validate top size
+            if (productSizes.length > 0 && !sz) {
+              setSizeError(true);
+              if (!firstErrorElementId) firstErrorElementId = "pdp-size-select";
+            }
+            // For sets: validate bottom size too
+            if (isSet && productSizes.length > 0 && !btmSz) {
+              setBottomSizeError(true);
+              if (!firstErrorElementId) firstErrorElementId = "pdp-bottom-size-select";
+            }
+            if (firstErrorElementId) {
+              const element = document.getElementById(firstErrorElementId);
+              if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }
+              return;
+            }
+
+            setIsAdding(true);
+
+            // Fly particle coordinates
+            try {
+              const cartIcon = document.querySelector('.cart-pill');
+              if (cartIcon && e.currentTarget) {
+                const btnRect = e.currentTarget.getBoundingClientRect();
+                const cartRect = cartIcon.getBoundingClientRect();
+
+                const flyEl = document.createElement('div');
+                flyEl.className = 'fly-to-cart-particle';
+                flyEl.style.left = `${btnRect.left + btnRect.width / 2 - 12}px`;
+                flyEl.style.top = `${btnRect.top + btnRect.height / 2 - 12}px`;
+                document.body.appendChild(flyEl);
+
+                requestAnimationFrame(() => {
+                  flyEl.style.transform = `translate(${cartRect.left - btnRect.left}px, ${cartRect.top - btnRect.top}px) scale(0.1)`;
+                  flyEl.style.opacity = '0';
+                });
+
+                setTimeout(() => {
+                  flyEl.remove();
+                }, 700);
+              }
+            } catch (err) {}
+
+            setTimeout(() => {
+              const finalSize = isSet ? `Top: ${sz} / Bot: ${btmSz}` : sz;
+              addToCart(p, ci ?? 0, finalSize || 'M', qty);
+              setIsAdding(false);
+              setAddedSuccess(true);
+              setIsCartOpen(true);
+              setTimeout(() => setAddedSuccess(false), 2000);
+            }, 600);
+          }}
+          disabled={isOutOfStock || isAdding}
+          className={`pdp-buy-btn ${addedSuccess ? 'success-state' : ''}`}
+          style={{ height: '44px', background: addedSuccess ? '#16a34a' : 'var(--primary-navy)', border: 'none', color: '#fff', padding: '0 20px', borderRadius: '8px', fontWeight: 700, fontSize: '14px', textTransform: 'uppercase', cursor: 'pointer' }}
+        >
+          {isOutOfStock ? 'Out of Stock' : isAdding ? 'Adding...' : addedSuccess ? '✓ Added' : 'Add to Bag'}
+        </button>
+      </div>
 
       {/* SIZE GUIDE MODAL */}
       {showSizeGuide && (

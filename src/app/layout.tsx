@@ -118,7 +118,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${serif.variable} ${sans.variable} ${inter.variable}`}>
-      <body style={{ fontFamily: "var(--font-sans)" }}>
+      <body style={{ fontFamily: "var(--font-inter)" }}>
         <JsonLd data={organizationSchema as any} />
         <JsonLd data={websiteSchema as any} />
         {children}

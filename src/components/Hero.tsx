@@ -7,6 +7,16 @@ import Link from "next/link";
 import { useApp } from "@/context/AppContext";
 import { normalizeMediaUrl } from "@/lib/api";
 
+function getMobileImageUrl(desktopUrl: string | null): string | null {
+  if (!desktopUrl) return null;
+  const dotIndex = desktopUrl.lastIndexOf(".");
+  if (dotIndex === -1) return desktopUrl;
+  const extension = desktopUrl.slice(dotIndex);
+  const base = desktopUrl.slice(0, dotIndex);
+  if (base.endsWith("-mob")) return desktopUrl;
+  return `${base}-mob${extension}`;
+}
+
 interface HeroProps {
   onShop: () => void;
 }
@@ -34,6 +44,7 @@ export default function Hero({ onShop }: HeroProps) {
     ? homeBanners.map((b: any) => ({
         id: b.id,
         src: b.imageUrl,
+        srcMob: getMobileImageUrl(b.imageUrl),
         link: b.linkUrl || null,
         title: b.title
       }))
@@ -65,11 +76,20 @@ export default function Hero({ onShop }: HeroProps) {
       <div className="hero-track" style={{ transform: `translateX(-${cur * 100}%)` }}>
         {slides.map((s: any, i: number) => {
           const content = s.src ? (
-            <img
-              src={s.src}
-              alt={s.title || "Hero Promotional Banner"}
-              style={{ width: "100%", height: "auto", objectFit: "contain", objectPosition: "center bottom", display: "block" }}
-            />
+            <>
+              <img
+                src={s.src}
+                alt={s.title || "Hero Promotional Banner"}
+                className="hero-image-desktop"
+                style={{ width: "100%", height: "auto", objectFit: "contain", objectPosition: "center bottom", display: "block" }}
+              />
+              <img
+                src={s.srcMob || ""}
+                alt={s.title || "Hero Promotional Banner Mobile"}
+                className="hero-image-mobile"
+                style={{ width: "100%", height: "auto", objectFit: "contain", objectPosition: "center bottom", display: "block" }}
+              />
+            </>
           ) : (
             <SmartSlide base={s.base} />
           );
@@ -143,20 +163,37 @@ export default function Hero({ onShop }: HeroProps) {
   );
 }
 
-// SmartSlide: always hides text, tries jpg/png/webp, and renders crop-free with height: auto
+// SmartSlide: always hides text, tries jpg/png/webp for both desktop and mobile, and renders crop-free with height: auto
 function SmartSlide({ base }: { base: string }) {
   const [src, setSrc] = useState(base + ".jpg");
+  const [srcMob, setSrcMob] = useState(base + "-mob.jpg");
+
   const tryNext = () => {
     if (src.endsWith(".jpg")) { setSrc(base + ".png"); }
     else if (src.endsWith(".png")) { setSrc(base + ".webp"); }
   };
 
+  const tryNextMob = () => {
+    if (srcMob.endsWith(".jpg")) { setSrcMob(base + "-mob.png"); }
+    else if (srcMob.endsWith(".png")) { setSrcMob(base + "-mob.webp"); }
+  };
+
   return (
-    <img
-      src={src}
-      alt="Hero Promotional Banner"
-      onError={tryNext}
-      style={{ width: "100%", height: "auto", objectFit: "contain", objectPosition: "center bottom", display: "block" }}
-    />
+    <>
+      <img
+        src={src}
+        alt="Hero Promotional Banner"
+        onError={tryNext}
+        className="hero-image-desktop"
+        style={{ width: "100%", height: "auto", objectFit: "contain", objectPosition: "center bottom", display: "block" }}
+      />
+      <img
+        src={srcMob}
+        alt="Hero Promotional Banner Mobile"
+        onError={tryNextMob}
+        className="hero-image-mobile"
+        style={{ width: "100%", height: "auto", objectFit: "contain", objectPosition: "center bottom", display: "block" }}
+      />
+    </>
   );
 }

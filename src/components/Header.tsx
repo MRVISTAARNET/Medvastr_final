@@ -224,10 +224,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
               "👤"
             )}
           </button>
-          <button className="ha" onClick={onWish} title="Wishlist" style={{ position: "relative" }}>
-            {wc > 0 ? "❤️" : "🤍"}
-            {wc > 0 && <span className="ha-badge">{wc}</span>}
-          </button>
+
           <button className="cart-pill" onClick={onCart}>
             🛒 <span className="mob-hide">Cart</span> {isHydrated ? <span className="cart-n">{cc}</span> : <span className="cart-n">...</span>}
           </button>
@@ -260,7 +257,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             padding: 18px 20px;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #10b981;
+            border-bottom: 1px solid #e2e8f0;
             background: #ffffff;
             position: sticky;
             top: 0;

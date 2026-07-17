@@ -66,6 +66,8 @@ interface AppContextType {
   user: User | null;
   isAuthOpen: boolean;
   setIsAuthOpen: (open: boolean) => void;
+  isCartOpen: boolean;
+  setIsCartOpen: (open: boolean) => void;
   isHydrated: boolean;
   addToCart: (p: Product, ci?: number, sz?: string, qty?: number) => void;
   updateCartQty: (index: number, delta: number) => void;
@@ -154,6 +156,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   });
   const [user, setUser] = useState<User | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
   const [toastKind, setToastKind] = useState<"ok" | "bad" | "">("");
@@ -608,6 +611,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         user,
         isAuthOpen,
         setIsAuthOpen,
+        isCartOpen,
+        setIsCartOpen,
         isHydrated,
         addToCart,
         updateCartQty,

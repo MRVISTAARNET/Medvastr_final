@@ -2,21 +2,28 @@
 
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 
 export default function BulkOrderBanner() {
-  const src = "https://d2tnzshqdaedbc.cloudfront.net/home-bulk-banner.jpg";
+  const srcDesk = "https://d2tnzshqdaedbc.cloudfront.net/home-bulk-banner.jpg";
+  const srcMob = "https://d2tnzshqdaedbc.cloudfront.net/home-bulk-banner-mob.jpg";
 
   return (
     <div className="bulk-banner-sec">
       <Link href="/bulk-orders" className="bulk-banner-link">
         <div className="bulk-banner" style={{ position: 'relative', overflow: 'hidden', cursor: 'pointer' }}>
-          <Image
-            src={src}
-            alt="Bulk Order Program"
-            fill
-            style={{ objectFit: 'cover' }}
-            sizes="100vw"
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={srcDesk}
+            alt="Bulk Order Program Desktop"
+            className="hero-image-desktop"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={srcMob}
+            alt="Bulk Order Program Mobile"
+            className="hero-image-mobile"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
         </div>
       </Link>

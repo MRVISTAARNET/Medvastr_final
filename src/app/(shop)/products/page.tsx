@@ -195,6 +195,8 @@ function ProductsContent() {
   if (sort === "pa") f = [...f].sort((a, b) => a.price - b.price);
   else if (sort === "pd") f = [...f].sort((a, b) => b.price - a.price);
   else if (sort === "rt") f = [...f].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  else if (sort === "az") f = [...f].sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+  else if (sort === "za") f = [...f].sort((a, b) => (b.name || "").localeCompare(a.name || ""));
   else if (sort === "nw") f = [...f].sort((a, b) => b.id - a.id);
 
   const pages = Math.ceil(f.length / PER);
@@ -632,17 +634,6 @@ function ProductsContent() {
                 </div>
               )}
 
-              {/* SORT */}
-              <div className="sb3-section">
-                <div className="sb3-sec-hd">SORT BY</div>
-                <select className="sb3-select" value={sort} onChange={(e) => setSort(e.target.value)}>
-                  <option value="default">Default</option>
-                  <option value="pa">Price: Low to High</option>
-                  <option value="pd">Price: High to Low</option>
-                  <option value="rt">⭐ Ratings</option>
-                  <option value="nw">Newest Arrival</option>
-                </select>
-              </div>
             </div>
           </div>
 
@@ -651,6 +642,18 @@ function ProductsContent() {
             <div className="prod-top">
               <div className="prod-count">
                 Showing <strong>{paged.length}</strong> of <strong>{f.length}</strong> products
+              </div>
+              <div className="prod-sort-wrapper">
+                <span className="sort-label">SORT BY:</span>
+                <select className="sort-sel" value={sort} onChange={(e) => setSort(e.target.value)}>
+                  <option value="default">Featured</option>
+                  <option value="pa">Price: Low to High</option>
+                  <option value="pd">Price: High to Low</option>
+                  <option value="rt">Ratings</option>
+                  <option value="az">Alphabetically, A-Z</option>
+                  <option value="za">Alphabetically, Z-A</option>
+                  <option value="nw">Newest Arrival</option>
+                </select>
               </div>
               {hasFilters && (
                 <div className="active-filters">
@@ -878,13 +881,15 @@ function ProductsContent() {
   );
 }
 
-// SmartBanner: always hides text, tries jpg/png/webp so your S3 upload always works
+// SmartBanner: always hides text, tries jpg/png/webp for both desktop and mobile so your S3 upload always works
 function SmartBanner({ base, title }: { base: string; title: string; }) {
   const [src, setSrc] = React.useState(base + ".jpg");
+  const [srcMob, setSrcMob] = React.useState(base + "-mob.jpg");
   const [failed, setFailed] = React.useState(false);
 
   React.useEffect(() => {
     setSrc(base + ".jpg");
+    setSrcMob(base + "-mob.jpg");
     setFailed(false);
   }, [base]);
 
@@ -892,6 +897,11 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
     if (src.endsWith(".jpg")) { setSrc(base + ".png"); }
     else if (src.endsWith(".png")) { setSrc(base + ".webp"); }
     else { setFailed(true); }
+  };
+
+  const tryNextMob = () => {
+    if (srcMob.endsWith(".jpg")) { setSrcMob(base + "-mob.png"); }
+    else if (srcMob.endsWith(".png")) { setSrcMob(base + "-mob.webp"); }
   };
 
   if (failed) return null;
@@ -904,13 +914,20 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
           src={src}
           alt={title}
           onError={tryNext}
-          className="cat-banner-img"
+          className="cat-banner-img hero-image-desktop"
+        />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={srcMob}
+          alt={title + " Mobile"}
+          onError={tryNextMob}
+          className="cat-banner-img hero-image-mobile"
         />
       </div>
       <style jsx>{`
         .cat-banner {
           width: 100%;
-          margin-bottom: 25px;
+          margin-bottom: 36px;
           border-radius: 16px;
           overflow: hidden;
           position: relative;
@@ -925,7 +942,7 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
         @media (max-width: 768px) {
           .cat-banner {
             border-radius: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 36px;
             min-height: 140px;
             display: flex;
             align-items: center;

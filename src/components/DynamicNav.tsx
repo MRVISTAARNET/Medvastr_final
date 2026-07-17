@@ -21,20 +21,33 @@ export default function DynamicNav({
   setMobileGroup,
 }: DynamicNavProps) {
   const [localGroup, setLocalGroup] = useState<string | null>(null);
+  const [hoverOff, setHoverOff] = useState(false);
   const mo = mobileGroup ?? localGroup;
   const setMo = setMobileGroup ?? setLocalGroup;
 
   const close = () => onNavigate?.();
 
+  const handleNavigate = () => {
+    setHoverOff(true);
+    close();
+  };
+
   return (
-    <div className="nav-in">
+    <div 
+      className={`nav-in ${hoverOff ? "hover-off" : ""}`}
+      onMouseLeave={() => setHoverOff(false)}
+    >
       {items.map((item) => {
         const key = item.label;
         const isMega = item.type === "MEGA_MENU" && item.children && item.children.length > 0;
 
         if (isMega) {
           return (
-            <div key={key} className={`nav-group${mo === key ? " mob-open" : ""}`}>
+            <div 
+              key={key} 
+              className={`nav-group${mo === key ? " mob-open" : ""}`}
+              onMouseEnter={() => setHoverOff(false)}
+            >
               <Link
                 href={item.href}
                 className="nl"
@@ -44,8 +57,10 @@ export default function DynamicNav({
                       e.preventDefault();
                       setMo(key);
                     } else {
-                      close();
+                      handleNavigate();
                     }
+                  } else {
+                    handleNavigate();
                   }
                 }}
               >
@@ -55,7 +70,7 @@ export default function DynamicNav({
                 <MegaMenu
                   items={item.children!}
                   label={item.label}
-                  onNavigate={close}
+                  onNavigate={handleNavigate}
                 />
               </div>
             </div>
@@ -67,7 +82,8 @@ export default function DynamicNav({
             key={key}
             href={item.href}
             className="nl"
-            onClick={close}
+            onClick={handleNavigate}
+            onMouseEnter={() => setHoverOff(false)}
           >
             {item.label}
           </Link>

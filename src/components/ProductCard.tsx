@@ -14,7 +14,7 @@ interface PCardProps {
 }
 
 export default function ProductCard({ p, forceColor }: PCardProps) {
-  const { addToCart, wishlist, toggleWishlist } = useApp();
+  const { addToCart } = useApp();
   const router = useRouter();
   const initialCi = useMemo(() => {
     if (forceColor && p.clrs) {
@@ -43,7 +43,6 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
   const [ci, setCi] = useState(initialCi); // Color Index
   const [ii, setIi] = useState(0); // Image Index within color
   const currentVariantId = (p as any).variantId || `${p.id}-${ci}`;
-  const wished = wishlist.includes(currentVariantId);
 
   const productPath = useMemo(() => {
     const base = `/product/${p.slug || p.id}`;
@@ -105,7 +104,6 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
                 sizes="(max-width: 768px) 50vw, 300px"
                 priority={false}
               />
-              {/* Hover flip removed as per user request to always show 1st image */}
             </>
           ) : (
             <div className="pc-emo-placeholder w-full h-full flex items-center justify-center bg-slate-50">
@@ -135,17 +133,7 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
           </>
         )}
 
-        {/* Wishlist */}
-        <button
-          className={`pc-wishlist ${wished ? "active" : ""}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            e.preventDefault();
-            toggleWishlist(currentVariantId);
-          }}
-        >
-          {wished ? "❤️" : "🤍"}
-        </button>
+
 
         {/* Quick Labels (Badges) - Simple & Clean */}
         <div className="pc-badges">
@@ -187,9 +175,17 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
                   className={`pc-swatch ${ci === i ? "active" : ""}`}
                   style={{ background: c }}
                   onClick={(e) => handleColorChange(e, i)}
-                />
+                >
+                  <span className="pc-swatch-tooltip">
+                    {p.clrNms?.[i] || "Color"}
+                  </span>
+                </div>
               ))}
-              {p.clrs.length > 5 && <span className="pc-swatch-more">+{p.clrs.length - 5}</span>}
+              {p.clrs.length > 5 && (
+                <span className="pc-swatch-more">
+                  +{p.clrs.length - 5} more
+                </span>
+              )}
             </div>
           )}
         </div>

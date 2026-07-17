@@ -4,20 +4,16 @@ import React, { useState, useEffect } from "react";
 import Announcement from "@/components/Announcement";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import MarqueeTicker from "@/components/MarqueeTicker";
 import CartDrawer from "@/components/CartDrawer";
-import WishlistDrawer from "@/components/WishlistDrawer";
 import AccountModal from "@/components/AccountModal";
 import Toast from "@/components/Toast";
-import FloatingPopups from "@/components/FloatingPopups";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { AppProvider, useApp } from "@/context/AppContext";
 
 function LayoutContent({ children }: { children: React.ReactNode }) {
-  const [cartO, setCartO] = useState(false);
-  const [wishO, setWishO] = useState(false);
   const [showBtt, setShowBtt] = useState(false);
-  const { user, isAuthOpen, setIsAuthOpen } = useApp();
+  const { user, isAuthOpen, setIsAuthOpen, isCartOpen, setIsCartOpen } = useApp();
 
   useEffect(() => {
     const onScroll = () => setShowBtt(window.scrollY > 300);
@@ -29,8 +25,8 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
     <>
       <Announcement />
       <Header
-        onCart={() => setCartO(true)}
-        onWish={() => setWishO(true)}
+        onCart={() => setIsCartOpen(true)}
+        onWish={() => {}}
         onAcct={() => setIsAuthOpen(true)}
         user={user}
       />
@@ -38,11 +34,10 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
         <ErrorBoundary>{children}</ErrorBoundary>
       </main>
       <Footer />
-      <CartDrawer open={cartO} onClose={() => setCartO(false)} />
-      <WishlistDrawer open={wishO} onClose={() => setWishO(false)} />
+      <CartDrawer open={isCartOpen} onClose={() => setIsCartOpen(false)} />
       {isAuthOpen && <AccountModal onClose={() => setIsAuthOpen(false)} />}
       <Toast />
-      <FloatingPopups />
+      <WhatsAppButton />
       {showBtt && (
         <button
           type="button"

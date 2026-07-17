@@ -10,7 +10,6 @@ import ProductCard from "@/components/ProductCard";
 const VideoSection = dynamic(() => import("@/components/VideoSection"));
 const AboutHomeSection = dynamic(() => import("@/components/AboutHomeSection"));
 const BulkOrderBanner = dynamic(() => import("@/components/BulkOrderBanner"));
-import MarqueeTicker from "@/components/MarqueeTicker";
 import { COLS, B } from "@/lib/data";
 import { useApp } from "@/context/AppContext";
 import { API_BASE } from "@/lib/api";
@@ -200,6 +199,25 @@ export default function Home() {
       )}
 
 
+      {/* FEATURE STRIP */}
+      <div className="feat-strip">
+        {[
+          ["🧪", "Lab Tested", "Quality certified"],
+          ["⏰", "12-Hour Ready", "Long-shift comfort"],
+          ["🛡️", "Anti-Distraction", "Built for focus"],
+          ["👜", "Up to 5 Pockets", "Everything you need"],
+          ["🚀", "Premium Fabric", "Looks new, wash after wash"],
+        ].map(([ico, t, s]) => (
+          <div className="fit" key={t}>
+            <span className="fit-ico">{ico}</span>
+            <span>
+              <span className="fit-t">{t}</span>
+              <span className="fit-s">{s}</span>
+            </span>
+          </div>
+        ))}
+      </div>
+
       {/* NEW ARRIVALS */}
       {newArr.length > 0 && (
         <div className="sec">
@@ -220,33 +238,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* FEATURE STRIP */}
-
-      <div className="feat-strip">
-        {[
-          ["🧪", "Lab Tested", "Quality certified"],
-          ["⏰", "12-Hour Ready", "Long-shift comfort"],
-          ["🛡️", "Anti-Distraction", "Built for focus"],
-          ["👜", "Up to 5 Pockets", "Everything you need"],
-          ["🚀", "200+ Washes", "Colour stays vivid"],
-        ].map(([ico, t, s]) => (
-          <div className="fit" key={t}>
-            <span className="fit-ico">{ico}</span>
-            <span>
-              <span className="fit-t">{t}</span>
-              <span className="fit-s">{s}</span>
-            </span>
-          </div>
-        ))}
-      </div>
-
-      <VideoSection />
-      <div style={{ margin: '60px 0' }}>
-        <MarqueeTicker />
-      </div>
-
       <BulkOrderBanner />
-      <AboutHomeSection />
 
       {/* Reviews — Live from API */}
       <div className="rev-sec">
@@ -260,14 +252,16 @@ export default function Home() {
           <div className="rev-g">
             {liveReviews.length > 0 ? (
               liveReviews.map((r: any, i) => (
-                <div className="rv" key={r.id || i}>
-                  <div className="rv-stars">{"★".repeat(Math.min(r.rating || 5, 5))}</div>
-                  <div className="rv-txt">"{r.body}"</div>
-                  {r.productName && (
-                    <div style={{ fontSize: 12, color: 'var(--teal)', fontWeight: 600, marginBottom: 8 }}>
-                      📦 {r.productName}
-                    </div>
-                  )}
+                <div className="rv-card" key={r.id || i}>
+                  <div className="rv-bubble">
+                    <div className="rv-stars">{"★".repeat(Math.min(r.rating || 5, 5))}</div>
+                    <div className="rv-txt">"{r.body}"</div>
+                    {r.productName && (
+                      <div className="rv-prd-tag">
+                        📦 {r.productName}
+                      </div>
+                    )}
+                  </div>
                   <div className="rv-auth">
                     <div className="rv-av">{(r.userName || 'U')[0].toUpperCase()}</div>
                     <div>
@@ -284,9 +278,11 @@ export default function Home() {
                 { r: 5, txt: "Finally, scrubs that look professional and feel comfortable for 12-hour shifts!", nm: 'Dr. Rohan M.', role: 'Resident Surgeon, Delhi', av: 'R' },
                 { r: 5, txt: "Ordered for our entire department. The colour consistency and stitching is perfect.", nm: 'Sr. Fatima K.', role: 'Head Nurse, Hyderabad', av: 'F' },
               ].map((r: any, i) => (
-                <div className="rv" key={i}>
-                  <div className="rv-stars">{"★".repeat(r.r)}</div>
-                  <div className="rv-txt">"{r.txt}"</div>
+                <div className="rv-card" key={i}>
+                  <div className="rv-bubble">
+                    <div className="rv-stars">{"★".repeat(r.r)}</div>
+                    <div className="rv-txt">"{r.txt}"</div>
+                  </div>
                   <div className="rv-auth">
                     <div className="rv-av">{r.av}</div>
                     <div>
@@ -300,6 +296,10 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      <VideoSection />
+
+      <AboutHomeSection />
 
       <div className="nl-sec">
         <div style={{ maxWidth: 1560, margin: "0 auto" }}>
@@ -334,8 +334,8 @@ export default function Home() {
             <input className="nl-inp" type="email" placeholder="Enter your email address" required />
             <button className="nl-go" type="submit">Subscribe</button>
           </form>
-          <div style={{ fontSize: 12, color: "rgba(255,255,255,.26)", marginTop: 13 }}>
-            Use code <strong style={{ color: "var(--g2)" }}>MEDVASTR10</strong> at checkout.
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,.45)", marginTop: 13 }}>
+            Use code <strong style={{ color: "#7FA5E6" }}>MEDVASTR10</strong> at checkout.
           </div>
         </div>
       </div>

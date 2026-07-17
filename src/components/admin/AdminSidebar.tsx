@@ -28,7 +28,6 @@ const AdminSidebar = () => {
     },
     {
       section: 'Marketing', items: [
-        { name: 'Bulk Orders', icon: '🛒', href: '/admin/bulk-orders' },
         { name: 'Blog', icon: '📰', href: '/admin/blog' },
         { name: 'Promo Codes', icon: '🎟️', href: '/admin/promos' },
         { name: 'Promotions', icon: '🎁', href: '/admin/promotions' },
