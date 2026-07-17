@@ -174,11 +174,7 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
                   className={`pc-swatch ${ci === i ? "active" : ""}`}
                   style={{ background: c }}
                   onClick={(e) => handleColorChange(e, i)}
-                >
-                  <span className="pc-swatch-tooltip">
-                    {p.clrNms?.[i] || "Color"}
-                  </span>
-                </div>
+                />
               ))}
               {p.clrs.length > 5 && (
                 <span className="pc-swatch-more">

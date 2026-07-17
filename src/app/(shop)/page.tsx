@@ -94,7 +94,7 @@ export default function Home() {
       <div className="sec">
         <div className="sec-hd">
           <div>
-            <div className="sec-t">Shop By Category</div>
+            <div className="sec-t">Shop By Categories</div>
             <div className="sec-s">Everything a medical professional needs, all in one place</div>
           </div>
           <Link href="/products" className="va">
