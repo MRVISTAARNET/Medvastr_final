@@ -103,7 +103,7 @@ export default function Home() {
         </div>
         <div className="cat-g">
           {[
-            { nm: "Scrub Suit", href: "/products?type=scrubs", img: "cat-scrub-suit.jpg" },
+            { nm: "Scrub Suit", href: "/products?type=scrubs", img: "/cat-scrub-suit.jpg" },
             { nm: "Cotton Crew T-Shirt", href: "/products?type=tshirts", img: "cat-tshirt.jpg" },
             { nm: "Full Sleeve Under Scrub", href: "/products?type=underscrub", img: "cat-under-scrub.jpg" },
             { nm: "Surgical Gown", href: "/products?cat=surgical-surgeon-gown", img: "cat-gown.jpg" },
@@ -113,7 +113,7 @@ export default function Home() {
             <Link href={c.href} className="cat-c" key={c.nm}>
               <div className="cat-img-box">
                 <img
-                  src={`https://d2tnzshqdaedbc.cloudfront.net/${c.img}`}
+                  src={c.img.startsWith("/") ? c.img : `https://d2tnzshqdaedbc.cloudfront.net/${c.img}`}
                   alt={c.nm}
                   onError={(e) => { (e.target as any).src = "https://placehold.co/400x400/f1f5f9/64748b?text=" + c.nm }}
                 />
