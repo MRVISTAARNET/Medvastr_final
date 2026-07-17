@@ -640,97 +640,18 @@ function ProductsContent() {
           {/* PRODUCTS AREA */}
           <div className="products-right">
             <div className="prod-top">
-              <div className="prod-count">
-                Showing <strong>{paged.length}</strong> of <strong>{f.length}</strong> products
-              </div>
               <div className="prod-sort-wrapper">
-                <span className="sort-label">✓ SORT BY :</span>
+                <span className="sort-label">Sort by:</span>
                 <div className="sort-sel-wrap">
                   <select className="sort-sel" value={sort} onChange={(e) => setSort(e.target.value)}>
-                    <option value="default">MOST POPULAR</option>
-                    <option value="pa">PRICE: LOW TO HIGH</option>
-                    <option value="pd">PRICE: HIGH TO LOW</option>
-                    <option value="rt">RATINGS</option>
-                    <option value="az">A TO Z</option>
-                    <option value="za">Z TO A</option>
-                    <option value="nw">NEWEST FIRST</option>
+                    <option value="default">Most popular</option>
+                    <option value="pa">Price: Low to High</option>
+                    <option value="pd">Price: High to Low</option>
+                    <option value="nw">Newest first</option>
                   </select>
                   <span className="sort-chevron">›</span>
                 </div>
               </div>
-              {hasFilters && (
-                <div className="active-filters">
-                  {typeFilter && cat === "all" && (
-                    <span className="af-tag">
-                      {typeLabelActive}
-                      <span
-                        className="af-x"
-                        onClick={() => {
-                          setTypeFilter("");
-                          setPg(1);
-                          updateURL({ type: null });
-                        }}
-                      >
-                        ✕
-                      </span>
-                    </span>
-                  )}
-                  {cat !== "all" && (
-                    <span className="af-tag">
-                      {activeCatLabel}
-                      <span
-                        className="af-x"
-                        onClick={() => {
-                          setCat("all");
-                          setPg(1);
-                        }}
-                      >
-                        ✕
-                      </span>
-                    </span>
-                  )}
-                  {gen !== "all" && (
-                    <span className="af-tag">
-                      {gen.charAt(0).toUpperCase() + gen.slice(1)}
-                      <span
-                        className="af-x"
-                        onClick={() => {
-                          setGen("all");
-                          setPg(1);
-                        }}
-                      >
-                        ✕
-                      </span>
-                    </span>
-                  )}
-                  {colorFilter && (
-                    <span className="af-tag">
-                      🎨 {colorFilter}
-                      <span
-                        className="af-x"
-                        onClick={() => { setColorFilter(''); setPg(1); }}
-                      >
-                        ✕
-                      </span>
-                    </span>
-                  )}
-                  {(minP || maxP) && (
-                    <span className="af-tag">
-                      ₹{minP || "0"}–{maxP ? "₹" + maxP : "max"}
-                      <span
-                        className="af-x"
-                        onClick={() => {
-                          setMinP("");
-                          setMaxP("");
-                          setPg(1);
-                        }}
-                      >
-                        ✕
-                      </span>
-                    </span>
-                  )}
-                </div>
-              )}
             </div>
 
             {paged.length === 0 ? (

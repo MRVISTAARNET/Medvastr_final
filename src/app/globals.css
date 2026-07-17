@@ -3680,10 +3680,9 @@ p {
 }
 
 .sort-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--ink);
-  letter-spacing: 0.05em;
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
   white-space: nowrap;
 }
 
@@ -3698,10 +3697,9 @@ p {
   background: transparent;
   border: none;
   outline: none;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--ink);
-  letter-spacing: 0.05em;
   cursor: pointer;
   padding-right: 14px;
   padding: 0 14px 0 0;
@@ -3711,8 +3709,8 @@ p {
   font-size: 14px;
   color: var(--ink);
   pointer-events: none;
-  margin-left: -10px;
-  font-weight: 700;
+  margin-left: -8px;
+  font-weight: 500;
 }
 
 .sort-sel:focus {
