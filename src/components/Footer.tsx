@@ -5,15 +5,8 @@ import Link from "next/link";
 import { B } from "@/lib/data";
 
 export default function Footer() {
-  const [openCol, setOpenCol] = useState<string | null>(null);
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
-
-  const toggle = (col: string) => {
-    if (window.innerWidth <= 768) {
-      setOpenCol(openCol === col ? null : col);
-    }
-  };
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,33 +19,47 @@ export default function Footer() {
 
   return (
     <footer id="ft">
+      {/* 1. Newsletter Strip */}
+      <div className="ft-newsletter-strip">
+        <div className="ft-ns-inner">
+          <div className="ft-ns-text">
+            Our emails are like our scrubs. Focused on you!
+          </div>
+          <div className="ft-ns-form-box">
+            {subscribed ? (
+              <div className="ft-ns-success">✓ Subscribed successfully!</div>
+            ) : (
+              <form onSubmit={handleSubscribe} className="ft-ns-form">
+                <input
+                  type="email"
+                  placeholder="Enter Email Address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="ft-ns-input"
+                />
+                <button type="submit" className="ft-ns-btn">
+                  →
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* 2. Main Grid */}
       <div className="ft-g">
+        {/* Brand Column */}
         <div className="ft-brand">
           <div className="ft-logo">medvastr</div>
           <span className="ft-tag">Wear Wellness</span>
           <p className="ft-desc">
-            India's leading medical apparel brand. Built specifically for the modern healthcare professional who demands style and comfort.
+            Product Manufactured For, Packed & Marketed By Medvastr.
           </p>
-
-          <div className="ft-contact-list">
-            <div className="contact-item">
-              <span className="contact-icon">📞</span>
-              <div className="contact-details">
-                <a href={`tel:${B.phone1}`}>{B.phone1}</a>
-                <span className="sep">•</span>
-                <a href={`tel:${B.phone2}`}>{B.phone2}</a>
-              </div>
-            </div>
-            <div className="contact-item">
-              <span className="contact-icon">✉️</span>
-              <a href={`mailto:${B.email}`}>{B.email}</a>
-            </div>
-            <div className="contact-item">
-              <span className="contact-icon">📍</span>
-              <span className="addr-text">{B.addr}</span>
-            </div>
+          <div className="ft-office-info">
+            <strong>Corporate Office</strong>
+            <p className="addr-text">{B.addr}</p>
           </div>
-
           <div className="ft-soc-v2">
             <a href={B.ig} target="_blank" rel="noopener" className="social-circle ig" aria-label="Instagram">
               <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
@@ -72,73 +79,57 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className={`ft-col${openCol === 'links' ? ' open' : ''}`}>
-          <h4 onClick={() => toggle('links')}>
-            Quick Links <span className="ft-arr">▾</span>
-          </h4>
+        {/* Company */}
+        <div className="ft-col">
+          <h4>Company</h4>
           <ul className="ft-lnks">
-            {[
-              ["Scrub Suit", "scrubs", false, true],
-              ["Cotton Crew T-Shirt", "tshirts", false, true],
-              ["Full Sleeve Under Scrub", "underscrub", false, true],
-              ["Surgical Gown", "surgical-surgeon-gown", false, false],
-              ["Surgical Cap", "surgical-surgeon-cap", false, false],
-              ["Linen & Bedding", "linen-and-bedding", true, false],
-              ["Brown Blanket", "brown-blankets", true, false],
-              ["Maternity Gown", "maternity-gown", true, false],
-              ["Patient Dress", "patient-dress", true, false]
-            ].map(([l, cat, isBulk, isType]) => (
-              <li key={l as string}>
-                <Link href={isBulk ? `/bulk-orders/${cat}` : (isType ? `/products?type=${cat}` : `/products?cat=${cat}`)}>{l as string}</Link>
-              </li>
-            ))}
+            <li><Link href="/about">About Us</Link></li>
+            <li><Link href="/blog">Blog</Link></li>
+            <li><Link href="/sizeguide">Size Guide</Link></li>
+            <li><Link href="/bulk-orders">Bulk Orders</Link></li>
           </ul>
         </div>
 
-        <div className={`ft-col${openCol === 'company' ? ' open' : ''}`}>
-          <h4 onClick={() => toggle('company')}>
-            Company <span className="ft-arr">▾</span>
-          </h4>
+        {/* Support */}
+        <div className="ft-col">
+          <h4>Support</h4>
           <ul className="ft-lnks">
-            {[
-              ["About Us", "about"], ["Shipping & Returns", "refund"], ["Privacy & Terms", "privacy"]
-            ].map(([l, p]) => (
-              <li key={l}><Link href={`/${p}`}>{l}</Link></li>
-            ))}
+            <li><Link href="/contact">Contact Us</Link></li>
+            <li><Link href="/track">Track Order</Link></li>
+            <li><Link href="/refund">Shipping & Returns</Link></li>
+            <li><Link href="/privacy">Privacy & Terms</Link></li>
           </ul>
         </div>
 
-        <div className="ft-col ft-newsletter">
-          <h4>Newsletter</h4>
-          <div className="ft-lnks">
-            <p className="newsletter-text" style={{ color: "#CBD5E1", fontSize: "14px", lineHeight: "1.6", marginBottom: "16px" }}>
-              Subscribe to get special offers, free giveaways, and once-in-a-lifetime deals.
-            </p>
-            {subscribed ? (
-              <div className="newsletter-success" style={{ color: "#22C55E", fontWeight: "600", fontSize: "14px", padding: "12px", background: "rgba(34, 197, 94, 0.1)", borderRadius: "8px" }}>
-                ✓ Subscribed successfully!
+        {/* Quick Links */}
+        <div className="ft-col">
+          <h4>Quick Links</h4>
+          <ul className="ft-lnks">
+            <li><Link href="/products?type=scrubs">Scrub Suit</Link></li>
+            <li><Link href="/products?type=tshirts">Cotton Crew T-Shirt</Link></li>
+            <li><Link href="/products?type=underscrub">Full Sleeve Under Scrub</Link></li>
+            <li><Link href="/products?cat=surgical-surgeon-gown">Surgical Gown</Link></li>
+            <li><Link href="/products?cat=surgical-surgeon-cap">Surgical Cap</Link></li>
+          </ul>
+        </div>
+
+        {/* Connect With Us */}
+        <div className="ft-col">
+          <h4>Connect With Us</h4>
+          <ul className="ft-lnks connect-info">
+            <li>
+              <span className="connect-icon">📞</span>
+              <div className="connect-details">
+                <a href={`tel:${B.phone1}`}>{B.phone1}</a>
+                <span className="sep">•</span>
+                <a href={`tel:${B.phone2}`}>{B.phone2}</a>
               </div>
-            ) : (
-              <form onSubmit={handleSubscribe} className="newsletter-form" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                <input
-                  type="email"
-                  placeholder="Enter email address"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  style={{ height: "48px", borderRadius: "12px", background: "rgba(255, 255, 255, 0.08)", border: "1.5px solid rgba(255,255,255,0.15)", padding: "0 16px", color: "#FFFFFF", outline: "none", fontSize: "14px" }}
-                />
-                <button
-                  type="submit"
-                  style={{ height: "48px", borderRadius: "12px", background: "#FFFFFF", color: "var(--primary-navy)", fontWeight: "600", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "opacity 0.2s", border: "none" }}
-                  onMouseEnter={(e) => e.currentTarget.style.opacity = "0.9"}
-                  onMouseLeave={(e) => e.currentTarget.style.opacity = "1"}
-                >
-                  Subscribe
-                </button>
-              </form>
-            )}
-          </div>
+            </li>
+            <li>
+              <span className="connect-icon">✉️</span>
+              <a href={`mailto:${B.email}`}>{B.email}</a>
+            </li>
+          </ul>
         </div>
       </div>
 
@@ -158,187 +149,263 @@ export default function Footer() {
         footer {
           background: var(--primary-navy);
           color: #CBD5E1;
-          padding: 80px 40px 40px;
+          padding: 0 0 40px;
           border-top: 1px solid var(--border-color);
           font-family: var(--sans), sans-serif;
         }
+
+        /* 1. Newsletter Strip */
+        .ft-newsletter-strip {
+          background: rgba(0, 0, 0, 0.15);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          padding: 30px 40px;
+          margin-bottom: 60px;
+          width: 100%;
+        }
+        .ft-ns-inner {
+          max-width: 1400px;
+          margin: 0 auto;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 20px;
+        }
+        .ft-ns-text {
+          font-size: 20px;
+          font-weight: 600;
+          color: #ffffff;
+          letter-spacing: -0.01em;
+        }
+        .ft-ns-form-box {
+          min-width: 320px;
+        }
+        .ft-ns-form {
+          display: flex;
+          align-items: center;
+          border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+          transition: border-color 0.25s ease;
+          width: 100%;
+        }
+        .ft-ns-form:focus-within {
+          border-color: #ffffff;
+        }
+        .ft-ns-input {
+          background: transparent !important;
+          border: none !important;
+          outline: none !important;
+          padding: 10px 0 !important;
+          font-size: 16px !important;
+          color: #ffffff !important;
+          flex-grow: 1;
+          width: 280px;
+          border-radius: 0 !important;
+          height: auto !important;
+        }
+        .ft-ns-input::placeholder {
+          color: rgba(255, 255, 255, 0.6);
+        }
+        .ft-ns-btn {
+          background: transparent;
+          border: none;
+          color: #ffffff;
+          font-size: 24px;
+          cursor: pointer;
+          padding: 0 5px;
+          line-height: 1;
+          transition: transform 0.2s ease;
+        }
+        .ft-ns-btn:hover {
+          transform: translateX(3px);
+        }
+        .ft-ns-success {
+          color: #22C55E;
+          font-weight: 600;
+          font-size: 15px;
+        }
+
+        /* 2. Main Grid */
         .ft-g {
           max-width: 1400px;
           margin: 0 auto;
+          padding: 0 40px;
           display: grid;
-          grid-template-columns: 2.5fr 1fr 1fr 2fr;
-          gap: 45px;
+          grid-template-columns: 2.2fr 1fr 1.2fr 1fr 1.6fr;
+          gap: 40px;
           align-items: start;
         }
         .ft-brand {
-           display: flex;
-           flex-direction: column;
-           gap: 15px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
         }
         .ft-logo { 
-          font-size: 42px; 
-          font-weight: 950; 
+          font-size: 32px; 
+          font-weight: 900; 
           color: #ffffff; 
           letter-spacing: -0.04em; 
           text-transform: lowercase;
-          margin-bottom: 2px;
           line-height: 1;
         }
         .ft-tag { 
-          font-size: 11px; 
-          letter-spacing: 3px; 
+          font-size: 10px; 
+          letter-spacing: 2px; 
           color: #FFFFFF; 
           text-transform: uppercase; 
           font-weight: 700; 
           opacity: 0.9;
         }
         .ft-desc { 
-          font-size: 14px; 
+          font-size: 13px; 
           color: #CBD5E1; 
-          line-height: 1.7; 
-          max-width: 380px; 
+          line-height: 1.6; 
+          max-width: 320px; 
           margin-bottom: 5px;
         }
-        
-        .ft-contact-list {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-          margin-bottom: 10px;
+        .ft-office-info {
+          font-size: 13px;
+          line-height: 1.5;
         }
-        .contact-item {
-          display: flex;
-          align-items: flex-start;
-          gap: 12px;
-          font-size: 14px;
+        .ft-office-info strong {
+          color: #ffffff;
+          display: block;
+          margin-bottom: 4px;
+        }
+        .addr-text {
           color: #CBD5E1;
         }
-        .contact-icon {
-          width: 32px;
-          height: 32px;
-          background: rgba(255,255,255,0.08);
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 14px;
-          flex-shrink: 0;
-        }
-        .contact-details {
-           display: flex;
-           gap: 8px;
-           flex-wrap: wrap;
-        }
-        .contact-item a { color: #CBD5E1; text-decoration: none; border-bottom: 1px solid transparent; transition: all 0.2s; font-weight: 600; }
-        .contact-item a:hover { border-bottom-color: #ffffff; color: white; }
-        .sep { opacity: 0.3; }
-        .addr-text { line-height: 1.5; color: #CBD5E1; }
-
-        .ft-soc-v2 { 
-          display: flex; 
-          gap: 15px; 
-          margin-top: 15px; 
-        }
-        .social-circle {
-          width: 44px;
-          height: 44px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          background: rgba(255,255,255,0.08);
-          transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          border: 1px solid rgba(255,255,255,0.08);
-        }
-        .social-circle:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-        .social-circle.ig:hover { background: #7FA5E6; border-color: #7FA5E6; }
-        .social-circle.fb:hover { background: #3F5F92; border-color: #3F5F92; }
-        .social-circle.wa:hover { background: #22C55E; border-color: #22C55E; }
-
+        
+        /* Columns */
         h4 { 
           font-size: 14px; 
-          font-weight: 800; 
-          letter-spacing: 1.5px; 
-          text-transform: uppercase; 
-          margin-bottom: 25px; 
+          font-weight: 600; 
+          text-transform: capitalize; 
+          margin-bottom: 20px; 
           color: #ffffff; 
           position: relative;
-          padding-bottom: 10px;
+          padding-bottom: 8px;
         }
         h4::after {
           content: '';
           position: absolute;
           left: 0;
           bottom: 0;
-          width: 30px;
+          width: 24px;
           height: 2px;
-          background: #7FA5E6;
+          background: var(--secondary-blue);
         }
         
         ul { list-style: none; padding: 0; }
         li { margin-bottom: 12px; }
-        li a { font-size: 14px; color: #CBD5E1; transition: all 0.2s; text-decoration: none; font-weight: 500; }
-        li a:hover { color: #ffffff; transform: translateX(5px); display: inline-block; }
+        li a { font-size: 13px; color: #CBD5E1; transition: all 0.2s; text-decoration: none; font-weight: 500; }
+        li a:hover { color: #ffffff; }
+        
+        /* Connect Info */
+        .connect-info li {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          font-size: 13px;
+          color: #CBD5E1;
+        }
+        .connect-icon {
+          font-size: 13px;
+          opacity: 0.8;
+        }
+        .connect-details {
+          display: flex;
+          gap: 6px;
+          flex-wrap: wrap;
+        }
+        .connect-info a {
+          color: #CBD5E1;
+          text-decoration: none;
+          font-weight: 600;
+        }
+        .connect-info a:hover {
+          color: #ffffff;
+        }
+        .sep { opacity: 0.3; }
+
+        .ft-soc-v2 { 
+          display: flex; 
+          gap: 12px; 
+          margin-top: 10px; 
+        }
+        .social-circle {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          background: rgba(255,255,255,0.06);
+          transition: all 0.25s ease;
+          border: 1px solid rgba(255,255,255,0.06);
+        }
+        .social-circle:hover {
+          transform: translateY(-3px);
+          background: rgba(255,255,255,0.12);
+        }
 
         .ft-btm { 
           max-width: 1400px; 
           margin: 60px auto 0; 
-          padding-top: 30px; 
+          padding: 30px 40px 0; 
           border-top: 1px solid rgba(255,255,255,0.08); 
           display: flex; 
           justify-content: space-between; 
           align-items: center; 
         }
-        .ft-copy { font-size: 13.5px; color: #CBD5E1; font-weight: 500; line-height: 1.6; }
+        .ft-copy { font-size: 13px; color: #CBD5E1; font-weight: 500; line-height: 1.6; }
         .ft-credit a { color: #CBD5E1; font-weight: 700; text-decoration: none; }
         .ft-credit a:hover { color: white; }
         
         .ft-pay { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
         .pay-p { 
           font-size: 10px; 
-          font-weight: 800; 
-          padding: 6px 12px; 
+          font-weight: 700; 
+          padding: 4px 10px; 
           background: rgba(255,255,255,0.02); 
-          border-radius: 6px; 
+          border-radius: 4px; 
           color: #CBD5E1; 
-          border: 1px solid rgba(255,255,255,0.08); 
+          border: 1px solid rgba(255,255,255,0.06); 
           text-transform: uppercase;
-          letter-spacing: 1px;
         }
 
         @media(max-width: 1024px) {
           .ft-g { gap: 30px; grid-template-columns: 2fr 1fr 1fr; }
-          .ft-newsletter { grid-column: span 3; margin-top: 20px; }
         }
 
         @media(max-width: 768px) {
-          footer { padding: 60px 24px 40px; }
-          .ft-g { grid-template-columns: 1fr; gap: 0; }
-          .ft-brand { margin-bottom: 50px; text-align: center; align-items: center; }
-          .ft-desc { margin: 15px auto; text-align: center; }
-          .ft-contact-list { align-items: center; }
-          .contact-item { justify-content: center; }
-          .ft-soc-v2 { justify-content: center; }
+          footer { padding: 0 0 40px; }
+          .ft-newsletter-strip {
+            padding: 24px 20px;
+            margin-bottom: 40px;
+          }
+          .ft-ns-inner {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+          }
+          .ft-ns-text {
+            font-size: 17px;
+          }
+          .ft-ns-form-box {
+            width: 100%;
+          }
+          .ft-ns-input {
+            width: 100%;
+          }
+          .ft-g { grid-template-columns: 1fr; gap: 30px; padding: 0 20px; }
+          .ft-brand { text-align: left; align-items: flex-start; }
+          .ft-desc { margin: 5px 0; }
           
-          .ft-col { border-bottom: 1px solid rgba(255,255,255,0.08); }
-          .ft-col h4 { margin-bottom: 0; padding: 22px 0; font-size: 13px; }
-          .ft-col h4::after { display: none; }
-          .ft-lnks { display: none; padding-bottom: 25px; }
-          .ft-col.open .ft-lnks { display: block; }
-          .ft-newsletter { grid-column: span 1; }
-          
-          .ft-btm { flex-direction: column; text-align: center; gap: 30px; margin-top: 40px; }
-          .ft-pay { justify-content: center; }
-          
-          .ft-arr { display: inline-block; transition: transform 0.3s; margin-left: 6px; font-size: 10px; opacity: 0.5; }
-          .ft-col.open .ft-arr { transform: rotate(180deg); opacity: 1; }
-          .ft-col h4 { display: flex; justify-content: space-between; align-items: center; }
+          .ft-btm { flex-direction: column; text-align: left; align-items: flex-start; gap: 20px; margin-top: 40px; padding: 30px 20px 0; }
+          .ft-pay { justify-content: flex-start; width: 100%; }
         }
       `}</style>
-    </footer >
+    </footer>
   );
 }

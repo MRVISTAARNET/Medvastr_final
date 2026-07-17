@@ -16,8 +16,8 @@ export default function WhatsAppButton() {
       >
         <svg
           viewBox="0 0 24 24"
-          width="30"
-          height="30"
+          width="22"
+          height="22"
           fill="currentColor"
           className="whatsapp-svg"
         >
@@ -28,17 +28,17 @@ export default function WhatsAppButton() {
       <style jsx>{`
         .whatsapp-float-btn {
           position: fixed;
-          bottom: 25px;
-          right: 25px;
+          bottom: 20px;
+          right: 20px;
           background-color: #25d366;
           color: white;
-          width: 58px;
-          height: 58px;
+          width: 44px;
+          height: 44px;
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+          box-shadow: 0 3px 12px rgba(37, 211, 102, 0.3);
           z-index: 9999;
           transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
           animation: whatsapp-pulse 2s infinite;
@@ -46,7 +46,7 @@ export default function WhatsAppButton() {
 
         .whatsapp-float-btn:hover {
           transform: scale(1.1) translateY(-2px);
-          box-shadow: 0 8px 24px rgba(37, 211, 102, 0.6);
+          box-shadow: 0 6px 16px rgba(37, 211, 102, 0.5);
           background-color: #20ba5a;
         }
 
@@ -56,13 +56,13 @@ export default function WhatsAppButton() {
 
         @keyframes whatsapp-pulse {
           0% {
-            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            box-shadow: 0 3px 12px rgba(37, 211, 102, 0.3);
           }
           50% {
-            box-shadow: 0 4px 24px 8px rgba(37, 211, 102, 0.2);
+            box-shadow: 0 3px 16px 6px rgba(37, 211, 102, 0.15);
           }
           100% {
-            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            box-shadow: 0 3px 12px rgba(37, 211, 102, 0.3);
           }
         }
 
@@ -70,8 +70,8 @@ export default function WhatsAppButton() {
           .whatsapp-float-btn {
             bottom: 20px;
             right: 20px;
-            width: 52px;
-            height: 52px;
+            width: 44px;
+            height: 44px;
           }
         }
       `}</style>
