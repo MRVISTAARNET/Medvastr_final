@@ -1049,7 +1049,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
           }}
           disabled={isOutOfStock || isAdding}
           className={`pdp-buy-btn ${addedSuccess ? 'success-state' : ''}`}
-          style={{ flexShrink: 0, height: '44px', background: addedSuccess ? '#16a34a' : 'var(--primary-navy)', border: 'none', color: '#fff', padding: '0 22px', borderRadius: '8px', fontWeight: 600, fontSize: '13px', textTransform: 'none', whiteSpace: 'nowrap', cursor: 'pointer' }}
+          style={{ flexShrink: 0, width: 'auto', height: '44px', background: addedSuccess ? '#16a34a' : 'var(--primary-navy)', border: 'none', color: '#fff', padding: '0 22px', borderRadius: '8px', fontWeight: 600, fontSize: '13px', textTransform: 'none', whiteSpace: 'nowrap', cursor: 'pointer' }}
         >
           {isOutOfStock ? 'Out of Stock' : isAdding ? 'Adding...' : addedSuccess ? '✓ Added' : 'Add to Bag'}
         </button>

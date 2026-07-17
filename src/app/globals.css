@@ -31,7 +31,7 @@
   --bdr2: var(--border-color);
   --red: var(--error);
   --grn: var(--success);
-  --serif: var(--font-serif), 'Cormorant Garamond', serif;
+  --serif: var(--font-sans), 'Plus Jakarta Sans', sans-serif;
   --sans: var(--font-sans), 'Plus Jakarta Sans', sans-serif;
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   --bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -2477,10 +2477,12 @@ p {
   border-radius: 4px !important;
   font-size: 10px !important;
   font-weight: 600 !important;
-  line-height: 1.2 !important;
+  line-height: 1 !important;
   letter-spacing: 0.02em !important;
   text-transform: capitalize !important;
-  width: max-content;
+  width: auto !important;
+  min-width: max-content !important;
+  white-space: nowrap !important;
   box-shadow: none !important;
 }
 
@@ -2511,13 +2513,16 @@ p {
   bottom: calc(100% + 6px);
   left: 50%;
   transform: translateX(-50%) translateY(4px);
-  background: #0f2044;
-  color: #ffffff;
-  font-size: 10px;
-  font-weight: 600;
-  padding: 4px 8px;
-  border-radius: 4px;
-  white-space: nowrap;
+  background: #0f2044 !important;
+  color: #ffffff !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  padding: 4px 8px !important;
+  border-radius: 4px !important;
+  white-space: nowrap !important;
+  width: max-content !important;
+  min-width: max-content !important;
+  display: block !important;
   opacity: 0;
   visibility: hidden;
   transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
