@@ -7,6 +7,13 @@ import { B } from "@/lib/data";
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [openCol, setOpenCol] = useState<string | null>(null);
+
+  const toggleCol = (colId: string) => {
+    if (typeof window !== "undefined" && window.innerWidth <= 768) {
+      setOpenCol(prev => prev === colId ? null : colId);
+    }
+  };
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,8 +87,11 @@ export default function Footer() {
         </div>
 
         {/* Company */}
-        <div className="ft-col">
-          <div className="ft-col-heading">Company</div>
+        <div className={`ft-col ${openCol === "company" ? "open" : ""}`}>
+          <div className="ft-col-heading" onClick={() => toggleCol("company")}>
+            Company
+            <span className="ft-col-toggle mob-only">{openCol === "company" ? "−" : "+"}</span>
+          </div>
           <ul className="ft-lnks">
             <li><Link href="/about">About Us</Link></li>
             <li><Link href="/blog">Blog</Link></li>
@@ -91,8 +101,11 @@ export default function Footer() {
         </div>
 
         {/* Support */}
-        <div className="ft-col">
-          <div className="ft-col-heading">Support</div>
+        <div className={`ft-col ${openCol === "support" ? "open" : ""}`}>
+          <div className="ft-col-heading" onClick={() => toggleCol("support")}>
+            Support
+            <span className="ft-col-toggle mob-only">{openCol === "support" ? "−" : "+"}</span>
+          </div>
           <ul className="ft-lnks">
             <li><Link href="/contact">Contact Us</Link></li>
             <li><Link href="/track">Track Order</Link></li>
@@ -102,8 +115,11 @@ export default function Footer() {
         </div>
 
         {/* Quick Links */}
-        <div className="ft-col">
-          <div className="ft-col-heading">Quick Links</div>
+        <div className={`ft-col ${openCol === "quick" ? "open" : ""}`}>
+          <div className="ft-col-heading" onClick={() => toggleCol("quick")}>
+            Quick Links
+            <span className="ft-col-toggle mob-only">{openCol === "quick" ? "−" : "+"}</span>
+          </div>
           <ul className="ft-lnks">
             <li><Link href="/products?type=scrubs">Scrub Suit</Link></li>
             <li><Link href="/products?type=tshirts">Cotton Crew T-Shirt</Link></li>
@@ -114,8 +130,11 @@ export default function Footer() {
         </div>
 
         {/* Connect With Us */}
-        <div className="ft-col">
-          <div className="ft-col-heading">Connect With Us</div>
+        <div className={`ft-col ${openCol === "connect" ? "open" : ""}`}>
+          <div className="ft-col-heading" onClick={() => toggleCol("connect")}>
+            Connect With Us
+            <span className="ft-col-toggle mob-only">{openCol === "connect" ? "−" : "+"}</span>
+          </div>
           <ul className="ft-lnks connect-info">
             <li>
               <span className="connect-icon">📞</span>
@@ -132,6 +151,7 @@ export default function Footer() {
           </ul>
         </div>
       </div>
+
 
       <div className="ft-btm">
         <div className="ft-copy">
@@ -388,8 +408,12 @@ export default function Footer() {
           letter-spacing: 0.05em;
         }
 
-        @media(max-width: 1024px) {
+         @media(max-width: 1024px) {
           .ft-g { gap: 30px; grid-template-columns: 2fr 1fr 1fr; }
+        }
+
+        .ft-col-toggle {
+          display: none;
         }
 
         @media(max-width: 768px) {
@@ -412,9 +436,39 @@ export default function Footer() {
           .ft-ns-input {
             width: 100%;
           }
-          .ft-g { grid-template-columns: 1fr; gap: 30px; padding: 0 20px; }
-          .ft-brand { text-align: left; align-items: flex-start; }
+          .ft-g { grid-template-columns: 1fr; gap: 15px; padding: 0 20px; }
+          .ft-brand { text-align: left; align-items: flex-start; margin-bottom: 10px; }
           .ft-desc { margin: 5px 0; }
+
+          .ft-col-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 0 !important;
+          }
+
+          .ft-col-toggle {
+            display: inline-block;
+            font-size: 16px;
+            font-weight: 500;
+            color: rgba(255,255,255,0.6);
+          }
+
+          .ft-lnks {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            padding-left: 0;
+          }
+
+          .ft-col.open .ft-lnks {
+            max-height: 320px;
+            padding-top: 12px;
+            padding-bottom: 16px;
+          }
           
           .ft-btm { flex-direction: column; text-align: left; align-items: flex-start; gap: 20px; margin-top: 40px; padding: 30px 20px 0; }
           .ft-pay { justify-content: flex-start; width: 100%; }

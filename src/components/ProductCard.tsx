@@ -42,7 +42,6 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
 
   const [ci, setCi] = useState(initialCi); // Color Index
   const [ii, setIi] = useState(0); // Image Index within color
-  const [hoveredCi, setHoveredCi] = useState<number | null>(null); // Hovered swatch index
   const currentVariantId = (p as any).variantId || `${p.id}-${ci}`;
 
   const productPath = useMemo(() => {
@@ -166,7 +165,7 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
             {p.origPrice && <span className="pc-was-price">{fmt(p.origPrice)}</span>}
           </div>
 
-          {/* Dynamic Color Swatches with inline name label */}
+          {/* Dynamic Color Swatches with CSS Tooltips */}
           {p.clrs && p.clrs.length > 0 && (
             <div className="pc-swatches">
               <div className="pc-swatch-row">
@@ -176,10 +175,11 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
                     className={`pc-swatch ${ci === i ? "active" : ""}`}
                     style={{ background: c }}
                     onClick={(e) => handleColorChange(e, i)}
-                    onMouseEnter={(e) => { e.stopPropagation(); setHoveredCi(i); }}
-                    onMouseLeave={(e) => { e.stopPropagation(); setHoveredCi(null); }}
-                    title={p.clrNms?.[i] || ""}
-                  />
+                  >
+                    {p.clrNms?.[i] && (
+                      <span className="pc-tooltip">{p.clrNms[i]}</span>
+                    )}
+                  </div>
                 ))}
                 {p.clrs.length > 5 && (
                   <span className="pc-swatch-more">
@@ -187,12 +187,6 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
                   </span>
                 )}
               </div>
-              {/* Color name label: shows hovered color or active color name */}
-              {(p.clrNms?.[hoveredCi ?? ci]) && (
-                <span className="pc-color-label">
-                  {p.clrNms[hoveredCi ?? ci]}
-                </span>
-              )}
             </div>
           )}
         </div>

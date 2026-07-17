@@ -79,20 +79,20 @@ export default function BlogPostClient({
           {post.publishedAt && <span> · {new Date(post.publishedAt).toLocaleDateString()}</span>}
         </div>
         <div
-          style={{ lineHeight: 1.8, fontSize: 16 }}
+          style={{ lineHeight: 1.8, fontSize: 16, color: "#334155" }}
           dangerouslySetInnerHTML={{ __html: contentHtml }}
         />
         <style>{`
-          article { font-family: var(--sans); }
-          article h1 { font-size: 28px; font-weight: 800; margin: 32px 0 12px; color: var(--ink, #1a1a2e); }
-          article h2 { font-size: 22px; font-weight: 700; margin: 28px 0 10px; color: var(--ink, #1a1a2e); }
-          article h3 { font-size: 18px; font-weight: 700; margin: 20px 0 8px; color: var(--ink, #1a1a2e); }
-          article ul { padding-left: 24px; margin: 12px 0; }
-          article li { margin-bottom: 6px; line-height: 1.7; }
-          article strong { font-weight: 700; }
+          article { font-family: var(--sans); color: #334155; }
+          article h1 { font-size: 26px; font-weight: 700; margin: 36px 0 16px; color: #0f2044; }
+          article h2 { font-size: 20px; font-weight: 700; margin: 32px 0 14px; color: #0f2044; }
+          article h3 { font-size: 17px; font-weight: 700; margin: 24px 0 10px; color: #0f2044; }
+          article ul { padding-left: 20px; margin: 16px 0; }
+          article li { margin-bottom: 8px; line-height: 1.8; color: #475569; }
+          article strong { font-weight: 700; color: #0f2044; }
           article em { font-style: italic; }
           article a { color: #008080; text-decoration: underline; }
-          article p { margin-bottom: 16px; }
+          article p { margin-bottom: 18px; line-height: 1.8; color: #334155; }
           article * { font-family: inherit !important; }
         `}</style>
         {related.length > 0 && (

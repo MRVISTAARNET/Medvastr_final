@@ -22,7 +22,7 @@ export default function BlogPage() {
       {loading ? (
         <div className="flex items-center justify-center py-20">
           <div className="flex flex-col items-center gap-4">
-            <div className="w-10 h-10 border-4 border-slate-300 border-t-emerald-600 rounded-full animate-spin"></div>
+            <div className="w-10 h-10 border-4 border-slate-300 border-t-teal-600 rounded-full animate-spin"></div>
             <p className="text-slate-600 font-medium">Loading articles…</p>
           </div>
         </div>
@@ -52,7 +52,7 @@ export default function BlogPage() {
                 href={`/blog/${post.slug}`}
                 className="group cursor-pointer"
               >
-                <article className="h-full flex flex-col bg-white rounded-2xl overflow-hidden border-2 border-slate-200 hover:border-emerald-400 shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                <article className="h-full flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-200 hover:border-teal-500 shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
                   {/* Image */}
                   {post.featuredImage ? (
                     <div className="relative overflow-hidden h-48 bg-gradient-to-br from-slate-200 to-slate-300">
@@ -64,7 +64,7 @@ export default function BlogPage() {
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300"></div>
                     </div>
                   ) : (
-                    <div className="h-48 bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center">
+                    <div className="h-48 bg-gradient-to-br from-teal-500 to-slate-700 flex items-center justify-center">
                       <span className="text-4xl">📰</span>
                     </div>
                   )}
@@ -73,13 +73,13 @@ export default function BlogPage() {
                   <div className="p-6 flex-1 flex flex-col">
                     {/* Category */}
                     {post.categoryName && (
-                      <span className="inline-block w-fit text-xs font-bold text-emerald-700 bg-emerald-100 px-3 py-1.5 rounded-full mb-4 uppercase tracking-wider">
+                      <span className="inline-block w-fit text-xs font-bold text-teal-700 bg-teal-50 px-3 py-1.5 rounded-full mb-4 uppercase tracking-wider">
                         {post.categoryName}
                       </span>
                     )}
 
                     {/* Title */}
-                    <h3 className="text-xl font-bold text-slate-900 mb-3 line-clamp-2 group-hover:text-emerald-600 transition">
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 line-clamp-2 group-hover:text-teal-600 transition">
                       {post.title}
                     </h3>
 
@@ -93,7 +93,7 @@ export default function BlogPage() {
                       <span className="text-xs text-slate-500 font-medium">
                         {post.author || "Medvastr"}
                       </span>
-                      <span className="text-emerald-600 font-semibold text-sm group-hover:gap-1 inline-flex items-center gap-0.5 transition">
+                      <span className="text-teal-600 font-semibold text-sm group-hover:gap-1 inline-flex items-center gap-0.5 transition">
                         Read More →
                       </span>
                     </div>
