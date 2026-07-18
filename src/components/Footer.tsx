@@ -194,8 +194,8 @@ export default function Footer() {
           gap: 20px;
         }
         .ft-ns-text {
-          font-size: 20px;
-          font-weight: 600;
+          font-size: 15px;
+          font-weight: 400;
           color: #ffffff;
           letter-spacing: -0.01em;
         }
@@ -428,7 +428,7 @@ export default function Footer() {
             gap: 15px;
           }
           .ft-ns-text {
-            font-size: 17px;
+            font-size: 14px;
           }
           .ft-ns-form-box {
             width: 100%;
