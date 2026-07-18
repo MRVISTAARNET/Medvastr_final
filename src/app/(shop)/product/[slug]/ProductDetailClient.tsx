@@ -880,19 +880,56 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
       {/* KNYAMED STYLE FEATURE HIGHLIGHTS STRIP */}
       <div className="pdp-highlights-strip">
         <div className="pdp-hl-col">
-          <img src="/ico-supersoft.jpg" alt="Super Soft" className="pdp-hl-icon" />
+          <svg className="pdp-hl-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M50 82V65" stroke="#0f2044" strokeWidth="2.5" strokeLinecap="round"/>
+            <path d="M40 68C43 65 47 62 50 65C53 62 57 65 60 68C56 72 44 72 40 68Z" fill="#a3b899" stroke="#0f2044" strokeWidth="2.5" strokeLinejoin="round"/>
+            <path d="M40 66C30 66 26 56 34 46C28 36 38 28 46 36C50 28 62 28 66 36C74 28 84 36 78 46C86 56 82 66 72 66C72 66 66 68 56 68C46 68 40 66 40 66Z" fill="#f8fafd" stroke="#0f2044" strokeWidth="2.5" strokeLinejoin="round"/>
+            <path d="M34 46C38 48 42 52 44 58" stroke="#0f2044" strokeWidth="2" strokeLinecap="round"/>
+            <path d="M78 46C74 48 70 52 68 58" stroke="#0f2044" strokeWidth="2" strokeLinecap="round"/>
+            <path d="M28 24L30 20L32 24L30 28L28 24Z" fill="#ffdf7a" stroke="#0f2044" strokeWidth="1.5"/>
+            <path d="M68 20L70 16L72 20L70 24L68 20Z" fill="#ffdf7a" stroke="#0f2044" strokeWidth="1.5"/>
+          </svg>
           <span className="pdp-hl-label">Super Soft</span>
         </div>
         <div className="pdp-hl-col">
-          <img src="/ico-breathable.jpg" alt="Breathable" className="pdp-hl-icon" />
+          <svg className="pdp-hl-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 40C30 35 45 45 55 40C65 35 75 40 80 42C75 48 65 43 55 48C45 53 30 43 20 40Z" fill="#e2eafd" stroke="#0f2044" strokeWidth="2" strokeLinejoin="round"/>
+            <path d="M20 52C30 47 45 57 55 52C65 47 75 52 80 54C75 60 65 55 55 60C45 65 30 55 20 52Z" fill="#c3d5ff" stroke="#0f2044" strokeWidth="2" strokeLinejoin="round"/>
+            <path d="M20 64C30 59 45 69 55 64C65 59 75 64 80 66C75 72 65 67 55 72C45 77 30 67 20 64Z" fill="#a4c0ff" stroke="#0f2044" strokeWidth="2" strokeLinejoin="round"/>
+            <path d="M38 78C38 70 42 62 40 50C38 38 48 26 48 18" stroke="#0f2044" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="1 4" />
+            <path d="M50 78C50 68 54 58 52 44C50 30 60 22 60 14" stroke="#0f2044" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="1 4" />
+            <path d="M62 78C62 70 66 62 64 50C62 38 72 26 72 18" stroke="#0f2044" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="1 4" />
+            <path d="M45 16C46 17 48 18 49 19" stroke="#0f2044" strokeWidth="2.5" strokeLinecap="round"/>
+            <path d="M57 12C58 13 60 14 61 15" stroke="#0f2044" strokeWidth="2.5" strokeLinecap="round"/>
+            <path d="M69 16C70 17 72 18 73 19" stroke="#0f2044" strokeWidth="2.5" strokeLinecap="round"/>
+            <circle cx="28" cy="22" r="3" fill="#ffdf7a" stroke="#0f2044" strokeWidth="1.5"/>
+            <circle cx="76" cy="30" r="2" fill="#ffdf7a" stroke="#0f2044" strokeWidth="1.5"/>
+          </svg>
           <span className="pdp-hl-label">Breathable</span>
         </div>
         <div className="pdp-hl-col">
-          <img src="/ico-featherlight.jpg" alt="Featherlight" className="pdp-hl-icon" />
+          <svg className="pdp-hl-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M30 75L72 25" stroke="#0f2044" strokeWidth="3" strokeLinecap="round"/>
+            <path d="M24 81L30 75" stroke="#0f2044" strokeWidth="4" strokeLinecap="round"/>
+            <path d="M72 25C65 24 48 30 42 45C38 55 36 65 30 75C40 72 50 68 56 58C62 48 70 32 72 25Z" fill="#f8fafd" stroke="#0f2044" strokeWidth="2.5" strokeLinejoin="round"/>
+            <path d="M66 32C60 36 50 42 46 54C42 62 40 70 30 75C36 71 42 67 46 59C50 51 60 38 66 32Z" fill="#ffdf7a" stroke="#0f2044" strokeWidth="1.5" strokeLinejoin="round"/>
+            <path d="M46 54L38 52" stroke="#0f2044" strokeWidth="2" strokeLinecap="round"/>
+            <path d="M54 44L46 41" stroke="#0f2044" strokeWidth="2" strokeLinecap="round"/>
+            <path d="M62 34L54 31" stroke="#0f2044" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
           <span className="pdp-hl-label">Featherlight</span>
         </div>
         <div className="pdp-hl-col">
-          <img src="/ico-polyviscose.jpg" alt="Poly Viscose" className="pdp-hl-icon" />
+          <svg className="pdp-hl-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g transform="translate(10, 15) scale(0.8)">
+              <path d="M10 20 L30 10 L80 60 L60 70 Z" fill="#ffdf7a" stroke="#0f2044" strokeWidth="2" strokeLinejoin="round"/>
+              <path d="M30 40 L50 30 L90 70 L70 80 Z" fill="#ffdf7a" stroke="#0f2044" strokeWidth="2" strokeLinejoin="round"/>
+              <path d="M10 60 L60 10 L80 20 L30 70 Z" fill="#c3d5ff" stroke="#0f2044" strokeWidth="2" strokeLinejoin="round"/>
+              <path d="M30 80 L80 30 L90 40 L40 90 Z" fill="#c3d5ff" stroke="#0f2044" strokeWidth="2" strokeLinejoin="round"/>
+              <path d="M36 28 L46 23 L56 33 L46 38 Z" fill="#ffdf7a" stroke="#0f2044" strokeWidth="2" strokeLinejoin="round"/>
+              <path d="M60 50 L70 45 L80 55 L70 60 Z" fill="#ffdf7a" stroke="#0f2044" strokeWidth="2" strokeLinejoin="round"/>
+            </g>
+          </svg>
           <span className="pdp-hl-label">Poly Viscose</span>
         </div>
       </div>

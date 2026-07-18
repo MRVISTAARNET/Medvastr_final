@@ -8130,10 +8130,10 @@ h1, h2, h3, h4 {
   background: rgba(255, 255, 255, 0.4);
 }
 
-.pdp-hl-icon {
-  width: 76px;
-  height: 76px;
-  object-fit: contain;
+.pdp-hl-svg {
+  width: 90px;
+  height: 90px;
+  display: block;
   margin-bottom: 4px;
 }
 
@@ -8154,9 +8154,9 @@ h1, h2, h3, h4 {
   .pdp-hl-col:not(:last-child)::after {
     display: none; /* Hide vertical dividers on mobile grid layout */
   }
-  .pdp-hl-icon {
-    width: 52px;
-    height: 52px;
+  .pdp-hl-svg {
+    width: 68px;
+    height: 68px;
   }
 }
 
