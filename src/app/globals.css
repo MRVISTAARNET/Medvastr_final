@@ -8130,12 +8130,23 @@ h1, h2, h3, h4 {
   background: rgba(255, 255, 255, 0.4);
 }
 
+.pdp-hl-icon-wrap {
+  width: 140px;
+  height: 110px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .pdp-hl-icon {
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
+  position: absolute;
+  width: 270px;
+  height: auto;
+  top: -30px;
   filter: invert(1);
-  mix-blend-mode: multiply; /* Inverts the black background to white and blends it transparently over the blue background */
+  mix-blend-mode: multiply;
 }
 
 .pdp-hl-label {
@@ -8155,9 +8166,13 @@ h1, h2, h3, h4 {
   .pdp-hl-col:not(:last-child)::after {
     display: none; /* Hide vertical dividers on mobile grid layout */
   }
+  .pdp-hl-icon-wrap {
+    width: 90px;
+    height: 75px;
+  }
   .pdp-hl-icon {
-    width: 64px;
-    height: 64px;
+    width: 170px;
+    top: -18px;
     filter: invert(1);
     mix-blend-mode: multiply;
   }

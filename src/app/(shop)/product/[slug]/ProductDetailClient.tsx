@@ -880,19 +880,27 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
       {/* KNYAMED STYLE FEATURE HIGHLIGHTS STRIP */}
       <div className="pdp-highlights-strip">
         <div className="pdp-hl-col">
-          <img src="/ico-supersoft.jpg" alt="Super Soft" className="pdp-hl-icon" />
+          <div className="pdp-hl-icon-wrap">
+            <img src="/ico-supersoft.jpg" alt="Super Soft" className="pdp-hl-icon" />
+          </div>
           <span className="pdp-hl-label">Super Soft</span>
         </div>
         <div className="pdp-hl-col">
-          <img src="/ico-breathable.jpg" alt="Breathable" className="pdp-hl-icon" />
+          <div className="pdp-hl-icon-wrap">
+            <img src="/ico-breathable.jpg" alt="Breathable" className="pdp-hl-icon" />
+          </div>
           <span className="pdp-hl-label">Breathable</span>
         </div>
         <div className="pdp-hl-col">
-          <img src="/ico-featherlight.jpg" alt="Featherlight" className="pdp-hl-icon" />
+          <div className="pdp-hl-icon-wrap">
+            <img src="/ico-featherlight.jpg" alt="Featherlight" className="pdp-hl-icon" />
+          </div>
           <span className="pdp-hl-label">Featherlight</span>
         </div>
         <div className="pdp-hl-col">
-          <img src="/ico-polyviscose.jpg" alt="Poly Viscose" className="pdp-hl-icon" />
+          <div className="pdp-hl-icon-wrap">
+            <img src="/ico-polyviscose.jpg" alt="Poly Viscose" className="pdp-hl-icon" />
+          </div>
           <span className="pdp-hl-label">Poly Viscose</span>
         </div>
       </div>
