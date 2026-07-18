@@ -33,6 +33,10 @@ const nextConfig = {
         hostname: "medvastr-assets.s3.ap-south-1.amazonaws.com",
       },
       {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
         protocol: "http",
         hostname: "localhost",
       },

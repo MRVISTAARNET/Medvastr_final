@@ -307,7 +307,7 @@ p {
   padding: 0 44px;
   height: 80px;
   display: grid;
-  grid-template-columns: 320px 1fr 280px;
+  grid-template-columns: 320px 1fr 320px;
   align-items: center;
   gap: 20px;
 }
@@ -408,9 +408,8 @@ p {
 .srch-drop {
   position: absolute;
   top: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: 520px;
+  left: 0;
+  width: 100%;
   background: var(--wh);
   border: 1.5px solid var(--bdr);
   border-radius: 14px;
@@ -423,12 +422,12 @@ p {
 @keyframes dropIn {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(-6px);
+    transform: translateY(-6px);
   }
 
   to {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    transform: translateY(0);
   }
 }
 
@@ -3472,7 +3471,9 @@ p {
   }
 
   .srch-drop {
-    width: calc(100% - 32px) !important;
+    width: 100% !important;
+    left: 0 !important;
+    transform: none !important;
     top: 100% !important;
   }
 
@@ -5089,7 +5090,7 @@ footer {
   }
 
   .hdr-row {
-    grid-template-columns: 180px 1fr 200px;
+    grid-template-columns: 200px 1fr 200px;
   }
 }
 
@@ -5180,7 +5181,7 @@ footer {
 @media (max-width: 1200px) {
   .hdr-row {
     padding: 0 24px;
-    grid-template-columns: 180px 1fr auto;
+    grid-template-columns: 200px 1fr 200px;
   }
 
   .nav-in {

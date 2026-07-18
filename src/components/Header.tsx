@@ -150,7 +150,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
         </div>
 
         <div className={`srch-col${mS ? " mob-on" : ""}`}>
-          <div className="srch-box">
+          <div className="srch-box" style={{ position: "relative" }}>
             <span className="srch-ico">🔍</span>
             <input
               placeholder="Search scrubs, surgical wear, caps..."
@@ -167,43 +167,43 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
                 ✕
               </span>
             )}
+            {sd && q && (
+              <div className="srch-drop" onMouseDown={(e) => e.preventDefault()}>
+                {res.length === 0 ? (
+                  <div className="s-empty">No results for "{q}"</div>
+                ) : (
+                  <>
+                    <div className="s-hd">Products</div>
+                    {res.map((p) => (
+                      <Link
+                        href={`/product/${p.slug || p.id}`}
+                        className="s-row"
+                        key={p.id}
+                        onClick={() => {
+                          setQ("");
+                          setSd(false);
+                          setMs(false);
+                          setMn(false);
+                        }}
+                      >
+                        <div className="s-thumb" style={{ background: p.bg, overflow: 'hidden' }}>
+                          {p.imgs && p.imgs[0] ? (
+                            <img src={p.imgs[0]} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          ) : (
+                            p.emo
+                          )}
+                        </div>
+                        <div>
+                          <div className="s-nm">{p.name}</div>
+                          <div className="s-pr">{fmt(p.price)}</div>
+                        </div>
+                      </Link>
+                    ))}
+                  </>
+                )}
+              </div>
+            )}
           </div>
-          {sd && q && (
-            <div className="srch-drop" onMouseDown={(e) => e.preventDefault()}>
-              {res.length === 0 ? (
-                <div className="s-empty">No results for "{q}"</div>
-              ) : (
-                <>
-                  <div className="s-hd">Products</div>
-                  {res.map((p) => (
-                    <Link
-                      href={`/product/${p.slug || p.id}`}
-                      className="s-row"
-                      key={p.id}
-                      onClick={() => {
-                        setQ("");
-                        setSd(false);
-                        setMs(false);
-                        setMn(false);
-                      }}
-                    >
-                      <div className="s-thumb" style={{ background: p.bg, overflow: 'hidden' }}>
-                        {p.imgs && p.imgs[0] ? (
-                          <img src={p.imgs[0]} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        ) : (
-                          p.emo
-                        )}
-                      </div>
-                      <div>
-                        <div className="s-nm">{p.name}</div>
-                        <div className="s-pr">{fmt(p.price)}</div>
-                      </div>
-                    </Link>
-                  ))}
-                </>
-              )}
-            </div>
-          )}
         </div>
 
         <div className="hdr-acts">
