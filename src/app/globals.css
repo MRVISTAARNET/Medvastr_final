@@ -1834,14 +1834,14 @@ p {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 2px solid #e2e8f0;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
   transition: all 0.5s cubic-bezier(0.2, 1, 0.3, 1);
 }
 
 .cat-c:hover .cat-img-box {
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
-  border-color: rgba(0, 0, 0, 0.05);
+  box-shadow: 0 6px 20px rgba(79, 123, 196, 0.15);
+  border-color: var(--accent-blue);
 }
 
 .cat-img-box img {
@@ -8130,23 +8130,11 @@ h1, h2, h3, h4 {
   background: rgba(255, 255, 255, 0.4);
 }
 
-.pdp-hl-icon-wrap {
-  width: 140px;
-  height: 110px;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .pdp-hl-icon {
-  position: absolute;
-  width: 270px;
-  height: auto;
-  top: -30px;
-  filter: invert(1);
-  mix-blend-mode: multiply;
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  margin-bottom: 4px;
 }
 
 .pdp-hl-label {
@@ -8166,15 +8154,9 @@ h1, h2, h3, h4 {
   .pdp-hl-col:not(:last-child)::after {
     display: none; /* Hide vertical dividers on mobile grid layout */
   }
-  .pdp-hl-icon-wrap {
-    width: 90px;
-    height: 75px;
-  }
   .pdp-hl-icon {
-    width: 170px;
-    top: -18px;
-    filter: invert(1);
-    mix-blend-mode: multiply;
+    width: 52px;
+    height: 52px;
   }
 }
 
