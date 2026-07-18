@@ -30,7 +30,7 @@ export default function Footer() {
       <div className="ft-newsletter-strip">
         <div className="ft-ns-inner">
           <div className="ft-ns-text">
-            Our emails are like our scrubs. Focused on you!
+            Medvastr - Stay informed. Stay comfortable.
           </div>
           <div className="ft-ns-form-box">
             {subscribed ? (
@@ -195,7 +195,7 @@ export default function Footer() {
         }
         .ft-ns-text {
           font-size: 20px;
-          font-weight: 400;
+          font-weight: 600;
           color: #ffffff;
           letter-spacing: -0.01em;
         }
