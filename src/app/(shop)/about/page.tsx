@@ -22,8 +22,16 @@ export default function AboutPage() {
       <section className="about-hero">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="https://d2tnzshqdaedbc.cloudfront.net/about-1.jpg"
-          alt="Medvastr Excellence"
+          src="/about-desktop.jpg"
+          alt="About Medvastr Desktop"
+          className="hero-image-desktop"
+          style={{ width: "100%", height: "auto", display: "block" }}
+        />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/about-mobile.jpg"
+          alt="About Medvastr Mobile"
+          className="hero-image-mobile"
           style={{ width: "100%", height: "auto", display: "block" }}
         />
       </section>
