@@ -874,14 +874,6 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             </DetailAccordion>
           </div>
 
-          {/* TRUST STRIP */}
-          <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', paddingTop: '24px', borderTop: '1px solid var(--bdr2)' }}>
-            {[['🔒', 'Secure Payment'], ['↩️', 'Easy Returns'], ['✅', 'Genuine Product'], ['🚚', freeShippingText]].map(([ico, label]) => (
-              <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '7px', fontSize: '12px', color: 'var(--lt)', fontWeight: 600 }}>
-                <span style={{ fontSize: '16px' }}>{ico}</span> {label}
-              </div>
-            ))}
-      </div>
     </div>
   </div>
 

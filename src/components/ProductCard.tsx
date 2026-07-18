@@ -136,11 +136,17 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
 
 
         {/* Quick Labels (Badges) - Simple & Clean */}
-        <div className="pc-badges">
-          {p.badge && p.badge.split(',').map((b, i) => (
-            <div key={i} className={`pc-badge badge-simple`}>{b.trim()}</div>
-          ))}
-        </div>
+        {p.badge && p.badge.toLowerCase() !== 'none' && p.badge.trim() !== '' && (
+          <div className="pc-badges">
+            {p.badge.split(',').map((b, i) => {
+              const val = b.trim();
+              if (!val || val.toLowerCase() === 'none') return null;
+              return (
+                <div key={i} className="pc-badge badge-simple">{val}</div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Info Section */}

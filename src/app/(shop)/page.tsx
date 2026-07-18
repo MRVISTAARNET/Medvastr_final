@@ -108,7 +108,7 @@ export default function Home() {
             { nm: "Full Sleeve Under Scrub", href: "/products?type=underscrub", img: "/cat-under-scrub.jpg" },
             { nm: "Surgical Gown", href: "/products?cat=surgical-surgeon-gown", img: "/cat-gown.jpg" },
             { nm: "Surgical Cap", href: "/products?cat=surgical-surgeon-cap", img: "/cat-cap.jpg" },
-            { nm: "Bulk Orders", href: "/bulk-orders", img: "cat-bulk.jpg" },
+            { nm: "Bulk Orders", href: "/bulk-orders", img: "/cat-bulk.jpg" },
           ].map(c => (
             <Link href={c.href} className="cat-c" key={c.nm}>
               <div className="cat-img-box">

@@ -2461,11 +2461,11 @@ p {
 /* CLEAN PRODUCT BADGES — knyamed style */
 .pc-badges {
   position: absolute;
-  top: 6px;
-  left: 6px;
+  top: 4px;
+  left: 4px;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 4px;
   z-index: 10;
 }
 
@@ -2473,9 +2473,9 @@ p {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 2.5px 6px !important;
+  padding: 1.5px 5px !important;
   border-radius: 2px !important;
-  font-size: 8.5px !important;
+  font-size: 7.5px !important;
   font-weight: 600 !important;
   line-height: 1 !important;
   letter-spacing: 0.02em !important;
@@ -3103,9 +3103,9 @@ p {
   }
 
   .pc-badge {
-    padding: 1.5px 4px !important;
-    font-size: 7.5px !important;
-    border-radius: 2px !important;
+    padding: 1px 3px !important;
+    font-size: 6.5px !important;
+    border-radius: 1.5px !important;
   }
 }
 
@@ -8133,8 +8133,8 @@ h1, h2, h3, h4 {
   width: 80px;
   height: 80px;
   object-fit: contain;
-  mix-blend-mode: multiply; /* Eliminates the white background of the icons seamlessly */
-  filter: contrast(1.05);
+  filter: invert(1);
+  mix-blend-mode: multiply; /* Inverts the black background to white and blends it transparently over the blue background */
 }
 
 .pdp-hl-label {
@@ -8157,6 +8157,8 @@ h1, h2, h3, h4 {
   .pdp-hl-icon {
     width: 64px;
     height: 64px;
+    filter: invert(1);
+    mix-blend-mode: multiply;
   }
 }
 
