@@ -85,6 +85,7 @@ interface AppContextType {
   toastKind: "ok" | "bad" | "";
   requestOtp: (email: string) => Promise<boolean>;
   loginWithOtp: (email: string, otp: string) => Promise<boolean>;
+  updateAuth: (token: string, user: User) => void;
 }
 
 export const AppContext = createContext<AppContextType | null>(null);
@@ -482,6 +483,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     toast("Logged out successfully");
   };
 
+  const updateAuth = useCallback((token: string, updatedUser: User) => {
+    localStorage.setItem(TOKEN_KEY, token);
+    setUser(updatedUser);
+  }, []);
+
   const addToCart = useCallback(async (p: Product, ci = 0, sz = "M", qty = 1) => {
     dispatch({ type: "ADD", p, ci, sz, qty });
     toast("Added to bag!", "ok");
@@ -630,6 +636,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         toast,
         toastMsg,
         toastKind,
+        updateAuth,
         refreshCategories: fetchCategories,
         refreshNav: fetchNav,
         refreshProducts: fetchProducts,

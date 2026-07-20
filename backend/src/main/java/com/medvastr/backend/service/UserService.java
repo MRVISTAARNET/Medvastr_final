@@ -1,5 +1,7 @@
 package com.medvastr.backend.service;
 
+import com.medvastr.backend.config.JwtUtils;
+import com.medvastr.backend.dto.AuthResponse;
 import com.medvastr.backend.dto.AddressDTO;
 import com.medvastr.backend.dto.AddressRequest;
 import com.medvastr.backend.dto.ChangePasswordRequest;
@@ -34,6 +36,7 @@ public class UserService {
     private final ProductRepository productRepo;
     private final ProductService productService;
     private final AuthService authService;
+    private final JwtUtils jwt;
 
     private User me() {
         return userRepo.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow();
@@ -53,12 +56,27 @@ public class UserService {
         return encoder.matches(rawPassword, u.getPassword());
     }
 
-    public UserDTO updateProfile(UpdateProfileRequest r) {
+    public AuthResponse updateProfile(UpdateProfileRequest r) {
         User u = me();
+        
+        if (r.getEmail() != null && !r.getEmail().trim().isEmpty() && !r.getEmail().equalsIgnoreCase(u.getEmail())) {
+            String newEmail = r.getEmail().trim().toLowerCase();
+            if (userRepo.existsByEmail(newEmail)) {
+                throw new RuntimeException("Email address is already in use by another account.");
+            }
+            u.setEmail(newEmail);
+        }
+        
         u.setFirstName(r.getFirstName());
         u.setLastName(r.getLastName());
         u.setPhone(r.getPhone());
-        return authService.toDTO(userRepo.save(u));
+        userRepo.save(u);
+        
+        String token = jwt.generate(u.getEmail());
+        return AuthResponse.builder()
+                .token(token)
+                .user(authService.toDTO(u))
+                .build();
     }
 
     public void changePassword(ChangePasswordRequest r) {

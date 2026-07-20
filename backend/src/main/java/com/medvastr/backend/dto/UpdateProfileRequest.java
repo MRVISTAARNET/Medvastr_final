@@ -19,5 +19,7 @@ public class UpdateProfileRequest {
 
     @Size(max = 15)
     private String phone;
+
+    private String email;
 }
 

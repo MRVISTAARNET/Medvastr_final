@@ -8,14 +8,14 @@ import { apiJson, getToken } from "@/lib/api";
 import { logError } from "@/lib/logger";
 
 export default function AccountPage() {
-  const { user, isHydrated, setIsAuthOpen, toast } = useApp();
+  const { user, isHydrated, setIsAuthOpen, toast, updateAuth } = useApp();
   const [activeTab, setActiveTab] = useState("profile");
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState<any[]>([]);
   const [addresses, setAddresses] = useState<any[]>([]);
 
   // Profile forms
-  const [profileForm, setProfileForm] = useState({ firstName: "", lastName: "", phone: "" });
+  const [profileForm, setProfileForm] = useState({ firstName: "", lastName: "", phone: "", email: "" });
   const [pwdForm, setPwdForm] = useState({ oldPassword: "", newPassword: "" });
   const [addressForm, setAddressForm] = useState({ fullName: "", phone: "", addressLine1: "", addressLine2: "", city: "", state: "", pincode: "", type: "HOME" });
   const [showAddAddress, setShowAddAddress] = useState(false);
@@ -25,7 +25,7 @@ export default function AccountPage() {
   useEffect(() => {
     document.title = "My Account | Medvastr";
     if (user) {
-      setProfileForm({ firstName: user.firstName, lastName: user.lastName, phone: user.phone || "" });
+      setProfileForm({ firstName: user.firstName, lastName: user.lastName, phone: user.phone || "", email: user.email || "" });
       fetchData();
     } else {
       if (isHydrated) setLoading(false);
@@ -52,10 +52,16 @@ export default function AccountPage() {
   const updateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await apiJson("/users/me", { method: "PUT", body: JSON.stringify(profileForm) });
-      if (res.success) toast("Profile updated!", "ok");
-      else toast("Failed to update profile", "bad");
-    } catch { toast("Error updating profile", "bad"); }
+      const res = await apiJson<{ token: string; user: any }>("/users/me", { method: "PUT", body: JSON.stringify(profileForm) });
+      if (res.success && res.data) {
+        updateAuth(res.data.token, res.data.user);
+        toast("Profile updated successfully!", "ok");
+      } else {
+        toast(res.message || "Failed to update profile", "bad");
+      }
+    } catch (err: any) { 
+      toast(err?.message || "Error updating profile", "bad"); 
+    }
   };
 
   const updatePwd = async (e: React.FormEvent) => {
@@ -149,6 +155,16 @@ export default function AccountPage() {
             {activeTab === "profile" && (
               <div>
                 <h2 style={{ fontSize: "20px", marginBottom: "24px" }}>Profile Details</h2>
+                
+                {user.email.startsWith("phone-") && user.email.endsWith("@medvastr.com") && (
+                  <div style={{ background: "#fffbeb", border: "1px solid #fde68a", color: "#b45309", padding: "16px", borderRadius: "12px", fontSize: "14px", marginBottom: "24px", display: "flex", gap: "10px", alignItems: "flex-start", lineHeight: "1.5" }}>
+                    <span style={{ fontSize: "18px" }}>💡</span>
+                    <div>
+                      <strong>Action Required:</strong> You logged in using your mobile number. Please update the <strong>Email Address</strong> field below with your actual email address to receive order updates, tracking links, and PDF invoices!
+                    </div>
+                  </div>
+                )}
+
                 <form onSubmit={updateProfile} style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "400px" }}>
                   <div className="input-group">
                     <label>First Name</label>
@@ -157,6 +173,18 @@ export default function AccountPage() {
                   <div className="input-group">
                     <label>Last Name</label>
                     <input className="co-input-field" value={profileForm.lastName} onChange={e => setProfileForm({...profileForm, lastName: e.target.value})} required />
+                  </div>
+                  <div className="input-group">
+                    <label>Email Address</label>
+                    <input 
+                      type="email" 
+                      className="co-input-field" 
+                      style={user.email.startsWith("phone-") && user.email.endsWith("@medvastr.com") ? { border: "2px solid #fbbf24", background: "#fffdf5" } : {}}
+                      value={profileForm.email} 
+                      onChange={e => setProfileForm({...profileForm, email: e.target.value})} 
+                      required 
+                      placeholder="Enter Email Address"
+                    />
                   </div>
                   <div className="input-group">
                     <label>Phone Number</label>

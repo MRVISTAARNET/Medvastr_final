@@ -26,7 +26,7 @@ public class UserController {
 
     @PutMapping("/me")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ApiResponse<UserDTO>> update(@RequestBody UpdateProfileRequest r) {
+    public ResponseEntity<ApiResponse<com.medvastr.backend.dto.AuthResponse>> update(@RequestBody UpdateProfileRequest r) {
         return ResponseEntity.ok(ApiResponse.ok("Updated", s.updateProfile(r)));
     }
 
