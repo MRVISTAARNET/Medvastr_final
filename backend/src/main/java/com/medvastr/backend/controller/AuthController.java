@@ -71,9 +71,14 @@ public class AuthController {
             }
             s.register(req);
         }
+        boolean isEmail = r.getEmail().contains("@");
+        String phoneToSend = null;
+        if (!isEmail) {
+            phoneToSend = formatPhoneNumber(r.getEmail());
+        }
         
-        otpService.generateAndSendOtp(resolvedEmail);
-        log.info("[OTP] Code sent to resolved email {}", resolvedEmail);
+        otpService.generateAndSendOtp(resolvedEmail, isEmail, !isEmail, phoneToSend);
+        log.info("[OTP] Code sent to resolved email {} (via Email: {}, via SMS: {})", resolvedEmail, isEmail, !isEmail);
         return ResponseEntity.ok(ApiResponse.ok("Verification code sent successfully.", null));
     }
 

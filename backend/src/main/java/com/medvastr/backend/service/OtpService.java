@@ -28,7 +28,7 @@ public class OtpService {
     private static final int OTP_VALIDITY_MINUTES = 10;
 
     @Transactional
-    public void generateAndSendOtp(String email) {
+    public void generateAndSendOtp(String email, boolean sendEmail, boolean sendSms, String phoneNumber) {
         otpRepo.deleteExpiredOtps(LocalDateTime.now());
 
         String code = String.format("%06d", random.nextInt(1_000_000));
@@ -44,16 +44,20 @@ public class OtpService {
         otpRepo.save(otp);
         log.info("[OtpService] OTP generated for {}", email);
 
-        emailService.sendOtpEmail(email, code);
+        if (sendEmail) {
+            try {
+                emailService.sendOtpEmail(email, code);
+            } catch (Exception e) {
+                log.error("[OtpService] Failed to send Email OTP to {}", email, e);
+            }
+        }
 
-        try {
-            userRepository.findByEmail(email).ifPresent(user -> {
-                if (user.getPhone() != null && !user.getPhone().isBlank()) {
-                    smsService.sendOtpSms(user.getPhone(), code);
-                }
-            });
-        } catch (Exception e) {
-            log.error("[OtpService] Failed to send SMS OTP to {}", email, e);
+        if (sendSms && phoneNumber != null && !phoneNumber.isBlank()) {
+            try {
+                smsService.sendOtpSms(phoneNumber, code);
+            } catch (Exception e) {
+                log.error("[OtpService] Failed to send SMS OTP to {}", phoneNumber, e);
+            }
         }
     }
 
