@@ -457,8 +457,19 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
       matches = [...matches, ...remaining];
     }
     
-    // 3. Take top 4 related items
-    return matches.slice(0, 4);
+    // Shuffle randomly to prevent always showing the same Maroon/Red items
+    const shuffled = [...matches].sort(() => 0.5 - Math.random());
+    
+    // Take top 4 and pre-select a random color variant for each to ensure stability during render
+    return shuffled.slice(0, 4).map(item => {
+      const randomColorHex = item.clrs && item.clrs.length > 0
+        ? item.clrs[Math.floor(Math.random() * item.clrs.length)]
+        : undefined;
+      return {
+        product: item,
+        selectedColorHex: randomColorHex
+      };
+    });
   }, [p, products]);
 
   const visibleImageIndexes = colorImages.map((_, i) => i).filter((i) => !brokenImages[i]);
@@ -1044,7 +1055,13 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             <h2 className="pdp-related-h">Pairs Well With</h2>
           </div>
           <div className="pg-4">
-            {related.map(rel => <ProductCard key={rel.id} p={rel} />)}
+            {related.map((rel, idx) => (
+              <ProductCard 
+                key={rel.product.id + "-" + idx} 
+                p={rel.product} 
+                forceColor={rel.selectedColorHex} 
+              />
+            ))}
           </div>
         </section>
       )}

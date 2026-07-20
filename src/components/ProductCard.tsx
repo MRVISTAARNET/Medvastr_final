@@ -156,10 +156,12 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
             <div className="pc-brand-box">
               <span className="pc-brand-name">Medvastr</span>
             </div>
-            <div className="pc-rating-box">
-              <span className="pc-star-avg">★</span>
-              <span className="pc-rating-val">{p.rating.toFixed(1)}</span>
-            </div>
+            {p.rev > 0 && (
+              <div className="pc-rating-box">
+                <span className="pc-star-avg">★</span>
+                <span className="pc-rating-val">{p.rating.toFixed(1)}</span>
+              </div>
+            )}
           </div>
 
           <Link href={productPath} className="pc-product-name" onClick={(e) => e.stopPropagation()}>
