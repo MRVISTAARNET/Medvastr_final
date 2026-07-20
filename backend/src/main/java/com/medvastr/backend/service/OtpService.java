@@ -1,7 +1,9 @@
 package com.medvastr.backend.service;
 
 import com.medvastr.backend.model.OTP;
+import com.medvastr.backend.model.User;
 import com.medvastr.backend.repository.OTPRepository;
+import com.medvastr.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,6 +21,8 @@ public class OtpService {
 
     private final OTPRepository otpRepo;
     private final EmailService emailService;
+    private final SmsService smsService;
+    private final UserRepository userRepository;
     private final SecureRandom random = new SecureRandom();
 
     private static final int OTP_VALIDITY_MINUTES = 10;
@@ -41,6 +45,16 @@ public class OtpService {
         log.info("[OtpService] OTP generated for {}", email);
 
         emailService.sendOtpEmail(email, code);
+
+        try {
+            userRepository.findByEmail(email).ifPresent(user -> {
+                if (user.getPhone() != null && !user.getPhone().isBlank()) {
+                    smsService.sendOtpSms(user.getPhone(), code);
+                }
+            });
+        } catch (Exception e) {
+            log.error("[OtpService] Failed to send SMS OTP to {}", email, e);
+        }
     }
 
     @Transactional

@@ -59,6 +59,7 @@ public class OrderService {
     private final InventoryLogRepository inventoryLogRepo;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
     private final WhatsAppService whatsAppService;
+    private final SmsService smsService;
 
     private User me() {
         return userRepo.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow();
@@ -333,11 +334,20 @@ public class OrderService {
 
     public OrderDTO updateStatus(Long id, String status) {
         Order o = orderRepo.findById(id).orElseThrow();
+        Order.OrderStatus oldStatus = o.getStatus();
         o.setStatus(Order.OrderStatus.valueOf(status));
         if ("DELIVERED".equals(status)) {
             o.setDeliveredAt(LocalDateTime.now());
         }
-        return toDTO(orderRepo.save(o));
+        Order saved = orderRepo.save(o);
+        if (oldStatus != Order.OrderStatus.SHIPPED && saved.getStatus() == Order.OrderStatus.SHIPPED) {
+            try {
+                smsService.sendOrderSms(saved, "DISPATCHED");
+            } catch (Exception e) {
+                log.error("Failed to send order dispatch SMS", e);
+            }
+        }
+        return toDTO(saved);
     }
 
     @Transactional
@@ -508,6 +518,11 @@ public class OrderService {
                             log.error("Failed to send WhatsApp order alerts", e);
                         }
                         try {
+                            smsService.sendOrderSms(order, order.getPaymentMethod().name());
+                        } catch (Exception e) {
+                            log.error("Failed to send SMS order confirmation", e);
+                        }
+                        try {
                             shiprocketService.createOrder(order.getId());
                         } catch (Exception e) {
                             log.error("Failed to push order to Shiprocket", e);
@@ -530,6 +545,11 @@ public class OrderService {
                 whatsAppService.sendOrderAlerts(order);
             } catch (Exception e) {
                 log.error("Failed to send WhatsApp order alerts", e);
+            }
+            try {
+                smsService.sendOrderSms(order, order.getPaymentMethod().name());
+            } catch (Exception e) {
+                log.error("Failed to send SMS order confirmation", e);
             }
             try {
                 shiprocketService.createOrder(order.getId());

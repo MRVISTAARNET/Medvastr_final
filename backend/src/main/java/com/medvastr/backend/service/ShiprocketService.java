@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class ShiprocketService {
     private final OrderRepository orderRepository;
+    private final SmsService smsService;
     private final java.util.Set<Long> ongoingSyncs = java.util.concurrent.ConcurrentHashMap.newKeySet();
 
     @Value("${shiprocket.enabled:false}")
@@ -587,6 +588,7 @@ public class ShiprocketService {
         var orderOpt = orderRepository.findByOrderNumber(orderId);
         if (orderOpt.isPresent()) {
             Order order = orderOpt.get();
+            Order.OrderStatus oldStatus = order.getStatus();
             log.info("[Shiprocket Webhook] Updating order {} to status: {}", orderId, status);
 
             if (awb != null && !awb.isEmpty()) {
@@ -599,7 +601,16 @@ public class ShiprocketService {
             // Map Shiprocket status to internal status
             updateOrderStatusMapping(order, status);
 
-            orderRepository.save(order);
+            Order saved = orderRepository.save(order);
+
+            // Send dispatch SMS if transitioned to SHIPPED
+            if (oldStatus != Order.OrderStatus.SHIPPED && saved.getStatus() == Order.OrderStatus.SHIPPED) {
+                try {
+                    smsService.sendOrderSms(saved, "DISPATCHED");
+                } catch (Exception e) {
+                    log.error("[Shiprocket Webhook] Failed to send order dispatch SMS", e);
+                }
+            }
         }
     }
 
@@ -808,16 +819,21 @@ public class ShiprocketService {
                         }
                     }
                     
-                    if (status == null || status.isEmpty()) {
-                        status = trackingData.optString("shipment_status");
-                    }
-                    
                     if (status != null && !status.isEmpty()) {
                         log.info("[Shiprocket Sync] Updating order {} status from tracking: {}", order.getOrderNumber(), status);
+                        Order.OrderStatus oldStatus = order.getStatus();
                         updateOrderStatusMapping(order, status);
+                        Order saved = orderRepository.save(order);
+                        if (oldStatus != Order.OrderStatus.SHIPPED && saved.getStatus() == Order.OrderStatus.SHIPPED) {
+                            try {
+                                smsService.sendOrderSms(saved, "DISPATCHED");
+                            } catch (Exception e) {
+                                log.error("[Shiprocket Sync] Failed to send order dispatch SMS", e);
+                            }
+                        }
+                    } else {
+                        orderRepository.save(order);
                     }
-                    
-                    orderRepository.save(order);
                 }
             }
         } catch (Exception e) {
