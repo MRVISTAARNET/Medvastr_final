@@ -5021,7 +5021,7 @@ footer {
 /* Back to Top */
 .btt {
   position: fixed;
-  bottom: 92px;
+  bottom: 32px;
   right: 32px;
   width: 44px;
   height: 44px;

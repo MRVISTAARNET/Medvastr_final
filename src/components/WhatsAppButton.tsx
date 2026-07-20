@@ -28,7 +28,7 @@ export default function WhatsAppButton() {
       <style jsx>{`
         .whatsapp-float-btn {
           position: fixed;
-          bottom: 32px;
+          bottom: 92px;
           right: 32px;
           background-color: #25d366;
           color: white;

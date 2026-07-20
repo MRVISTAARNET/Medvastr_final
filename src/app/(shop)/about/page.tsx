@@ -293,6 +293,11 @@ export default function AboutPage() {
           color: white;
         }
 
+        .diff-card p,
+        .diff-card strong {
+          color: white !important;
+        }
+
         .about-cta {
           padding: 80px 24px;
           background: var(--bg-slate);
