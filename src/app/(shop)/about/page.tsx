@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const COLORS = {
   navy: "var(--primary-navy)",
-  teal: "#008080",
+  blue: "var(--secondary-blue)",
   slate: "var(--secondary-text)",
   light: "var(--bg-slate)",
   white: "var(--white, #ffffff)",
@@ -154,12 +154,12 @@ export default function AboutPage() {
         }
 
         .about-subtitle {
-          font-size: 11px;
-          font-weight: 800;
-          color: ${COLORS.teal};
-          letter-spacing: 2px;
+          font-size: 13px !important;
+          font-weight: 600 !important;
+          color: ${COLORS.blue} !important;
+          letter-spacing: 1px !important;
           text-transform: uppercase;
-          margin-bottom: 12px;
+          margin-bottom: 8px;
           text-align: left;
         }
 
@@ -168,13 +168,14 @@ export default function AboutPage() {
         }
 
         .section-title {
-          font-size: clamp(24px, 4vw, 32px);
-          font-weight: 750;
-          margin-bottom: 40px;
+          font-family: var(--sans) !important;
+          font-size: 26px !important;
+          font-weight: 600 !important;
+          color: ${COLORS.navy} !important;
+          line-height: 1.25 !important;
+          letter-spacing: -0.015em !important;
+          margin-bottom: 30px;
           text-align: left;
-          color: ${COLORS.navy};
-          letter-spacing: -0.5px;
-          line-height: 1.25;
         }
 
         .promises-section .section-title {
@@ -194,25 +195,25 @@ export default function AboutPage() {
 
         .story-highlight-box {
           background: rgba(32, 58, 95, 0.03);
-          padding: 36px;
-          border-radius: 16px;
+          padding: 30px;
+          border-radius: 12px;
           border-left: 4px solid var(--secondary-blue);
         }
 
         .highlight-text {
-          font-size: 18px;
-          line-height: 1.7;
-          color: ${COLORS.navy};
-          font-weight: 500;
+          font-size: 15px !important;
+          line-height: 1.7 !important;
+          color: ${COLORS.navy} !important;
+          font-weight: 500 !important;
         }
 
         .story-text {
-          font-size: 15px;
-          line-height: 1.8;
-          color: ${COLORS.slate};
+          font-size: 14px !important;
+          line-height: 1.7 !important;
+          color: ${COLORS.slate} !important;
           display: flex;
           flex-direction: column;
-          gap: 20px;
+          gap: 16px;
         }
 
         .promises-section {
@@ -228,36 +229,36 @@ export default function AboutPage() {
 
         .promise-card {
           background: ${COLORS.white};
-          padding: 45px 30px;
-          border-radius: 16px;
+          padding: 40px 24px;
+          border-radius: 12px;
           border: 1px solid #e2e8f0;
           text-align: center;
           transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-          box-shadow: 0 4px 12px rgba(32, 58, 95, 0.03);
+          box-shadow: 0 4px 12px rgba(32, 58, 95, 0.02);
         }
 
         .promise-card:hover {
-          transform: translateY(-6px);
-          box-shadow: 0 16px 36px rgba(32, 58, 95, 0.08);
+          transform: translateY(-4px);
+          box-shadow: 0 12px 28px rgba(32, 58, 95, 0.06);
           border-color: var(--secondary-blue);
         }
 
         .promise-icon {
-          font-size: 36px;
-          margin-bottom: 24px;
+          font-size: 32px;
+          margin-bottom: 20px;
         }
 
         .promise-card h3 {
-          font-size: 18px;
-          font-weight: 700;
-          margin-bottom: 14px;
-          color: ${COLORS.navy};
+          font-size: 16px !important;
+          font-weight: 600 !important;
+          margin-bottom: 12px;
+          color: ${COLORS.navy} !important;
         }
 
         .promise-card p {
-          font-size: 14px;
-          line-height: 1.6;
-          color: ${COLORS.slate};
+          font-size: 13px !important;
+          line-height: 1.6 !important;
+          color: ${COLORS.slate} !important;
           font-weight: 400;
         }
 
@@ -266,12 +267,12 @@ export default function AboutPage() {
         }
 
         .diff-card {
-          padding: 40px 50px;
-          border-radius: 20px;
-          font-size: 16px;
-          line-height: 1.8;
+          padding: 36px 48px;
+          border-radius: 16px;
+          font-size: 14px !important;
+          line-height: 1.7 !important;
           text-align: left;
-          box-shadow: 0 10px 30px rgba(32, 58, 95, 0.05);
+          box-shadow: 0 10px 30px rgba(32, 58, 95, 0.04);
         }
 
         .diff-card.green {
@@ -283,7 +284,7 @@ export default function AboutPage() {
         }
 
         .green-icon {
-          font-size: 44px;
+          font-size: 36px;
           flex-shrink: 0;
         }
 
@@ -293,32 +294,32 @@ export default function AboutPage() {
         }
 
         .about-cta {
-          padding: 100px 24px;
+          padding: 80px 24px;
           background: var(--bg-slate);
           text-align: center;
           border-top: 1px solid var(--border-color);
         }
 
         .cta-content {
-          max-width: 650px;
+          max-width: 600px;
           margin: 0 auto;
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 20px;
+          gap: 16px;
         }
 
         .cta-title {
-          font-size: clamp(24px, 5vw, 36px);
-          font-weight: 800;
-          color: ${COLORS.navy};
-          letter-spacing: -1px;
-          line-height: 1.2;
+          font-size: 26px !important;
+          font-weight: 600 !important;
+          color: ${COLORS.navy} !important;
+          letter-spacing: -0.015em !important;
+          line-height: 1.25 !important;
         }
 
         .cta-desc {
-          font-size: 16px;
-          color: ${COLORS.slate};
+          font-size: 14px !important;
+          color: ${COLORS.slate} !important;
           margin-bottom: 12px;
           line-height: 1.5;
         }
@@ -327,13 +328,13 @@ export default function AboutPage() {
           display: inline-block;
           background: var(--primary-navy);
           color: white;
-          padding: 16px 40px;
-          border-radius: 8px;
-          font-size: 15px;
-          font-weight: 700;
+          padding: 14px 36px;
+          border-radius: 6px;
+          font-size: 14px !important;
+          font-weight: 600 !important;
           text-decoration: none;
           transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-          box-shadow: 0 4px 14px rgba(32, 58, 95, 0.2);
+          box-shadow: 0 4px 12px rgba(32, 58, 95, 0.15);
           letter-spacing: 0.5px;
           text-transform: uppercase;
           border: 2px solid var(--primary-navy);
@@ -345,7 +346,7 @@ export default function AboutPage() {
           color: var(--primary-navy);
           border-color: var(--primary-navy);
           transform: translateY(-2px);
-          box-shadow: 0 8px 24px rgba(32, 58, 95, 0.25);
+          box-shadow: 0 6px 18px rgba(32, 58, 95, 0.2);
         }
 
         @media (max-width: 900px) {
