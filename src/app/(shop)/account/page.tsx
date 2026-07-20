@@ -122,7 +122,7 @@ export default function AccountPage() {
           <div style={{ width: "250px", background: "white", padding: "20px", borderRadius: "16px", boxShadow: "0 4px 20px rgba(0,0,0,0.03)" }}>
             <div style={{ paddingBottom: "20px", borderBottom: "1px solid #e2e8f0", marginBottom: "20px" }}>
               <div style={{ fontSize: "18px", fontWeight: 800, color: "#0f172a" }}>{user.firstName} {user.lastName}</div>
-              <div style={{ fontSize: "13px", color: "#64748b" }}>{user.email}</div>
+              <div style={{ fontSize: "13px", color: "#64748b" }}>{user.email || "No email linked"}</div>
             </div>
             <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "10px" }}>
               {[
@@ -132,7 +132,7 @@ export default function AccountPage() {
                 { id: "orders", label: "Order History", icon: "📦" }
               ].map(t => (
                 <li key={t.id}>
-                  <button 
+                   <button 
                     onClick={() => setActiveTab(t.id)}
                     style={{
                       width: "100%", textAlign: "left", padding: "12px 16px", borderRadius: "10px", border: "none", cursor: "pointer",
@@ -152,48 +152,51 @@ export default function AccountPage() {
           {/* MAIN CONTENT */}
           <div style={{ flex: 1, minWidth: "300px", background: "white", padding: "40px", borderRadius: "16px", boxShadow: "0 4px 20px rgba(0,0,0,0.03)" }}>
             
-            {activeTab === "profile" && (
-              <div>
-                <h2 style={{ fontSize: "20px", marginBottom: "24px" }}>Profile Details</h2>
-                
-                {user.email.startsWith("phone-") && user.email.endsWith("@medvastr.com") && (
-                  <div style={{ background: "#fffbeb", border: "1px solid #fde68a", color: "#b45309", padding: "16px", borderRadius: "12px", fontSize: "14px", marginBottom: "24px", display: "flex", gap: "10px", alignItems: "flex-start", lineHeight: "1.5" }}>
-                    <span style={{ fontSize: "18px" }}>💡</span>
-                    <div>
-                      <strong>Action Required:</strong> You logged in using your mobile number. Please update the <strong>Email Address</strong> field below with your actual email address to receive order updates, tracking links, and PDF invoices!
+            {activeTab === "profile" && (() => {
+              const hasNoRealEmail = !user.email || (user.email.startsWith("phone-") && user.email.endsWith("@medvastr.com"));
+              return (
+                <div>
+                  <h2 style={{ fontSize: "20px", marginBottom: "24px" }}>Profile Details</h2>
+                  
+                  {hasNoRealEmail && (
+                    <div style={{ background: "#fffbeb", border: "1px solid #fde68a", color: "#b45309", padding: "16px", borderRadius: "12px", fontSize: "14px", marginBottom: "24px", display: "flex", gap: "10px", alignItems: "flex-start", lineHeight: "1.5" }}>
+                      <span style={{ fontSize: "18px" }}>💡</span>
+                      <div>
+                        <strong>Action Required:</strong> You logged in using your mobile number. Please update the <strong>Email Address</strong> field below with your actual email address to receive order updates, tracking links, and PDF invoices!
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                <form onSubmit={updateProfile} style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "400px" }}>
-                  <div className="input-group">
-                    <label>First Name</label>
-                    <input className="co-input-field" value={profileForm.firstName} onChange={e => setProfileForm({...profileForm, firstName: e.target.value})} required />
-                  </div>
-                  <div className="input-group">
-                    <label>Last Name</label>
-                    <input className="co-input-field" value={profileForm.lastName} onChange={e => setProfileForm({...profileForm, lastName: e.target.value})} required />
-                  </div>
-                  <div className="input-group">
-                    <label>Email Address</label>
-                    <input 
-                      type="email" 
-                      className="co-input-field" 
-                      style={user.email.startsWith("phone-") && user.email.endsWith("@medvastr.com") ? { border: "2px solid #fbbf24", background: "#fffdf5" } : {}}
-                      value={profileForm.email} 
-                      onChange={e => setProfileForm({...profileForm, email: e.target.value})} 
-                      required 
-                      placeholder="Enter Email Address"
-                    />
-                  </div>
-                  <div className="input-group">
-                    <label>Phone Number</label>
-                    <input className="co-input-field" value={profileForm.phone} onChange={e => setProfileForm({...profileForm, phone: e.target.value})} />
-                  </div>
-                  <button type="submit" className="pdp-buy-btn" style={{ marginTop: "10px" }}>Save Changes</button>
-                </form>
-              </div>
-            )}
+                  <form onSubmit={updateProfile} style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "400px" }}>
+                    <div className="input-group">
+                      <label>First Name</label>
+                      <input className="co-input-field" value={profileForm.firstName} onChange={e => setProfileForm({...profileForm, firstName: e.target.value})} required />
+                    </div>
+                    <div className="input-group">
+                      <label>Last Name</label>
+                      <input className="co-input-field" value={profileForm.lastName} onChange={e => setProfileForm({...profileForm, lastName: e.target.value})} required />
+                    </div>
+                    <div className="input-group">
+                      <label>Email Address</label>
+                      <input 
+                        type="email" 
+                        className="co-input-field" 
+                        style={hasNoRealEmail ? { border: "2px solid #fbbf24", background: "#fffdf5" } : {}}
+                        value={profileForm.email || ""} 
+                        onChange={e => setProfileForm({...profileForm, email: e.target.value})} 
+                        required={!hasNoRealEmail}
+                        placeholder="Enter Email Address"
+                      />
+                    </div>
+                    <div className="input-group">
+                      <label>Phone Number</label>
+                      <input className="co-input-field" value={profileForm.phone} onChange={e => setProfileForm({...profileForm, phone: e.target.value})} />
+                    </div>
+                    <button type="submit" className="pdp-buy-btn" style={{ marginTop: "10px" }}>Save Changes</button>
+                  </form>
+                </div>
+              );
+            })()}
 
             {activeTab === "security" && (
               <div>

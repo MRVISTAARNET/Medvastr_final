@@ -37,7 +37,7 @@ public class AuthService {
 
     // ── Register ─────────────────────────────────────────────────────────────
     public AuthResponse register(RegisterRequest r) {
-        if (userRepo.existsByEmail(r.getEmail()))
+        if (r.getEmail() != null && !r.getEmail().isBlank() && userRepo.existsByEmail(r.getEmail()))
             throw new RuntimeException("Email already registered");
 
         User u = User.builder()
@@ -56,7 +56,9 @@ public class AuthService {
         userRepo.save(u);
 
         try {
-            emailService.sendWelcomeEmail(u.getEmail(), u.getFirstName());
+            if (u.getEmail() != null && !u.getEmail().isBlank()) {
+                emailService.sendWelcomeEmail(u.getEmail(), u.getFirstName());
+            }
         } catch (Exception ex) {
             log.error("Failed to send welcome email during registration for {}", u.getEmail(), ex);
         }
@@ -71,12 +73,24 @@ public class AuthService {
         return buildResponse(userRepo.findByEmail(r.getEmail()).orElseThrow());
     }
 
-    public AuthResponse loginViaOtp(String email) {
-        User u = userRepo.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+    public AuthResponse loginViaOtp(String emailOrPhone) {
+        User u;
+        if (emailOrPhone.contains("@")) {
+            u = userRepo.findByEmail(emailOrPhone)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+        } else {
+            String cleanPhone = emailOrPhone.replaceAll("[^0-9]", "");
+            String suffix = cleanPhone.length() > 10 
+                    ? cleanPhone.substring(cleanPhone.length() - 10) 
+                    : cleanPhone;
+            u = userRepo.findByPhoneSuffix(suffix)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+        }
+        
         if (!u.isEmailVerified()) {
             u.setEmailVerified(true);
             userRepo.save(u);
-            log.info("[AuthService] Email auto-verified via OTP for {}", email);
+            log.info("[AuthService] Email/Phone auto-verified via OTP for {}", emailOrPhone);
         }
         return buildResponse(u);
     }

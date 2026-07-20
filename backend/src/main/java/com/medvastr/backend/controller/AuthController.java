@@ -52,56 +52,68 @@ public class AuthController {
     // ── OTP: Request code ─────────────────────────────────────────────────
     @PostMapping("/otp-request")
     public ResponseEntity<ApiResponse<Void>> requestOtp(@RequestBody @Valid OtpRequest r) {
-        String resolvedEmail = resolveEmail(r.getEmail());
-        log.info("[OTP] Request for identifier: {}, resolved email: {}", r.getEmail(), resolvedEmail);
+        String resolvedId = resolveIdentifier(r.getEmail());
+        log.info("[OTP] Request for identifier: {}, resolved identifier: {}", r.getEmail(), resolvedId);
         
-        if (!userRepository.existsByEmail(resolvedEmail)) {
-            log.info("[OTP] Auto-registering new user with email: {}", resolvedEmail);
+        boolean userExists;
+        if (resolvedId.contains("@")) {
+            userExists = userRepository.existsByEmail(resolvedId);
+        } else {
+            String cleanPhone = resolvedId.replaceAll("[^0-9]", "");
+            String suffix = cleanPhone.length() > 10 ? cleanPhone.substring(cleanPhone.length() - 10) : cleanPhone;
+            userExists = userRepository.findByPhoneSuffix(suffix).isPresent();
+        }
+        
+        if (!userExists) {
+            log.info("[OTP] Auto-registering new user with identifier: {}", resolvedId);
             RegisterRequest req = new RegisterRequest();
-            req.setEmail(resolvedEmail);
-            req.setFirstName(resolvedEmail.split("@")[0]);
+            
+            if (resolvedId.contains("@")) {
+                req.setEmail(resolvedId);
+                req.setPhone("");
+                req.setFirstName(resolvedId.split("@")[0]);
+            } else {
+                req.setEmail(null); // Keep email null for phone-only registration!
+                req.setPhone(resolvedId);
+                req.setFirstName("User");
+            }
+            
             req.setLastName("");
             req.setPassword(UUID.randomUUID().toString()); // random secure pass since it's OTP based
-            
-            // Set the phone number on the new user profile if the identifier was a phone number
-            if (!r.getEmail().contains("@")) {
-                req.setPhone(formatPhoneNumber(r.getEmail()));
-            } else {
-                req.setPhone("");
-            }
             s.register(req);
         }
+        
         boolean isEmail = r.getEmail().contains("@");
         String phoneToSend = null;
         if (!isEmail) {
             phoneToSend = formatPhoneNumber(r.getEmail());
         }
         
-        otpService.generateAndSendOtp(resolvedEmail, isEmail, !isEmail, phoneToSend);
-        log.info("[OTP] Code sent to resolved email {} (via Email: {}, via SMS: {})", resolvedEmail, isEmail, !isEmail);
+        otpService.generateAndSendOtp(resolvedId, isEmail, !isEmail, phoneToSend);
+        log.info("[OTP] Code sent to resolved identifier {} (via Email: {}, via SMS: {})", resolvedId, isEmail, !isEmail);
         return ResponseEntity.ok(ApiResponse.ok("Verification code sent successfully.", null));
     }
 
     // ── OTP: Verify code and log in ────────────────────────────────────────
     @PostMapping("/otp-login")
     public ResponseEntity<ApiResponse<AuthResponse>> otpLogin(@RequestBody @Valid OtpRequest r) {
-        String resolvedEmail = resolveEmail(r.getEmail());
-        log.info("[OTP] Login attempt for identifier: {}, resolved email: {}", r.getEmail(), resolvedEmail);
+        String resolvedId = resolveIdentifier(r.getEmail());
+        log.info("[OTP] Login attempt for identifier: {}, resolved identifier: {}", r.getEmail(), resolvedId);
         
         if (r.getOtp() == null || r.getOtp().isBlank()) {
             return ResponseEntity.badRequest().body(ApiResponse.err("OTP code is required."));
         }
-        if (otpService.validateOtp(resolvedEmail, r.getOtp())) {
-            AuthResponse auth = s.loginViaOtp(resolvedEmail);
-            log.info("[OTP] Login successful for resolved email: {}", resolvedEmail);
+        if (otpService.validateOtp(resolvedId, r.getOtp())) {
+            AuthResponse auth = s.loginViaOtp(resolvedId);
+            log.info("[OTP] Login successful for resolved identifier: {}", resolvedId);
             return ResponseEntity.ok(ApiResponse.ok("Login successful", auth));
         } else {
-            log.warn("[OTP] Invalid or expired OTP for resolved email: {}", resolvedEmail);
+            log.warn("[OTP] Invalid or expired OTP for resolved identifier: {}", resolvedId);
             return ResponseEntity.badRequest().body(ApiResponse.err("Invalid or expired OTP. Please try again."));
         }
     }
 
-    private String resolveEmail(String identifier) {
+    private String resolveIdentifier(String identifier) {
         if (identifier == null || identifier.isBlank()) {
             return "";
         }
@@ -124,10 +136,12 @@ public class AuthController {
         
         // Try to look up existing user by matching the last 10 digits of their phone
         return userRepository.findByPhoneSuffix(suffix)
-                .map(com.medvastr.backend.model.User::getEmail)
+                .map(u -> {
+                    return (u.getEmail() != null && !u.getEmail().isBlank()) ? u.getEmail() : u.getPhone();
+                })
                 .orElseGet(() -> {
-                    // Generate a unique dummy email for this phone number if new user
-                    return "phone-" + suffix + "@medvastr.com";
+                    // If no user exists, the identifier is the formatted phone number
+                    return "91" + suffix;
                 });
     }
 
