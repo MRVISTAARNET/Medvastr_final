@@ -42,27 +42,49 @@ export default function Home() {
       .catch(() => { });
   }, []);
 
+  // Flatten products into color variants to display all colors as individual cards
+  const flattenedProducts = React.useMemo(() => {
+    const list: any[] = [];
+    products.forEach((p) => {
+      if (p.clrs && p.clrs.length > 0) {
+        p.clrs.forEach((colorHex: string, idx: number) => {
+          list.push({
+            ...p,
+            variantId: `${p.id}-${idx}`,
+            displayColorHex: colorHex,
+            displayColorName: p.clrNms?.[idx] || "",
+            displayImage: p.clrImgs?.[colorHex]?.[0] || p.imgs?.[0],
+            allColors: p.clrs,
+          });
+        });
+      } else {
+        list.push({ ...p, variantId: p.id });
+      }
+    });
+    return list;
+  }, [products]);
+
   const tabProducts = (() => {
     const tab = TABS.find((t) => t.id === activeTab);
     if (!tab) return [];
     // Only show products in this tab that are also tagged as Bestseller
-    return products.filter((x) =>
+    return flattenedProducts.filter((x) =>
       tab.types.includes(x.type || "") &&
       (x.badge || "").toLowerCase().includes("bestseller")
     ).slice(0, 8);
   })();
 
-  const newArr = products.filter((p) =>
+  const newArr = flattenedProducts.filter((p) =>
     (p.badge || "").includes("New") ||
     (p.badge || "").includes("New Launch")
   ).slice(0, 8);
 
-  const flexiBestsellers = products.filter(p => p.name.toLowerCase().includes("flexi fit v scrub") && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8);
-  const flexiFallback = flexiBestsellers.length === 0 ? products.filter(p => p.type === "scrubs" && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8) : [];
+  const flexiBestsellers = flattenedProducts.filter(p => p.name.toLowerCase().includes("flexi fit v scrub") && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8);
+  const flexiFallback = flexiBestsellers.length === 0 ? flattenedProducts.filter(p => p.type === "scrubs" && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8) : [];
   const hasFlexi = flexiBestsellers.length > 0 || flexiFallback.length > 0;
 
-  const tshirtBestsellers = products.filter(p => (p.name.toLowerCase().includes("t-shirt") || p.name.toLowerCase().includes("tshirt") || p.type === "tshirts") && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8);
-  const tshirtFallback = tshirtBestsellers.length === 0 ? products.filter(p => p.type === "tshirts" && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8) : [];
+  const tshirtBestsellers = flattenedProducts.filter(p => (p.name.toLowerCase().includes("t-shirt") || p.name.toLowerCase().includes("tshirt") || p.type === "tshirts") && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8);
+  const tshirtFallback = tshirtBestsellers.length === 0 ? flattenedProducts.filter(p => p.type === "tshirts" && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8) : [];
   const hasTshirts = tshirtBestsellers.length > 0 || tshirtFallback.length > 0;
 
   return (
@@ -157,13 +179,13 @@ export default function Home() {
 
           <div className="prod-grid">
             {flexiBestsellers.map((p) => (
-                <ProductCard key={p.id} p={p} />
+                <ProductCard key={p.variantId || p.id} p={p} forceColor={p.displayColorHex} />
               ))
             }
             {/* Fallback if no specific products found: show top scrubs */}
             {flexiBestsellers.length === 0 &&
               flexiFallback.map(p => (
-                <ProductCard key={p.id} p={p} />
+                <ProductCard key={p.variantId || p.id} p={p} forceColor={p.displayColorHex} />
               ))
             }
           </div>
@@ -185,13 +207,13 @@ export default function Home() {
 
           <div className="prod-grid">
             {tshirtBestsellers.map((p) => (
-                <ProductCard key={p.id} p={p} />
+                <ProductCard key={p.variantId || p.id} p={p} forceColor={p.displayColorHex} />
               ))
             }
             {/* Fallback: show top tshirts */}
             {tshirtBestsellers.length === 0 &&
               tshirtFallback.map(p => (
-                <ProductCard key={p.id} p={p} />
+                <ProductCard key={p.variantId || p.id} p={p} forceColor={p.displayColorHex} />
               ))
             }
           </div>
@@ -215,7 +237,7 @@ export default function Home() {
           </div>
           <div className="prod-grid">
             {newArr.map((p) => (
-              <ProductCard key={p.id} p={p} />
+              <ProductCard key={p.variantId || p.id} p={p} forceColor={p.displayColorHex} />
             ))}
           </div>
         </div>

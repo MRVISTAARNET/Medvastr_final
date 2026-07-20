@@ -1906,18 +1906,21 @@ p {
 }
 
 .clr-t {
-  font-family: var(--serif);
-  font-size: 36px;
-  color: white;
-  font-weight: 700;
+  font-family: var(--sans) !important;
+  font-size: 26px !important;
+  font-weight: 600 !important;
+  color: white !important;
+  letter-spacing: -0.015em !important;
+  line-height: 1.2 !important;
   margin-bottom: 7px;
-  letter-spacing: -0.03em;
 }
 
 .clr-s {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.45);
-  margin-bottom: 32px;
+  font-size: 13px !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+  margin-top: 4px !important;
+  margin-bottom: 32px !important;
+  line-height: 1.5 !important;
 }
 
 .clr-row {
@@ -4086,13 +4089,13 @@ p {
 }
 
 .about-h {
-  font-family: var(--sans);
-  font-size: 34px;
-  font-weight: 800;
-  color: var(--ink);
-  line-height: 1.2;
+  font-family: var(--sans) !important;
+  font-size: 26px !important;
+  font-weight: 600 !important;
+  color: var(--ink) !important;
+  line-height: 1.25 !important;
   margin-bottom: 20px;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em !important;
   text-align: left;
   width: 100%;
 }
@@ -5018,7 +5021,7 @@ footer {
 /* Back to Top */
 .btt {
   position: fixed;
-  bottom: 95px;
+  bottom: 92px;
   right: 32px;
   width: 44px;
   height: 44px;
