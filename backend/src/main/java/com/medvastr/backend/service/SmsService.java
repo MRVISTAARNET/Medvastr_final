@@ -9,7 +9,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -23,12 +25,6 @@ public class SmsService {
     @Value("${msg91.authkey:}")
     private String authKey;
 
-    @Value("${msg91.sender.default:MDVSTR}")
-    private String defaultSender;
-
-    @Value("${msg91.sender.otp:MVSOTP}")
-    private String otpSender;
-
     @Value("${msg91.flow.otp:}")
     private String otpFlowId;
 
@@ -40,6 +36,18 @@ public class SmsService {
 
     @Value("${msg91.flow.order.dispatched:}")
     private String orderDispatchedFlowId;
+
+    @Value("${msg91.template.otp:}")
+    private String otpTemplateId;
+
+    @Value("${msg91.template.order.cod:}")
+    private String orderCodTemplateId;
+
+    @Value("${msg91.template.order.prepaid:}")
+    private String orderPrepaidTemplateId;
+
+    @Value("${msg91.template.order.dispatched:}")
+    private String orderDispatchedTemplateId;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -56,30 +64,10 @@ public class SmsService {
             return;
         }
 
-        try {
-            String url = "https://control.msg91.com/api/v5/flow/";
+        Map<String, String> variables = new HashMap<>();
+        variables.put("OTP", otpCode);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("authkey", authKey);
-
-            Map<String, Object> body = new HashMap<>();
-            body.put("flow_id", otpFlowId);
-            body.put("sender", otpSender);
-            body.put("mobiles", cleanPhone);
-            
-            Map<String, String> variables = new HashMap<>();
-            variables.put("OTP", otpCode);
-            body.put("var", variables);
-
-            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-            ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
-
-            log.info("[SMS] Sent OTP to {}. Response Status: {} | Body: {}", 
-                    cleanPhone, response.getStatusCode(), response.getBody());
-        } catch (Exception e) {
-            log.error("[SMS] Failed to send OTP to {}: {}", cleanPhone, e.getMessage(), e);
-        }
+        triggerOneApiFlow(otpFlowId, otpTemplateId, cleanPhone, variables);
     }
 
     @Async
@@ -97,19 +85,25 @@ public class SmsService {
         }
 
         String flowId = null;
+        String templateId = null;
         Map<String, String> variables = new HashMap<>();
 
         if ("COD".equalsIgnoreCase(templateType)) {
             flowId = orderCodFlowId;
+            templateId = orderCodTemplateId;
             variables.put("OrderID", order.getOrderNumber());
             variables.put("number", order.getTotalAmount().toString());
         } else if ("PREPAID".equalsIgnoreCase(templateType)) {
             flowId = orderPrepaidFlowId;
+            templateId = orderPrepaidTemplateId;
             variables.put("OrderID", order.getOrderNumber());
             variables.put("number", order.getTotalAmount().toString());
         } else if ("DISPATCHED".equalsIgnoreCase(templateType)) {
             flowId = orderDispatchedFlowId;
+            templateId = orderDispatchedTemplateId;
             variables.put("ORDERID", order.getOrderNumber());
+            variables.put("CurrierAwsName", order.getCourierName() != null ? order.getCourierName() : "our logistics partner");
+            variables.put("Numeric", order.getTrackingNumber() != null ? order.getTrackingNumber() : "");
         }
 
         if (flowId == null || flowId.isBlank()) {
@@ -117,27 +111,60 @@ public class SmsService {
             return;
         }
 
+        triggerOneApiFlow(flowId, templateId, cleanPhone, variables);
+    }
+
+    private void triggerOneApiFlow(String flowId, String templateId, String cleanPhone, Map<String, String> variables) {
         try {
-            String url = "https://control.msg91.com/api/v5/flow/";
+            // MSG91 OneAPI Flow execution endpoint
+            String url = "https://control.msg91.com/api/v5/oneapi/api/flow/" + flowId + "/run";
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             headers.set("authkey", authKey);
 
+            // Construct new OneAPI Flow JSON payload structure
             Map<String, Object> body = new HashMap<>();
-            body.put("flow_id", flowId);
-            body.put("sender", defaultSender);
-            body.put("mobiles", cleanPhone);
-            body.put("var", variables);
+            Map<String, Object> data = new HashMap<>();
+            List<Map<String, Object>> sendTo = new ArrayList<>();
+            Map<String, Object> recipientNode = new HashMap<>();
+            
+            // Map template variables (support both plain and templateId-prefixed formats)
+            Map<String, Object> varsNode = new HashMap<>();
+            for (Map.Entry<String, String> entry : variables.entrySet()) {
+                Map<String, String> valNode = new HashMap<>();
+                valNode.put("value", entry.getValue());
+                
+                // 1. Plain variable mapping (e.g. "ORDERID" -> "MVS-123")
+                varsNode.put(entry.getKey(), valNode);
+                
+                // 2. Prefixed variable mapping (e.g. "6a5ddb0d...:ORDERID" -> "MVS-123")
+                if (templateId != null && !templateId.isBlank()) {
+                    varsNode.put(templateId + ":" + entry.getKey(), valNode);
+                }
+            }
+            
+            List<Map<String, Object>> toList = new ArrayList<>();
+            Map<String, Object> mobileNode = new HashMap<>();
+            mobileNode.put("mobiles", cleanPhone);
+            mobileNode.put("variables", varsNode);
+            toList.add(mobileNode);
+            
+            recipientNode.put("to", toList);
+            recipientNode.put("variables", varsNode);
+            
+            sendTo.add(recipientNode);
+            data.put("sendTo", sendTo);
+            body.put("data", data);
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
             ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
 
-            log.info("[SMS] Sent Order Notification ({}) to {}. Response Status: {} | Body: {}", 
-                    templateType, cleanPhone, response.getStatusCode(), response.getBody());
+            log.info("[SMS] Sent Flow {} to {}. Status: {} | Response: {}", 
+                    flowId, cleanPhone, response.getStatusCode(), response.getBody());
         } catch (Exception e) {
-            log.error("[SMS] Failed to send Order Notification ({}) to {}: {}", 
-                    templateType, cleanPhone, e.getMessage(), e);
+            log.error("[SMS] Failed to trigger Flow {} for {}: {}", 
+                    flowId, cleanPhone, e.getMessage(), e);
         }
     }
 
