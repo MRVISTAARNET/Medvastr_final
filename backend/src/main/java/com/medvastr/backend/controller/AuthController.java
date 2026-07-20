@@ -106,21 +106,23 @@ public class AuthController {
             return identifier.trim().toLowerCase();
         }
         
-        // Otherwise, treat as phone number and format clean
-        String cleanPhone = formatPhoneNumber(identifier);
+        // Clean digits only
+        String cleanPhone = identifier.replaceAll("[^0-9]", "");
         if (cleanPhone.isEmpty()) {
             return identifier.trim().toLowerCase(); // fallback
         }
         
-        // Try to look up existing user by phone
-        return userRepository.findByPhone(cleanPhone)
+        // Extract the last 10 digits as the suffix (handles different prefixes like 91 or +91)
+        String suffix = cleanPhone.length() > 10 
+                ? cleanPhone.substring(cleanPhone.length() - 10) 
+                : cleanPhone;
+        
+        // Try to look up existing user by matching the last 10 digits of their phone
+        return userRepository.findByPhoneSuffix(suffix)
                 .map(com.medvastr.backend.model.User::getEmail)
                 .orElseGet(() -> {
                     // Generate a unique dummy email for this phone number if new user
-                    String tenDigit = cleanPhone.length() >= 10 
-                            ? cleanPhone.substring(cleanPhone.length() - 10) 
-                            : cleanPhone;
-                    return "phone-" + tenDigit + "@medvastr.com";
+                    return "phone-" + suffix + "@medvastr.com";
                 });
     }
 
