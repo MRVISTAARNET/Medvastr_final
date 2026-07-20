@@ -425,9 +425,41 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   }
 
   const currentVariantId = (p as any).variantId || `${p.id}-${ci || 0}`;
-  const wished = false;
-  const relatedPool = products.filter((x) => x.id !== p.id && x.active !== false);
-  const related = relatedPool.slice(0, 4);
+  const related = useMemo(() => {
+    if (!p || !products || products.length === 0) return [];
+    
+    const currentType = (p.type || "").toLowerCase();
+    let targetTypes: string[] = [];
+    
+    if (currentType.includes("scrub") && !currentType.includes("under")) {
+      // Current is a scrub suit. Pair with underscrubs, t-shirts, caps, or diagnostics.
+      targetTypes = ["underscrub", "underscrubs", "tshirts", "tshirt", "surgical", "diagnostic"];
+    } else {
+      // Current is anything else (underscrub, tshirt, surgical gown, cap, etc.).
+      // Pair with scrub suits!
+      targetTypes = ["scrubs", "scrub"];
+    }
+    
+    // 1. Get products matching target types
+    let matches = products.filter(x => 
+      x.id !== p.id && 
+      x.active !== false && 
+      targetTypes.some(t => (x.type || "").toLowerCase().includes(t))
+    );
+    
+    // 2. If we don't have enough matches (we need 4), fill with other products
+    if (matches.length < 4) {
+      const remaining = products.filter(x => 
+        x.id !== p.id && 
+        x.active !== false && 
+        !matches.some(m => m.id === x.id)
+      );
+      matches = [...matches, ...remaining];
+    }
+    
+    // 3. Take top 4 related items
+    return matches.slice(0, 4);
+  }, [p, products]);
 
   const visibleImageIndexes = colorImages.map((_, i) => i).filter((i) => !brokenImages[i]);
   const isVideo = (url: string) => /\.(mp4|webm|ogg|mov)$/i.test(url);

@@ -1,14 +1,13 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 
 const COLORS = {
-  navy: "#0a0f1c",
+  navy: "var(--primary-navy)",
   teal: "#008080",
-  slate: "#475569",
-  light: "#f8fafc",
-  white: "#ffffff",
+  slate: "var(--secondary-text)",
+  light: "var(--bg-slate)",
+  white: "var(--white, #ffffff)",
 };
 
 export default function AboutPage() {
@@ -39,86 +38,95 @@ export default function AboutPage() {
       {/* 2. MAIN CONTENT */}
       <section className="about-main">
         <div className="content-container">
+          
+          {/* Brand Intro & Story */}
           <div className="story-section">
+            <h1 className="about-subtitle">OUR HERITAGE</h1>
             <h2 className="section-title">Caring for Those Who Care for Others</h2>
-            <div className="story-text">
-              <p>
-                Since 2012, we have been a trusted partner for top hospitals, supplying high-quality linen and uniforms.
-              </p>
-              <p>
-                Over the years, we watched healthcare heroes working exhausting shifts in stiff, uncomfortable scrubs.
-                We knew they deserved better.
-              </p>
-              <p className="highlight">
-                That is why we created <strong>Medvastr</strong>—a brand dedicated to changing medical apparel for the better.
-              </p>
-              <p>
-                We meet the needs of modern hospitals by offering premium medical scrubs and eco-friendly green linen products.
-              </p>
+            
+            <div className="story-layout">
+              <div className="story-highlight-box">
+                <p className="highlight-text">
+                  For over a decade, Medvastr has stood side-by-side with India's healthcare sector. Established in 2012 as a dedicated hospital supply partner, we have dressed thousands of medical professionals and provided state-of-the-art medical textiles to top-tier healthcare institutions.
+                </p>
+              </div>
+              <div className="story-text">
+                <p>
+                  Our journey began in the corridors of busy clinics and emergency wards. We observed doctors, nurses, and surgeons working grueling 12 to 24-hour shifts in stiff, restrictive, and standard-issue uniforms. We realized that while medical technology was rapidly advancing, the apparel designed for healthcare heroes remained stagnant. They deserved fabric that worked as hard as they did.
+                </p>
+                <p>
+                  Thus, Medvastr was born. Our mission is simple yet transformative: to engineer professional medical wear that blends advanced fabric technology, anatomical utility, and modern, refined aesthetics.
+                </p>
+                <p>
+                  Today, we meet the rigorous demands of modern clinical environments by offering premium, high-stretch medical scrubs alongside eco-certified hospital linen solutions.
+                </p>
+              </div>
             </div>
           </div>
 
+          {/* Three Promises Grid */}
           <div className="promises-section">
-            <h2 className="section-title">Our Three Simple Promises</h2>
+            <h1 className="about-subtitle centered">OUR COMMITMENT</h1>
+            <h2 className="section-title">The Three Pillars of Medvastr</h2>
             <div className="promises-grid">
               <div className="promise-card">
                 <div className="promise-icon">✨</div>
-                <h3>Comfort That Lasts</h3>
+                <h3>Advanced Comfort Textiles</h3>
                 <p>
-                  We use a special, soft fabric blend with a little bit of stretch. It breathes well,
-                  keeps you dry, and feels lightweight even during a long 12-hour shift.
+                  We utilize a specialized poly-viscose and spandex blend designed for peak flexibility. Engineered to breathe, wick moisture, and remain exceptionally lightweight through long shifts.
                 </p>
               </div>
               <div className="promise-card">
                 <div className="promise-icon">🛡️</div>
-                <h3>Made to Endure</h3>
+                <h3>Hospital-Grade Durability</h3>
                 <p>
-                  Hospital uniform washing is tough. Our uniforms use high-quality dyes and strong stitching
-                  so they stay bright, professional, and looking like new—even after multiple washes.
+                  Medical apparel undergoes aggressive industrial laundering. We utilize reinforced triple-needle stitching and high-performance dyes to prevent color fading and fraying, keeping your team looking sharp.
                 </p>
               </div>
               <div className="promise-card">
                 <div className="promise-icon">📦</div>
                 <h3>A Complete Solution</h3>
                 <p>
-                  We don't just sell scrubs. We supply entire hospitals with everything they need,
-                  from nursing uniforms to patient clothes and bed linens, all color-coded by department.
+                  From color-coded departmental scrubs to specialized patient wear and custom hospital linen, we offer end-to-end solutions that streamline logistics and enhance the visual identity of leading hospitals.
                 </p>
               </div>
             </div>
           </div>
 
+          {/* Greener Future Sustainability */}
           <div className="different-section">
-            <h2 className="section-title">A Greener Future</h2>
+            <h2 className="section-title">Sustainable Medical Textiles</h2>
             <div className="diff-card green">
+              <div className="green-icon">🌿</div>
               <p>
-                Alongside our scrubs, we offer <strong>Green Linen</strong> options—eco-friendly, sustainable hospital linens
-                designed to reduce waste and help healthcare facilities lower their environmental footprint without losing quality or safety.
+                In line with our commitment to healthcare innovation, Medvastr pioneers eco-friendly textile alternatives. Our <strong>Green Linen</strong> collection provides certified sustainable bedsheets, surgical drapes, and patient apparel, helping institutions reduce their carbon footprint without compromising on clinical hygiene or barrier protection.
               </p>
             </div>
           </div>
 
-          <div className="different-section" style={{ marginTop: '60px' }}>
-            <h2 className="section-title">What Makes Us Different?</h2>
-            <div className="diff-card">
+          {/* Experience & Trust Section */}
+          <div className="different-section" style={{ marginTop: '80px' }}>
+            <h2 className="section-title">A Decade of Institutional Trust</h2>
+            <div className="diff-card navy">
               <p>
-                <strong>Real Experience:</strong> We have over a decade of real experience working directly with hospitals.
-                We know exactly what fabric works, what lasts, and what healthcare workers actually need to feel good at work.
+                We don't just design uniforms; we build partnerships. Over 10 years of close collaboration with clinical administrators, laundry managers, and practicing physicians allows us to build garments with anatomical precision and long-term utility.
               </p>
             </div>
           </div>
+
         </div>
       </section>
 
       {/* 3. FOOTER CTA */}
-      <section className="about-cta" style={{ background: '#f8fafc', padding: '120px 24px' }}>
-        <div className="cta-content" style={{ maxWidth: '800px', margin: '0 auto' }}>
-          <h2 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 950, marginBottom: '50px', color: '#0f172a', letterSpacing: '-1.5px', lineHeight: 1.1 }}>
+      <section className="about-cta">
+        <div className="cta-content">
+          <h2 className="cta-title">
             Ready to experience the Medvastr difference?
           </h2>
-          <a href="/products" className="premium-btn">
-            Explore Our Products
-          </a>
+          <p className="cta-desc">Join thousands of medical professionals across India who have upgraded their daily workwear.</p>
+          <Link href="/products" className="premium-btn">
+            Explore the Collection
+          </Link>
         </div>
       </section>
 
@@ -135,51 +143,71 @@ export default function AboutPage() {
           overflow: hidden;
         }
 
-
-        .hero-content {
-          position: relative;
-          z-index: 1;
-          padding: 0 20px;
-        }
-
-        .hero-content h1 {
-          font-size: 56px;
-          font-weight: 900;
-          margin-bottom: 16px;
-          letter-spacing: -2px;
-        }
-
-        .hero-content p {
-          font-size: 20px;
-          opacity: 0.9;
-          font-weight: 500;
-        }
-
         .about-main {
-          padding: 100px 24px;
+          padding: 80px 24px;
+          background: ${COLORS.white};
         }
 
         .content-container {
-          max-width: 1000px;
+          max-width: 1100px;
           margin: 0 auto;
         }
 
-        .section-title {
-          font-size: 32px;
+        .about-subtitle {
+          font-size: 11px;
           font-weight: 800;
-          margin-bottom: 40px;
+          color: ${COLORS.teal};
+          letter-spacing: 2px;
+          text-transform: uppercase;
+          margin-bottom: 12px;
+          text-align: left;
+        }
+
+        .about-subtitle.centered {
           text-align: center;
+        }
+
+        .section-title {
+          font-size: clamp(24px, 4vw, 32px);
+          font-weight: 750;
+          margin-bottom: 40px;
+          text-align: left;
           color: ${COLORS.navy};
           letter-spacing: -0.5px;
+          line-height: 1.25;
+        }
+
+        .promises-section .section-title {
+          text-align: center;
         }
 
         .story-section {
-          margin-bottom: 100px;
-          text-align: center;
+          margin-bottom: 90px;
+        }
+
+        .story-layout {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 40px;
+          align-items: start;
+        }
+
+        .story-highlight-box {
+          background: rgba(32, 58, 95, 0.03);
+          padding: 36px;
+          border-radius: 16px;
+          border-left: 4px solid var(--secondary-blue);
+        }
+
+        .highlight-text {
+          font-size: 18px;
+          line-height: 1.7;
+          color: ${COLORS.navy};
+          font-weight: 500;
         }
 
         .story-text {
-          font-size: 18px;
+          font-size: 15px;
           line-height: 1.8;
           color: ${COLORS.slate};
           display: flex;
@@ -187,127 +215,158 @@ export default function AboutPage() {
           gap: 20px;
         }
 
-        .story-text .highlight {
-          font-size: 22px;
-          color: ${COLORS.navy};
-          background: ${COLORS.light};
-          padding: 30px;
-          border-radius: 16px;
-          border-left: 5px solid ${COLORS.teal};
-        }
-
         .promises-section {
-          margin-bottom: 100px;
+          margin-bottom: 90px;
         }
 
         .promises-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
           gap: 30px;
+          margin-top: 20px;
         }
 
         .promise-card {
           background: ${COLORS.white};
-          padding: 40px 30px;
-          border-radius: 20px;
+          padding: 45px 30px;
+          border-radius: 16px;
           border: 1px solid #e2e8f0;
           text-align: center;
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow: 0 4px 12px rgba(32, 58, 95, 0.03);
         }
 
         .promise-card:hover {
-          transform: translateY(-10px);
-          box-shadow: 0 20px 40px rgba(0,0,0,0.05);
-          border-color: ${COLORS.teal};
+          transform: translateY(-6px);
+          box-shadow: 0 16px 36px rgba(32, 58, 95, 0.08);
+          border-color: var(--secondary-blue);
         }
 
         .promise-icon {
-          font-size: 40px;
-          margin-bottom: 20px;
+          font-size: 36px;
+          margin-bottom: 24px;
         }
 
         .promise-card h3 {
-          font-size: 20px;
-          font-weight: 800;
-          margin-bottom: 15px;
+          font-size: 18px;
+          font-weight: 700;
+          margin-bottom: 14px;
           color: ${COLORS.navy};
         }
 
         .promise-card p {
-          font-size: 15px;
+          font-size: 14px;
           line-height: 1.6;
           color: ${COLORS.slate};
+          font-weight: 400;
         }
 
         .different-section {
-          text-align: center;
+          margin-bottom: 60px;
         }
 
         .diff-card {
-          background: ${COLORS.navy};
-          color: ${COLORS.white};
-          padding: 50px;
-          border-radius: 24px;
-          font-size: 20px;
-          line-height: 1.6;
+          padding: 40px 50px;
+          border-radius: 20px;
+          font-size: 16px;
+          line-height: 1.8;
+          text-align: left;
+          box-shadow: 0 10px 30px rgba(32, 58, 95, 0.05);
         }
 
         .diff-card.green {
           background: linear-gradient(135deg, #064e3b 0%, #0d9488 100%);
+          color: white;
+          display: flex;
+          gap: 24px;
+          align-items: center;
+        }
+
+        .green-icon {
+          font-size: 44px;
+          flex-shrink: 0;
+        }
+
+        .diff-card.navy {
+          background: ${COLORS.navy};
+          color: white;
         }
 
         .about-cta {
           padding: 100px 24px;
-          background: ${COLORS.light};
+          background: var(--bg-slate);
           text-align: center;
+          border-top: 1px solid var(--border-color);
         }
 
-        .cta-content h2 {
-          font-size: 36px;
-          font-weight: 850;
-          margin-bottom: 30px;
+        .cta-content {
+          max-width: 650px;
+          margin: 0 auto;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 20px;
+        }
+
+        .cta-title {
+          font-size: clamp(24px, 5vw, 36px);
+          font-weight: 800;
+          color: ${COLORS.navy};
           letter-spacing: -1px;
+          line-height: 1.2;
+        }
+
+        .cta-desc {
+          font-size: 16px;
+          color: ${COLORS.slate};
+          margin-bottom: 12px;
+          line-height: 1.5;
         }
 
         .premium-btn {
           display: inline-block;
-          background: linear-gradient(135deg, #ff4d4d 0%, #ff8c1a 30%, #ffcc00 60%, #ff8c1a 85%, #ff4d4d 100%);
-          background-size: 200% auto;
+          background: var(--primary-navy);
           color: white;
-          padding: 24px 80px;
-          border-radius: 100px;
-          font-size: 24px;
-          font-weight: 900;
+          padding: 16px 40px;
+          border-radius: 8px;
+          font-size: 15px;
+          font-weight: 700;
           text-decoration: none;
-          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-          box-shadow: 0 20px 50px rgba(255, 77, 77, 0.4), inset 0 2px 2px rgba(255,255,255,0.4);
-          letter-spacing: 2px;
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow: 0 4px 14px rgba(32, 58, 95, 0.2);
+          letter-spacing: 0.5px;
           text-transform: uppercase;
-          border: 3px solid white;
+          border: 2px solid var(--primary-navy);
           cursor: pointer;
-          position: relative;
-          overflow: hidden;
         }
 
         .premium-btn:hover {
-          transform: translateY(-10px) scale(1.05);
-          box-shadow: 0 30px 60px rgba(255, 77, 77, 0.6);
-          background-position: right center;
-        }
-
-        .premium-btn:active {
+          background: white;
+          color: var(--primary-navy);
+          border-color: var(--primary-navy);
           transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(32, 58, 95, 0.25);
         }
 
         @media (max-width: 900px) {
+          .story-layout {
+            grid-template-columns: 1fr;
+            gap: 24px;
+          }
           .promises-grid {
             grid-template-columns: 1fr;
-          }
-          .hero-content h1 {
-            font-size: 40px;
+            gap: 20px;
           }
           .about-main {
-            padding: 60px 24px;
+            padding: 60px 20px;
+          }
+          .diff-card {
+            padding: 30px;
+          }
+          .diff-card.green {
+            flex-direction: column;
+            text-align: center;
+            gap: 16px;
           }
         }
       `}</style>
