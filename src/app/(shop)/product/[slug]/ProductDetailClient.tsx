@@ -359,6 +359,14 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
     }
   };
 
+  const scrollToReviews = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const el = document.getElementById("pdp-reviews-sec");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   const [zoom, setZoom] = useState(false);
   const [zoomIndex, setZoomIndex] = useState(0);
   const imageRefs = useRef<Record<number, HTMLDivElement | null>>({});
@@ -669,11 +677,11 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                   </>
                 )}
               </div>
-              <div className="pdp-rating-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+              <div onClick={scrollToReviews} className="pdp-rating-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: 0, cursor: 'pointer' }}>
                 <div className="pdp-rating-stars" style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#fef08a', color: '#ca8a04', padding: '4px 10px', borderRadius: '20px', fontSize: '14px', fontWeight: 700 }}>
                   <span style={{ fontSize: '16px', color: '#eab308' }}>★</span> {avgRating}
                 </div>
-                <a href="#pdp-reviews-sec" className="pdp-review-count" style={{ fontSize: '13px', color: '#64748b', fontWeight: 600, textDecoration: 'underline' }}>({reviewCount} Reviews)</a>
+                <a href="#pdp-reviews-sec" onClick={scrollToReviews} className="pdp-review-count" style={{ fontSize: '13px', color: '#64748b', fontWeight: 600, textDecoration: 'underline' }}>({reviewCount} Reviews)</a>
               </div>
             </div>
             <span className="pdp-tax-msg">Includes all applicable taxes and handling</span>
@@ -977,8 +985,27 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
         </div>
       </div>
 
+      {/* RELATED */}
+      {related.length > 0 && (
+        <section className="pdp-related-sec">
+          <div className="pdp-related-hd">
+            <span className="pdp-related-tag">Curated Selection</span>
+            <h2 className="pdp-related-h">Pairs Well With</h2>
+          </div>
+          <div className="pg-4">
+            {related.map((rel, idx) => (
+              <ProductCard 
+                key={rel.product.id + "-" + idx} 
+                p={rel.product} 
+                forceColor={rel.selectedColorHex} 
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* REVIEWS SECTION */}
-      <section className="pdp-reviews-sec">
+      <section id="pdp-reviews-sec" className="pdp-reviews-sec">
         <div className="pdp-reviews-hd">
           <h2 className="pdp-reviews-title">Customer Reviews</h2>
           <div className="pdp-reviews-avg">
@@ -1046,25 +1073,6 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
           <p className="pdp-no-reviews">Be the first to share your experience with this product!</p>
         )}
       </section>
-
-      {/* RELATED */}
-      {related.length > 0 && (
-        <section className="pdp-related-sec">
-          <div className="pdp-related-hd">
-            <span className="pdp-related-tag">Curated Selection</span>
-            <h2 className="pdp-related-h">Pairs Well With</h2>
-          </div>
-          <div className="pg-4">
-            {related.map((rel, idx) => (
-              <ProductCard 
-                key={rel.product.id + "-" + idx} 
-                p={rel.product} 
-                forceColor={rel.selectedColorHex} 
-              />
-            ))}
-          </div>
-        </section>
-      )}
 
       {/* Sticky Bottom Bar on Mobile */}
       <div className="pdp-sticky-bar-mobile">
