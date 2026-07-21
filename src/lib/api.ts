@@ -6,7 +6,7 @@ export const API_BASE =
 export const API_ORIGIN = API_BASE.replace(/\/api\/?$/, "");
 
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://medvastr.com";
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://www.medvastr.com";
 
 /** Set NEXT_PUBLIC_RAZORPAY_KEY in production (Razorpay dashboard). */
 export const RAZORPAY_KEY = process.env.NEXT_PUBLIC_RAZORPAY_KEY || "";
