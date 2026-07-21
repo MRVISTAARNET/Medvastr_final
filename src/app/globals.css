@@ -1895,10 +1895,10 @@ p {
 
 /* Colour Section */
 .clr-sec {
-  background: #f0f7ff;
+  background: #e2eeff;
   padding: 40px 0;
-  border-top: 1px solid #e0f2fe;
-  border-bottom: 1px solid #e0f2fe;
+  border-top: 1px solid #cbe0ff;
+  border-bottom: 1px solid #cbe0ff;
 }
 
 .clr-in {
