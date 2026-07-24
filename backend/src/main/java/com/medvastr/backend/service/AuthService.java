@@ -154,8 +154,9 @@ public class AuthService {
 
     // ── Helpers ───────────────────────────────────────────────────────────────
     private AuthResponse buildResponse(User u) {
+        String subject = (u.getEmail() != null && !u.getEmail().isBlank()) ? u.getEmail() : u.getPhone();
         return AuthResponse.builder()
-                .token(jwt.generate(u.getEmail()))
+                .token(jwt.generate(subject))
                 .expiresIn(jwt.getExpMs())
                 .user(toDTO(u))
                 .build();

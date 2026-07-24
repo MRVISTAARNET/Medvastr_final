@@ -39,7 +39,15 @@ public class UserService {
     private final JwtUtils jwt;
 
     private User me() {
-        return userRepo.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow();
+        String principal = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (principal != null && principal.contains("@")) {
+            return userRepo.findByEmail(principal).orElseThrow(() -> new RuntimeException("User not found: " + principal));
+        } else if (principal != null && !principal.isBlank()) {
+            String cleanPhone = principal.replaceAll("[^0-9]", "");
+            String suffix = cleanPhone.length() > 10 ? cleanPhone.substring(cleanPhone.length() - 10) : cleanPhone;
+            return userRepo.findByPhoneSuffix(suffix).orElseThrow(() -> new RuntimeException("User not found for phone: " + principal));
+        }
+        throw new RuntimeException("Unauthenticated user context");
     }
 
     public UserDTO getProfile() {

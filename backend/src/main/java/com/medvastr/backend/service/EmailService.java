@@ -328,7 +328,7 @@ public class EmailService {
                         SECONDARY_COLOR,
                         HtmlUtils.htmlEscape(order.getOrderNumber()),
                         HtmlUtils.htmlEscape(order.getShippingName()),
-                        HtmlUtils.htmlEscape(order.getUser().getEmail()),
+                        HtmlUtils.htmlEscape(order.getUser() != null && order.getUser().getEmail() != null ? order.getUser().getEmail() : "N/A"),
                         nf.format(order.getTotalAmount()),
                         order.getPaymentMethod().name(),
                         itemsHtml.toString(),
