@@ -66,7 +66,7 @@ export default function MegaMenu({ items, label, onNavigate }: MegaMenuProps) {
             <>
               <div className="mcol-hd">BULK SERVICES</div>
               <div className="m-desc-box">
-                <p>Medvastr provides high-quality institutional uniforms and linen for hospitals, clinics, and medical colleges across India.</p>
+                <p>Medvarn provides high-quality institutional uniforms and linen for hospitals, clinics, and medical colleges across India.</p>
                 <p style={{ marginTop: '10px', fontSize: '12px', opacity: 0.8 }}>Contact us for customized volume discounts and branding options.</p>
                 <Link href="/contact" className="m-contact-btn" onClick={onNavigate}>
                   Get a Quote →

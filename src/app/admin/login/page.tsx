@@ -37,7 +37,7 @@ export default function AdminLogin() {
       <div className="login-box">
         <div className="login-top">
           <div className="login-shield">🛡️</div>
-          <div className="login-logo">Medva<span>str</span></div>
+          <div className="login-logo">Medva<span>rn</span></div>
           <div className="login-sub">Admin Dashboard — Authorized Access Only</div>
         </div>
         <div className="login-body">
@@ -48,7 +48,7 @@ export default function AdminLogin() {
               <input
                 id="admin-email"
                 type="email"
-                placeholder="admin@medvastr.com"
+                placeholder="admin@medvarn.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
@@ -108,7 +108,7 @@ export default function AdminLogin() {
             </div>
 
             <div className="login-note">
-              🔒 This area is restricted to Medvastr admins only.<br />All access attempts are logged.
+              🔒 This area is restricted to Medvarn admins only.<br />All access attempts are logged.
             </div>
           </form>
         </div>

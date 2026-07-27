@@ -6,7 +6,7 @@ import { API_BASE } from "@/lib/api";
 
 export default function ContactPage() {
   React.useEffect(() => {
-    document.title = "Contact Us | Medvastr";
+    document.title = "Contact Us | Medvarn";
   }, []);
 
   const [sent, setSent] = useState(false);
@@ -56,7 +56,7 @@ export default function ContactPage() {
             </div>
 
             <div className="ct-socials-wrap">
-              <div className="ct-socials-title">Follow Medvastr</div>
+              <div className="ct-socials-title">Follow Medvarn</div>
               <div className="ct-socials">
                 {socials.map(([ico, nm, url]) => (
                   <a key={nm} href={url} target="_blank" rel="noopener" className="ct-social-btn">{ico}</a>

@@ -105,7 +105,7 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
             {user ? (
               <>
                 <h2 className="banner-title">Welcome</h2>
-                <p className="banner-subtitle">Glad to have you back at Medvastr!</p>
+                <p className="banner-subtitle">Glad to have you back at Medvarn!</p>
               </>
             ) : fpMode ? (
               <>
@@ -120,7 +120,7 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
             ) : (
               <>
                 <h2 className="banner-title">Looks like you're new here!</h2>
-                <p className="banner-subtitle">Create an account to get started with Medvastr</p>
+                <p className="banner-subtitle">Create an account to get started with Medvarn</p>
               </>
             )}
           </div>
@@ -128,7 +128,7 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
           {/* Decorative Card */}
           <div className="banner-card-box">
             <div className="banner-tilted-card">
-              <span className="card-brand-label">medvastr</span>
+              <span className="card-brand-label">medvarn</span>
             </div>
           </div>
         </div>
@@ -244,7 +244,7 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
 
                 {/* Terms Disclaimer */}
                 <p style={{ fontSize: "12px", color: "var(--secondary-text)", lineHeight: "1.5", margin: 0 }}>
-                  By continuing, you agree to Medvastr's <Link href="/terms" onClick={onClose} style={{ color: "var(--accent-blue)", fontWeight: 600 }}>Terms of Use</Link> and <Link href="/privacy" onClick={onClose} style={{ color: "var(--accent-blue)", fontWeight: 600 }}>Privacy Policy</Link>.
+                  By continuing, you agree to Medvarn's <Link href="/terms" onClick={onClose} style={{ color: "var(--accent-blue)", fontWeight: 600 }}>Terms of Use</Link> and <Link href="/privacy" onClick={onClose} style={{ color: "var(--accent-blue)", fontWeight: 600 }}>Privacy Policy</Link>.
                 </p>
 
                 <button type="submit" disabled={loading} className="btn-primary" style={{ marginTop: 8 }}>
@@ -270,7 +270,7 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
                         📧 Continue with OTP (no password needed)
                       </span>
                     </div>
-                    <div>New to Medvastr? <span onClick={() => switchMode('register')} style={{ color: "var(--accent-blue)", fontWeight: 700, cursor: "pointer" }}>Create an account</span></div>
+                    <div>New to Medvarn? <span onClick={() => switchMode('register')} style={{ color: "var(--accent-blue)", fontWeight: 700, cursor: "pointer" }}>Create an account</span></div>
                   </>
                 )}
                 {mode === 'login-otp' && (

@@ -147,7 +147,7 @@ export function mapApiProduct(p: any): Product {
     sku: p.sku || `MV-${p.id}`,
     style: p.styleId || p.style || "Standard",
     styleId: p.styleId || p.style || "Standard",
-    brand: p.brand || "Medvastr",
+    brand: p.brand || "Medvarn",
     sizes:
       (p.sizes?.length ? p.sizes : variantSizes.length ? sortSizes(variantSizes) : undefined) ||
       ["XS", "S", "M", "L", "XL"],

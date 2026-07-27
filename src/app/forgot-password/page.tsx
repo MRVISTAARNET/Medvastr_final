@@ -63,7 +63,7 @@ export default function ForgotPasswordPage() {
 
             <div className="fp-wrap">
                 <div className="fp-card">
-                    <div className="fp-logo">Medva<span>str</span></div>
+                    <div className="fp-logo">Medva<span>rn</span></div>
                     <div className="fp-icon">🔐</div>
                     <div className="fp-title">Forgot Password?</div>
                     <div className="fp-sub">
@@ -83,7 +83,7 @@ export default function ForgotPasswordPage() {
                                 <label>Email Address</label>
                                 <input
                                     type="email"
-                                    placeholder="admin@medvastr.com"
+                                    placeholder="admin@medvarn.com"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     autoComplete="email"

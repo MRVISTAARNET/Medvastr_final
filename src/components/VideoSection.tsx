@@ -28,7 +28,7 @@ export default function VideoSection() {
           Built for the <em>front lines</em>
         </h2>
         <p className="vid-s">
-          Watch how Medvastr apparel performs in high-pressure clinical environments. From fluid resistance to 4-way
+          Watch how Medvarn apparel performs in high-pressure clinical environments. From fluid resistance to 4-way
           stretch flexibility.
         </p>
 
@@ -36,7 +36,7 @@ export default function VideoSection() {
           {embedUrl ? (
             <iframe
               src={embedUrl}
-              title="Medvastr Brand Video"
+              title="Medvarn Brand Video"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               style={{ width: "100%", height: "100%", border: "none", borderRadius: "inherit" }}

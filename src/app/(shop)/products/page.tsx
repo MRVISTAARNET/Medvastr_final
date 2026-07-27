@@ -74,7 +74,7 @@ function ProductsContent() {
   }, [initCat, initColor, initSize, initFabric, initFit, initGen, initType, searchParams]);
 
   useEffect(() => {
-    let title = "Shop Professional Scrubs & Surgical Wear | Medvastr";
+    let title = "Shop Professional Scrubs & Surgical Wear | Medvarn";
     if (gen !== "all" || cat !== "all" || typeFilter) {
       const parts: string[] = [];
       if (gen !== "all") {
@@ -86,7 +86,7 @@ function ProductsContent() {
         parts.push(cat.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase()));
       }
       parts.push("Collection");
-      title = `${parts.join(" ")} | Medvastr`;
+      title = `${parts.join(" ")} | Medvarn`;
     }
     document.title = title;
   }, [gen, cat, typeFilter]);
@@ -306,7 +306,7 @@ function ProductsContent() {
       dynamicCats = root.children.filter(c => c.active !== false).map(c => ({ id: c.slug, l: c.name, depth: 0 }));
     }
   } else {
-    // If "All Products" is selected, show generic categories matching Medvastr's main types
+    // If "All Products" is selected, show generic categories matching Medvarn's main types
     dynamicCats = [
       { id: "scrub-suit", l: "Scrub Suits", depth: 0 },
       { id: "underscrub", l: "Underscrubs", depth: 0 },
@@ -425,7 +425,7 @@ function ProductsContent() {
     staticBannerTitle = `${genName}'s Collection`;
   } else {
     staticBannerBase = `${S3}/all-products-banner`;
-    staticBannerTitle = "The Medvastr Collection";
+    staticBannerTitle = "The Medvarn Collection";
   }
 
   // DYNAMIC DESCRIPTION
@@ -434,7 +434,7 @@ function ProductsContent() {
   const descMap: Record<string, string> = {
     "Men's Collection": "Engineered for excellence and performance, our men's collection combines rugged durability with a professional fit that respects the demands of your profession.",
     "Women's Collection": "Designed for the modern healthcare hero, our women's collection offers a perfect blend of sophisticated style, functional design, and ultimate comfortable movement.",
-    "The Medvastr Collection": "Explore our complete range of premium medical apparel and equipment, each piece reflecting our decade-long commitment to those who care for others.",
+    "The Medvarn Collection": "Explore our complete range of premium medical apparel and equipment, each piece reflecting our decade-long commitment to those who care for others.",
     "Surgical Wear": "Engineered for the highest standards of safety and comfort in the operating room. Our surgical collection is designed to provide maximum barrier protection while allowing for unrestricted movement."
   };
 

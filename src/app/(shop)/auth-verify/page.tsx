@@ -10,7 +10,7 @@ function ResetPasswordForm() {
     const token = searchParams.get('token') ?? '';
 
     useEffect(() => {
-        document.title = "Reset Password | Medvastr";
+        document.title = "Reset Password | Medvarn";
     }, []);
 
     const [newPassword, setNewPassword] = useState('');

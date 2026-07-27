@@ -229,7 +229,7 @@ export default function Home() {
           <div className="sec-hd">
             <div>
               <div className="sec-t">New Arrivals</div>
-              <div className="sec-s">Fresh additions to the Medvastr collection</div>
+              <div className="sec-s">Fresh additions to the Medvarn collection</div>
             </div>
             <Link href="/products" className="va">
               View All New Arrivals →

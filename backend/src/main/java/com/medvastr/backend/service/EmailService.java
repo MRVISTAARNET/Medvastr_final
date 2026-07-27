@@ -137,12 +137,12 @@ public class EmailService {
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
                     <div style="background: linear-gradient(135deg, #008080 0%%, #1a2b4a 100%%); padding: 50px 30px; text-align: center; color: white;">
                         <div style="font-size: 40px; margin-bottom: 20px;">✨</div>
-                        <h1 style="margin: 0; font-size: 28px; letter-spacing: 1px;">Welcome to Medvastr</h1>
+                        <h1 style="margin: 0; font-size: 28px; letter-spacing: 1px;">Welcome to Medvarn</h1>
                         <p style="margin: 10px 0 0; opacity: 0.9; font-size: 16px;">The new standard in medical apparel</p>
                     </div>
                     <div style="padding: 40px; color: #1e293b; line-height: 1.8;">
                         <p style="font-size: 18px; font-weight: 600; margin-top: 0;">Hi %s,</p>
-                        <p>We're thrilled to have you join our community of healthcare professionals. Medvastr was founded with a single mission: to provide the heroes of healthcare with apparel that matches their dedication—combining ultimate comfort, professional style, and clinical-grade durability.</p>
+                        <p>We're thrilled to have you join our community of healthcare professionals. Medvarn was founded with a single mission: to provide the heroes of healthcare with apparel that matches their dedication—combining ultimate comfort, professional style, and clinical-grade durability.</p>
 
                         <div style="background: #f8fafc; border-left: 4px solid #008080; padding: 20px; margin: 30px 0; border-radius: 0 12px 12px 0;">
                             <p style="margin: 0; font-weight: 700; color: #008080; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;">Your Account Features</p>
@@ -162,16 +162,16 @@ public class EmailService {
 
                         <hr style="border: none; border-top: 1px solid #f1f5f9; margin: 40px 0;">
                         <p style="font-size: 14px; text-align: center; color: #64748b;">If you have any questions, our support team is always here to help.</p>
-                        <p style="font-size: 15px; font-weight: 700; text-align: center; color: #1a2b4a; margin-bottom: 0;">Team Medvastr</p>
+                        <p style="font-size: 15px; font-weight: 700; text-align: center; color: #1a2b4a; margin-bottom: 0;">Team Medvarn</p>
                     </div>
                     <div style="background: #f9fafb; padding: 25px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #f1f5f9;">
-                        &copy; 2026 Medvastr | Premium Medical Apparel<br>
+                        &copy; 2026 Medvarn | Premium Medical Apparel<br>
                         Express Zone, Malad East, Mumbai – 400063
                     </div>
                 </div>
                 """
                 .formatted(firstName, frontendUrl);
-        sendHtmlEmail(toEmail, "Welcome to the Medvastr Community", html, "support@medvastr.com", "Medvastr Welcome");
+        sendHtmlEmail(toEmail, "Welcome to the Medvarn Community", html, "support@medvarn.com", "Medvarn Welcome");
     }
 
     public void sendOtpEmail(String toEmail, String otpCode) {
@@ -182,19 +182,19 @@ public class EmailService {
                     </div>
                     <div style="padding: 40px; color: #333; line-height: 1.6;">
                         <p>Hello,</p>
-                        <p>Use the following One-Time Password (OTP) to complete your login or registration at Medvastr:</p>
+                        <p>Use the following One-Time Password (OTP) to complete your login or registration at Medvarn:</p>
                         <div style="text-align: center; margin: 30px 0; padding: 20px; background: #f9f9f9; border-radius: 12px; border: 2px solid #eee;">
                             <span style="font-size: 32px; font-weight: bold; color: #008080; letter-spacing: 5px;">%s</span>
                         </div>
                         <p style="font-size: 13px; color: #666;">This code is valid for 10 minutes. Please do not share this OTP with anyone.</p>
                         <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-                        <p style="font-size: 14px;">Team Medvastr</p>
+                        <p style="font-size: 14px;">Team Medvarn</p>
                     </div>
                 </div>
                 """
                 .formatted(otpCode);
         try {
-            sendHtmlEmailInner(toEmail, "Your Medvastr Verification Code", html, "info@medvastr.com", "Medvastr");
+            sendHtmlEmailInner(toEmail, "Your Medvarn Verification Code", html, "info@medvarn.com", "Medvarn");
         } catch (Exception e) {
             log.error("Failed to send OTP", e);
             throw new RuntimeException("Failed to send OTP email: " + e.getMessage());
@@ -206,23 +206,23 @@ public class EmailService {
         String html = """
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 12px; overflow: hidden;">
                     <div style="background: %s; padding: 30px; text-align: center; color: white;">
-                        <h1 style="margin: 0; font-size: 24px;">Welcome to Medvastr!</h1>
+                        <h1 style="margin: 0; font-size: 24px;">Welcome to Medvarn!</h1>
                     </div>
                     <div style="padding: 40px; color: #333; line-height: 1.6;">
                         <p>Hello,</p>
-                        <p>Thank you for subscribing to the Medvastr newsletter!</p>
+                        <p>Thank you for subscribing to the Medvarn newsletter!</p>
                         <p>As a thank you, here is your welcome discount code:</p>
                         <div style="text-align: center; margin: 30px 0; padding: 20px; background: #f9f9f9; border-radius: 12px; border: 2px dashed #008080;">
-                            <span style="font-size: 24px; font-weight: bold; color: #008080; letter-spacing: 2px;">MEDVASTR10</span>
+                            <span style="font-size: 24px; font-weight: bold; color: #008080; letter-spacing: 2px;">MEDVARN10</span>
                             <div style="font-size: 12px; color: #666; margin-top: 5px;">Use this code at checkout for 10%% OFF your first order.</div>
                         </div>
                         <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-                        <p style="font-size: 14px;">Team Medvastr</p>
+                        <p style="font-size: 14px;">Team Medvarn</p>
                     </div>
                 </div>
                 """
                 .formatted(BRAND_COLOR);
-        sendHtmlEmail(toEmail, "Welcome to Medvastr - You're Subscribed!", html, "info@medvastr.com", "Medvastr");
+        sendHtmlEmail(toEmail, "Welcome to Medvarn - You're Subscribed!", html, "info@medvarn.com", "Medvarn");
     }
 
     private void sendHtmlEmailInner(String to, String subject, String body, String alias, String aliasName)
@@ -367,7 +367,7 @@ public class EmailService {
         if (order.getTempPassword() != null && !order.getTempPassword().isEmpty()) {
             credentialsHtml = """
                     <div style="background: #e0f2fe; border: 1.5px dashed #0284c7; border-radius: 16px; padding: 25px; margin: 35px 0;">
-                        <h3 style="margin: 0 0 10px; font-size: 15px; font-weight: 800; color: #0369a1;">🔑 Your Medvastr Account has been Created!</h3>
+                        <h3 style="margin: 0 0 10px; font-size: 15px; font-weight: 800; color: #0369a1;">🔑 Your Medvarn Account has been Created!</h3>
                         <p style="margin: 0 0 12px; font-size: 14px; color: #0369a1; line-height: 1.5;">We have automatically registered a customer account for you. You can use it to log in, track shipments, and view order history.</p>
                         <div style="background: white; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 13px; color: #334155; line-height: 1.6;">
                             <b>Email:</b> %s<br>
@@ -383,7 +383,7 @@ public class EmailService {
                     <div style="background: %s; padding: 50px 30px; text-align: center; color: white;">
                         <div style="font-size: 40px; margin-bottom: 15px;">📦</div>
                         <h1 style="margin: 0; font-size: 26px; font-weight: 800; letter-spacing: 1px;">Order Confirmed!</h1>
-                        <p style="margin: 10px 0 0; opacity: 0.9; font-size: 15px;">Thank you for choosing Medvastr</p>
+                        <p style="margin: 10px 0 0; opacity: 0.9; font-size: 15px;">Thank you for choosing Medvarn</p>
                     </div>
 
                     <div style="padding: 40px; color: #1e293b; line-height: 1.6;">
@@ -423,7 +423,7 @@ public class EmailService {
                     </div>
 
                     <div style="background: #f9fafb; padding: 25px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #f1f5f9;">
-                        © 2026 Medvastr | Premium Medical Apparel<br>
+                        © 2026 Medvarn | Premium Medical Apparel<br>
                         Express Zone, Malad East, Mumbai – 400063
                     </div>
                 </div>

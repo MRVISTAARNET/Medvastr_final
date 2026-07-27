@@ -143,9 +143,8 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
           <button className="ha mob-only" onClick={() => setMn(true)}>
             ☰
           </button>
-          <Link href="/" className="logo">
-            <span className="lw" style={{ fontSize: 44, fontWeight: 900, letterSpacing: -1.5 }}>medvastr</span>
-            <span className="lt" style={{ fontSize: 11, letterSpacing: 3, marginTop: -2 }}>Wear Wellness</span>
+          <Link href="/" className="logo" style={{ display: "flex", alignItems: "center" }}>
+            <img src="/logo.png" alt="Medvarn - The Colour Of Wellness" style={{ height: "48px", width: "auto", objectFit: "contain" }} />
           </Link>
         </div>
 
@@ -235,7 +234,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
       <div className={`mob-drawer-ov${mn ? " on" : ""}`} onClick={() => setMn(false)} />
       <div id="nav" className={mn ? " mob-on" : ""}>
         <div className="mob-nav-hd mob-only">
-          <span className="mob-nav-brand">medvastr</span>
+          <img src="/logo.png" alt="Medvarn" style={{ height: "36px", width: "auto", objectFit: "contain" }} />
           <button type="button" className="mn-close" onClick={() => setMn(false)} style={{ touchAction: 'manipulation' }}>✕</button>
         </div>
         <DynamicNav

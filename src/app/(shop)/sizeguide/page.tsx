@@ -5,7 +5,7 @@ import { normalizeMediaUrl } from "@/lib/api";
 
 export default function SizeGuidePage() {
   React.useEffect(() => {
-    document.title = "Size Guide | Medvastr";
+    document.title = "Size Guide | Medvarn";
   }, []);
 
   const S = {

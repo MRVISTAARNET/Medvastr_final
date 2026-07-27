@@ -71,8 +71,8 @@ export default function AdminSettings() {
             <div className="table-card" style={{ marginBottom: 0 }}>
               <div className="table-hd"><div className="table-title">Store Information</div></div>
               <div style={{ padding: '22px' }}>
-                <div className="fg"><label>Store Name</label><input type="text" defaultValue="Medvastr" style={inp} /></div>
-                <div className="fg"><label>Email</label><input type="email" defaultValue="info@medvastr.com" style={inp} /></div>
+                <div className="fg"><label>Store Name</label><input type="text" defaultValue="Medvarn" style={inp} /></div>
+                <div className="fg"><label>Email</label><input type="email" defaultValue="info@medvarn.com" style={inp} /></div>
                 <div className="fg"><label>Phone</label><input type="tel" defaultValue="8976488911" style={inp} /></div>
                 <div className="fg">
                   <label>Address</label>

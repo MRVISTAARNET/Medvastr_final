@@ -515,7 +515,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
     "mpn": p.styleId || p.sku || `MVS-${p.id}`,
     "brand": {
       "@type": "Brand",
-      "name": p.brand || "Medvastr"
+      "name": p.brand || "Medvarn"
     },
     "offers": {
       "@type": "Offer",
@@ -1166,7 +1166,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
         <div className="size-guide-backdrop" onClick={() => setShowSizeGuide(false)}>
           <div className="size-guide-modal" onClick={e => e.stopPropagation()}>
             <button className="size-guide-close" onClick={() => setShowSizeGuide(false)}>✕</button>
-            <h3 className="size-guide-title">Medvastr Size Specifications Guide</h3>
+            <h3 className="size-guide-title">Medvarn Size Specifications Guide</h3>
             <p className="size-guide-subtitle">All measurements are in inches. Body measurements should be taken directly on your body.</p>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', maxHeight: '70vh', overflowY: 'auto', paddingRight: '10px' }}>

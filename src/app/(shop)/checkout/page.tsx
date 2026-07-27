@@ -15,7 +15,7 @@ declare global {
 
 export default function CheckoutPage() {
   useEffect(() => {
-    document.title = "Checkout | Medvastr";
+    document.title = "Checkout | Medvarn";
   }, []);
 
   const { cart, clearCart, toast, user, isHydrated, setIsAuthOpen, storeSettings } = useApp();
@@ -234,7 +234,7 @@ export default function CheckoutPage() {
         key: activeRzpKey,
         amount: Math.round(orderData.totalAmount * 100),
         currency: "INR",
-        name: "Medvastr",
+        name: "Medvarn",
         description: "Medical Wear Purchase",
         order_id: orderData.razorpayOrderId,
         handler: (response: any) => verifyPayment(orderData, response),
@@ -323,7 +323,7 @@ export default function CheckoutPage() {
           <div className="co-success-icon">🎉</div>
           <h2 className="co-success-h">Order Confirmed!</h2>
           <p className="co-success-p">
-            Thank you for choosing Medvastr. Your order <strong>{orderNum}</strong> has been placed and is being prepared for shipment.
+            Thank you for choosing Medvarn. Your order <strong>{orderNum}</strong> has been placed and is being prepared for shipment.
           </p>
           <div className="co-success-btns">
             <Link href="/" className="pdp-buy-btn flex items-center justify-center" style={{ height: '60px' }}>Continue Shopping</Link>

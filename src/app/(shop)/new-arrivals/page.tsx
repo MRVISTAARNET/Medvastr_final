@@ -5,7 +5,7 @@ import ProductCard from "@/components/ProductCard";
 
 export default function NewArrivalsPage() {
   useEffect(() => {
-    document.title = "New Arrivals | Medvastr";
+    document.title = "New Arrivals | Medvarn";
   }, []);
 
   const ctx = useContext(AppContext);

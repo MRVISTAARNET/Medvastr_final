@@ -16,7 +16,7 @@ export default function PrivacyPage() {
           margin: "0 auto"
         }}
       >
-        <p style={{ marginBottom: "24px" }}>At Medvastr, we are committed to protecting the privacy and security of our customers and site visitors. This Privacy Policy details how we collect, use, and safeguard your personal information when you visit our website or make a purchase.</p>
+        <p style={{ marginBottom: "24px" }}>At Medvarn, we are committed to protecting the privacy and security of our customers and site visitors. This Privacy Policy details how we collect, use, and safeguard your personal information when you visit our website or make a purchase.</p>
 
         <h3 style={{ borderBottom: "1px solid #e2e8f0", paddingBottom: "12px", marginTop: "40px", color: "#0f172a" }}>1. Types of Information We Collect</h3>
         <p style={{ marginBottom: "24px" }}>We collect personal information that you provide to us directly, including but not limited to your name, email address, shipping and billing addresses, phone number, and payment information. We also automatically collect certain information about your device, such as your IP address, browser type, and how you interact with our site through cookies and similar technologies.</p>

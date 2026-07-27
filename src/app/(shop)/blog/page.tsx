@@ -30,7 +30,7 @@ export default function BlogPage() {
         <div className="text-center py-20">
           <div className="text-7xl mb-6">📰</div>
           <h2 className="text-3xl font-bold text-slate-900 mb-3">Articles coming soon</h2>
-          <p className="text-lg text-slate-600">Check back for guides and insights from Medvastr.</p>
+          <p className="text-lg text-slate-600">Check back for guides and insights from Medvarn.</p>
         </div>
       ) : (
         <div className="space-y-8">
@@ -91,7 +91,7 @@ export default function BlogPage() {
                     {/* Footer */}
                     <div className="flex items-center justify-between pt-4 border-t border-slate-200">
                       <span className="text-xs text-slate-500 font-medium">
-                        {post.author || "Medvastr"}
+                        {post.author || "Medvarn"}
                       </span>
                       <span className="text-teal-600 font-semibold text-sm group-hover:gap-1 inline-flex items-center gap-0.5 transition">
                         Read More →

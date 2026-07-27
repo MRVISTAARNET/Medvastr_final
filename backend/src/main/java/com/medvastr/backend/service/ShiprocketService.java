@@ -437,7 +437,7 @@ public class ShiprocketService {
                 order.getShippingPincode() != null ? order.getShippingPincode().replaceAll("[^0-9]", "") : "400063");
         shipOrder.put("billing_state", order.getShippingState() != null ? order.getShippingState() : "Maharashtra");
         shipOrder.put("billing_country", "India");
-        shipOrder.put("billing_email", order.getUser() != null ? order.getUser().getEmail() : "customer@medvastr.com");
+        shipOrder.put("billing_email", (order.getUser() != null && order.getUser().getEmail() != null) ? order.getUser().getEmail() : "customer@medvarn.com");
         
         String phone = order.getShippingPhone() != null ? order.getShippingPhone().replaceAll("[^0-9]", "") : "9999999999";
         if (phone.length() < 10) phone = "9999999999";

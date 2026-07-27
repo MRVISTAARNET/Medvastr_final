@@ -11,7 +11,7 @@ interface GenPageProps {
 
 export default function GenericPage({ title, desc, children }: GenPageProps) {
   React.useEffect(() => {
-    document.title = `${title} | Medvastr`;
+    document.title = `${title} | Medvarn`;
   }, [title]);
 
   return (
@@ -22,7 +22,7 @@ export default function GenericPage({ title, desc, children }: GenPageProps) {
       >
         <h1 style={{ fontFamily: "var(--serif)", fontSize: 52, fontWeight: 700, marginBottom: 12, letterSpacing: "-.03em" }}>{title}</h1>
         <div className="inner-sub" style={{ fontSize: 18, color: "var(--lt)", marginBottom: 48, lineHeight: 1.6 }}>
-          {desc || "Medvastr – Premium Medical Apparel"}
+          {desc || "Medvarn – Premium Medical Apparel"}
         </div>
         <div className="inner-card" style={{ background: "var(--wh)", border: "1.5px solid var(--bdr)", borderRadius: 20, padding: 44, boxShadow: "var(--s2)" }}>
           {children || (

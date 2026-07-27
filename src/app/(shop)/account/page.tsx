@@ -23,7 +23,7 @@ export default function AccountPage() {
   const [showNewPassword, setShowNewPassword] = useState(false);
 
   useEffect(() => {
-    document.title = "My Account | Medvastr";
+    document.title = "My Account | Medvarn";
     if (user) {
       setProfileForm({ firstName: user.firstName, lastName: user.lastName, phone: user.phone || "", email: user.email || "" });
       fetchData();
@@ -153,7 +153,7 @@ export default function AccountPage() {
           <div style={{ flex: 1, minWidth: "300px", background: "white", padding: "40px", borderRadius: "16px", boxShadow: "0 4px 20px rgba(0,0,0,0.03)" }}>
             
             {activeTab === "profile" && (() => {
-              const hasNoRealEmail = !user.email || (user.email.startsWith("phone-") && user.email.endsWith("@medvastr.com"));
+              const hasNoRealEmail = !user.email || (user.email.startsWith("phone-") && (user.email.endsWith("@medvarn.com") || user.email.endsWith("@medvastr.com")));
               return (
                 <div>
                   <h2 style={{ fontSize: "20px", marginBottom: "24px" }}>Profile Details</h2>

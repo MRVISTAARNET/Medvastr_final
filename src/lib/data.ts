@@ -1,13 +1,13 @@
 export const B = {
-  name: "Medvastr",
+  name: "Medvarn",
   phone1: "8976488911",
   phone2: "9920314164",
   landline: "022 46089785",
-  email: "info@medvastr.com",
+  email: "info@medvarn.com",
   addr: "F 81-B, Express Zone, Malad East, Mumbai – 400063",
-  ig: "https://www.instagram.com/medvastr/",
-  fb: "https://www.facebook.com/medvastr/",
-  li: "https://www.linkedin.com/company/medvastr/",
+  ig: "https://www.instagram.com/medvarn/",
+  fb: "https://www.facebook.com/medvarn/",
+  li: "https://www.linkedin.com/company/medvarn/",
 };
 
 export const COLS = [

@@ -24,15 +24,15 @@ const sans = Plus_Jakarta_Sans({
   variable: "--font-sans",
 });
 
-const siteTitle = "Medvastr | Premium Medical Apparel & Professional Scrubs";
+const siteTitle = "Medvarn | Premium Medical Apparel & Professional Scrubs";
 const siteDescription =
-  "Medvastr offers world-class medical scrubs, surgical wear, and hospital linen for healthcare professionals. Superior comfort, performance fabrics, and modern fits designed in India.";
+  "Medvarn offers world-class medical scrubs, surgical wear, and hospital linen for healthcare professionals. Superior comfort, performance fabrics, and modern fits designed in India.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: siteTitle,
-    template: "%s | Medvastr",
+    template: "%s | Medvarn",
   },
   description: siteDescription,
   keywords: [
@@ -41,17 +41,17 @@ export const metadata: Metadata = {
     "doctors apparel",
     "nurse uniform",
     "premium scrubs",
-    "Medvastr",
+    "Medvarn",
     "surgical gowns",
     "hospital linen",
   ],
-  authors: [{ name: "Medvastr" }],
-  creator: "Medvastr",
+  authors: [{ name: "Medvarn" }],
+  creator: "Medvarn",
   openGraph: {
     type: "website",
     locale: "en_IN",
     url: SITE_URL,
-    siteName: "Medvastr",
+    siteName: "Medvarn",
     title: siteTitle,
     description: siteDescription,
   },
@@ -87,13 +87,13 @@ export default function RootLayout({
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "Medvastr",
+    "name": "Medvarn",
     "url": SITE_URL,
     "logo": `${SITE_URL}/logo.png`,
     "sameAs": [
-      "https://www.instagram.com/medvastr/",
-      "https://www.facebook.com/medvastr/",
-      "https://www.linkedin.com/company/medvastr/"
+      "https://www.instagram.com/medvarn/",
+      "https://www.facebook.com/medvarn/",
+      "https://www.linkedin.com/company/medvarn/"
     ],
     "contactPoint": {
       "@type": "ContactPoint",
@@ -107,7 +107,7 @@ export default function RootLayout({
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "Medvastr",
+    "name": "Medvarn",
     "url": SITE_URL,
     "potentialAction": {
       "@type": "SearchAction",

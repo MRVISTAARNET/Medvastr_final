@@ -7316,7 +7316,7 @@ html {
 /* Zoom lightbox modal handled globally at end of stylesheet */
 
 /* ============================================================
-   MEDVASTR PREMIUM PDP & CARD RECOVERY
+   MEDVARN PREMIUM PDP & CARD RECOVERY
    ============================================================ */
 .pdp-grid {
   display: grid;
@@ -7355,7 +7355,7 @@ html {
 }
 
 /* ============================================================
-   MEDVASTR ZOOM LIGHTBOX MODAL — Global & Responsive
+   MEDVARN ZOOM LIGHTBOX MODAL — Global & Responsive
    ============================================================ */
 body.zoom-open {
   overflow: hidden !important;
@@ -7520,7 +7520,7 @@ body.zoom-open {
 }
 
 /* ============================================================
-   MEDVASTR LUXURY PDP (60/40 + VERTICAL THUMBS)
+   MEDVARN LUXURY PDP (60/40 + VERTICAL THUMBS)
    ============================================================ */
 .pdp-grid {
   display: grid;

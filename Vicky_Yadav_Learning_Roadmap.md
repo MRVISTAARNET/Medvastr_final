@@ -1,6 +1,6 @@
 # Full-Stack Development Mastery: 1-Month Roadmap for Vicky Yadav
 
-Congratulations on building and deploying the complete **Medvastr** project! Successfully integrating Next.js, Spring Boot, AWS, Razorpay, and Shiprocket is a massive achievement. Since you want to transition from using AI to deeply understanding every part of the stack, this guide will help you structure your learning over the next 30 days.
+Congratulations on building and deploying the complete **Medvarn** project! Successfully integrating Next.js, Spring Boot, AWS, Razorpay, and Shiprocket is a massive achievement. Since you want to transition from using AI to deeply understanding every part of the stack, this guide will help you structure your learning over the next 30 days.
 
 ---
 
@@ -60,7 +60,7 @@ Do not stress! Take it step-by-step. Dedicate 3-4 hours daily.
 *   **Day 24:** EC2 & Elastic Beanstalk (How environments work, logs viewing).
 *   **Day 25:** S3 & Amplify (Bucket policies, CORS, frontend hosting).
 *   **Day 26-27:** Debugging & Logging (Reading error stack traces, using `console.log` and Spring Boot logs to find issues).
-*   **Day 28-30:** **Final Challenge:** Rebuild a mini-version of Medvastr (just 1 product, 1 checkout flow) entirely without AI assistance.
+*   **Day 28-30:** **Final Challenge:** Rebuild a mini-version of Medvarn (just 1 product, 1 checkout flow) entirely without AI assistance.
 
 ---
 

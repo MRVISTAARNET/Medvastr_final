@@ -18,6 +18,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Optional<Order> findByRazorpayOrderId(String razorpayOrderId);
 
+    @Query("SELECT o FROM Order o WHERE o.orderNumber = :num OR o.trackingNumber = :num OR CAST(o.shiprocketOrderId AS string) = :num OR o.razorpayOrderId = :num")
+    Optional<Order> findAnyMatchingOrder(@Param("num") String num);
+
     Page<Order> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable p);
 
     Page<Order> findByStatusOrderByCreatedAtDesc(Order.OrderStatus s, Pageable p);

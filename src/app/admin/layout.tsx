@@ -3,7 +3,7 @@ import './admin.css';
 import { AppProvider } from '@/context/AppContext';
 
 export const metadata = {
-  title: 'Medvastr Admin — Dashboard',
+  title: 'Medvarn Admin — Dashboard',
 };
 
 export default function AdminRootLayout({

@@ -1,7 +1,7 @@
-# Medvastr E-Commerce API Documentation
+# Medvarn E-Commerce API Documentation
 
 ## Base URL
-- Production: `https://api.medvastr.com`
+- Production: `https://api.medvarn.com`
 - Development: `http://localhost:8080`
 
 ## Authentication
@@ -338,7 +338,7 @@ AWS_SECRET_ACCESS_KEY=your_secret
 # Email
 SMTP_HOST=smtp.titan.email
 SMTP_PORT=587
-SMTP_USER=noreply@medvastr.com
+SMTP_USER=noreply@medvarn.com
 SMTP_PASSWORD=your_password
 
 # Payment
@@ -346,13 +346,13 @@ RAZORPAY_KEY_ID=rzp_live_xxxxx
 RAZORPAY_KEY_SECRET=your_secret
 
 # API Endpoints
-FRONTEND_URL=https://medvastr.com
-API_URL=https://api.medvastr.com
+FRONTEND_URL=https://medvarn.com
+API_URL=https://api.medvarn.com
 ```
 
 ### Database Migration
 ```bash
-mysql -h RDS_ENDPOINT -u admin -p medvastr_db < migration_v3_ecommerce_features.sql
+mysql -h RDS_ENDPOINT -u admin -p medvarn_db < migration_v3_ecommerce_features.sql
 ```
 
 ### Build & Deploy
@@ -369,4 +369,4 @@ amplify deploy
 ---
 
 ## 📞 Support
-For API issues or questions, contact: dev@medvastr.com
+For API issues or questions, contact: dev@medvarn.com

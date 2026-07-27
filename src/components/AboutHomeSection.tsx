@@ -12,12 +12,12 @@ export default function AboutHomeSection() {
         <div style={{ width: "100%" }}>
           <div className="about-tag">⚕ Introduction</div>
           <h2 className="about-h">
-            Medvastr: Stylish & Functional Medical Scrubs and Surgical Wear for Men & Women!
+            Medvarn: Stylish & Functional Medical Scrubs and Surgical Wear for Men & Women!
           </h2>
           
           <div className={`about-rich-text ${showAll ? "expanded" : ""}`}>
             <p className="about-p">
-              Medvastr is your one-stop shop for top-quality medical scrubs, surgical wear, and base layers for men and women. We believe every medical professional deserves comfortable, flexible, and breathable apparel that also projects a highly professional image.
+              Medvarn is your one-stop shop for top-quality medical scrubs, surgical wear, and base layers for men and women. We believe every medical professional deserves comfortable, flexible, and breathable apparel that also projects a highly professional image.
             </p>
 
             <div className="about-details">

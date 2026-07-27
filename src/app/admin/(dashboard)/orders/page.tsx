@@ -116,7 +116,7 @@ export default function AdminOrders() {
       'Tracking AWB': o.awb,
       'Courier': o.courier
     }));
-    downloadCSV(feed, `medvastr_orders_${new Date().toISOString().slice(0, 10)}.csv`);
+    downloadCSV(feed, `medvarn_orders_${new Date().toISOString().slice(0, 10)}.csv`);
   };
 
   const handleBulkSync = async () => {

@@ -34,7 +34,7 @@ function BarcodeImage({ value }: { value: string }) {
 
 // Standardized Mappings for SKU Generation
 const GENDER_PREFIX = { 'Men': 'M', 'Women': 'W', 'Unisex': 'U' };
-const BRAND_PREFIX = { 'Medvastr': 'MED', 'Fabscrubs': 'FAB', 'Others': 'OTH' };
+const BRAND_PREFIX = { 'Medvarn': 'MED', 'Fabscrubs': 'FAB', 'Others': 'OTH' };
 
 export function generateVariantSku(gender: string, style: string, name: string, color: string, size: string): string {
   const gPrefix = gender === 'Men' ? 'M' : (gender === 'Women' ? 'W' : 'U');
@@ -104,7 +104,7 @@ export default function AdminProducts() {
 
   const [form, setForm] = useState<any>({
     name: '',
-    brand: 'Medvastr',
+    brand: 'Medvarn',
     gender: 'Men',
     style: 'Standard', // Standard, Top, Bottom, Set
     parentId: '',
@@ -182,7 +182,7 @@ export default function AdminProducts() {
       });
     } else {
       setForm({
-        name: '', brand: 'Medvastr', gender: 'Men', style: 'Standard', parentId: '', subCategoryId: '', childCategoryId: '',
+        name: '', brand: 'Medvarn', gender: 'Men', style: 'Standard', parentId: '', subCategoryId: '', childCategoryId: '',
         price: 0, origPrice: 0, tax: 0, type: 'scrubs', description: '', fabric: '',
         sizes: 'S, M, L, XL', clrs: '', imgs: [], videoUrl: '', active: true, imgsByColor: {},
         badge: 'None', fit: 'Classic Fit', pocketCount: 0, weightValue: '0.5', weightUnit: 'kg', careInstructions: 'Machine Wash Cold', shortDescription: '',
@@ -324,9 +324,9 @@ export default function AdminProducts() {
     });
 
     // Auto-generate missing SEO fields
-    const seoTitle = form.seoTitle?.trim() || `${form.name} | Premium ${form.type} - Medvastr`;
+    const seoTitle = form.seoTitle?.trim() || `${form.name} | Premium ${form.type} - Medvarn`;
     const seoDescription = form.seoDescription?.trim() || form.shortDescription || form.description?.slice(0, 150) || "";
-    const seoKeywords = form.seoKeywords?.trim() || `${form.name.toLowerCase()}, medvastr, medical scrubs, ${form.gender.toLowerCase()} ${form.type}`;
+    const seoKeywords = form.seoKeywords?.trim() || `${form.name.toLowerCase()}, medvarn, medical scrubs, ${form.gender.toLowerCase()} ${form.type}`;
 
     const body = {
       ...form,
@@ -378,7 +378,7 @@ export default function AdminProducts() {
       Stock: v.stockQuantity,
       Active: p.active ? 'Yes' : 'No'
     })));
-    downloadCSV(feed, `medvastr_inventory_${new Date().toISOString().slice(0, 10)}.csv`);
+    downloadCSV(feed, `medvarn_inventory_${new Date().toISOString().slice(0, 10)}.csv`);
   };
 
   const [barcodeProduct, setBarcodeProduct] = useState<any>(null);
@@ -431,7 +431,7 @@ export default function AdminProducts() {
           <svg class="barcode-svg" data-value="${v.sku || v.barcode}"></svg>
           <div class="footer-info">
             <span class="sku-text">SKU: ${v.sku}</span>
-            <span>Medvastr</span>
+            <span>Medvarn</span>
           </div>
         </div>
       `;
@@ -495,7 +495,7 @@ export default function AdminProducts() {
 
   return (
     <>
-      <AdminTopbar title="Products" sub="Medvastr Catalogue Management" action={{ label: '+ Add Product', onClick: openAddModal }} />
+      <AdminTopbar title="Products" sub="Medvarn Catalogue Management" action={{ label: '+ Add Product', onClick: openAddModal }} />
       <div className="admin-content">
         <div className="panel">
           <div className="table-card">
@@ -549,7 +549,7 @@ export default function AdminProducts() {
                 <div style={{ display: 'grid', gap: '20px' }}>
                   <div className="fg"><label>Product Name <span style={{ color: 'red' }}>*</span></label><input id="p-name" value={form.name} onChange={handleInputChange} placeholder="e.g. Flexi Fit V Scrub" /></div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
-                    <div className="fg"><label>Brand <span style={{ color: 'red' }}>*</span></label><select id="p-brand" value={form.brand} onChange={handleInputChange}><option>Medvastr</option><option>Fabscrubs</option><option>Standard</option><option>Others</option></select></div>
+                    <div className="fg"><label>Brand <span style={{ color: 'red' }}>*</span></label><select id="p-brand" value={form.brand} onChange={handleInputChange}><option>Medvarn</option><option>Fabscrubs</option><option>Standard</option><option>Others</option></select></div>
                     <div className="fg"><label>Gender <span style={{ color: 'red' }}>*</span></label><select id="p-gender" value={form.gender} onChange={handleInputChange}><option>Men</option><option>Women</option><option>Unisex</option></select></div>
                     <div className="fg"><label>Style <span style={{ color: 'red' }}>*</span></label><select id="p-style" value={form.style} onChange={handleInputChange}><option>Standard</option><option>Top</option><option>Bottom</option><option>Set</option></select></div>
                   </div>
@@ -866,7 +866,7 @@ export default function AdminProducts() {
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: '10px', color: '#64748b', fontWeight: 600 }}>
                           <span style={{ fontFamily: 'monospace' }}>SKU: {v.sku}</span>
-                          <span>Medvastr</span>
+                          <span>Medvarn</span>
                         </div>
                       </div>
                       <button type="button" className="btn-secondary" style={{ width: '100%', padding: '6px 12px', fontSize: '12px' }} onClick={() => handleDownloadBarcodeItem(v, cardId)}>

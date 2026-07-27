@@ -17,7 +17,7 @@ export default function AdminBlogPage() {
     excerpt: "",
     content: "",
     featuredImage: "",
-    authorName: "Medvastr",
+    authorName: "Medvarn",
     status: "DRAFT",
     seoTitle: "",
     seoDescription: "",
@@ -109,7 +109,7 @@ export default function AdminBlogPage() {
   };
 
   const resetForm = () => {
-    setForm({ title: "", slug: "", excerpt: "", content: "", featuredImage: "", authorName: "Medvastr", status: "DRAFT", seoTitle: "", seoDescription: "" });
+    setForm({ title: "", slug: "", excerpt: "", content: "", featuredImage: "", authorName: "Medvarn", status: "DRAFT", seoTitle: "", seoDescription: "" });
     setEditingId(null);
     setShowSeoSection(false);
     setContentPreview(false);
@@ -189,7 +189,7 @@ export default function AdminBlogPage() {
                   <label>Author Name</label>
                   <input
                     type="text"
-                    placeholder="Medvastr"
+                    placeholder="Medvarn"
                     value={form.authorName}
                     onChange={(e) => setForm({ ...form, authorName: e.target.value })}
                   />

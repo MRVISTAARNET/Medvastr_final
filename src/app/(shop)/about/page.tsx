@@ -12,7 +12,7 @@ const COLORS = {
 
 export default function AboutPage() {
   React.useEffect(() => {
-    document.title = "About Us | Medvastr";
+    document.title = "About Us | Medvarn";
   }, []);
 
   return (
@@ -22,14 +22,14 @@ export default function AboutPage() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/about-desktop.jpg"
-          alt="About Medvastr Desktop"
+          alt="About Medvarn Desktop"
           className="hero-image-desktop"
           style={{ width: "100%", height: "auto", display: "block" }}
         />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/about-mobile.jpg"
-          alt="About Medvastr Mobile"
+          alt="About Medvarn Mobile"
           className="hero-image-mobile"
           style={{ width: "100%", height: "auto", display: "block" }}
         />
@@ -47,7 +47,7 @@ export default function AboutPage() {
             <div className="story-layout">
               <div className="story-highlight-box">
                 <p className="highlight-text">
-                  For over a decade, Medvastr has stood side-by-side with India's healthcare sector. Established in 2012 as a dedicated hospital supply partner, we have dressed thousands of medical professionals and provided state-of-the-art medical textiles to top-tier healthcare institutions.
+                  For over a decade, Medvarn has stood side-by-side with India's healthcare sector. Established in 2012 as a dedicated hospital supply partner, we have dressed thousands of medical professionals and provided state-of-the-art medical textiles to top-tier healthcare institutions.
                 </p>
               </div>
               <div className="story-text">
@@ -55,7 +55,7 @@ export default function AboutPage() {
                   Our journey began in the corridors of busy clinics and emergency wards. We observed doctors, nurses, and surgeons working grueling 12 to 24-hour shifts in stiff, restrictive, and standard-issue uniforms. We realized that while medical technology was rapidly advancing, the apparel designed for healthcare heroes remained stagnant. They deserved fabric that worked as hard as they did.
                 </p>
                 <p>
-                  Thus, Medvastr was born. Our mission is simple yet transformative: to engineer professional medical wear that blends advanced fabric technology, anatomical utility, and modern, refined aesthetics.
+                  Thus, Medvarn was born. Our mission is simple yet transformative: to engineer professional medical wear that blends advanced fabric technology, anatomical utility, and modern, refined aesthetics.
                 </p>
                 <p>
                   Today, we meet the rigorous demands of modern clinical environments by offering premium, high-stretch medical scrubs alongside eco-certified hospital linen solutions.
@@ -67,7 +67,7 @@ export default function AboutPage() {
           {/* Three Promises Grid */}
           <div className="promises-section">
             <h1 className="about-subtitle centered">OUR COMMITMENT</h1>
-            <h2 className="section-title">The Three Pillars of Medvastr</h2>
+            <h2 className="section-title">The Three Pillars of Medvarn</h2>
             <div className="promises-grid">
               <div className="promise-card">
                 <div className="promise-icon">✨</div>
@@ -99,7 +99,7 @@ export default function AboutPage() {
             <div className="diff-card green">
               <div className="green-icon">🌿</div>
               <p>
-                In line with our commitment to healthcare innovation, Medvastr pioneers eco-friendly textile alternatives. Our <strong>Green Linen</strong> collection provides certified sustainable bedsheets, surgical drapes, and patient apparel, helping institutions reduce their carbon footprint without compromising on clinical hygiene or barrier protection.
+                In line with our commitment to healthcare innovation, Medvarn pioneers eco-friendly textile alternatives. Our <strong>Green Linen</strong> collection provides certified sustainable bedsheets, surgical drapes, and patient apparel, helping institutions reduce their carbon footprint without compromising on clinical hygiene or barrier protection.
               </p>
             </div>
           </div>
@@ -121,7 +121,7 @@ export default function AboutPage() {
       <section className="about-cta">
         <div className="cta-content">
           <h2 className="cta-title">
-            Ready to experience the Medvastr difference?
+            Ready to experience the Medvarn difference?
           </h2>
           <p className="cta-desc">Join thousands of medical professionals across India who have upgraded their daily workwear.</p>
           <Link href="/products" className="premium-btn">

@@ -22,7 +22,7 @@ export default function Announcement() {
     promoItem,
     { text: "Bulk discounts for hospitals & clinics" },
     { text: `Call us: ${B.phone1}` },
-    { text: "Code MEDVASTR10 — 10% off first order" },
+    { text: "Code MEDVARN10 — 10% off first order" },
   ];
 
   const doubled = [...ITEMS, ...ITEMS];

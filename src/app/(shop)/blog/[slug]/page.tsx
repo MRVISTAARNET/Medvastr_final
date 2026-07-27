@@ -40,7 +40,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         description: post.excerpt,
         image: post.featuredImage,
         datePublished: post.publishedAt,
-        author: { "@type": "Person", name: post.authorName || "Medvastr" },
+        author: { "@type": "Person", name: post.authorName || "Medvarn" },
       }
     : null;
 

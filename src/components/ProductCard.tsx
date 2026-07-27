@@ -107,7 +107,7 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
             </>
           ) : (
             <div className="pc-emo-placeholder w-full h-full flex items-center justify-center bg-slate-50">
-              <span className="text-slate-300 text-xs font-bold tracking-widest text-center px-4 uppercase">Medvastr</span>
+              <span className="text-slate-300 text-xs font-bold tracking-widest text-center px-4 uppercase">Medvarn</span>
             </div>
           )}
         </div>
@@ -154,7 +154,7 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
         <div>
           <div className="pc-top-meta">
             <div className="pc-brand-box">
-              <span className="pc-brand-name">Medvastr</span>
+              <span className="pc-brand-name">Medvarn</span>
             </div>
             {p.rev > 0 && (
               <div className="pc-rating-box">

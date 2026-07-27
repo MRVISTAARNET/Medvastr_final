@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const tags = Array.isArray(product.tags) ? product.tags : (product.tags ? String(product.tags).split(",") : []);
     const category = product.categoryName || product.category?.name || "";
     const subcategory = product.subcategoryName || product.subcategory?.name || "";
-    const brand = product.brand || "Medvastr";
+    const brand = product.brand || "Medvarn";
     const nameWords = product.name?.split(" ") || [];
     const derived = [brand, category, subcategory, ...tags, ...nameWords]
       .map((s: string) => s?.trim())
@@ -58,7 +58,7 @@ export default async function ProductPage({ params }: PageProps) {
         description: product.seoDescription || product.description,
         image: product.imageUrls?.[0],
         sku: product.sku,
-        brand: { "@type": "Brand", name: product.brand || "Medvastr" },
+        brand: { "@type": "Brand", name: product.brand || "Medvarn" },
         offers: {
           "@type": "Offer",
           priceCurrency: "INR",

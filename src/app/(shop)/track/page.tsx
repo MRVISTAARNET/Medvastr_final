@@ -10,7 +10,7 @@ import { useApp } from "@/context/AppContext";
 
 function TrackContent() {
   useEffect(() => {
-    document.title = "Track Your Order | Medvastr";
+    document.title = "Track Your Order | Medvarn";
   }, []);
 
   const { user, setIsAuthOpen } = useApp();

@@ -298,13 +298,13 @@ public class OrderService {
     }
 
     public OrderDTO getByNum(String num) {
-        Order o = orderRepo.findByOrderNumber(num).orElseThrow(() -> new RuntimeException("Not found: " + num));
+        Order o = orderRepo.findAnyMatchingOrder(num).orElseThrow(() -> new RuntimeException("Not found: " + num));
         assertOrderOwner(o);
         return toDTO(o);
     }
 
     public OrderDTO cancel(String num) {
-        Order o = orderRepo.findByOrderNumber(num).orElseThrow();
+        Order o = orderRepo.findAnyMatchingOrder(num).orElseThrow(() -> new RuntimeException("Not found: " + num));
         assertOrderOwner(o);
         
         // Block cancellation if order is already processed/shipped or courier assigned
@@ -431,7 +431,7 @@ public class OrderService {
     }
 
     public TrackingDTO track(String num) {
-        Order o = orderRepo.findByOrderNumber(num).orElseThrow(() -> new RuntimeException("Not found: " + num));
+        Order o = orderRepo.findAnyMatchingOrder(num).orElseThrow(() -> new RuntimeException("Not found: " + num));
         assertOrderOwner(o);
 
         // Sync order status from Shiprocket tracking in real time
@@ -441,7 +441,7 @@ public class OrderService {
                 && o.getStatus() != Order.OrderStatus.RETURNED) {
             shiprocketService.syncTrackingStatus(o);
             // Refresh order reference to get updated status and estimated delivery date
-            o = orderRepo.findByOrderNumber(num).orElseThrow();
+            o = orderRepo.findAnyMatchingOrder(num).orElseThrow();
         }
 
         List<String> steps = Arrays.asList("PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED");

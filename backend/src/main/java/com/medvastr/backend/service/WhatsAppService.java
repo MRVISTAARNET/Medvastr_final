@@ -66,7 +66,7 @@ public class WhatsAppService {
 
     private String buildOrderMessage(Order order) {
         StringBuilder sb = new StringBuilder();
-        sb.append("*Medvastr Order Confirmed!* 🎉\n\n");
+        sb.append("*Medvarn Order Confirmed!* 🎉\n\n");
         sb.append("Order: #").append(order.getOrderNumber()).append("\n");
         sb.append("Name: ").append(order.getShippingName()).append("\n");
         sb.append("Total: \u20B9").append(order.getTotalAmount()).append("\n");
@@ -89,9 +89,9 @@ public class WhatsAppService {
 
         if (order.getTempPassword() != null && !order.getTempPassword().isEmpty()) {
             sb.append("\n*🔑 Your Account Login Details:*\n");
-            sb.append("Email: ").append(order.getUser().getEmail()).append("\n");
+            sb.append("Email: ").append(order.getUser() != null && order.getUser().getEmail() != null ? order.getUser().getEmail() : "N/A").append("\n");
             sb.append("Password: ").append(order.getTempPassword()).append("\n");
-            sb.append("Visit: www.medvastr.com/login\n");
+            sb.append("Visit: www.medvarn.com/login\n");
         }
 
         return sb.toString();
