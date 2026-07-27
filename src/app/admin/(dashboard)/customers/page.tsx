@@ -10,51 +10,114 @@ export default function AdminCustomers() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
 
+  const [error, setError] = useState('');
+
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
+        setError('');
         const token = localStorage.getItem('token');
+        if (!token) {
+          setError("Admin token missing. Redirecting to admin login...");
+          setTimeout(() => { window.location.href = '/admin/login'; }, 2000);
+          return;
+        }
+
         const [usersRes, ordersRes] = await Promise.all([
-          fetch(`${API_BASE}/users?size=100`, {
+          fetch(`${API_BASE}/users?size=200`, {
             headers: { 'Authorization': `Bearer ${token}` }
           }),
           fetch(`${API_BASE}/orders/admin/all?size=500`, {
             headers: { 'Authorization': `Bearer ${token}` }
           })
         ]);
+
+        if (usersRes.status === 401 || ordersRes.status === 401 || usersRes.status === 403 || ordersRes.status === 403) {
+          setError("Admin session expired. Redirecting to admin login...");
+          setTimeout(() => { window.location.href = '/admin/login'; }, 2000);
+          return;
+        }
+
         const usersData = await usersRes.json();
         const ordersData = await ordersRes.json();
 
-        if (usersData.success && ordersData.success) {
-          const allOrders = ordersData.data.content || [];
-          setCustomers(usersData.data.content.map((u: any) => {
-            const userOrders = allOrders.filter((o: any) => 
-              (o.userId && o.userId === u.id) || 
-              (o.userEmail && o.userEmail.toLowerCase() === u.email.toLowerCase()) ||
-              (o.shippingPhone && u.phone && o.shippingPhone.replace(/\D/g, '') === u.phone.replace(/\D/g, ''))
-            );
+        const rawUsers = usersData.success ? (usersData.data?.content || usersData.data || []) : [];
+        const allOrders = ordersData.success ? (ordersData.data?.content || ordersData.data || []) : [];
 
-            const totalSpent = userOrders.reduce((sum: number, o: any) => sum + (o.totalAmount || 0), 0);
-            
-            // Get the city from the latest order
-            const latestOrder = userOrders[0];
-            const city = latestOrder?.shippingCity || '—';
+        // Build customer map indexed by email / phone
+        const customerMap = new Map<string, any>();
 
-            return {
-              id: u.id,
-              name: `${u.firstName} ${u.lastName}`,
-              email: u.email,
-              phone: u.phone,
-              orders: userOrders.length,
-              spent: totalSpent,
-              city: city,
-              joined: u.createdAt,
-              role: u.role
-            };
-          }));
-        }
+        // 1. Add registered users
+        rawUsers.forEach((u: any) => {
+          const key = (u.email || u.phone || `user_${u.id}`).toLowerCase();
+          customerMap.set(key, {
+            id: u.id,
+            name: `${u.firstName || ''} ${u.lastName || ''}`.trim() || u.email || 'Customer',
+            email: u.email || '—',
+            phone: u.phone || '—',
+            orders: 0,
+            spent: 0,
+            city: '—',
+            joined: u.createdAt || new Date().toISOString(),
+            role: u.role || 'CUSTOMER'
+          });
+        });
+
+        // 2. Aggregate order details & add guest buyers
+        allOrders.forEach((o: any) => {
+          const email = o.userEmail || (o.user && o.user.email);
+          const phone = o.shippingPhone || (o.user && o.user.phone);
+          const name = o.shippingName || (o.user ? `${o.user.firstName || ''} ${o.user.lastName || ''}`.trim() : 'Guest Customer');
+
+          let matchKey = '';
+          if (email) {
+            for (const [k, v] of customerMap.entries()) {
+              if (v.email && v.email.toLowerCase() === email.toLowerCase()) {
+                matchKey = k;
+                break;
+              }
+            }
+          }
+          if (!matchKey && phone) {
+            const cleanPhone = phone.replace(/\D/g, '');
+            for (const [k, v] of customerMap.entries()) {
+              if (v.phone && v.phone.replace(/\D/g, '') === cleanPhone) {
+                matchKey = k;
+                break;
+              }
+            }
+          }
+
+          if (!matchKey) {
+            matchKey = (email || phone || `order_${o.id}`).toLowerCase();
+            customerMap.set(matchKey, {
+              id: `guest_${o.id}`,
+              name: name,
+              email: email || '—',
+              phone: phone || '—',
+              orders: 0,
+              spent: 0,
+              city: o.shippingCity || '—',
+              joined: o.createdAt || new Date().toISOString(),
+              role: 'GUEST'
+            });
+          }
+
+          const record = customerMap.get(matchKey);
+          if (record) {
+            record.orders += 1;
+            record.spent += (o.totalAmount || 0);
+            if (record.city === '—' && o.shippingCity) {
+              record.city = o.shippingCity;
+            }
+          }
+        });
+
+        setCustomers(Array.from(customerMap.values()));
       } catch (e) {
         console.error("Failed to fetch customers and orders", e);
+        setError("Failed to load customer details. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -94,6 +157,11 @@ export default function AdminCustomers() {
       />
       <div className="admin-content">
         <div className="panel">
+          {error && (
+            <div style={{ padding: '12px 16px', background: '#fef2f2', border: '1px solid #fca5a5', color: '#991b1b', borderRadius: '8px', marginBottom: '16px', fontSize: '14px', fontWeight: 600 }}>
+              ⚠️ {error}
+            </div>
+          )}
           <div className="stats-grid" style={{ marginBottom: '22px' }}>
             <StatCard ico="👥" label="Total Customers" val={fmtNum(customers.length)} sub="registered accounts" dir="neu" bg="#dbeafe" />
             <StatCard ico="🏆" label="Top Spender" val={fmt(maxSpent)} sub="Highest lifetime value" dir="neu" bg="#fef5e4" />
