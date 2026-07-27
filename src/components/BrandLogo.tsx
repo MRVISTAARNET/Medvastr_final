@@ -6,19 +6,18 @@ interface BrandLogoProps {
 }
 
 export default function BrandLogo({ dark = false, height }: BrandLogoProps) {
-  const finalHeight = height || (dark ? 56 : 68);
-
   if (dark) {
+    const finalHeight = height || 58;
     return (
       <div
         style={{
           display: "inline-flex",
           alignItems: "center",
           background: "#ffffff",
-          padding: "8px 18px",
-          borderRadius: "10px",
-          boxShadow: "0 4px 16px rgba(0,0,0,0.18)",
-          marginBottom: "16px",
+          padding: "10px 24px",
+          borderRadius: "12px",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.22)",
+          marginBottom: "18px",
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -31,15 +30,15 @@ export default function BrandLogo({ dark = false, height }: BrandLogoProps) {
             maxHeight: `${finalHeight}px`,
             objectFit: "contain",
             display: "block",
-            transform: "scale(1.15)",
           }}
         />
       </div>
     );
   }
 
+  const finalHeight = height || 54;
   return (
-    <div style={{ display: "inline-flex", alignItems: "center", padding: "2px 0", overflow: "visible" }}>
+    <div style={{ display: "inline-flex", alignItems: "center", overflow: "hidden", maxHeight: "58px" }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/logo.png"
@@ -47,11 +46,9 @@ export default function BrandLogo({ dark = false, height }: BrandLogoProps) {
         style={{
           height: `${finalHeight}px`,
           width: "auto",
-          maxHeight: `${finalHeight}px`,
+          maxHeight: "54px",
           objectFit: "contain",
           display: "block",
-          transform: "scale(1.22)",
-          transformOrigin: "left center",
         }}
       />
     </div>
