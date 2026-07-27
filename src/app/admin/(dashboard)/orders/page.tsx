@@ -124,10 +124,23 @@ export default function AdminOrders() {
     setSyncMsg('');
     try {
       const token = localStorage.getItem('token');
+      if (!token) {
+        setSyncMsg('❌ Admin token missing. Redirecting to admin login...');
+        setTimeout(() => { window.location.href = '/admin/login'; }, 2000);
+        return;
+      }
       const res = await fetch(`${API_BASE}/orders/admin/sync-shiprocket`, {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       });
+      if (res.status === 401 || res.status === 403) {
+        setSyncMsg('❌ Admin session expired / Unauthorized. Redirecting to admin login...');
+        setTimeout(() => { window.location.href = '/admin/login'; }, 2000);
+        return;
+      }
       const data = await res.json();
       setSyncMsg(data.success ? `✅ ${data.data}` : `❌ ${data.message || 'Sync failed'}`);
       if (data.success) await fetchOrders();
@@ -144,10 +157,23 @@ export default function AdminOrders() {
     setSingleSyncing(true);
     try {
       const token = localStorage.getItem('token');
+      if (!token) {
+        alert('❌ Admin session missing. Please log in at /admin/login');
+        window.location.href = '/admin/login';
+        return;
+      }
       const res = await fetch(`${API_BASE}/orders/admin/${editingOrder.id}/sync-status`, {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       });
+      if (res.status === 401 || res.status === 403) {
+        alert('❌ Admin session expired. Please log in again at /admin/login');
+        window.location.href = '/admin/login';
+        return;
+      }
       const data = await res.json();
       if (data.success) {
         const updated = data.data;
