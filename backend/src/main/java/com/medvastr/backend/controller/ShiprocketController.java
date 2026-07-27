@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/tracking")
+@RequestMapping({ "/api/v1/tracking", "/v1/tracking" })
 @RequiredArgsConstructor
 @Slf4j
 public class ShiprocketController {
