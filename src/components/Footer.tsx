@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { B } from "@/lib/data";
+import BrandLogo from "./BrandLogo";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -58,7 +59,9 @@ export default function Footer() {
       <div className="ft-g">
         {/* Brand Column */}
         <div className="ft-brand">
-          <img src="/logo.png" alt="Medvarn" style={{ height: "42px", width: "auto", objectFit: "contain" }} />
+          <Link href="/" style={{ textDecoration: "none" }}>
+            <BrandLogo dark={true} height={42} />
+          </Link>
           <p className="ft-desc">
             Product Manufactured For, Packed & Marketed By Medvarn.
           </p>
@@ -139,8 +142,6 @@ export default function Footer() {
               <span className="connect-icon">📞</span>
               <div className="connect-details">
                 <a href={`tel:${B.phone1}`}>{B.phone1}</a>
-                <span className="sep">•</span>
-                <a href={`tel:${B.phone2}`}>{B.phone2}</a>
               </div>
             </li>
             <li>

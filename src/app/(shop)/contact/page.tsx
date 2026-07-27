@@ -37,7 +37,7 @@ export default function ContactPage() {
 
             <div className="ct-info-list">
               {[
-                { ico: "📞", label: "Speak with us", value: `${B.phone1}\n${B.phone2}`, href: `tel:${B.phone1}` },
+                { ico: "📞", label: "Speak with us", value: B.phone1, href: `tel:${B.phone1}` },
                 { ico: "✉️", label: "Write to us", value: B.email, href: `mailto:${B.email}` },
                 { ico: "📍", label: "Visit our office", value: B.addr, href: undefined },
               ].map((item) => (

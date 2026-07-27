@@ -6,6 +6,7 @@ import { useApp } from "@/context/AppContext";
 import { fmt } from "@/lib/data";
 import { NAV_DATA } from "@/lib/navData";
 import DynamicNav from "./DynamicNav";
+import BrandLogo from "./BrandLogo";
 
 interface HeaderProps {
   onCart: () => void;
@@ -144,7 +145,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             ☰
           </button>
           <Link href="/" className="logo" style={{ display: "flex", alignItems: "center" }}>
-            <img src="/logo.png" alt="Medvarn - The Colour Of Wellness" style={{ height: "48px", width: "auto", objectFit: "contain" }} />
+            <BrandLogo dark={false} height={40} />
           </Link>
         </div>
 
