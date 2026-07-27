@@ -60,7 +60,7 @@ export default function Footer() {
         {/* Brand Column */}
         <div className="ft-brand">
           <Link href="/" style={{ textDecoration: "none" }}>
-            <BrandLogo dark={true} height={42} />
+            <BrandLogo dark={true} height={56} />
           </Link>
           <p className="ft-desc">
             Product Manufactured For, Packed & Marketed By Medvarn.
