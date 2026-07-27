@@ -1,6 +1,8 @@
 package com.medvastr.backend.config;
 
+import com.medvastr.backend.model.PromoCode;
 import com.medvastr.backend.model.User;
+import com.medvastr.backend.repository.PromoCodeRepository;
 import com.medvastr.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,12 +12,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.math.BigDecimal;
+
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
 public class DataInitializer {
 
     private final UserRepository userRepo;
+    private final PromoCodeRepository promoRepo;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${app.admin.email:admin@medvastr.com}")
@@ -27,31 +32,48 @@ public class DataInitializer {
     @Bean
     public CommandLineRunner initAdminUser() {
         return args -> {
-            if (adminPassword == null || adminPassword.isBlank()) {
-                log.info("[DataInitializer] ADMIN_INITIAL_PASSWORD not set — skipping admin bootstrap.");
-                return;
+            if (adminPassword != null && !adminPassword.isBlank() && !userRepo.existsByEmail(adminEmail)) {
+                log.info("[DataInitializer] Creating admin user for: {}", adminEmail);
+                User admin = User.builder()
+                        .firstName("Admin")
+                        .lastName("Medvarn")
+                        .email(adminEmail)
+                        .phone("9999999999")
+                        .password(passwordEncoder.encode(adminPassword))
+                        .role(User.Role.ADMIN)
+                        .emailVerified(true)
+                        .active(true)
+                        .loyaltyPoints(0)
+                        .build();
+                userRepo.save(admin);
+                log.info("[DataInitializer] Admin user BOOTSTRAPPED successfully for {}", adminEmail);
             }
 
-            if (userRepo.existsByEmail(adminEmail)) {
-                log.info("[DataInitializer] Admin {} already exists.", adminEmail);
-                return;
+            // Seed default MEDVARN10 & MEDVASTR10 promo codes
+            if (!promoRepo.existsByCodeIgnoreCase("MEDVARN10")) {
+                promoRepo.save(PromoCode.builder()
+                        .code("MEDVARN10")
+                        .description("10% Welcome Discount for Medvarn")
+                        .discountType(PromoCode.DiscountType.PERCENTAGE)
+                        .discountValue(BigDecimal.TEN)
+                        .minimumOrderAmount(BigDecimal.ZERO)
+                        .usedCount(0)
+                        .active(true)
+                        .build());
+                log.info("[DataInitializer] Seeded MEDVARN10 promo code");
             }
-
-            log.info("[DataInitializer] Creating/Updating admin user for: {}", adminEmail);
-            User admin = User.builder()
-                    .firstName("Admin")
-                    .lastName("Medvastr")
-                    .email(adminEmail)
-                    .phone("9999999999")
-                    .password(passwordEncoder.encode(adminPassword))
-                    .role(User.Role.ADMIN)
-                    .emailVerified(true)
-                    .active(true)
-                    .loyaltyPoints(0)
-                    .build();
-
-            userRepo.save(admin);
-            log.info("[DataInitializer] Admin user BOOTSTRAPPED successfully for {}", adminEmail);
+            if (!promoRepo.existsByCodeIgnoreCase("MEDVASTR10")) {
+                promoRepo.save(PromoCode.builder()
+                        .code("MEDVASTR10")
+                        .description("10% Discount Code")
+                        .discountType(PromoCode.DiscountType.PERCENTAGE)
+                        .discountValue(BigDecimal.TEN)
+                        .minimumOrderAmount(BigDecimal.ZERO)
+                        .usedCount(0)
+                        .active(true)
+                        .build());
+                log.info("[DataInitializer] Seeded MEDVASTR10 promo code");
+            }
         };
     }
 }
