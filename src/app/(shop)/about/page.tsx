@@ -132,9 +132,9 @@ export default function AboutPage() {
 
       <style jsx>{`
         .about-page {
-          background: ${COLORS.white};
-          color: ${COLORS.navy};
-          font-family: inherit;
+          background: #ffffff;
+          color: #0f172a;
+          font-family: var(--sans), Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         .about-hero {
@@ -145,7 +145,7 @@ export default function AboutPage() {
 
         .about-main {
           padding: 80px 24px;
-          background: ${COLORS.white};
+          background: #ffffff;
         }
 
         .content-container {
@@ -154,12 +154,13 @@ export default function AboutPage() {
         }
 
         .about-subtitle {
+          font-family: var(--sans), Inter, system-ui, sans-serif !important;
           font-size: 13px !important;
-          font-weight: 600 !important;
-          color: ${COLORS.blue} !important;
-          letter-spacing: 1px !important;
+          font-weight: 700 !important;
+          color: #008080 !important;
+          letter-spacing: 1.5px !important;
           text-transform: uppercase;
-          margin-bottom: 8px;
+          margin-bottom: 10px;
           text-align: left;
         }
 
@@ -168,12 +169,12 @@ export default function AboutPage() {
         }
 
         .section-title {
-          font-family: var(--sans) !important;
-          font-size: 26px !important;
-          font-weight: 600 !important;
-          color: ${COLORS.navy} !important;
+          font-family: var(--sans), Inter, system-ui, sans-serif !important;
+          font-size: 32px !important;
+          font-weight: 800 !important;
+          color: #0f172a !important;
           line-height: 1.25 !important;
-          letter-spacing: -0.015em !important;
+          letter-spacing: -0.5px !important;
           margin-bottom: 30px;
           text-align: left;
         }
@@ -194,23 +195,26 @@ export default function AboutPage() {
         }
 
         .story-highlight-box {
-          background: rgba(32, 58, 95, 0.03);
-          padding: 30px;
-          border-radius: 12px;
-          border-left: 4px solid var(--secondary-blue);
+          background: #f8fafc;
+          padding: 32px;
+          border-radius: 16px;
+          border-left: 4px solid #008080;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.02);
         }
 
         .highlight-text {
-          font-size: 15px !important;
+          font-family: var(--sans), Inter, system-ui, sans-serif !important;
+          font-size: 16px !important;
           line-height: 1.7 !important;
-          color: ${COLORS.navy} !important;
-          font-weight: 500 !important;
+          color: #0f172a !important;
+          font-weight: 600 !important;
         }
 
         .story-text {
-          font-size: 14px !important;
-          line-height: 1.7 !important;
-          color: ${COLORS.slate} !important;
+          font-family: var(--sans), Inter, system-ui, sans-serif !important;
+          font-size: 15px !important;
+          line-height: 1.75 !important;
+          color: #475569 !important;
           display: flex;
           flex-direction: column;
           gap: 16px;
@@ -228,37 +232,39 @@ export default function AboutPage() {
         }
 
         .promise-card {
-          background: ${COLORS.white};
-          padding: 40px 24px;
-          border-radius: 12px;
+          background: #ffffff;
+          padding: 40px 28px;
+          border-radius: 16px;
           border: 1px solid #e2e8f0;
           text-align: center;
           transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-          box-shadow: 0 4px 12px rgba(32, 58, 95, 0.02);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
         }
 
         .promise-card:hover {
           transform: translateY(-4px);
-          box-shadow: 0 12px 28px rgba(32, 58, 95, 0.06);
-          border-color: var(--secondary-blue);
+          box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
+          border-color: #008080;
         }
 
         .promise-icon {
-          font-size: 32px;
+          font-size: 36px;
           margin-bottom: 20px;
         }
 
         .promise-card h3 {
-          font-size: 16px !important;
-          font-weight: 600 !important;
+          font-family: var(--sans), Inter, system-ui, sans-serif !important;
+          font-size: 18px !important;
+          font-weight: 700 !important;
           margin-bottom: 12px;
-          color: ${COLORS.navy} !important;
+          color: #0f172a !important;
         }
 
         .promise-card p {
-          font-size: 13px !important;
-          line-height: 1.6 !important;
-          color: ${COLORS.slate} !important;
+          font-family: var(--sans), Inter, system-ui, sans-serif !important;
+          font-size: 14px !important;
+          line-height: 1.65 !important;
+          color: #64748b !important;
           font-weight: 400;
         }
 
@@ -268,11 +274,12 @@ export default function AboutPage() {
 
         .diff-card {
           padding: 36px 48px;
-          border-radius: 16px;
-          font-size: 14px !important;
-          line-height: 1.7 !important;
+          border-radius: 20px;
+          font-family: var(--sans), Inter, system-ui, sans-serif !important;
+          font-size: 15px !important;
+          line-height: 1.75 !important;
           text-align: left;
-          box-shadow: 0 10px 30px rgba(32, 58, 95, 0.04);
+          box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
         }
 
         .diff-card.green {
@@ -284,12 +291,12 @@ export default function AboutPage() {
         }
 
         .green-icon {
-          font-size: 36px;
+          font-size: 40px;
           flex-shrink: 0;
         }
 
         .diff-card.navy {
-          background: ${COLORS.navy};
+          background: #0f172a;
           color: white;
         }
 
@@ -300,13 +307,13 @@ export default function AboutPage() {
 
         .about-cta {
           padding: 80px 24px;
-          background: var(--bg-slate);
+          background: #f8fafc;
           text-align: center;
-          border-top: 1px solid var(--border-color);
+          border-top: 1px solid #e2e8f0;
         }
 
         .cta-content {
-          max-width: 600px;
+          max-width: 650px;
           margin: 0 auto;
           display: flex;
           flex-direction: column;
@@ -315,43 +322,44 @@ export default function AboutPage() {
         }
 
         .cta-title {
-          font-size: 26px !important;
-          font-weight: 600 !important;
-          color: ${COLORS.navy} !important;
-          letter-spacing: -0.015em !important;
-          line-height: 1.25 !important;
+          font-family: var(--sans), Inter, system-ui, sans-serif !important;
+          font-size: 30px !important;
+          font-weight: 800 !important;
+          color: #0f172a !important;
+          letter-spacing: -0.5px !important;
+          line-height: 1.3 !important;
         }
 
         .cta-desc {
-          font-size: 14px !important;
-          color: ${COLORS.slate} !important;
+          font-size: 15px !important;
+          color: #64748b !important;
           margin-bottom: 12px;
-          line-height: 1.5;
+          line-height: 1.6;
         }
 
         .premium-btn {
           display: inline-block;
-          background: var(--primary-navy);
+          background: #0f172a;
           color: white;
-          padding: 14px 36px;
-          border-radius: 6px;
-          font-size: 14px !important;
-          font-weight: 600 !important;
+          padding: 16px 40px;
+          border-radius: 10px;
+          font-size: 15px !important;
+          font-weight: 700 !important;
           text-decoration: none;
-          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-          box-shadow: 0 4px 12px rgba(32, 58, 95, 0.15);
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 16px rgba(15, 23, 42, 0.2);
           letter-spacing: 0.5px;
           text-transform: uppercase;
-          border: 2px solid var(--primary-navy);
+          border: 2px solid #0f172a;
           cursor: pointer;
         }
 
         .premium-btn:hover {
           background: white;
-          color: var(--primary-navy);
-          border-color: var(--primary-navy);
+          color: #0f172a;
+          border-color: #0f172a;
           transform: translateY(-2px);
-          box-shadow: 0 6px 18px rgba(32, 58, 95, 0.2);
+          box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
         }
 
         @media (max-width: 900px) {
