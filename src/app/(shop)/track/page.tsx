@@ -8,6 +8,25 @@ import { apiJson, API_BASE } from "@/lib/api";
 import GenericPage from "@/components/GenericPage";
 import { useApp } from "@/context/AppContext";
 
+function extractQueryParam(params: ReturnType<typeof useSearchParams>) {
+  if (!params) return "";
+  const targetKeys = ["order", "id", "tracking", "awb", "q", "order_id", "num"];
+  for (const k of targetKeys) {
+    const val = params.get(k) || params.get(` ${k}`) || params.get(`${k} `);
+    if (val && val.trim()) return val.trim();
+  }
+  for (const [key, val] of Array.from(params.entries())) {
+    const cleanKey = key.trim();
+    if (targetKeys.includes(cleanKey) || cleanKey.includes("order") || cleanKey.includes("track")) {
+      if (val && val.trim()) return val.trim();
+    }
+  }
+  for (const [, val] of Array.from(params.entries())) {
+    if (val && val.trim()) return val.trim();
+  }
+  return "";
+}
+
 function TrackContent() {
   useEffect(() => {
     document.title = "Track Your Order | Medvarn";
@@ -15,14 +34,15 @@ function TrackContent() {
 
   const { user, setIsAuthOpen } = useApp();
   const searchParams = useSearchParams();
-  const [orderNum, setOrderNum] = useState(searchParams.get("order") || "");
+  const initialNum = extractQueryParam(searchParams);
+  const [orderNum, setOrderNum] = useState(initialNum);
   const [tracking, setTracking] = useState<any>(null);
   const [orderData, setOrderData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const q = searchParams.get("order");
+    const q = extractQueryParam(searchParams);
     if (q) {
       setOrderNum(q);
       trackOrder(q);
