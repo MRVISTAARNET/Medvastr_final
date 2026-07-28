@@ -8181,7 +8181,7 @@ h1, h2, h3, h4 {
   max-width: 1440px;
   margin: 0 auto;
   padding: 0 28px;
-  height: 88px;
+  height: 92px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -8198,26 +8198,26 @@ h1, h2, h3, h4 {
 .hdr-nav-inline {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   flex-grow: 1;
-  padding: 0 16px;
+  padding-left: 28px;
 }
 
 .hdr-nav-inline .nav-in {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 28px;
 }
 
 .hdr-nav-inline .nl {
   font-family: var(--sans);
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-  color: #0b1a36;
-  text-transform: none;
+  font-size: 16.5px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: #071530;
+  text-transform: uppercase;
   padding: 8px 0;
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition: color 0.2s ease;
   white-space: nowrap;
 }
 
@@ -8246,7 +8246,7 @@ h1, h2, h3, h4 {
   border: none;
   padding: 8px 12px;
   border-radius: 10px;
-  color: #0b1a36;
+  color: #071530;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: var(--sans);
@@ -8271,8 +8271,11 @@ h1, h2, h3, h4 {
 @media (max-width: 1366px) {
   .hdr-row {
     padding: 0 20px;
-    height: 82px;
+    height: 86px;
     gap: 16px;
+  }
+  .hdr-nav-inline {
+    padding-left: 16px;
   }
   .hdr-nav-inline .nav-in {
     gap: 20px;
