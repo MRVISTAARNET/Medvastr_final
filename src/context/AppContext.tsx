@@ -490,6 +490,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const addToCart = useCallback(async (p: Product, ci = 0, sz = "M", qty = 1) => {
     dispatch({ type: "ADD", p, ci, sz, qty });
+    setIsCartOpen(true);
     toast("Added to bag!", "ok");
     const token = getToken();
     if (token) {

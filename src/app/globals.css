@@ -8200,13 +8200,24 @@ h1, h2, h3, h4 {
   align-items: center;
   justify-content: flex-start;
   flex-grow: 1;
-  padding-left: 56px;
+  padding-left: 76px;
 }
 
 .hdr-nav-inline .nav-in {
   display: flex;
   align-items: center;
   gap: 36px;
+}
+
+.hdr-nav-inline .nav-group {
+  position: relative;
+  padding-bottom: 6px;
+}
+
+.hdr-nav-inline .nav-group:hover .nav-sub {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .hdr-nav-inline .nl {

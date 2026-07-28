@@ -791,7 +791,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
                   // Create fly-to-cart particle animation
                   try {
-                    const cartIcon = document.querySelector('.cart-pill');
+                    const cartIcon = document.querySelector('.cart-act-item') || document.querySelector('.cart-icon-wrap') || document.querySelector('.cart-pill');
                     if (cartIcon && e.currentTarget) {
                       const btnRect = e.currentTarget.getBoundingClientRect();
                       const cartRect = cartIcon.getBoundingClientRect();
