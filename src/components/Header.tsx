@@ -140,33 +140,75 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
   return (
     <div id="hdr">
       <div className="hdr-row">
-        <div className="hdr-logo-area" style={{ display: "flex", alignItems: "center", gap: 30 }}>
+        {/* Left: Mobile Toggle & Brand Logo */}
+        <div className="hdr-logo-area">
           <button className="ha mob-only" onClick={() => setMn(true)}>
             ☰
           </button>
           <Link href="/" className="logo" style={{ display: "flex", alignItems: "center" }}>
-            <BrandLogo dark={false} height={68} />
+            <BrandLogo dark={false} height={64} />
           </Link>
         </div>
 
-        <div className={`srch-col${mS ? " mob-on" : ""}`}>
-          <div className="srch-box" style={{ position: "relative" }}>
+        {/* Middle: Desktop Inline Navigation */}
+        <div className="hdr-nav-inline mob-hide">
+          <DynamicNav
+            items={resolvedNav}
+            mobileOpen={mn}
+            onNavigate={() => setMn(false)}
+            mobileGroup={mo}
+            setMobileGroup={setMo}
+          />
+        </div>
+
+        {/* Right: Icon-Only Action Buttons */}
+        <div className="hdr-acts">
+          <button 
+            className="ha icon-btn" 
+            onClick={() => setMs(!mS)} 
+            title="Search"
+          >
+            🔍
+          </button>
+          
+          <button 
+            className="ha icon-btn" 
+            onClick={onAcct} 
+            title={user ? `Account (${user.firstName || "User"})` : "Account"}
+          >
+            👤
+          </button>
+
+          <button className="cart-pill-icon" onClick={onCart} title="Cart">
+            <span className="cart-ico">🛒</span>
+            {isHydrated ? <span className="cart-badge">{cc}</span> : <span className="cart-badge">0</span>}
+          </button>
+        </div>
+      </div>
+
+      {/* Slide-Down Animated Search Overlay */}
+      {mS && (
+        <div className="srch-overlay-bar">
+          <div className="srch-overlay-inner">
             <span className="srch-ico">🔍</span>
             <input
-              placeholder="Search scrubs, surgical wear, caps..."
+              autoFocus
+              placeholder="Search scrubs, surgical wear, caps, underscrubs..."
               value={q}
               onChange={(e) => {
                 setQ(e.target.value);
                 setSd(true);
               }}
-              onFocus={() => setSd(true)}
-              onBlur={() => setTimeout(() => setSd(false), 300)}
             />
             {q && (
               <span className="srch-clr" onClick={() => setQ("")}>
                 ✕
               </span>
             )}
+            <button className="srch-close-btn" onClick={() => setMs(false)}>
+              Close ✕
+            </button>
+
             {sd && q && (
               <div className="srch-drop" onMouseDown={(e) => e.preventDefault()}>
                 {res.length === 0 ? (
@@ -205,31 +247,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             )}
           </div>
         </div>
-
-        <div className="hdr-acts">
-          <button className="ha mob-only" onClick={() => setMs(!mS)}>
-            🔍
-          </button>
-          <button className="ha ha-user-btn" onClick={onAcct} title="Account" style={{ whiteSpace: 'nowrap', width: user ? 'auto' : '42px', padding: user ? '0 15px' : '0', borderRadius: user ? '999px' : '50%' }}>
-            {user ? (
-              <>
-                <span className="mob-hide" style={{ fontSize: 13, fontWeight: 700, color: "var(--t)" }}>
-                  Hello, {user.firstName || "Admin"}
-                </span>
-                <span className="mob-only" style={{ display: 'none' }}>
-                  👤
-                </span>
-              </>
-            ) : (
-              "👤"
-            )}
-          </button>
-
-          <button className="cart-pill" onClick={onCart}>
-            🛒 <span className="mob-hide">Cart</span> {isHydrated ? <span className="cart-n">{cc}</span> : <span className="cart-n">...</span>}
-          </button>
-        </div>
-      </div>
+      )}
 
       {/* Mobile Nav Drawer */}
       <div className={`mob-drawer-ov${mn ? " on" : ""}`} onClick={() => setMn(false)} />

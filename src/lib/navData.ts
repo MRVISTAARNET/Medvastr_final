@@ -77,34 +77,6 @@ export const HARDCODED_CATEGORIES: CategoryNode[] = [
 
 export const NAV_DATA: NavItem[] = [
     {
-        label: 'MEN',
-        href: '/products?gender=men',
-        type: 'MEGA_MENU',
-        children: [
-            {
-                title: 'SCRUB SUITS',
-                items: [
-                    { label: 'All Scrub Suits', href: '/products?cat=men-scrub-suit&gender=men' },
-                    { label: 'Flexi Fit V Scrub', href: '/products?cat=men-flexi-fit-v-scrub&gender=men' },
-                ]
-            },
-            {
-                title: 'UNDER SCRUBS & TOPS',
-                items: [
-                    { label: 'Full Sleeve Compression', href: '/products?cat=men-full-sleeve-compression-underscrub&gender=men' },
-                    { label: 'Cotton T-Shirt', href: '/products?cat=men-cotton-tshirt&gender=men' },
-                ]
-            },
-            {
-                title: 'SURGICAL & LAB',
-                items: [
-                    { label: 'Surgical Gown', href: '/products?cat=men-surgeon-gown&gender=men' },
-                    { label: 'Surgical Cap', href: '/products?cat=men-surgeon-cap&gender=men' },
-                ]
-            }
-        ]
-    },
-    {
         label: 'WOMEN',
         href: '/products?gender=women',
         type: 'MEGA_MENU',
@@ -128,6 +100,34 @@ export const NAV_DATA: NavItem[] = [
                 items: [
                     { label: 'Surgical Gown', href: '/products?cat=women-surgeon-gown&gender=women' },
                     { label: 'Surgical Cap', href: '/products?cat=women-surgeon-cap&gender=women' },
+                ]
+            }
+        ]
+    },
+    {
+        label: 'MEN',
+        href: '/products?gender=men',
+        type: 'MEGA_MENU',
+        children: [
+            {
+                title: 'SCRUB SUITS',
+                items: [
+                    { label: 'All Scrub Suits', href: '/products?cat=men-scrub-suit&gender=men' },
+                    { label: 'Flexi Fit V Scrub', href: '/products?cat=men-flexi-fit-v-scrub&gender=men' },
+                ]
+            },
+            {
+                title: 'UNDER SCRUBS & TOPS',
+                items: [
+                    { label: 'Full Sleeve Compression', href: '/products?cat=men-full-sleeve-compression-underscrub&gender=men' },
+                    { label: 'Cotton T-Shirt', href: '/products?cat=men-cotton-tshirt&gender=men' },
+                ]
+            },
+            {
+                title: 'SURGICAL & LAB',
+                items: [
+                    { label: 'Surgical Gown', href: '/products?cat=men-surgeon-gown&gender=men' },
+                    { label: 'Surgical Cap', href: '/products?cat=men-surgeon-cap&gender=men' },
                 ]
             }
         ]
@@ -163,7 +163,6 @@ export const NAV_DATA: NavItem[] = [
             }
         ]
     },
-    { label: 'ABOUT US', href: '/about', type: 'LINK' },
     { label: 'BLOGS', href: '/blog', type: 'LINK' },
     { label: 'CONTACT US', href: '/contact', type: 'LINK' },
 ];
