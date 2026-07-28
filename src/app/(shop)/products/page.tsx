@@ -391,7 +391,7 @@ function ProductsContent() {
   if (isSurgical) {
     if (isGownCat || isCapCat) {
       const lookupKey = `${genKey !== "all" ? genKey : "all"}-${isGownCat ? "gown" : "cap"}`;
-      staticBannerBase = surgicalBannerMap[lookupKey] ?? `${S3}/surgical-wear-banner`;
+      staticBannerBase = surgicalBannerMap[lookupKey] ?? (isGownCat ? `${S3}/men-surgical-gown-banner` : `${S3}/men-surgical-cap-banner`);
     } else if (genKey === "women") {
       staticBannerBase = `${S3}/women-surgical-wear-banner`;
     } else {
