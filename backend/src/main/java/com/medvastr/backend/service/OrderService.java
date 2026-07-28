@@ -63,7 +63,15 @@ public class OrderService {
     private final SmsService smsService;
 
     private User me() {
-        return userRepo.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow();
+        String principal = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (principal != null && principal.contains("@")) {
+            return userRepo.findByEmail(principal).orElseThrow(() -> new RuntimeException("User not found: " + principal));
+        } else if (principal != null && !principal.isBlank()) {
+            String cleanPhone = principal.replaceAll("[^0-9]", "");
+            String suffix = cleanPhone.length() > 10 ? cleanPhone.substring(cleanPhone.length() - 10) : cleanPhone;
+            return userRepo.findByPhoneSuffix(suffix).orElseThrow(() -> new RuntimeException("User not found for phone: " + principal));
+        }
+        throw new RuntimeException("Unauthenticated user context");
     }
 
     private void assertOrderOwner(Order order) {
@@ -295,7 +303,14 @@ public class OrderService {
     }
 
     public Page<OrderDTO> getMyOrders(Pageable p) {
-        return orderRepo.findByUserIdOrderByCreatedAtDesc(me().getId(), p).map(this::toDTO);
+        User user = me();
+        String email = user.getEmail();
+        String phone = user.getPhone();
+        String cleanPhone = phone != null ? phone.replaceAll("[^0-9]", "") : null;
+        if (cleanPhone != null && cleanPhone.length() > 10) {
+            cleanPhone = cleanPhone.substring(cleanPhone.length() - 10);
+        }
+        return orderRepo.findUserOrdersSmart(user.getId(), email, phone, cleanPhone, p).map(this::toDTO);
     }
 
     public OrderDTO getByNum(String num) {

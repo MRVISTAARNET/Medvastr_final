@@ -23,6 +23,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Page<Order> findByUserIdOrderByCreatedAtDesc(Long userId, Pageable p);
 
+    @Query("SELECT DISTINCT o FROM Order o WHERE (o.user IS NOT NULL AND o.user.id = :userId) " +
+           "OR (:email IS NOT NULL AND LOWER(o.userEmail) = LOWER(:email)) " +
+           "OR (:cleanPhone IS NOT NULL AND (o.shippingPhone = :phone OR o.shippingPhone = :cleanPhone OR o.shippingPhone LIKE CONCAT('%', :cleanPhone))) " +
+           "ORDER BY o.createdAt DESC")
+    Page<Order> findUserOrdersSmart(@Param("userId") Long userId,
+                                   @Param("email") String email,
+                                   @Param("phone") String phone,
+                                   @Param("cleanPhone") String cleanPhone,
+                                   Pageable p);
+
     Page<Order> findByStatusOrderByCreatedAtDesc(Order.OrderStatus s, Pageable p);
 
     Page<Order> findAllByOrderByCreatedAtDesc(Pageable p);
