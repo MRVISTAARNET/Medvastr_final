@@ -140,6 +140,8 @@ public class Order {
 
     private LocalDateTime deliveredAt;
 
+    private boolean dispatchedSmsSent;
+
     public enum OrderStatus {
         PENDING,
         CONFIRMED,

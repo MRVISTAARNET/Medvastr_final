@@ -70,6 +70,8 @@ public class SmsService {
         triggerOneApiFlow(otpFlowId, otpTemplateId, cleanPhone, variables);
     }
 
+    private final com.medvastr.backend.repository.OrderRepository orderRepo;
+
     @Async
     public void sendOrderSms(Order order, String templateType) {
         if (!enabled) {
@@ -99,6 +101,17 @@ public class SmsService {
             variables.put("OrderID", order.getOrderNumber());
             variables.put("number", order.getTotalAmount().toString());
         } else if ("DISPATCHED".equalsIgnoreCase(templateType)) {
+            if (order.isDispatchedSmsSent()) {
+                log.info("[SMS] Order {} DISPATCHED SMS already sent previously. Skipping duplicate notification.", order.getOrderNumber());
+                return;
+            }
+            order.setDispatchedSmsSent(true);
+            try {
+                orderRepo.save(order);
+            } catch (Exception e) {
+                log.warn("[SMS] Could not persist dispatchedSmsSent flag: {}", e.getMessage());
+            }
+
             flowId = orderDispatchedFlowId;
             templateId = orderDispatchedTemplateId;
             variables.put("ORDERID", order.getOrderNumber());
