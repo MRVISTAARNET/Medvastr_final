@@ -26,7 +26,7 @@ const MENU_COLORS = [
 
 export default function MegaMenu({ items, label, onNavigate }: MegaMenuProps) {
   return (
-    <div className="mega">
+    <div className="mega-container">
       <div className="mega-in" style={{ gridTemplateColumns: `repeat(${items.length + 1}, 1fr)` }}>
         {items.map((col, idx) => (
           <div key={idx} className="mcol">

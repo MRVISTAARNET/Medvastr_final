@@ -681,64 +681,7 @@ p {
   transform: translateY(0);
 }
 
-/* ============================================================
-   MEGA MENU — Premium redesign matching reference
-   ============================================================ */
-.mega {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: #ffffff;
-  border-top: 3px solid #0f172a;
-  border-bottom: 1px solid #e8ecf0;
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.14);
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transform: translateY(-8px);
-  transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s;
-}
-
-.nav-group:hover .mega,
-.mega:hover {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: all;
-  transform: translateY(0);
-}
-
-.nav-in.hover-off .mega {
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-  transform: translateY(-8px) !important;
-  transition: none !important;
-}
-
-/* Top quick-links bar — hidden in new layout */
-.mega-top-bar {
-  display: none;
-}
-
-/* Mega inner grid */
-.mega-in {
-  max-width: 1300px;
-  margin: 0 auto;
-  padding: 0 40px;
-  display: grid;
-  grid-template-columns: 220px 200px 180px 180px 280px;
-  justify-content: space-between;
-  gap: 0;
-  min-height: 320px;
-}
-
-/* Column */
-.mcol {
-  padding: 28px 24px;
-  border-right: 1px solid #f0f3f7;
-}
+/* Legacy mega menu styles removed - handled by MegaMenu component & header nav-sub */
 
 .mcol:first-child {
   padding-left: 0;
@@ -8186,6 +8129,7 @@ h1, h2, h3, h4 {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
+  position: relative;
 }
 
 .hdr-logo-area {
@@ -8197,6 +8141,7 @@ h1, h2, h3, h4 {
 }
 
 .hdr-nav-inline {
+  position: static;
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -8205,6 +8150,7 @@ h1, h2, h3, h4 {
 }
 
 .hdr-nav-inline .nav-in {
+  position: static;
   display: flex;
   align-items: center;
   gap: 36px;
@@ -8212,7 +8158,7 @@ h1, h2, h3, h4 {
 }
 
 .hdr-nav-inline .nav-group {
-  position: relative;
+  position: static;
   display: flex;
   align-items: center;
   height: 84px;
@@ -8222,29 +8168,17 @@ h1, h2, h3, h4 {
   display: none;
   position: absolute;
   top: 100%;
-  left: 0;
-  width: 940px;
-  max-width: 90vw;
+  left: 36px;
+  right: 36px;
+  width: auto;
+  max-width: 1368px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1);
-  padding: 28px 32px;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 20px 50px rgba(15, 32, 68, 0.12);
+  padding: 32px 40px;
   z-index: 1200;
   margin-top: 0px;
-}
-
-/* Adjust dropdown width & position for surgical wear & bulk orders */
-.hdr-nav-inline .nav-group:nth-child(3) .nav-sub {
-  left: auto;
-  right: -80px;
-  width: 560px;
-}
-
-.hdr-nav-inline .nav-group:nth-child(4) .nav-sub {
-  left: auto;
-  right: 0;
-  width: 560px;
 }
 
 .hdr-nav-inline .nav-group:hover .nav-sub {
