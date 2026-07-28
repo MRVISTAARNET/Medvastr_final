@@ -146,7 +146,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             ☰
           </button>
           <Link href="/" className="logo" style={{ display: "flex", alignItems: "center" }}>
-            <BrandLogo dark={false} height={64} />
+            <BrandLogo dark={false} height={48} />
           </Link>
         </div>
 

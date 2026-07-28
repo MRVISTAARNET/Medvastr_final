@@ -77,7 +77,7 @@ export const HARDCODED_CATEGORIES: CategoryNode[] = [
 
 export const NAV_DATA: NavItem[] = [
     {
-        label: 'WOMEN',
+        label: 'Women',
         href: '/products?gender=women',
         type: 'MEGA_MENU',
         children: [
@@ -105,7 +105,7 @@ export const NAV_DATA: NavItem[] = [
         ]
     },
     {
-        label: 'MEN',
+        label: 'Men',
         href: '/products?gender=men',
         type: 'MEGA_MENU',
         children: [
@@ -133,7 +133,7 @@ export const NAV_DATA: NavItem[] = [
         ]
     },
     {
-        label: 'SURGICAL WEAR',
+        label: 'Surgical Wear',
         href: '/products?cat=surgical-wear',
         type: 'MEGA_MENU',
         children: [
@@ -147,7 +147,7 @@ export const NAV_DATA: NavItem[] = [
         ]
     },
     {
-        label: 'BULK ORDERS',
+        label: 'Bulk Orders',
         href: '/bulk-orders',
         type: 'MEGA_MENU',
         children: [
@@ -163,7 +163,7 @@ export const NAV_DATA: NavItem[] = [
             }
         ]
     },
-    { label: 'ABOUT US', href: '/about', type: 'LINK' },
-    { label: 'BLOGS', href: '/blog', type: 'LINK' },
-    { label: 'CONTACT US', href: '/contact', type: 'LINK' },
+    { label: 'About Us', href: '/about', type: 'LINK' },
+    { label: 'Blogs', href: '/blog', type: 'LINK' },
+    { label: 'Contact Us', href: '/contact', type: 'LINK' },
 ];
