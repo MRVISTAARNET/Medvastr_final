@@ -21,22 +21,17 @@ export default function DynamicNav({
   setMobileGroup,
 }: DynamicNavProps) {
   const [localGroup, setLocalGroup] = useState<string | null>(null);
-  const [hoverOff, setHoverOff] = useState(false);
   const mo = mobileGroup ?? localGroup;
   const setMo = setMobileGroup ?? setLocalGroup;
 
   const close = () => onNavigate?.();
 
   const handleNavigate = () => {
-    setHoverOff(true);
     close();
   };
 
   return (
-    <div 
-      className={`nav-in ${hoverOff ? "hover-off" : ""}`}
-      onMouseLeave={() => setHoverOff(false)}
-    >
+    <div className="nav-in">
       {items.map((item) => {
         const key = item.label;
         const isMega = item.type === "MEGA_MENU" && item.children && item.children.length > 0;
@@ -46,7 +41,6 @@ export default function DynamicNav({
             <div 
               key={key} 
               className={`nav-group${mo === key ? " mob-open" : ""}`}
-              onMouseEnter={() => setHoverOff(false)}
             >
               <Link
                 href={item.href}
@@ -64,7 +58,8 @@ export default function DynamicNav({
                   }
                 }}
               >
-                {item.label} <span className="nav-arrow">▾</span>
+                <span>{item.label}</span>
+                <span className="nav-arrow">▾</span>
               </Link>
               <div className="nav-sub">
                 <MegaMenu
@@ -83,9 +78,8 @@ export default function DynamicNav({
             href={item.href}
             className="nl"
             onClick={handleNavigate}
-            onMouseEnter={() => setHoverOff(false)}
           >
-            {item.label}
+            <span>{item.label}</span>
           </Link>
         );
       })}

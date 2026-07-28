@@ -8212,7 +8212,29 @@ h1, h2, h3, h4 {
 
 .hdr-nav-inline .nav-group {
   position: relative;
-  padding-bottom: 6px;
+  padding-bottom: 12px;
+}
+
+.hdr-nav-inline .nav-sub {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 860px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+  padding: 24px;
+  z-index: 1200;
+  margin-top: 0px;
+}
+
+/* Adjust dropdown position for items on the right side */
+.hdr-nav-inline .nav-group:nth-child(3) .nav-sub,
+.hdr-nav-inline .nav-group:nth-child(4) .nav-sub {
+  left: auto;
+  right: 0;
 }
 
 .hdr-nav-inline .nav-group:hover .nav-sub {
@@ -8231,6 +8253,23 @@ h1, h2, h3, h4 {
   padding: 8px 0;
   transition: color 0.2s ease;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 40px;
+  line-height: 1;
+}
+
+.hdr-nav-inline .nl span {
+  display: inline-block;
+  line-height: 1;
+}
+
+.hdr-nav-inline .nav-arrow {
+  font-size: 11px;
+  line-height: 1;
+  display: inline-block;
+  margin-left: 1px;
 }
 
 .hdr-nav-inline .nl:hover {
