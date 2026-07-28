@@ -8234,70 +8234,64 @@ h1, h2, h3, h4 {
 .hdr-acts {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
   flex-shrink: 0;
 }
 
-.icon-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+.hdr-act-item {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  font-size: 18px;
+  gap: 7px;
+  background: transparent;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
   color: #0f2044;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-family: var(--sans);
 }
 
-.icon-btn:hover {
-  background: #0f2044;
-  color: #ffffff;
-  border-color: #0f2044;
+.hdr-act-item:hover {
+  background: #f1f5f9;
+  color: #10599a;
 }
 
-.cart-pill-icon {
+.hdr-act-icon {
+  stroke: currentColor;
+  flex-shrink: 0;
+}
+
+.hdr-act-lbl {
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.cart-icon-wrap {
   position: relative;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #0f2044;
-  color: #ffffff;
-  border: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease;
 }
 
-.cart-pill-icon:hover {
-  background: #10599a;
-  transform: scale(1.04);
-}
-
-.cart-ico {
-  font-size: 18px;
-}
-
-.cart-badge {
+.cart-badge-dot {
   position: absolute;
-  top: -4px;
-  right: -4px;
+  top: -7px;
+  right: -9px;
   background: #ef4444;
   color: #ffffff;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 800;
-  width: 20px;
-  height: 20px;
+  min-width: 17px;
+  height: 17px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #ffffff;
+  padding: 0 4px;
+  border: 1.5px solid #ffffff;
+  line-height: 1;
 }
 
 /* Animated Slide-Down Search Overlay */

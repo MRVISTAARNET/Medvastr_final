@@ -163,6 +163,7 @@ export const NAV_DATA: NavItem[] = [
             }
         ]
     },
+    { label: 'ABOUT US', href: '/about', type: 'LINK' },
     { label: 'BLOGS', href: '/blog', type: 'LINK' },
     { label: 'CONTACT US', href: '/contact', type: 'LINK' },
 ];

@@ -161,27 +161,47 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
           />
         </div>
 
-        {/* Right: Icon-Only Action Buttons */}
+        {/* Right: Premium Icon + Label Action Items */}
         <div className="hdr-acts">
+          {/* Search Button */}
           <button 
-            className="ha icon-btn" 
+            className="hdr-act-item" 
             onClick={() => setMs(!mS)} 
             title="Search"
           >
-            🔍
+            <svg className="hdr-act-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span className="hdr-act-lbl mob-hide">Search</span>
           </button>
           
+          {/* Account / Login Button */}
           <button 
-            className="ha icon-btn" 
+            className="hdr-act-item" 
             onClick={onAcct} 
-            title={user ? `Account (${user.firstName || "User"})` : "Account"}
+            title={user ? `Account (${user.firstName || "User"})` : "Login"}
           >
-            👤
+            <svg className="hdr-act-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span className="hdr-act-lbl mob-hide">
+              {user ? (user.firstName || "Account") : "Login"}
+            </span>
           </button>
 
-          <button className="cart-pill-icon" onClick={onCart} title="Cart">
-            <span className="cart-ico">🛒</span>
-            {isHydrated ? <span className="cart-badge">{cc}</span> : <span className="cart-badge">0</span>}
+          {/* Cart Button */}
+          <button className="hdr-act-item cart-act-item" onClick={onCart} title="Cart">
+            <div className="cart-icon-wrap">
+              <svg className="hdr-act-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+              </svg>
+              {isHydrated && cc > 0 && <span className="cart-badge-dot">{cc}</span>}
+            </div>
+            <span className="hdr-act-lbl mob-hide">Cart</span>
           </button>
         </div>
       </div>
