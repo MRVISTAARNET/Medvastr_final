@@ -384,6 +384,7 @@ function SmartAboutBanner() {
     "https://d2tnzshqdaedbc.cloudfront.net/about-desktop.webp"
   ];
   const mobCandidates = [
+    "https://d2tnzshqdaedbc.cloudfront.net/about-desktop-mob.jpg",
     "https://d2tnzshqdaedbc.cloudfront.net/about-mobile.jpg",
     "https://d2tnzshqdaedbc.cloudfront.net/about-us-mobile.jpg",
     "https://d2tnzshqdaedbc.cloudfront.net/about-us-mob.jpg",

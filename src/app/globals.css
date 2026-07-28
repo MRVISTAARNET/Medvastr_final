@@ -8208,11 +8208,14 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   gap: 36px;
+  height: 84px;
 }
 
 .hdr-nav-inline .nav-group {
   position: relative;
-  padding-bottom: 12px;
+  display: flex;
+  align-items: center;
+  height: 84px;
 }
 
 .hdr-nav-inline .nav-sub {
@@ -8220,12 +8223,13 @@ h1, h2, h3, h4 {
   position: absolute;
   top: 100%;
   left: 0;
-  min-width: 860px;
+  min-width: 840px;
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
-  padding: 24px;
+  border-top: 3px solid #0f2044;
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 20px 50px rgba(15, 32, 68, 0.12);
+  padding: 24px 28px;
   z-index: 1200;
   margin-top: 0px;
 }
@@ -8250,13 +8254,12 @@ h1, h2, h3, h4 {
   letter-spacing: 0.06em;
   color: #0f2044;
   text-transform: uppercase;
-  padding: 8px 0;
+  padding: 0;
   transition: color 0.2s ease;
   white-space: nowrap;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 4px;
-  height: 40px;
+  height: 84px;
   line-height: 1;
 }
 
@@ -8266,10 +8269,11 @@ h1, h2, h3, h4 {
 }
 
 .hdr-nav-inline .nav-arrow {
-  font-size: 11px;
+  font-size: 10px;
   line-height: 1;
   display: inline-block;
-  margin-left: 1px;
+  margin-left: 3px;
+  transform: translateY(-0.5px);
 }
 
 .hdr-nav-inline .nl:hover {
