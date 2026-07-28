@@ -90,15 +90,31 @@ export default function MegaMenu({ items, label, onNavigate }: MegaMenuProps) {
       </div>
 
       <style jsx>{`
+        .mega-in {
+          display: grid;
+          gap: 28px;
+        }
+        .mcol {
+          padding-right: 24px;
+          border-right: 1px solid #f1f5f9;
+        }
+        .mcol-hd {
+          font-size: 12px !important;
+          font-weight: 750 !important;
+          color: #008080 !important;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          margin-bottom: 16px;
+        }
         .m-deep-list { list-style: none; padding: 0; margin: 0; }
-        .m-parent-li { margin-bottom: 8px; }
-        .m-sub-a { font-size: 13px !important; color: #64748b !important; font-weight: 500 !important; transition: all 0.2s; text-decoration: none; display: block; }
+        .m-parent-li { margin-bottom: 10px; }
+        .m-sub-a { font-size: 13.5px !important; color: #475569 !important; font-weight: 500 !important; transition: all 0.2s; text-decoration: none; display: block; }
         .m-sub-a:hover { color: #008080 !important; padding-left: 4px; }
         
         .m-clr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
-        .m-clr-card { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px; border: 1px solid #f1f5f9; border-radius: 8px; text-decoration: none; transition: background 0.2s; }
+        .m-clr-card { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 8px; border: 1px solid #f1f5f9; border-radius: 8px; text-decoration: none; transition: background 0.2s; }
         .m-clr-card:hover { background: #f8fafc; border-color: #e2e8f0; }
-        .m-clr-dot { width: 26px; height: 26px; border-radius: 50%; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+        .m-clr-dot { width: 24px; height: 24px; border-radius: 50%; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
         .m-clr-nm { font-size: 10px; font-weight: 700; color: #1e293b; text-align: center; }
 
         .m-desc-box { font-size: 13px; line-height: 1.6; color: #64748b; margin-top: 5px; }

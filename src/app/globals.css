@@ -8223,22 +8223,28 @@ h1, h2, h3, h4 {
   position: absolute;
   top: 100%;
   left: 0;
-  min-width: 840px;
+  width: 940px;
+  max-width: 90vw;
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-top: 3px solid #0f2044;
-  border-radius: 0 0 16px 16px;
-  box-shadow: 0 20px 50px rgba(15, 32, 68, 0.12);
-  padding: 24px 28px;
+  border-radius: 12px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1);
+  padding: 28px 32px;
   z-index: 1200;
   margin-top: 0px;
 }
 
-/* Adjust dropdown position for items on the right side */
-.hdr-nav-inline .nav-group:nth-child(3) .nav-sub,
+/* Adjust dropdown width & position for surgical wear & bulk orders */
+.hdr-nav-inline .nav-group:nth-child(3) .nav-sub {
+  left: auto;
+  right: -80px;
+  width: 560px;
+}
+
 .hdr-nav-inline .nav-group:nth-child(4) .nav-sub {
   left: auto;
   right: 0;
+  width: 560px;
 }
 
 .hdr-nav-inline .nav-group:hover .nav-sub {
