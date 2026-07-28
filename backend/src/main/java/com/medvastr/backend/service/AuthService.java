@@ -29,6 +29,7 @@ import java.util.Base64;
 public class AuthService {
 
     private final UserRepository userRepo;
+    private final com.medvastr.backend.repository.OrderRepository orderRepo;
     private final PasswordEncoder encoder;
     private final JwtUtils jwt;
     private final AuthenticationManager authManager;
@@ -84,7 +85,32 @@ public class AuthService {
                     ? cleanPhone.substring(cleanPhone.length() - 10) 
                     : cleanPhone;
             u = userRepo.findByPhoneSuffix(suffix)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+                    .orElseGet(() -> {
+                        // Check if an existing User account has an order with this phone
+                        var matchingOrders = orderRepo.findRecentWithUserByPhoneSuffix(suffix);
+                        if (!matchingOrders.isEmpty()) {
+                            User primaryUser = matchingOrders.get(0).getUser();
+                            if (primaryUser != null) {
+                                if (primaryUser.getPhone() == null || primaryUser.getPhone().isBlank()) {
+                                    primaryUser.setPhone(cleanPhone);
+                                    userRepo.save(primaryUser);
+                                }
+                                log.info("[AuthService] Linked OTP phone {} to primary email account {}", cleanPhone, primaryUser.getEmail());
+                                return primaryUser;
+                            }
+                        }
+                        
+                        // Create user if no existing user found
+                        User newUser = User.builder()
+                                .firstName("User")
+                                .lastName("User")
+                                .phone(cleanPhone)
+                                .emailVerified(true)
+                                .active(true)
+                                .password(encoder.encode(java.util.UUID.randomUUID().toString()))
+                                .build();
+                        return userRepo.save(newUser);
+                    });
         }
         
         if (!u.isEmailVerified()) {

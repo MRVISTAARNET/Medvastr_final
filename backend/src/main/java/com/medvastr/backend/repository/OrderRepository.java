@@ -33,6 +33,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                                    @Param("cleanPhone") String cleanPhone,
                                    Pageable p);
 
+    @Query("SELECT o FROM Order o WHERE (o.shippingPhone = :suffix OR o.shippingPhone LIKE CONCAT('%', :suffix)) AND o.user IS NOT NULL ORDER BY o.createdAt DESC")
+    List<Order> findRecentWithUserByPhoneSuffix(@Param("suffix") String suffix);
+
     Page<Order> findByStatusOrderByCreatedAtDesc(Order.OrderStatus s, Pageable p);
 
     Page<Order> findAllByOrderByCreatedAtDesc(Pageable p);

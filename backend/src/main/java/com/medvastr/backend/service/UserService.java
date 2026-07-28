@@ -16,6 +16,7 @@ import com.medvastr.backend.repository.ProductRepository;
 import com.medvastr.backend.repository.UserRepository;
 import com.medvastr.backend.repository.WishlistItemRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class UserService {
     private final UserRepository userRepo;
     private final PasswordEncoder encoder;
@@ -69,18 +71,39 @@ public class UserService {
         
         if (r.getEmail() != null && !r.getEmail().trim().isEmpty() && !r.getEmail().equalsIgnoreCase(u.getEmail())) {
             String newEmail = r.getEmail().trim().toLowerCase();
-            if (userRepo.existsByEmail(newEmail)) {
-                throw new RuntimeException("Email address is already in use by another account.");
+            var existingOpt = userRepo.findByEmail(newEmail);
+            if (existingOpt.isPresent()) {
+                User existingUser = existingOpt.get();
+                if (!existingUser.getId().equals(u.getId())) {
+                    if (u.getPhone() != null && !u.getPhone().isBlank()) {
+                        existingUser.setPhone(u.getPhone());
+                    }
+                    if (r.getFirstName() != null && !r.getFirstName().isBlank() && "User".equalsIgnoreCase(existingUser.getFirstName())) {
+                        existingUser.setFirstName(r.getFirstName());
+                    }
+                    if (r.getLastName() != null && !r.getLastName().isBlank() && "User".equalsIgnoreCase(existingUser.getLastName())) {
+                        existingUser.setLastName(r.getLastName());
+                    }
+                    userRepo.save(existingUser);
+                    log.info("[UserService] Seamlessly merged user {} into existing email account {}", u.getId(), newEmail);
+                    String token = jwt.generate(existingUser.getEmail());
+                    return AuthResponse.builder()
+                            .token(token)
+                            .user(authService.toDTO(existingUser))
+                            .build();
+                }
+            } else {
+                u.setEmail(newEmail);
             }
-            u.setEmail(newEmail);
         }
         
-        u.setFirstName(r.getFirstName());
-        u.setLastName(r.getLastName());
-        u.setPhone(r.getPhone());
+        if (r.getFirstName() != null && !r.getFirstName().isBlank()) u.setFirstName(r.getFirstName());
+        if (r.getLastName() != null && !r.getLastName().isBlank()) u.setLastName(r.getLastName());
+        if (r.getPhone() != null && !r.getPhone().isBlank()) u.setPhone(r.getPhone());
         userRepo.save(u);
         
-        String token = jwt.generate(u.getEmail());
+        String subject = (u.getEmail() != null && !u.getEmail().isBlank()) ? u.getEmail() : u.getPhone();
+        String token = jwt.generate(subject);
         return AuthResponse.builder()
                 .token(token)
                 .user(authService.toDTO(u))
