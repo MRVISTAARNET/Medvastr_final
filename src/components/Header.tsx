@@ -146,7 +146,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             ☰
           </button>
           <Link href="/" className="logo" style={{ display: "flex", alignItems: "center" }}>
-            <BrandLogo dark={false} height={48} />
+            <BrandLogo dark={false} height={66} />
           </Link>
         </div>
 
@@ -169,7 +169,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             onClick={() => setMs(!mS)} 
             title="Search"
           >
-            <svg className="hdr-act-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="hdr-act-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
@@ -182,7 +182,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             onClick={onAcct} 
             title={user ? `Account (${user.firstName || "User"})` : "Login"}
           >
-            <svg className="hdr-act-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="hdr-act-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
               <circle cx="12" cy="7" r="4"></circle>
             </svg>
@@ -194,7 +194,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
           {/* Cart Button */}
           <button className="hdr-act-item cart-act-item" onClick={onCart} title="Cart">
             <div className="cart-icon-wrap">
-              <svg className="hdr-act-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <svg className="hdr-act-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="9" cy="21" r="1"></circle>
                 <circle cx="20" cy="21" r="1"></circle>
                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
