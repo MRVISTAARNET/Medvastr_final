@@ -85,7 +85,7 @@ export default function BulkOrderPage() {
   return (
     <div className="bulk-page">
       {/* ── HERO BANNER ── */}
-      <SmartBanner base="/bulk-order-banner" title="Bulk Orders for Healthcare" />
+      <SmartBanner base="https://d2tnzshqdaedbc.cloudfront.net/bulk-order-banner" title="Bulk Orders for Healthcare" />
 
       <div className="bulk-inner">
 

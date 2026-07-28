@@ -21,14 +21,14 @@ export default function AboutPage() {
       <section className="about-hero">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/about-desktop.jpg"
+          src="https://d2tnzshqdaedbc.cloudfront.net/about-desktop.jpg"
           alt="About Medvarn Desktop"
           className="hero-image-desktop"
           style={{ width: "100%", height: "auto", display: "block" }}
         />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/about-mobile.jpg"
+          src="https://d2tnzshqdaedbc.cloudfront.net/about-mobile.jpg"
           alt="About Medvarn Mobile"
           className="hero-image-mobile"
           style={{ width: "100%", height: "auto", display: "block" }}
