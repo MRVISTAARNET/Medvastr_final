@@ -17,23 +17,8 @@ export default function AboutPage() {
 
   return (
     <div className="about-page">
-      {/* 1. HERO BANNER */}
-      <section className="about-hero">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="https://d2tnzshqdaedbc.cloudfront.net/about-desktop.jpg"
-          alt="About Medvarn Desktop"
-          className="hero-image-desktop"
-          style={{ width: "100%", height: "auto", display: "block" }}
-        />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="https://d2tnzshqdaedbc.cloudfront.net/about-mobile.jpg"
-          alt="About Medvarn Mobile"
-          className="hero-image-mobile"
-          style={{ width: "100%", height: "auto", display: "block" }}
-        />
-      </section>
+      {/* 1. HERO BANNER WITH SMART FALLBACK */}
+      <SmartAboutBanner />
 
       {/* 2. MAIN CONTENT */}
       <section className="about-main">
@@ -385,5 +370,54 @@ export default function AboutPage() {
         }
       `}</style>
     </div>
+  );
+}
+
+function SmartAboutBanner() {
+  const deskCandidates = [
+    "https://d2tnzshqdaedbc.cloudfront.net/about-desktop.jpg",
+    "https://d2tnzshqdaedbc.cloudfront.net/about-us-desktop.jpg",
+    "https://d2tnzshqdaedbc.cloudfront.net/about-banner.jpg",
+    "https://d2tnzshqdaedbc.cloudfront.net/about-us.jpg",
+    "https://d2tnzshqdaedbc.cloudfront.net/about-desktop.png",
+    "https://d2tnzshqdaedbc.cloudfront.net/about-us.png",
+    "https://d2tnzshqdaedbc.cloudfront.net/about-desktop.webp"
+  ];
+  const mobCandidates = [
+    "https://d2tnzshqdaedbc.cloudfront.net/about-mobile.jpg",
+    "https://d2tnzshqdaedbc.cloudfront.net/about-us-mobile.jpg",
+    "https://d2tnzshqdaedbc.cloudfront.net/about-us-mob.jpg",
+    "https://d2tnzshqdaedbc.cloudfront.net/about-banner-mob.jpg",
+    "https://d2tnzshqdaedbc.cloudfront.net/about-mobile.png",
+    "https://d2tnzshqdaedbc.cloudfront.net/about-us-mob.png",
+    "https://d2tnzshqdaedbc.cloudfront.net/about-mobile.webp"
+  ];
+
+  const [deskIdx, setDeskIdx] = React.useState(0);
+  const [mobIdx, setMobIdx] = React.useState(0);
+
+  return (
+    <section className="about-hero" style={{ width: "100%", overflow: "hidden" }}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={deskCandidates[deskIdx] || deskCandidates[0]}
+        alt="About Medvarn Desktop"
+        className="hero-image-desktop"
+        onError={() => {
+          if (deskIdx < deskCandidates.length - 1) setDeskIdx(deskIdx + 1);
+        }}
+        style={{ width: "100%", height: "auto", display: "block" }}
+      />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={mobCandidates[mobIdx] || mobCandidates[0]}
+        alt="About Medvarn Mobile"
+        className="hero-image-mobile"
+        onError={() => {
+          if (mobIdx < mobCandidates.length - 1) setMobIdx(mobIdx + 1);
+        }}
+        style={{ width: "100%", height: "auto", display: "block" }}
+      />
+    </section>
   );
 }
