@@ -8198,20 +8198,22 @@ h1, h2, h3, h4 {
 .hdr-nav-inline {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   flex-grow: 1;
+  padding-left: 12px;
 }
 
 .hdr-nav-inline .nav-in {
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 28px;
 }
 
 .hdr-nav-inline .nl {
   font-family: var(--sans);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   color: #0f2044;
   text-transform: uppercase;
   padding: 8px 0;
@@ -8220,7 +8222,13 @@ h1, h2, h3, h4 {
 }
 
 .hdr-nav-inline .nl:hover {
-  color: var(--secondary-blue, #10599a);
+  color: #10599a;
+}
+
+@media (min-width: 1025px) {
+  #nav {
+    display: none !important;
+  }
 }
 
 .hdr-acts {
