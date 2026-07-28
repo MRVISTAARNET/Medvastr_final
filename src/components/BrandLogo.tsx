@@ -3,10 +3,9 @@ import React from "react";
 interface BrandLogoProps {
   dark?: boolean; // true for dark background (Footer), false for light background (Header)
   height?: number;
-  noMargin?: boolean;
 }
 
-export default function BrandLogo({ dark = false, height, noMargin = false }: BrandLogoProps) {
+export default function BrandLogo({ dark = false, height }: BrandLogoProps) {
   if (dark) {
     const finalHeight = height || 64;
     return (
@@ -15,10 +14,10 @@ export default function BrandLogo({ dark = false, height, noMargin = false }: Br
           display: "inline-flex",
           alignItems: "center",
           background: "#ffffff",
-          padding: "8px 18px",
+          padding: "10px 22px",
           borderRadius: "12px",
-          boxShadow: "0 4px 16px rgba(0,0,0,0.25)",
-          marginBottom: noMargin ? "0px" : "18px",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+          marginBottom: "18px",
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}

@@ -8172,9 +8172,9 @@ h1, h2, h3, h4 {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: #0f2044;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  background: #ffffff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
 }
 
 .hdr-row {
@@ -8211,18 +8211,18 @@ h1, h2, h3, h4 {
 
 .hdr-nav-inline .nl {
   font-family: var(--sans);
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  color: #ffffff;
-  text-transform: none;
+  font-size: 14.5px;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  color: #0f2044;
+  text-transform: uppercase;
   padding: 8px 0;
-  transition: color 0.2s ease, opacity 0.2s ease;
+  transition: color 0.2s ease;
   white-space: nowrap;
 }
 
 .hdr-nav-inline .nl:hover {
-  color: #93c5fd;
+  color: #10599a;
 }
 
 @media (min-width: 1025px) {
@@ -8246,15 +8246,15 @@ h1, h2, h3, h4 {
   border: none;
   padding: 8px 12px;
   border-radius: 10px;
-  color: #ffffff;
+  color: #0f2044;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: var(--sans);
 }
 
 .hdr-act-item:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: #93c5fd;
+  background: #f1f5f9;
+  color: #10599a;
 }
 
 .hdr-act-icon {
@@ -8263,9 +8263,9 @@ h1, h2, h3, h4 {
 }
 
 .hdr-act-lbl {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
+  font-size: 14.5px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
 }
 
 @media (max-width: 1366px) {
@@ -8281,7 +8281,8 @@ h1, h2, h3, h4 {
     gap: 24px;
   }
   .hdr-nav-inline .nl {
-    font-size: 14.5px;
+    font-size: 13.5px;
+    letter-spacing: 0.04em;
   }
   .hdr-act-item {
     padding: 6px 8px;
