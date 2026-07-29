@@ -645,10 +645,15 @@ public class ShiprocketService {
         } else if (s.contains("out for delivery") || s.contains("out_for_delivery")) {
             order.setStatus(Order.OrderStatus.OUT_FOR_DELIVERY);
 
-        // ── DELIVERED ─────────────────────────────────────────────────────
-        } else if (s.contains("delivered") && !s.contains("undelivered") && !s.contains("rto")) {
+        // ── DELIVERED / PAID ──────────────────────────────────────────────
+        } else if ((s.contains("delivered") || s.contains("paid")) && !s.contains("undelivered") && !s.contains("rto")) {
             order.setStatus(Order.OrderStatus.DELIVERED);
-            order.setDeliveredAt(java.time.LocalDateTime.now());
+            if (order.getDeliveredAt() == null) {
+                order.setDeliveredAt(java.time.LocalDateTime.now());
+            }
+            if (order.getPaymentMethod() == Order.PaymentMethod.COD) {
+                order.setPaymentStatus(Order.PaymentStatus.PAID);
+            }
 
         // ── RETURNED / RTO ────────────────────────────────────────────────
         } else if (s.contains("rto") || s.contains("return") || s.contains("returned")) {
