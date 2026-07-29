@@ -1,12 +1,11 @@
-/** Live production API (Elastic Beanstalk). Override via Amplify env if needed. */
 export const API_BASE =
   process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
-  "https://api.medvastr.com/api";
+  "https://api.medvarn.com/api";
 
 export const API_ORIGIN = API_BASE.replace(/\/api\/?$/, "");
 
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://www.medvastr.com";
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://www.medvarn.com";
 
 /** Set NEXT_PUBLIC_RAZORPAY_KEY in production (Razorpay dashboard). */
 export const RAZORPAY_KEY = process.env.NEXT_PUBLIC_RAZORPAY_KEY || "";

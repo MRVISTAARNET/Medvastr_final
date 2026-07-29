@@ -102,7 +102,8 @@ public class SmsService {
             variables.put("number", order.getTotalAmount().toString());
         } else if ("DISPATCHED".equalsIgnoreCase(templateType)) {
             if (order.isDispatchedSmsSent()) {
-                log.info("[SMS] Order {} DISPATCHED SMS already sent previously. Skipping duplicate notification.", order.getOrderNumber());
+                log.info("[SMS] Order {} DISPATCHED SMS already sent previously. Skipping duplicate notification.",
+                        order.getOrderNumber());
                 return;
             }
             order.setDispatchedSmsSent(true);
@@ -115,7 +116,8 @@ public class SmsService {
             flowId = orderDispatchedFlowId;
             templateId = orderDispatchedTemplateId;
             variables.put("ORDERID", order.getOrderNumber());
-            variables.put("CurrierAwsName", order.getCourierName() != null ? order.getCourierName() : "our logistics partner");
+            variables.put("CurrierAwsName",
+                    order.getCourierName() != null ? order.getCourierName() : "our logistics partner");
             variables.put("Numeric", order.getTrackingNumber() != null ? order.getTrackingNumber() : "");
         }
 
@@ -141,31 +143,31 @@ public class SmsService {
             Map<String, Object> data = new HashMap<>();
             List<Map<String, Object>> sendTo = new ArrayList<>();
             Map<String, Object> recipientNode = new HashMap<>();
-            
+
             // Map template variables (support both plain and templateId-prefixed formats)
             Map<String, Object> varsNode = new HashMap<>();
             for (Map.Entry<String, String> entry : variables.entrySet()) {
                 Map<String, String> valNode = new HashMap<>();
                 valNode.put("value", entry.getValue());
-                
+
                 // 1. Plain variable mapping (e.g. "ORDERID" -> "MVS-123")
                 varsNode.put(entry.getKey(), valNode);
-                
+
                 // 2. Prefixed variable mapping (e.g. "6a5ddb0d...:ORDERID" -> "MVS-123")
                 if (templateId != null && !templateId.isBlank()) {
                     varsNode.put(templateId + ":" + entry.getKey(), valNode);
                 }
             }
-            
+
             List<Map<String, Object>> toList = new ArrayList<>();
             Map<String, Object> mobileNode = new HashMap<>();
             mobileNode.put("mobiles", cleanPhone);
             mobileNode.put("variables", varsNode);
             toList.add(mobileNode);
-            
+
             recipientNode.put("to", toList);
             recipientNode.put("variables", varsNode);
-            
+
             sendTo.add(recipientNode);
             data.put("sendTo", sendTo);
             body.put("data", data);
@@ -173,18 +175,20 @@ public class SmsService {
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
             ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
 
-            log.info("[SMS] Sent Flow {} to {}. Status: {} | Response: {}", 
+            log.info("[SMS] Sent Flow {} to {}. Status: {} | Response: {}",
                     flowId, cleanPhone, response.getStatusCode(), response.getBody());
         } catch (Exception e) {
-            log.error("[SMS] Failed to trigger Flow {} for {}: {}", 
+            log.error("[SMS] Failed to trigger Flow {} for {}: {}",
                     flowId, cleanPhone, e.getMessage(), e);
         }
     }
 
     private String formatPhoneNumber(String phone) {
-        if (phone == null) return "";
+        if (phone == null)
+            return "";
         String clean = phone.replaceAll("[^0-9]", "");
-        if (clean.isEmpty()) return "";
+        if (clean.isEmpty())
+            return "";
         if (clean.length() == 10) {
             return "91" + clean;
         }
