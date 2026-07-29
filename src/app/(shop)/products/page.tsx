@@ -854,12 +854,15 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
   const tryNext = () => {
     if (src.endsWith(".jpg")) { setSrc(base + ".png"); }
     else if (src.endsWith(".png")) { setSrc(base + ".webp"); }
+    else if (base.includes("women-surgical-wear-banner")) { setSrc("https://d2tnzshqdaedbc.cloudfront.net/surgical-wear-banner.jpg"); }
     else { setFailed(true); }
   };
 
   const tryNextMob = () => {
-    if (srcMob.endsWith(".jpg")) { setSrcMob(base + "-mob.png"); }
-    else if (srcMob.endsWith(".png")) { setSrcMob(base + "-mob.webp"); }
+    if (srcMob.endsWith("-mob.jpg")) { setSrcMob(base + "-mob.png"); }
+    else if (srcMob.endsWith("-mob.png")) { setSrcMob(base + "-mob.webp"); }
+    else if (base.includes("women-surgical-wear-banner")) { setSrcMob("https://d2tnzshqdaedbc.cloudfront.net/surgical-wear-banner-mob.jpg"); }
+    else if (srcMob !== src) { setSrcMob(src); }
   };
 
   if (failed) return null;
