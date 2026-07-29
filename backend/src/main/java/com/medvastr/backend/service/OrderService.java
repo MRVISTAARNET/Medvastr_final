@@ -366,6 +366,18 @@ public class OrderService {
         return toDTO(saved);
     }
 
+    public OrderDTO updatePaymentStatus(Long id, String paymentStatus) {
+        Order o = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found: " + id));
+        o.setPaymentStatus(Order.PaymentStatus.valueOf(paymentStatus.toUpperCase()));
+        if ("PAID".equalsIgnoreCase(paymentStatus)) {
+            if (o.getDeliveredAt() == null && o.getStatus() == Order.OrderStatus.DELIVERED) {
+                o.setDeliveredAt(LocalDateTime.now());
+            }
+        }
+        Order saved = orderRepo.save(o);
+        return toDTO(saved);
+    }
+
     @Transactional
     public OrderDTO pushToShiprocket(Long id) {
         Order o = orderRepo.findById(id).orElseThrow();

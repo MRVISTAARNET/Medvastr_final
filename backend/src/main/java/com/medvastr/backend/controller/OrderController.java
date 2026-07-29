@@ -70,6 +70,12 @@ public class OrderController {
         return ResponseEntity.ok(ApiResponse.ok("Updated", s.updateStatus(id, status)));
     }
 
+    @PutMapping("/admin/{id}/payment-status")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<OrderDTO>> updatePaymentStatus(@PathVariable Long id, @RequestParam String paymentStatus) {
+        return ResponseEntity.ok(ApiResponse.ok("Payment status updated", s.updatePaymentStatus(id, paymentStatus)));
+    }
+
     @PostMapping("/admin/{id}/shiprocket")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<OrderDTO>> pushToShiprocket(@PathVariable Long id) {
