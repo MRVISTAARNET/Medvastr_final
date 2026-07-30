@@ -131,7 +131,68 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
     }).slice(0, 6);
   };
 
+  const getMatchingPages = () => {
+    if (!q) return [];
+    const query = q.trim().toLowerCase().replace(/[\s-]/g, "");
+    const pages = [
+      {
+        title: "About Us",
+        href: "/about",
+        ico: "🏢",
+        desc: "Learn about Medvarn mission & medical apparel quality",
+        keywords: ["about", "aboutus", "company", "mission", "medvarn", "story", "who"]
+      },
+      {
+        title: "Contact Us & Support",
+        href: "/contact",
+        ico: "📞",
+        desc: "Get phone, email, location & customer service info",
+        keywords: ["contact", "contactus", "support", "help", "phone", "email", "number", "location", "address", "customer"]
+      },
+      {
+        title: "Track Your Order",
+        href: "/track",
+        ico: "🚚",
+        desc: "Real-time delivery status with Order ID or AWB",
+        keywords: ["track", "tracking", "order", "status", "shipment", "awb", "where", "delivery"]
+      },
+      {
+        title: "Bulk Orders & Institutional Services",
+        href: "/bulk-orders",
+        ico: "📦",
+        desc: "Hospital, clinic & college bulk quotes & branding",
+        keywords: ["bulk", "hospital", "institutional", "wholesale", "quote", "quantity", "discount"]
+      },
+      {
+        title: "Size Guide & Measurement Chart",
+        href: "/sizeguide",
+        ico: "📐",
+        desc: "Size charts for men & women scrubs, gowns & tops",
+        keywords: ["size", "sizeguide", "chart", "measurement", "fit", "small", "medium", "large"]
+      },
+      {
+        title: "Blogs & Articles",
+        href: "/blog",
+        ico: "📝",
+        desc: "Healthcare apparel tips, news & medical guides",
+        keywords: ["blog", "blogs", "article", "news", "guide", "tips"]
+      },
+      {
+        title: "Returns & Exchanges",
+        href: "/returns",
+        ico: "🔄",
+        desc: "Hassle-free return policy & exchange rules",
+        keywords: ["return", "returns", "exchange", "refund", "policy"]
+      }
+    ];
+    return pages.filter(p => 
+      p.title.toLowerCase().replace(/[\s-]/g, "").includes(query) ||
+      p.keywords.some(k => k.includes(query) || query.includes(k))
+    ).slice(0, 3);
+  };
+
   const res = getSuggestions();
+  const pageRes = getMatchingPages();
 
   const resolvedNav = NAV_DATA;
   const cc = cart.reduce((s, i) => s + i.qty, 0);
@@ -213,7 +274,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
             <span className="srch-ico">🔍</span>
             <input
               autoFocus
-              placeholder="Search scrubs, surgical wear, caps, underscrubs..."
+              placeholder="Search scrubs, surgical wear, pages (about, contact, track)..."
               value={q}
               onChange={(e) => {
                 setQ(e.target.value);
@@ -231,36 +292,67 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
 
             {sd && q && (
               <div className="srch-drop" onMouseDown={(e) => e.preventDefault()}>
-                {res.length === 0 ? (
+                {res.length === 0 && pageRes.length === 0 ? (
                   <div className="s-empty">No results for "{q}"</div>
                 ) : (
                   <>
-                    <div className="s-hd">Products</div>
-                    {res.map((p) => (
-                      <Link
-                        href={`/product/${p.slug || p.id}`}
-                        className="s-row"
-                        key={p.id}
-                        onClick={() => {
-                          setQ("");
-                          setSd(false);
-                          setMs(false);
-                          setMn(false);
-                        }}
-                      >
-                        <div className="s-thumb" style={{ background: p.bg, overflow: 'hidden' }}>
-                          {p.imgs && p.imgs[0] ? (
-                            <img src={p.imgs[0]} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                          ) : (
-                            p.emo
-                          )}
-                        </div>
-                        <div>
-                          <div className="s-nm">{p.name}</div>
-                          <div className="s-pr">{fmt(p.price)}</div>
-                        </div>
-                      </Link>
-                    ))}
+                    {pageRes.length > 0 && (
+                      <>
+                        <div className="s-hd">Quick Pages & Support</div>
+                        {pageRes.map((p) => (
+                          <Link
+                            href={p.href}
+                            className="s-row"
+                            key={p.href}
+                            onClick={() => {
+                              setQ("");
+                              setSd(false);
+                              setMs(false);
+                              setMn(false);
+                            }}
+                          >
+                            <div className="s-thumb" style={{ background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
+                              {p.ico}
+                            </div>
+                            <div>
+                              <div className="s-nm" style={{ fontWeight: '700', color: '#0f2044' }}>{p.title}</div>
+                              <div className="s-pr" style={{ color: '#64748b', fontSize: '12px' }}>{p.desc}</div>
+                            </div>
+                          </Link>
+                        ))}
+                      </>
+                    )}
+
+                    {res.length > 0 && (
+                      <>
+                        <div className="s-hd" style={{ marginTop: pageRes.length > 0 ? '14px' : '0' }}>Products</div>
+                        {res.map((p) => (
+                          <Link
+                            href={`/product/${p.slug || p.id}`}
+                            className="s-row"
+                            key={p.id}
+                            onClick={() => {
+                              setQ("");
+                              setSd(false);
+                              setMs(false);
+                              setMn(false);
+                            }}
+                          >
+                            <div className="s-thumb" style={{ background: p.bg, overflow: 'hidden' }}>
+                              {p.imgs && p.imgs[0] ? (
+                                <img src={p.imgs[0]} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                              ) : (
+                                p.emo
+                              )}
+                            </div>
+                            <div>
+                              <div className="s-nm">{p.name}</div>
+                              <div className="s-pr">{fmt(p.price)}</div>
+                            </div>
+                          </Link>
+                        ))}
+                      </>
+                    )}
                   </>
                 )}
               </div>
