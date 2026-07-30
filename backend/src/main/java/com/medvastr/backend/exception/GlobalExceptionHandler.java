@@ -51,12 +51,34 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(ApiResponse.err(e.getMessage()));
     }
 
+    @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiResponse<Object>> typeMismatch(
+            org.springframework.web.method.annotation.MethodArgumentTypeMismatchException e) {
+        String paramName = e.getName();
+        String requiredType = e.getRequiredType() != null ? e.getRequiredType().getSimpleName() : "valid value";
+        log.warn("Parameter type mismatch: '{}' should be a {}", paramName, requiredType);
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.err("Invalid parameter: '" + paramName + "' must be a valid " + requiredType));
+    }
+
     @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
     public ResponseEntity<ApiResponse<Object>> noResource(
             org.springframework.web.servlet.resource.NoResourceFoundException e) {
-        log.warn("Static resource not found: {}", e.getResourcePath());
+        String path = e.getResourcePath();
+        if (path != null && (path.contains("phpunit") || path.contains("ntlm") || path.contains("php") || path.contains("wp-") || path.contains("admin"))) {
+            log.debug("Bot scan probe ignored: {}", path);
+        } else {
+            log.info("Static resource not found: {}", path);
+        }
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ApiResponse.err("Resource not found"));
+    }
+
+    @ExceptionHandler(org.springframework.web.servlet.NoHandlerFoundException.class)
+    public ResponseEntity<ApiResponse<Object>> noHandler(
+            org.springframework.web.servlet.NoHandlerFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.err("Route not found"));
     }
 
     @ExceptionHandler(org.springframework.web.HttpMediaTypeNotAcceptableException.class)
