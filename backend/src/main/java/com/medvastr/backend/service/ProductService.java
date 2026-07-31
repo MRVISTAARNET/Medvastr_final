@@ -47,6 +47,7 @@ public class ProductService {
     private final ProductSizeRepository sizeRepo;
     private final ProductVariantRepository variantRepo;
     private final InventoryLogRepository inventoryLogRepo;
+    private final S3StorageService s3StorageService;
 
     public Page<ProductDTO> getAll(ProductFilterRequest f, Pageable p) {
         List<Long> categoryIds = null;
@@ -331,6 +332,12 @@ public class ProductService {
         assignSubAndChildCategories(p, r);
 
         if (r.getImageUrls() != null) {
+            Set<String> newUrls = new java.util.HashSet<>(r.getImageUrls());
+            for (ProductImage oldImg : p.getImages()) {
+                if (oldImg.getImageUrl() != null && !newUrls.contains(oldImg.getImageUrl())) {
+                    s3StorageService.deleteFileByUrl(oldImg.getImageUrl());
+                }
+            }
             p.getImages().clear();
             productRepo.saveAndFlush(p); // Force clear old images
             replaceImages(p, r.getImageUrls());
@@ -424,6 +431,13 @@ public class ProductService {
     public void delete(Long id) {
         productRepo.findById(id).ifPresent(p -> {
             p.setActive(false);
+            if (p.getImages() != null) {
+                for (ProductImage img : p.getImages()) {
+                    if (img.getImageUrl() != null) {
+                        s3StorageService.deleteFileByUrl(img.getImageUrl());
+                    }
+                }
+            }
             productRepo.save(p);
         });
     }

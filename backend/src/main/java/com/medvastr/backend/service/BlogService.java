@@ -22,6 +22,7 @@ public class BlogService {
 
     private final BlogPostRepository postRepository;
     private final BlogCategoryRepository categoryRepository;
+    private final S3StorageService s3StorageService;
 
     @Transactional(readOnly = true)
     public Page<BlogPostDTO> getPublished(Pageable pageable) {
@@ -60,7 +61,15 @@ public class BlogService {
         BlogPost post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found: " + id));
         BlogPost.PostStatus oldStatus = post.getStatus();
+        String oldImage = post.getFeaturedImage();
+
         mapToEntity(post, dto);
+
+        // If featured image changed, purge the old image from S3
+        if (oldImage != null && !oldImage.equalsIgnoreCase(post.getFeaturedImage())) {
+            s3StorageService.deleteFileByUrl(oldImage);
+        }
+
         if (dto.getStatus() == BlogPost.PostStatus.PUBLISHED
                 && oldStatus != BlogPost.PostStatus.PUBLISHED
                 && post.getPublishedAt() == null) {
@@ -70,7 +79,12 @@ public class BlogService {
     }
 
     public void delete(Long id) {
-        postRepository.deleteById(id);
+        postRepository.findById(id).ifPresent(post -> {
+            if (post.getFeaturedImage() != null) {
+                s3StorageService.deleteFileByUrl(post.getFeaturedImage());
+            }
+            postRepository.delete(post);
+        });
     }
 
     // Categories
