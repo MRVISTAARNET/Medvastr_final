@@ -34,18 +34,8 @@ export default function BlogPage() {
         </div>
       ) : (
         <div className="space-y-8">
-          {/* Header Section */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-              📚 Our Blog & Resources
-            </h1>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-              Explore healthcare insights, medical apparel guides, and industry updates
-            </p>
-          </div>
-
           {/* Blog Posts Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
             {posts.map((post) => (
               <Link
                 key={post.id}
@@ -55,16 +45,16 @@ export default function BlogPage() {
                 <article className="h-full flex flex-col bg-white rounded-2xl overflow-hidden border border-slate-200 hover:border-teal-500 shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
                   {/* Image */}
                   {post.featuredImage ? (
-                    <div className="relative overflow-hidden h-48 bg-gradient-to-br from-slate-200 to-slate-300">
+                    <div className="relative overflow-hidden h-52 bg-gradient-to-br from-slate-200 to-slate-300">
                       <img
                         src={post.featuredImage}
                         alt={post.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300"></div>
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
                     </div>
                   ) : (
-                    <div className="h-48 bg-gradient-to-br from-teal-500 to-slate-700 flex items-center justify-center">
+                    <div className="h-52 bg-gradient-to-br from-teal-600 to-slate-800 flex items-center justify-center">
                       <span className="text-4xl">📰</span>
                     </div>
                   )}
@@ -73,28 +63,28 @@ export default function BlogPage() {
                   <div className="p-6 flex-1 flex flex-col">
                     {/* Category */}
                     {post.categoryName && (
-                      <span className="inline-block w-fit text-xs font-bold text-teal-700 bg-teal-50 px-3 py-1.5 rounded-full mb-4 uppercase tracking-wider">
+                      <span className="inline-block w-fit text-xs font-bold text-teal-700 bg-teal-50 px-3 py-1.5 rounded-full mb-3 uppercase tracking-wider">
                         {post.categoryName}
                       </span>
                     )}
 
                     {/* Title */}
-                    <h3 className="text-xl font-bold text-slate-900 mb-3 line-clamp-2 group-hover:text-teal-600 transition">
+                    <h3 className="text-xl font-bold text-slate-900 mb-3 line-clamp-2 group-hover:text-teal-600 transition leading-snug">
                       {post.title}
                     </h3>
 
                     {/* Excerpt */}
-                    <p className="text-slate-600 text-sm leading-relaxed line-clamp-3 mb-4 flex-grow">
+                    <p className="text-slate-600 text-sm leading-relaxed line-clamp-3 mb-6 flex-grow">
                       {post.excerpt}
                     </p>
 
                     {/* Footer */}
-                    <div className="flex items-center justify-between pt-4 border-t border-slate-200">
-                      <span className="text-xs text-slate-500 font-medium">
-                        {post.author || "Medvarn"}
+                    <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                      <span className="text-xs text-slate-500 font-semibold">
+                        By {post.author || "Medvarn Team"}
                       </span>
-                      <span className="text-teal-600 font-semibold text-sm group-hover:gap-1 inline-flex items-center gap-0.5 transition">
-                        Read More →
+                      <span className="text-teal-600 font-bold text-xs bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-full transition flex items-center gap-1">
+                        Read Article →
                       </span>
                     </div>
                   </div>

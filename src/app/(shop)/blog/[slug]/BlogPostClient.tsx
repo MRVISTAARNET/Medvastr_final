@@ -9,28 +9,40 @@ import GenericPage from "@/components/GenericPage";
 // Simple Markdown → HTML converter (no package needed)
 function renderMarkdown(md: string): string {
   if (!md) return "";
-  return md
-    // Headings
-    .replace(/^### (.+)$/gm, "<h3>$1</h3>")
-    .replace(/^## (.+)$/gm, "<h2>$1</h2>")
-    .replace(/^# (.+)$/gm, "<h1>$1</h1>")
-    // Bold and italic
-    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/\*(.+?)\*/g, "<em>$1</em>")
-    // Unordered list items
-    .replace(/^\* (.+)$/gm, "<li>$1</li>")
-    // Wrap consecutive <li> in <ul>
-    .replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul>${m}</ul>`)
-    // Numbered list items
-    .replace(/^\d+\. (.+)$/gm, "<li>$1</li>")
-    // Links
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>')
-    // Paragraphs: blank lines between text become <p> breaks
-    .replace(/\n\n+/g, "</p><p>")
-    // Wrap in <p> if not starting with a block element
-    .replace(/^(?!<[hul])(.+)/gm, (m) => m.startsWith("<") ? m : m)
-    // Line breaks
-    .replace(/\n(?!<)/g, "<br/>");
+  let html = md.trim();
+
+  // Headings
+  html = html.replace(/^### (.+)$/gm, "<h3>$1</h3>");
+  html = html.replace(/^## (.+)$/gm, "<h2>$1</h2>");
+  html = html.replace(/^# (.+)$/gm, "<h1>$1</h1>");
+
+  // Bold and italic
+  html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
+
+  // Unordered list items
+  html = html.replace(/^\* (.+)$/gm, "<li>$1</li>");
+  html = html.replace(/^- (.+)$/gm, "<li>$1</li>");
+  html = html.replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul class="article-ul">${m}</ul>`);
+
+  // Blockquotes
+  html = html.replace(/^> (.+)$/gm, "<blockquote>$1</blockquote>");
+
+  // Links
+  html = html.replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+  // Paragraphs: divide by double newlines for proper editorial structure
+  const paragraphs = html.split(/\n\s*\n/);
+  return paragraphs
+    .map((p) => {
+      const trimmed = p.trim();
+      if (!trimmed) return "";
+      if (trimmed.startsWith("<h") || trimmed.startsWith("<ul") || trimmed.startsWith("<ol") || trimmed.startsWith("<blockquote")) {
+        return trimmed;
+      }
+      return `<p>${trimmed.replace(/\n/g, "<br/>")}</p>`;
+    })
+    .join("");
 }
 
 export default function BlogPostClient({
@@ -59,7 +71,7 @@ export default function BlogPostClient({
   if (!post) {
     return (
       <GenericPage title="Blog">
-        <p style={{ textAlign: "center", padding: 60 }}>Loading…</p>
+        <p style={{ textAlign: "center", padding: 60 }}>Loading article…</p>
       </GenericPage>
     );
   }
@@ -70,30 +82,54 @@ export default function BlogPostClient({
 
   return (
     <GenericPage title={post.title} desc={post.excerpt || ""}>
-      <article style={{ maxWidth: 760, margin: "0 auto", padding: "20px 0 60px" }}>
+      <article style={{ maxWidth: 820, margin: "0 auto", padding: "20px 0 60px" }}>
         {post.featuredImage && (
-          <img src={post.featuredImage} alt="" style={{ width: "100%", borderRadius: 12, marginBottom: 24 }} />
+          <div style={{ borderRadius: 16, overflow: "hidden", marginBottom: 32, boxShadow: "0 8px 30px rgba(0,0,0,0.08)" }}>
+            <img src={post.featuredImage} alt={post.title} style={{ width: "100%", maxHeight: "480px", objectFit: "cover", display: "block" }} />
+          </div>
         )}
-        <div style={{ fontSize: 13, color: "var(--lt)", marginBottom: 16 }}>
-          {post.authorName && <span>{post.authorName}</span>}
-          {post.publishedAt && <span> · {new Date(post.publishedAt).toLocaleDateString()}</span>}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, fontSize: 14, color: "#64748b", marginBottom: 28, paddingBottom: 16, borderBottom: "1px solid #e2e8f0" }}>
+          <span style={{ background: "#f0faf8", color: "#008080", fontWeight: 700, padding: "4px 12px", borderRadius: 20, fontSize: 12, textTransform: "uppercase" }}>
+            {post.categoryName || "Healthcare Guide"}
+          </span>
+          <span>By <strong>{post.authorName || "Medvarn Editorial Team"}</strong></span>
+          {post.publishedAt && <span>• {new Date(post.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</span>}
         </div>
         <div
-          style={{ lineHeight: 1.8, fontSize: 16, color: "#334155" }}
+          className="blog-content-body"
           dangerouslySetInnerHTML={{ __html: contentHtml }}
         />
         <style>{`
-          article { font-family: var(--sans); color: #334155; }
-          article h1 { font-size: 26px; font-weight: 700; margin: 36px 0 16px; color: #0f2044; }
-          article h2 { font-size: 20px; font-weight: 700; margin: 32px 0 14px; color: #0f2044; }
-          article h3 { font-size: 17px; font-weight: 700; margin: 24px 0 10px; color: #0f2044; }
-          article ul { padding-left: 20px; margin: 16px 0; }
-          article li { margin-bottom: 8px; line-height: 1.8; color: #475569; }
-          article strong { font-weight: 700; color: #0f2044; }
-          article em { font-style: italic; }
-          article a { color: #008080; text-decoration: underline; }
-          article p { margin-bottom: 18px; line-height: 1.8; color: #334155; }
-          article * { font-family: inherit !important; }
+          .blog-content-body { font-family: var(--font-inter), system-ui, sans-serif; color: #334155; font-size: 16.5px; line-height: 1.85; }
+          .blog-content-body p { margin-bottom: 22px; color: #334155; line-height: 1.85; }
+          
+          /* Editorial Drop-Cap First Letter */
+          .blog-content-body p:first-of-type::first-letter {
+            font-size: 3.6rem;
+            font-weight: 900;
+            float: left;
+            line-height: 0.8;
+            margin-right: 12px;
+            margin-top: 4px;
+            color: #008080;
+          }
+          .blog-content-body p:first-of-type {
+            font-size: 1.15rem;
+            line-height: 1.85;
+            color: #0f172a;
+            font-weight: 500;
+            margin-bottom: 24px;
+          }
+
+          .blog-content-body h1 { font-size: 28px; font-weight: 800; margin: 40px 0 18px; color: #0f2044; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+          .blog-content-body h2 { font-size: 22px; font-weight: 800; margin: 36px 0 16px; color: #0f2044; border-left: 4px solid #008080; padding-left: 14px; }
+          .blog-content-body h3 { font-size: 18px; font-weight: 700; margin: 28px 0 12px; color: #0f2044; }
+          .blog-content-body ul, .blog-content-body ol { padding-left: 24px; margin: 20px 0; }
+          .blog-content-body li { margin-bottom: 10px; line-height: 1.8; color: #334155; }
+          .blog-content-body strong { font-weight: 700; color: #0f2044; }
+          .blog-content-body em { font-style: italic; color: #1e293b; }
+          .blog-content-body a { color: #008080; text-decoration: underline; font-weight: 600; }
+          .blog-content-body blockquote { background: #f0faf8; border-left: 4px solid #008080; padding: 18px 24px; border-radius: 0 12px 12px 0; margin: 28px 0; font-style: italic; font-size: 1.05rem; color: #0f2044; }
         `}</style>
         {related.length > 0 && (
           <section style={{ marginTop: 48 }}>
