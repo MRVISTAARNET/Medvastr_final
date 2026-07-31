@@ -20,9 +20,9 @@ function renderMarkdown(md: string): string {
   html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
   html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
 
-  // Unordered list items
-  html = html.replace(/^\* (.+)$/gm, "<li>$1</li>");
-  html = html.replace(/^- (.+)$/gm, "<li>$1</li>");
+  // Unordered list items & inline bullets (e.g. • Item 1 • Item 2)
+  html = html.replace(/• ([^\n•]+)/g, "<li>$1</li>");
+  html = html.replace(/^[•\-\*] (.+)$/gm, "<li>$1</li>");
   html = html.replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul class="article-ul">${m}</ul>`);
 
   // Blockquotes

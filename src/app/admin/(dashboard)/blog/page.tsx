@@ -138,6 +138,41 @@ export default function AdminBlogPage() {
     p.authorName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const renderPreviewMarkdown = (text: string) => {
+    if (!text) return "<p style='color: #94a3b8; font-style: italic;'>No content written yet.</p>";
+    let html = text.trim();
+    if (html.startsWith("<") && html.includes(">")) {
+      return html;
+    }
+
+    // Headings
+    html = html.replace(/^### (.+)$/gm, "<h3>$1</h3>");
+    html = html.replace(/^## (.+)$/gm, "<h2>$1</h2>");
+    html = html.replace(/^# (.+)$/gm, "<h1>$1</h1>");
+
+    // Bold & Italic
+    html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+    html = html.replace(/\*(.+?)\*/g, "<em>$1</em>");
+
+    // Inline Bullet Points (e.g. • Item 1 • Item 2)
+    html = html.replace(/• ([^\n•]+)/g, "<li>$1</li>");
+    html = html.replace(/^[•\-\*] (.+)$/gm, "<li>$1</li>");
+    html = html.replace(/(<li>.*<\/li>\n?)+/g, (m) => `<ul style="padding-left: 20px; margin: 14px 0; color: #334155;">${m}</ul>`);
+
+    // Paragraphs
+    const paragraphs = html.split(/\n\s*\n/);
+    return paragraphs
+      .map((p) => {
+        const trimmed = p.trim();
+        if (!trimmed) return "";
+        if (trimmed.startsWith("<h") || trimmed.startsWith("<ul") || trimmed.startsWith("<ol") || trimmed.startsWith("<blockquote")) {
+          return trimmed;
+        }
+        return `<p style="margin-bottom: 18px; line-height: 1.8; color: #334155;">${trimmed.replace(/\n/g, "<br/>")}</p>`;
+      })
+      .join("");
+  };
+
   return (
     <div className="admin-content">
       {/* Toast */}
@@ -245,16 +280,19 @@ export default function AdminBlogPage() {
                     className="btn-secondary"
                     style={{ height: '28px', fontSize: '12px', padding: '0 12px' }}
                   >
-                    {contentPreview ? "Edit Mode" : "Preview Mode"}
+                    {contentPreview ? "✏️ Edit Mode" : "👁️ Preview Mode"}
                   </button>
                 </div>
                 {contentPreview ? (
-                  <div style={{ width: '100%', padding: '16px 20px', border: '1.5px solid var(--bdr2)', borderRadius: '9px', background: 'white', minHeight: '250px' }}>
-                    <div dangerouslySetInnerHTML={{ __html: form.content }} />
+                  <div style={{ width: '100%', padding: '24px', border: '1.5px solid var(--teal)', borderRadius: '12px', background: '#fafafa', minHeight: '280px', maxHeight: '500px', overflowY: 'auto' }}>
+                    <div
+                      className="blog-preview-container"
+                      dangerouslySetInnerHTML={{ __html: renderPreviewMarkdown(form.content) }}
+                    />
                   </div>
                 ) : (
                   <textarea
-                    placeholder="Write your post content here (HTML or Markdown supported)"
+                    placeholder="Write your post content here (HTML or plain paragraphs supported)"
                     value={form.content}
                     onChange={(e) => setForm({ ...form, content: e.target.value })}
                     rows={12}
