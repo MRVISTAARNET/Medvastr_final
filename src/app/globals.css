@@ -5231,6 +5231,7 @@ footer {
     width: 100% !important;
   }
 
+  .nav-sub,
   .mega {
     position: static !important;
     display: none !important;
@@ -5242,12 +5243,14 @@ footer {
     border: none !important;
     border-top: none !important;
     background: #f8fafc !important;
-    padding: 4px 0 12px 20px !important;
+    padding: 8px 16px 16px 20px !important;
+    width: 100% !important;
   }
 
   .nav-group.mob-open > .nl {
     color: #0f7c6e !important;
     background: #f0fdf9 !important;
+    font-weight: 700 !important;
   }
 
   .nav-group.mob-open .nav-arrow {
@@ -5255,6 +5258,7 @@ footer {
     color: #0f7c6e !important;
   }
 
+  .nav-group.mob-open .nav-sub,
   .nav-group.mob-open .mega {
     display: block !important;
   }
@@ -5263,15 +5267,47 @@ footer {
     display: none !important;
   }
 
+  .mega-container {
+    padding: 0 !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
   .mega-in {
+    display: flex !important;
+    flex-direction: column !important;
     grid-template-columns: 1fr !important;
-    padding: 10px 0 !important;
+    padding: 6px 0 !important;
+    gap: 16px !important;
   }
 
   .mcol {
     padding: 0 !important;
     border: none !important;
-    margin-bottom: 12px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .mcol-hd {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    color: #0f7c6e !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    margin-bottom: 8px !important;
+    padding-bottom: 4px !important;
+    border-bottom: 1px dashed #cbd5e1 !important;
+  }
+
+  .m-deep-list {
+    padding-left: 4px !important;
+  }
+
+  .m-sub-a {
+    font-size: 13.5px !important;
+    color: #334155 !important;
+    padding: 4px 0 !important;
+    font-weight: 500 !important;
   }
 
   .mcol:last-child {

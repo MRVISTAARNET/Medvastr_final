@@ -365,7 +365,9 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
       <div className={`mob-drawer-ov${mn ? " on" : ""}`} onClick={() => setMn(false)} />
       <div id="nav" className={mn ? " mob-on" : ""}>
         <div className="mob-nav-hd mob-only">
-          <img src="/logo.png" alt="Medvarn" style={{ height: "36px", width: "auto", objectFit: "contain" }} />
+          <Link href="/" onClick={() => setMn(false)} style={{ display: "flex", alignItems: "center" }}>
+            <BrandLogo dark={false} height={40} />
+          </Link>
           <button type="button" className="mn-close" onClick={() => setMn(false)} style={{ touchAction: 'manipulation' }}>✕</button>
         </div>
         <DynamicNav
