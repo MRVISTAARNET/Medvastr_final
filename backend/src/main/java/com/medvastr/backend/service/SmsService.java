@@ -66,6 +66,7 @@ public class SmsService {
 
         Map<String, String> variables = new HashMap<>();
         variables.put("OTP", otpCode);
+        variables.put("num1", otpCode);
 
         triggerOneApiFlow(otpFlowId, otpTemplateId, cleanPhone, variables);
     }
@@ -94,12 +95,16 @@ public class SmsService {
             flowId = orderCodFlowId;
             templateId = orderCodTemplateId;
             variables.put("OrderID", order.getOrderNumber());
+            variables.put("var1", order.getOrderNumber());
             variables.put("number", order.getTotalAmount().toString());
+            variables.put("num1", order.getTotalAmount().toString());
         } else if ("PREPAID".equalsIgnoreCase(templateType)) {
             flowId = orderPrepaidFlowId;
             templateId = orderPrepaidTemplateId;
             variables.put("OrderID", order.getOrderNumber());
+            variables.put("var1", order.getOrderNumber());
             variables.put("number", order.getTotalAmount().toString());
+            variables.put("num1", order.getTotalAmount().toString());
         } else if ("DISPATCHED".equalsIgnoreCase(templateType)) {
             if (order.isDispatchedSmsSent()) {
                 log.info("[SMS] Order {} DISPATCHED SMS already sent previously. Skipping duplicate notification.",
@@ -115,10 +120,17 @@ public class SmsService {
 
             flowId = orderDispatchedFlowId;
             templateId = orderDispatchedTemplateId;
+
+            String courier = order.getCourierName() != null ? order.getCourierName() : "our logistics partner";
+            String awb = order.getTrackingNumber() != null ? order.getTrackingNumber() : "";
+
             variables.put("ORDERID", order.getOrderNumber());
-            variables.put("CurrierAwsName",
-                    order.getCourierName() != null ? order.getCourierName() : "our logistics partner");
-            variables.put("Numeric", order.getTrackingNumber() != null ? order.getTrackingNumber() : "");
+            variables.put("var1", order.getOrderNumber());
+            variables.put("CurrierAwsName", courier);
+            variables.put("var2", courier);
+            variables.put("Numeric", awb);
+            variables.put("number1", awb);
+            variables.put("number2", order.getOrderNumber());
         }
 
         if (flowId == null || flowId.isBlank()) {
