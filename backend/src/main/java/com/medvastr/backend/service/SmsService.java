@@ -143,8 +143,15 @@ public class SmsService {
 
     private void triggerOneApiFlow(String flowId, String templateId, String cleanPhone, Map<String, String> variables) {
         try {
-            // MSG91 OneAPI Flow execution endpoint
-            String url = "https://control.msg91.com/api/v5/oneapi/api/flow/" + flowId + "/run";
+            // MSG91 Campaign API execution endpoint
+            String url;
+            if (flowId.startsWith("http")) {
+                url = flowId;
+            } else if (flowId.contains("/")) {
+                url = "https://control.msg91.com/api/v5/" + flowId + "/run";
+            } else {
+                url = "https://control.msg91.com/api/v5/campaign/api/campaigns/" + flowId + "/run";
+            }
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
