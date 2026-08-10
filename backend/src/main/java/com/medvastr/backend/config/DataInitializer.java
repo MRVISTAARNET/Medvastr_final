@@ -32,21 +32,24 @@ public class DataInitializer {
     @Bean
     public CommandLineRunner initAdminUser() {
         return args -> {
-            if (adminPassword != null && !adminPassword.isBlank() && !userRepo.existsByEmail(adminEmail)) {
-                log.info("[DataInitializer] Creating admin user for: {}", adminEmail);
-                User admin = User.builder()
-                        .firstName("Admin")
-                        .lastName("Medvarn")
-                        .email(adminEmail)
-                        .phone("9999999999")
-                        .password(passwordEncoder.encode(adminPassword))
-                        .role(User.Role.ADMIN)
-                        .emailVerified(true)
-                        .active(true)
-                        .loyaltyPoints(0)
-                        .build();
+            if (adminPassword != null && !adminPassword.isBlank()) {
+                User admin = userRepo.findByEmail(adminEmail).orElseGet(() -> {
+                    log.info("[DataInitializer] Creating admin user for: {}", adminEmail);
+                    return User.builder()
+                            .firstName("Admin")
+                            .lastName("Medvarn")
+                            .email(adminEmail)
+                            .phone("9999999999")
+                            .emailVerified(true)
+                            .loyaltyPoints(0)
+                            .build();
+                });
+                admin.setEmail(adminEmail);
+                admin.setPassword(passwordEncoder.encode(adminPassword));
+                admin.setRole(User.Role.ADMIN);
+                admin.setActive(true);
                 userRepo.save(admin);
-                log.info("[DataInitializer] Admin user BOOTSTRAPPED successfully for {}", adminEmail);
+                log.info("[DataInitializer] Admin user synced/bootstrapped successfully for {}", adminEmail);
             }
 
             // Seed default MEDVARN10 & MEDVASTR10 promo codes
