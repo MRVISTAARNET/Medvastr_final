@@ -70,7 +70,7 @@ public class EmailService {
     public void sendPasswordResetEmail(String toEmail, String token) {
         String resetLink = frontendUrl + "/auth-verify?token=" + token;
         String html = getPasswordResetHtml(toEmail, resetLink);
-        sendHtmlEmail(toEmail, "Reset Your Medvastr Password", html, "support@medvastr.com", "Medvastr Support");
+        sendHtmlEmail(toEmail, "Reset Your Medvarn Password", html, "support@medvarn.com", "Medvarn Support");
     }
 
     @Async
@@ -85,7 +85,7 @@ public class EmailService {
             log.info("[EmailService] Sending order confirmation - Customer Email: {} | Subject: {}", customerEmail,
                     subject);
             String html = getOrderConfirmationHtml(order);
-            sendHtmlEmailInner(customerEmail, subject, html, "orders@medvastr.com", "Medvastr Orders");
+            sendHtmlEmailInner(customerEmail, subject, html, "orders@medvarn.com", "Medvarn Orders");
             log.info("[EmailService] Order Confirmation Status: SUCCESS | Customer Email: {} | Subject: {}",
                     customerEmail, subject);
         } catch (Exception ex) {
@@ -95,13 +95,13 @@ public class EmailService {
 
     @Async
     public void sendAdminNotification(Order order) {
-        String adminEmail = "info@medvastr.com";
+        String adminEmail = "info@medvarn.com";
         String subject = "New Order Received - " + order.getOrderNumber();
         log.info("[EmailService] Sending admin notification - Admin Email: {} | Subject: {}", adminEmail, subject);
 
         try {
             String html = getAdminNotificationHtml(order);
-            sendHtmlEmailInner(adminEmail, subject, html, "orders@medvastr.com", "Medvastr Bot");
+            sendHtmlEmailInner(adminEmail, subject, html, "orders@medvarn.com", "Medvarn Bot");
             log.info("[EmailService] Admin Notification Status: SUCCESS | Admin Email: {} | Subject: {}", adminEmail,
                     subject);
         } catch (Exception ex) {
@@ -123,12 +123,12 @@ public class EmailService {
                 "<p><b>Email:</b> " + safeEmail + "</p>" +
                 "<p><b>Phone:</b> " + safePhone + "</p>" +
                 "<p><b>Message:</b> " + safeMessage + "</p>";
-        sendHtmlEmail("info@medvastr.com", "New Inquiry: " + i.getType(), html, "no-reply@medvastr.com",
-                "Medvastr Bot");
+        sendHtmlEmail("info@medvarn.com", "New Inquiry: " + i.getType(), html, "no-reply@medvarn.com",
+                "Medvarn Bot");
 
         String replyHtml = "<p>Hi " + safeName
-                + ",</p><p>We received your inquiry and our team will get back to you within 24 hours.</p><p>Regards,<br>Medvastr Team</p>";
-        sendHtmlEmail(i.getEmail(), "Inquiry Received", replyHtml, "info@medvastr.com", "Medvastr Support");
+                + ",</p><p>We received your inquiry and our team will get back to you within 24 hours.</p><p>Regards,<br>Medvarn Team</p>";
+        sendHtmlEmail(i.getEmail(), "Inquiry Received", replyHtml, "info@medvarn.com", "Medvarn Support");
     }
 
     @Async
@@ -271,7 +271,7 @@ public class EmailService {
                         </div>
                         <p style="font-size: 13px; color: #666;">This link expires in 15 minutes. If you didn't request this, you can safely ignore this email.</p>
                         <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-                        <p style="font-size: 14px;">Team Medvastr</p>
+                        <p style="font-size: 14px;">Team Medvarn</p>
                     </div>
                 </div>
                 """
