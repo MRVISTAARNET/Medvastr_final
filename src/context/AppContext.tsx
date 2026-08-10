@@ -13,6 +13,7 @@ import {
 } from "@/lib/api";
 import { mapApiProduct, toApiProductRequest, resolveVariantId } from "@/lib/productUtils";
 import { NAV_DATA, HARDCODED_CATEGORIES, type CategoryNode } from "@/lib/navData";
+import { trackAddToCart } from "@/lib/metaPixel";
 
 interface CartItem extends Product {
   k: string;
@@ -492,6 +493,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: "ADD", p, ci, sz, qty });
     setIsCartOpen(true);
     toast("Added to bag!", "ok");
+    try {
+      trackAddToCart(p, qty);
+    } catch {}
     const token = getToken();
     if (token) {
       try {

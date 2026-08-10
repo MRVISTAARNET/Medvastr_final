@@ -11,6 +11,7 @@ import { mapApiProduct, getImagesForColor, getSizesForColor } from "@/lib/produc
 import ProductImageZoom from "@/components/ProductImageZoom";
 import ExpandableDescription from "@/components/ExpandableDescription";
 import JsonLd from "@/components/JsonLd";
+import { trackViewContent } from "@/lib/metaPixel";
 
 function DetailAccordion({ title, children, defaultOpen = false }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -133,7 +134,10 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
-  }, []);
+    if (p) {
+      try { trackViewContent(p); } catch {}
+    }
+  }, [p?.id]);
 
   const [ci, setCi] = useState<number | null>(null); // null = no color selected yet
   const [sz, setSz] = useState("");

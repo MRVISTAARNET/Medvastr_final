@@ -30,7 +30,8 @@ export default function AdminInquiries() {
     const formatDate = (dateStr: string) => {
         if (!dateStr) return "";
         try {
-            const d = new Date(dateStr);
+            const isoStr = (dateStr.endsWith("Z") || dateStr.includes("+")) ? dateStr : dateStr + "Z";
+            const d = new Date(isoStr);
             return d.toLocaleString("en-IN", {
                 timeZone: "Asia/Kolkata",
                 day: "2-digit",

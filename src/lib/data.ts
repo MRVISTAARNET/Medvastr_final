@@ -89,13 +89,15 @@ export const fmt = (n: number) => "₹ " + Number(n || 0).toLocaleString("en-IN"
 export const fmtNum = (n: number) => Number(n || 0).toLocaleString("en-IN");
 export const fmtDate = (d: string | Date) => {
   if (!d) return "—";
-  return new Date(d).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+  const str = typeof d === "string" && !d.endsWith("Z") && !d.includes("+") ? d + "Z" : d;
+  return new Date(str).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric", timeZone: "Asia/Kolkata" });
 };
 export const fmtDateTime = (d: string | Date) => {
   if (!d) return "—";
-  const dateObj = new Date(d);
-  const dateStr = dateObj.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
-  const timeStr = dateObj.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+  const str = typeof d === "string" && !d.endsWith("Z") && !d.includes("+") ? d + "Z" : d;
+  const dateObj = new Date(str);
+  const dateStr = dateObj.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric", timeZone: "Asia/Kolkata" });
+  const timeStr = dateObj.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata" });
   return `${dateStr} ${timeStr}`;
 };
 

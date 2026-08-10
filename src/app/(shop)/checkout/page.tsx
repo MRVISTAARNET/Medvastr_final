@@ -6,6 +6,7 @@ import { useApp } from "@/context/AppContext";
 import { fmt } from "@/lib/data";
 import { apiJson, API_BASE, RAZORPAY_KEY, getToken } from "@/lib/api";
 import { getImagesForColor } from "@/lib/productUtils";
+import { trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
 
 declare global {
   interface Window {
@@ -14,11 +15,14 @@ declare global {
 }
 
 export default function CheckoutPage() {
+  const { cart, clearCart, toast, user, isHydrated, setIsAuthOpen, storeSettings } = useApp();
   useEffect(() => {
     document.title = "Checkout | Medvarn";
+    if (cart.length > 0) {
+      const currentSub = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      try { trackInitiateCheckout(cart.length, currentSub); } catch {}
+    }
   }, []);
-
-  const { cart, clearCart, toast, user, isHydrated, setIsAuthOpen, storeSettings } = useApp();
   const [submitting, setSubmitting] = useState(false);
   const [orderNum, setOrderNum] = useState<string | null>(null);
   const [shippingCost, setShippingCost] = useState<number>(0);
@@ -194,6 +198,7 @@ export default function CheckoutPage() {
         });
         if (data.success && data.data?.paymentStatus === 'PAID') {
           setOrderNum(orderData.orderNumber);
+          try { trackPurchase(orderData.orderNumber, orderData.totalAmount || tot, cart.length); } catch {}
           clearCart();
           toast("Payment Successful!", "ok");
         } else {
@@ -301,6 +306,7 @@ export default function CheckoutPage() {
           handleOnlinePayment(data.data);
         } else {
           setOrderNum(data.data.orderNumber);
+          try { trackPurchase(data.data.orderNumber, data.data.totalAmount || tot, cart.length); } catch {}
           clearCart();
           setSubmitting(false);
         }
