@@ -1166,7 +1166,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
       </div>
 
       {/* SIZE GUIDE MODAL */}
-      {showSizeGuide && (
+      {showSizeGuide && mounted && createPortal(
         <div className="size-guide-backdrop" onClick={() => setShowSizeGuide(false)}>
           <div className="size-guide-modal" onClick={e => e.stopPropagation()}>
             <button className="size-guide-close" onClick={() => setShowSizeGuide(false)}>✕</button>
@@ -1259,7 +1259,8 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       <style jsx>{`
@@ -1274,7 +1275,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
           display: flex;
           align-items: center;
           justify-content: center;
-          z-index: 99999;
+          z-index: 99999999;
           padding: 20px;
           animation: fadeIn 0.2s ease-out;
         }
