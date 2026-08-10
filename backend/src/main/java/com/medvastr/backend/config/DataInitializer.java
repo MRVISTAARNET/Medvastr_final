@@ -23,7 +23,7 @@ public class DataInitializer {
     private final PromoCodeRepository promoRepo;
     private final PasswordEncoder passwordEncoder;
 
-    @Value("${app.admin.email:admin@medvastr.com}")
+    @Value("${app.admin.email:info@medvarn.com}")
     private String adminEmail;
 
     @Value("${app.admin.password:}")
