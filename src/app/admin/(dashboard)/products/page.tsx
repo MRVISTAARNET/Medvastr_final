@@ -536,12 +536,47 @@ export default function AdminProducts() {
               <button className="modal-x" onClick={() => setIsModalOpen(false)}>✕</button>
             </div>
 
-            <div className="p-tabs">
-              <button className={`p-tab ${activeTab === 'basic' ? 'on' : ''}`} onClick={() => setActiveTab('basic')}>1. Basic Info</button>
-              <button className={`p-tab ${activeTab === 'pricing' ? 'on' : ''}`} onClick={() => setActiveTab('pricing')}>2. Pricing & Category</button>
-              <button className={`p-tab ${activeTab === 'inventory' ? 'on' : ''}`} onClick={() => setActiveTab('inventory')}>3. Inventory</button>
-              <button className={`p-tab ${activeTab === 'media' ? 'on' : ''}`} onClick={() => setActiveTab('media')}>4. Media</button>
-              <button className={`p-tab ${activeTab === 'seo' ? 'on' : ''}`} onClick={() => setActiveTab('seo')}>5. SEO Settings</button>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              padding: '14px 20px',
+              background: '#f8fafc',
+              borderBottom: '1px solid #e2e8f0',
+              overflowX: 'auto',
+              scrollbarWidth: 'thin'
+            }}>
+              {[
+                { id: 'basic', label: '1. Basic Info' },
+                { id: 'pricing', label: '2. Pricing & Category' },
+                { id: 'inventory', label: '3. Inventory' },
+                { id: 'media', label: '4. Media' },
+                { id: 'seo', label: '5. SEO Settings' },
+              ].map((t) => {
+                const active = activeTab === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setActiveTab(t.id as any)}
+                    style={{
+                      padding: '9px 16px',
+                      borderRadius: '8px',
+                      border: active ? '1.5px solid #008080' : '1px solid #cbd5e1',
+                      background: active ? '#008080' : '#ffffff',
+                      color: active ? '#ffffff' : '#334155',
+                      fontWeight: active ? 700 : 600,
+                      fontSize: '13px',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      transition: 'all 0.2s ease',
+                      boxShadow: active ? '0 2px 6px rgba(0,128,128,0.2)' : 'none',
+                    }}
+                  >
+                    {t.label}
+                  </button>
+                );
+              })}
             </div>
 
             <div className="modal-body">

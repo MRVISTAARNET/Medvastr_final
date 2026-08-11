@@ -62,7 +62,7 @@ const AdminSidebar = () => {
   return (
     <div id="admin-sidebar">
       <div className="sb-logo">
-        <div className="sb-logo-t">Med<span>vastr</span></div>
+        <div className="sb-logo-t">Med<span>varn</span></div>
         <div className="sb-logo-s">ADMIN DASHBOARD</div>
         <button
           type="button"
