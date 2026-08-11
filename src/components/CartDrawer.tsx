@@ -328,7 +328,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                             </div>
 
                             <div style={{ minWidth: 0, flex: 1 }}>
-                              <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                              <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a", lineHeight: 1.25 }}>
                                 {prod.name}
                               </div>
                               <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "2px" }}>
