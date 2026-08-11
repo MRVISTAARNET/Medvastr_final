@@ -885,12 +885,27 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
           {/* FREQUENTLY BOUGHT TOGETHER / BUNDLE DEALS */}
           {(() => {
-            const bundleItem = products.find(x => x.id !== p.id && (
-              x.type?.toLowerCase().includes('cap') ||
-              x.type?.toLowerCase().includes('underscrub') ||
-              x.name?.toLowerCase().includes('t-shirt') ||
-              x.name?.toLowerCase().includes('cap')
-            )) || products.find(x => x.id !== p.id);
+            if (!p || !products || products.length === 0) return null;
+            const pType = (p.type || '').toLowerCase();
+            const pName = (p.name || '').toLowerCase();
+
+            let bundleItem: Product | undefined;
+
+            if (pType.includes('scrub') || pType.includes('set') || pName.includes('scrub')) {
+              bundleItem = products.find(x => x.id !== p.id && (x.type?.toLowerCase().includes('cap') || x.name?.toLowerCase().includes('cap'))) ||
+                           products.find(x => x.id !== p.id && (x.type?.toLowerCase().includes('underscrub') || x.name?.toLowerCase().includes('under'))) ||
+                           products.find(x => x.id !== p.id && (x.type?.toLowerCase().includes('tshirt') || x.name?.toLowerCase().includes('t-shirt')));
+            } else if (pType.includes('surgical') || pName.includes('gown')) {
+              bundleItem = products.find(x => x.id !== p.id && (x.type?.toLowerCase().includes('cap') || x.name?.toLowerCase().includes('cap'))) ||
+                           products.find(x => x.id !== p.id && x.type?.toLowerCase().includes('scrub'));
+            } else if (pType.includes('tshirt') || pType.includes('underscrub') || pName.includes('t-shirt')) {
+              bundleItem = products.find(x => x.id !== p.id && x.type?.toLowerCase().includes('scrub')) ||
+                           products.find(x => x.id !== p.id && (x.type?.toLowerCase().includes('cap') || x.name?.toLowerCase().includes('cap')));
+            }
+
+            if (!bundleItem) {
+              bundleItem = products.find(x => x.id !== p.id);
+            }
 
             if (!bundleItem) return null;
 
