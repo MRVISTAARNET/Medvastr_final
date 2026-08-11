@@ -557,6 +557,22 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
     } : {})
   };
 
+  const pdpVolRate = qty === 2 ? 0.05 : (qty === 3 || qty === 4) ? 0.10 : qty >= 5 ? 0.15 : 0;
+  const pdpOrigTotal = p.price * qty;
+  const pdpDiscount = Math.round(pdpOrigTotal * pdpVolRate);
+  const pdpFinalTotal = pdpOrigTotal - pdpDiscount;
+  const pdpVolPercent = Math.round(pdpVolRate * 100);
+
+  const pdpBtnLabel = isOutOfStock
+    ? 'Currently Out of Stock'
+    : isAdding
+    ? 'Adding...'
+    : addedSuccess
+    ? '✓ Added to Bag!'
+    : pdpVolRate > 0
+    ? `Add to Bag • ${fmt(pdpFinalTotal)}`
+    : `Add to Bag • ${fmt(pdpOrigTotal)}`;
+
   return (
     <div className="pdp-container">
       <JsonLd data={productSchema as any} />
@@ -770,121 +786,97 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                 </div>
               </div>
             )}
-          </div>
 
-          {/* ACTIONS */}
-          <div className="pdp-main-actions">
-            <div className="pdp-qty-wish-row" style={{ display: 'flex', gap: '10px', alignItems: 'center', width: '100%' }}>
-              <div className="pdp-qty-stepper" style={{ height: '52px', border: '1.5px solid #cbd5e1', borderRadius: '8px', padding: '0 8px', width: '120px', background: '#fff' }}>
-                <button className="pdp-step-btn" style={{ width: '32px', height: '32px', border: 'none', background: 'none', cursor: 'pointer', fontSize: '18px' }} onClick={() => setQty(q => Math.max(1, q - 1))}>−</button>
-                <div className="pdp-qty-display" style={{ fontWeight: 700 }}>{qty}</div>
-                <button className="pdp-step-btn" style={{ width: '32px', height: '32px', border: 'none', background: 'none', cursor: 'pointer', fontSize: '18px' }} onClick={() => setQty(q => q + 1)}>+</button>
+            {/* ACTIONS */}
+            <div className="pdp-main-actions">
+              <div className="pdp-qty-wish-row" style={{ display: 'flex', gap: '10px', alignItems: 'center', width: '100%' }}>
+                <div className="pdp-qty-stepper" style={{ height: '52px', border: '1.5px solid #cbd5e1', borderRadius: '8px', padding: '0 8px', width: '120px', background: '#fff', flexShrink: 0 }}>
+                  <button className="pdp-step-btn" style={{ width: '32px', height: '32px', border: 'none', background: 'none', cursor: 'pointer', fontSize: '18px' }} onClick={() => setQty(q => Math.max(1, q - 1))}>−</button>
+                  <div className="pdp-qty-display" style={{ fontWeight: 700 }}>{qty}</div>
+                  <button className="pdp-step-btn" style={{ width: '32px', height: '32px', border: 'none', background: 'none', cursor: 'pointer', fontSize: '18px' }} onClick={() => setQty(q => q + 1)}>+</button>
+                </div>
+
+                <button
+                  onClick={async (e) => {
+                    let firstErrorElementId: string | null = null;
+                    if (p.clrs && p.clrs.length > 0 && ci === null) {
+                      setColorError(true);
+                      if (!firstErrorElementId) firstErrorElementId = "pdp-color-select";
+                    }
+                    if (productSizes.length > 0 && !sz) {
+                      setSizeError(true);
+                      if (!firstErrorElementId) firstErrorElementId = "pdp-size-select";
+                    }
+                    if (isSet && productSizes.length > 0 && !btmSz) {
+                      setBottomSizeError(true);
+                      if (!firstErrorElementId) firstErrorElementId = "pdp-bottom-size-select";
+                    }
+                    if (firstErrorElementId) {
+                      const element = document.getElementById(firstErrorElementId);
+                      if (element) {
+                        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      }
+                      return;
+                    }
+
+                    setIsAdding(true);
+
+                    try {
+                      const cartIcon = document.querySelector('.cart-act-item') || document.querySelector('.cart-icon-wrap') || document.querySelector('.cart-pill');
+                      if (cartIcon && e.currentTarget) {
+                        const btnRect = e.currentTarget.getBoundingClientRect();
+                        const cartRect = cartIcon.getBoundingClientRect();
+
+                        const flyEl = document.createElement('div');
+                        flyEl.className = 'fly-to-cart-particle';
+                        flyEl.style.left = `${btnRect.left + btnRect.width / 2 - 12}px`;
+                        flyEl.style.top = `${btnRect.top + btnRect.height / 2 - 12}px`;
+                        document.body.appendChild(flyEl);
+
+                        const deltaX = cartRect.left - btnRect.left;
+                        const deltaY = cartRect.top - btnRect.top;
+
+                        flyEl.animate([
+                          { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                          { transform: `translate(${deltaX}px, ${deltaY}px) scale(0.2)`, opacity: 0.2 }
+                        ], {
+                          duration: 600,
+                          easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+                          fill: 'forwards'
+                        });
+
+                        setTimeout(() => flyEl.remove(), 600);
+                      }
+                    } catch {}
+
+                    setTimeout(() => {
+                      const finalSize = isSet ? `Top: ${sz} / Bot: ${btmSz}` : sz;
+                      addToCart(p, ci ?? 0, finalSize || 'M', qty);
+                      setIsAdding(false);
+                      setAddedSuccess(true);
+                      setIsCartOpen(true);
+                      
+                      setTimeout(() => {
+                        setAddedSuccess(false);
+                      }, 2000);
+                    }, 600);
+                  }}
+                  disabled={isOutOfStock || isAdding}
+                  className={`pdp-buy-btn ${addedSuccess ? 'success-state' : ''}`}
+                  style={{ flex: 1, height: '52px', border: 'none', background: addedSuccess ? '#16a34a' : 'var(--ink, #1e1b4b)', color: '#fff', borderRadius: '8px', fontWeight: 700, fontSize: '15px', textTransform: 'uppercase', cursor: 'pointer', transition: 'background 0.3s' }}
+                >
+                  {pdpBtnLabel}
+                </button>
               </div>
-              {(() => {
-                const pdpVolRate = qty === 2 ? 0.05 : (qty === 3 || qty === 4) ? 0.10 : qty >= 5 ? 0.15 : 0;
-                const pdpOrigTotal = p.price * qty;
-                const pdpDiscount = Math.round(pdpOrigTotal * pdpVolRate);
-                const pdpFinalTotal = pdpOrigTotal - pdpDiscount;
-                const pdpVolPercent = Math.round(pdpVolRate * 100);
 
-                const btnLabel = isOutOfStock
-                  ? 'Currently Out of Stock'
-                  : isAdding
-                  ? 'Adding...'
-                  : addedSuccess
-                  ? '✓ Added to Bag!'
-                  : pdpVolRate > 0
-                  ? `Add to Bag • ${fmt(pdpFinalTotal)}`
-                  : `Add to Bag • ${fmt(pdpOrigTotal)}`;
-
-                return (
-                  <>
-                    <button
-                      onClick={async (e) => {
-                        let firstErrorElementId: string | null = null;
-                        // Validate color selection
-                        if (p.clrs && p.clrs.length > 0 && ci === null) {
-                          setColorError(true);
-                          if (!firstErrorElementId) firstErrorElementId = "pdp-color-select";
-                        }
-                        // Validate top size
-                        if (productSizes.length > 0 && !sz) {
-                          setSizeError(true);
-                          if (!firstErrorElementId) firstErrorElementId = "pdp-size-select";
-                        }
-                        // For sets: validate bottom size too
-                        if (isSet && productSizes.length > 0 && !btmSz) {
-                          setBottomSizeError(true);
-                          if (!firstErrorElementId) firstErrorElementId = "pdp-bottom-size-select";
-                        }
-                        if (firstErrorElementId) {
-                          const element = document.getElementById(firstErrorElementId);
-                          if (element) {
-                            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                          }
-                          return;
-                        }
-
-                        setIsAdding(true);
-
-                        // Create fly-to-cart particle animation
-                        try {
-                          const cartIcon = document.querySelector('.cart-act-item') || document.querySelector('.cart-icon-wrap') || document.querySelector('.cart-pill');
-                          if (cartIcon && e.currentTarget) {
-                            const btnRect = e.currentTarget.getBoundingClientRect();
-                            const cartRect = cartIcon.getBoundingClientRect();
-
-                            const flyEl = document.createElement('div');
-                            flyEl.className = 'fly-to-cart-particle';
-                            flyEl.style.left = `${btnRect.left + btnRect.width / 2 - 12}px`;
-                            flyEl.style.top = `${btnRect.top + btnRect.height / 2 - 12}px`;
-                            document.body.appendChild(flyEl);
-
-                            const deltaX = cartRect.left - btnRect.left;
-                            const deltaY = cartRect.top - btnRect.top;
-
-                            flyEl.animate([
-                              { transform: 'translate(0, 0) scale(1)', opacity: 1 },
-                              { transform: `translate(${deltaX}px, ${deltaY}px) scale(0.2)`, opacity: 0.2 }
-                            ], {
-                              duration: 600,
-                              easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
-                              fill: 'forwards'
-                            });
-
-                            setTimeout(() => flyEl.remove(), 600);
-                          }
-                        } catch {}
-
-                        setTimeout(() => {
-                          const finalSize = isSet ? `Top: ${sz} / Bot: ${btmSz}` : sz;
-                          addToCart(p, ci ?? 0, finalSize || 'M', qty);
-                          setIsAdding(false);
-                          setAddedSuccess(true);
-                          setIsCartOpen(true); // Auto-open cart drawer!
-                          
-                          setTimeout(() => {
-                            setAddedSuccess(false);
-                          }, 2000);
-                        }, 600);
-                      }}
-                      disabled={isOutOfStock || isAdding}
-                      className={`pdp-buy-btn ${addedSuccess ? 'success-state' : ''}`}
-                      style={{ flex: 1, height: '52px', border: 'none', background: addedSuccess ? '#16a34a' : 'var(--ink, #1e1b4b)', color: '#fff', borderRadius: '8px', fontWeight: 700, fontSize: '15px', textTransform: 'uppercase', cursor: 'pointer', transition: 'background 0.3s' }}
-                    >
-                      {btnLabel}
-                    </button>
-
-                    {pdpVolRate > 0 && (
-                      <div style={{ width: '100%', marginTop: '10px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '8px 12px', color: '#15803d', fontSize: '13px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span>🎉</span>
-                        <span>{pdpVolPercent}% Multi-Item Volume Discount Applied! (You save {fmt(pdpDiscount)})</span>
-                      </div>
-                    )}
-                  </>
-                );
-              })()}
+              {pdpVolRate > 0 && (
+                <div style={{ width: '100%', marginTop: '12px', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '8px', padding: '10px 14px', color: '#15803d', fontSize: '13px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>🎉</span>
+                  <span>{pdpVolPercent}% Multi-Item Volume Discount Applied! (You save {fmt(pdpDiscount)})</span>
+                </div>
+              )}
             </div>
+
             <div style={{ marginTop: '20px', padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
               <div style={{ fontSize: '15px', fontWeight: 700, color: '#1e293b', marginBottom: '10px' }}>Delivery Details</div>
               <div style={{ display: 'flex', gap: '8px' }}>
@@ -973,9 +965,8 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               </div>
             </DetailAccordion>
           </div>
-
-    </div>
-  </div>
+        </div>
+      </div>
 
       {/* KNYAMED STYLE FEATURE HIGHLIGHTS STRIP */}
       <div className="pdp-highlights-strip">
