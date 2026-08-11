@@ -122,6 +122,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const [addedSuccess, setAddedSuccess] = useState(false);
   const [selectedBundleIdx, setSelectedBundleIdx] = useState(0);
   const [selectedBundleSize, setSelectedBundleSize] = useState<string>('M');
+  const [selectedBundleColorIdx, setSelectedBundleColorIdx] = useState<number>(0);
   const [bundlePreviewImg, setBundlePreviewImg] = useState<string | null>(null);
 
   const idOrSlug = String(slug || "");
@@ -970,6 +971,10 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             if (bundleList.length === 0) return null;
 
             const activeBundleItem = bundleList[selectedBundleIdx < bundleList.length ? selectedBundleIdx : 0];
+            const activeColorIdx = selectedBundleColorIdx < (activeBundleItem.clrs?.length || 1) ? selectedBundleColorIdx : 0;
+            const bundleImages = getImagesForColor(activeBundleItem, activeColorIdx);
+            const bundleThumb = bundleImages[0] || activeBundleItem.imgs[0];
+
             const combinedOriginal = p.price + activeBundleItem.price;
             
             // 15% Margin-Safe Bundle Savings Calculation
@@ -998,6 +1003,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                       type="button"
                       onClick={() => {
                         setSelectedBundleIdx(idx);
+                        setSelectedBundleColorIdx(0);
                         if (item.sizes && item.sizes.length > 0) setSelectedBundleSize(item.sizes[0]);
                       }}
                       style={{
@@ -1033,11 +1039,11 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                   <span style={{ fontSize: '20px', fontWeight: 800, color: '#008080' }}>+</span>
                   <div 
                     style={{ width: '64px', height: '82px', borderRadius: '8px', overflow: 'hidden', background: '#ffffff', border: '1px solid #cbd5e1', flexShrink: 0, cursor: 'pointer', position: 'relative' }}
-                    onClick={() => activeBundleItem.imgs?.[0] && setBundlePreviewImg(activeBundleItem.imgs[0].split('?')[0])}
+                    onClick={() => bundleThumb && setBundlePreviewImg(bundleThumb.split('?')[0])}
                     title="Click to preview full image"
                   >
-                    {activeBundleItem.imgs && activeBundleItem.imgs[0] ? (
-                      <img src={activeBundleItem.imgs[0].split('?')[0]} alt={activeBundleItem.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    {bundleThumb ? (
+                      <img src={bundleThumb.split('?')[0]} alt={activeBundleItem.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
                       <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🧢</div>
                     )}
@@ -1056,29 +1062,61 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                   </div>
                 </div>
 
-                {/* Bundle Item Size Picker */}
-                <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#64748b' }}>Select Size for {activeBundleItem.short || 'Bundle Item'}:</span>
-                  <div style={{ display: 'flex', gap: '6px' }}>
-                    {activeSizes.map((s) => (
-                      <button
-                        key={s}
-                        type="button"
-                        onClick={() => setSelectedBundleSize(s)}
-                        style={{
-                          padding: '3px 9px',
-                          borderRadius: '6px',
-                          fontSize: '11px',
-                          fontWeight: 700,
-                          border: currentBundleSize === s ? '1.5px solid #0f172a' : '1px solid #cbd5e1',
-                          background: currentBundleSize === s ? '#0f172a' : '#ffffff',
-                          color: currentBundleSize === s ? '#ffffff' : '#475569',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        {s}
-                      </button>
-                    ))}
+                {/* Bundle Item Color & Size Selectors */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '16px', padding: '10px 12px', background: '#ffffff', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+                  {/* Color Swatches */}
+                  {activeBundleItem.clrs && activeBundleItem.clrs.length > 0 && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', minWidth: '75px' }}>Color:</span>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        {activeBundleItem.clrs.map((clr, cIdx) => (
+                          <button
+                            key={clr}
+                            type="button"
+                            onClick={() => setSelectedBundleColorIdx(cIdx)}
+                            title={activeBundleItem.clrNms?.[cIdx] || clr}
+                            style={{
+                              width: '18px',
+                              height: '18px',
+                              borderRadius: '50%',
+                              background: clr,
+                              border: activeColorIdx === cIdx ? '2px solid #0f172a' : '1px solid #cbd5e1',
+                              boxShadow: activeColorIdx === cIdx ? '0 0 0 2px #008080' : 'none',
+                              cursor: 'pointer'
+                            }}
+                          />
+                        ))}
+                        <span style={{ fontSize: '11px', fontWeight: 600, color: '#475569', alignSelf: 'center' }}>
+                          {activeBundleItem.clrNms?.[activeColorIdx] || ''}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Size Selector */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', minWidth: '75px' }}>Size:</span>
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                      {activeSizes.map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => setSelectedBundleSize(s)}
+                          style={{
+                            padding: '3px 9px',
+                            borderRadius: '6px',
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            border: currentBundleSize === s ? '1.5px solid #0f172a' : '1px solid #cbd5e1',
+                            background: currentBundleSize === s ? '#0f172a' : '#ffffff',
+                            color: currentBundleSize === s ? '#ffffff' : '#475569',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
@@ -1087,7 +1125,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                   onClick={() => {
                     const finalSize = isSet ? `Top: ${sz} / Bot: ${btmSz}` : sz;
                     addToCart(p, ci ?? 0, finalSize || 'M', qty);
-                    addToCart(activeBundleItem, 0, currentBundleSize, 1);
+                    addToCart(activeBundleItem, activeColorIdx, currentBundleSize, 1);
                     setIsCartOpen(true);
                     toast(`Bundle added! Saved ${fmt(bundleDiscount)}`, "ok");
                   }}

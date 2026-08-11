@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useApp } from "@/context/AppContext";
 import { fmt } from "@/lib/data";
 import { useRouter } from "next/navigation";
@@ -15,6 +15,7 @@ interface CartDrawerProps {
 export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const { cart, updateCartQty, removeFromCart, storeSettings, products, addToCart } = useApp();
   const router = useRouter();
+  const [upsellSizes, setUpsellSizes] = useState<Record<number, string>>({});
 
   const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const totalQty = cart.reduce((a, b) => a + b.qty, 0);
@@ -293,23 +294,45 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                             <div style={{ fontSize: "12px", fontWeight: 800, color: "#008080" }}>{fmt(prod.price)}</div>
                           </div>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => addToCart(prod, 0, prod.sizes?.[0] || "M", 1)}
-                          style={{
-                            padding: "6px 12px",
-                            background: "#f0fdf4",
-                            border: "1px solid #bbf7d0",
-                            color: "#166534",
-                            borderRadius: "6px",
-                            fontSize: "12px",
-                            fontWeight: 700,
-                            cursor: "pointer",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          + Add
-                        </button>
+                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                          <select
+                            aria-label="Select size"
+                            value={upsellSizes[prod.id] || prod.sizes?.[0] || "M"}
+                            onChange={(e) => setUpsellSizes({ ...upsellSizes, [prod.id]: e.target.value })}
+                            style={{
+                              padding: "4px 6px",
+                              borderRadius: "6px",
+                              border: "1px solid #cbd5e1",
+                              fontSize: "11px",
+                              fontWeight: 700,
+                              background: "#ffffff",
+                              color: "#0f172a",
+                              outline: "none",
+                              cursor: "pointer",
+                            }}
+                          >
+                            {(prod.sizes && prod.sizes.length > 0 ? prod.sizes : ["S", "M", "L", "XL"]).map((sz) => (
+                              <option key={sz} value={sz}>{sz}</option>
+                            ))}
+                          </select>
+                          <button
+                            type="button"
+                            onClick={() => addToCart(prod, 0, upsellSizes[prod.id] || prod.sizes?.[0] || "M", 1)}
+                            style={{
+                              padding: "6px 12px",
+                              background: "#f0fdf4",
+                              border: "1px solid #bbf7d0",
+                              color: "#166534",
+                              borderRadius: "6px",
+                              fontSize: "12px",
+                              fontWeight: 700,
+                              cursor: "pointer",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            + Add
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
