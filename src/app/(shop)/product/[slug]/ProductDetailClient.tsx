@@ -120,6 +120,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
   const [isAdding, setIsAdding] = useState(false);
   const [addedSuccess, setAddedSuccess] = useState(false);
+  const [selectedBundleIdx, setSelectedBundleIdx] = useState(0);
 
   const idOrSlug = String(slug || "");
   const numericId = Number(idOrSlug);
@@ -883,104 +884,6 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             </div>
           </div>
 
-          {/* FREQUENTLY BOUGHT TOGETHER / BUNDLE DEALS */}
-          {(() => {
-            if (!p || !products || products.length === 0) return null;
-            const pType = (p.type || '').toLowerCase();
-            const pName = (p.name || '').toLowerCase();
-
-            let bundleItem: Product | undefined;
-
-            if (pType.includes('scrub') || pType.includes('set') || pName.includes('scrub')) {
-              bundleItem = products.find(x => x.id !== p.id && (x.type?.toLowerCase().includes('cap') || x.name?.toLowerCase().includes('cap'))) ||
-                           products.find(x => x.id !== p.id && (x.type?.toLowerCase().includes('underscrub') || x.name?.toLowerCase().includes('under'))) ||
-                           products.find(x => x.id !== p.id && (x.type?.toLowerCase().includes('tshirt') || x.name?.toLowerCase().includes('t-shirt')));
-            } else if (pType.includes('surgical') || pName.includes('gown')) {
-              bundleItem = products.find(x => x.id !== p.id && (x.type?.toLowerCase().includes('cap') || x.name?.toLowerCase().includes('cap'))) ||
-                           products.find(x => x.id !== p.id && x.type?.toLowerCase().includes('scrub'));
-            } else if (pType.includes('tshirt') || pType.includes('underscrub') || pName.includes('t-shirt')) {
-              bundleItem = products.find(x => x.id !== p.id && x.type?.toLowerCase().includes('scrub')) ||
-                           products.find(x => x.id !== p.id && (x.type?.toLowerCase().includes('cap') || x.name?.toLowerCase().includes('cap')));
-            }
-
-            if (!bundleItem) {
-              bundleItem = products.find(x => x.id !== p.id);
-            }
-
-            if (!bundleItem) return null;
-
-            const combinedOriginal = p.price + bundleItem.price;
-            const bundleDiscount = 200;
-            const bundleFinalPrice = Math.max(0, combinedOriginal - bundleDiscount);
-
-            return (
-              <div style={{ marginTop: '24px', padding: '20px', background: '#f0fdf4', borderRadius: '16px', border: '1.5px solid #bbf7d0' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-                  <div style={{ fontSize: '15px', fontWeight: 800, color: '#166534', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span>🛍️ Frequently Bought Together</span>
-                  </div>
-                  <span style={{ background: '#dcfce7', color: '#15803d', padding: '4px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 900 }}>
-                    SAVE ₹{bundleDiscount} BUNDLE
-                  </span>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                  <div style={{ width: '60px', height: '75px', borderRadius: '8px', overflow: 'hidden', background: '#ffffff', border: '1px solid #cbd5e1', flexShrink: 0 }}>
-                    {p.imgs && p.imgs[0] ? (
-                      <img src={p.imgs[0].split('?')[0]} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : (
-                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>👕</div>
-                    )}
-                  </div>
-                  <span style={{ fontSize: '18px', fontWeight: 800, color: '#15803d' }}>+</span>
-                  <div style={{ width: '60px', height: '75px', borderRadius: '8px', overflow: 'hidden', background: '#ffffff', border: '1px solid #cbd5e1', flexShrink: 0 }}>
-                    {bundleItem.imgs && bundleItem.imgs[0] ? (
-                      <img src={bundleItem.imgs[0].split('?')[0]} alt={bundleItem.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : (
-                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🧢</div>
-                    )}
-                  </div>
-
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {p.name} + {bundleItem.name}
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
-                      <span style={{ fontSize: '15px', fontWeight: 900, color: '#166534' }}>{fmt(bundleFinalPrice)}</span>
-                      <span style={{ fontSize: '12px', textDecoration: 'line-through', color: '#94a3b8' }}>{fmt(combinedOriginal)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    const finalSize = isSet ? `Top: ${sz} / Bot: ${btmSz}` : sz;
-                    addToCart(p, ci ?? 0, finalSize || 'M', qty);
-                    addToCart(bundleItem, 0, bundleItem.sizes?.[0] || 'M', 1);
-                    setIsCartOpen(true);
-                    toast(`Bundle added! Saved ₹${bundleDiscount}`, "ok");
-                  }}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    background: '#166534',
-                    color: '#ffffff',
-                    border: 'none',
-                    borderRadius: '10px',
-                    fontSize: '14px',
-                    fontWeight: 800,
-                    cursor: 'pointer',
-                    transition: 'background 0.2s',
-                    boxShadow: '0 4px 12px rgba(22, 101, 52, 0.2)'
-                  }}
-                >
-                  ⚡ Add Bundle to Bag — {fmt(bundleFinalPrice)} (Save ₹{bundleDiscount})
-                </button>
-              </div>
-            );
-          })()}
-
           {/* ACCORDIONS */}
           <div className="pdp-details-wrap">
             <DetailAccordion title="Performance & Fabric" defaultOpen={false}>
@@ -1026,6 +929,126 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               </div>
             </DetailAccordion>
           </div>
+
+          {/* FREQUENTLY BOUGHT TOGETHER / INTERACTIVE BUNDLE DEALS (POSITIONED BELOW ACCORDIONS) */}
+          {(() => {
+            if (!p || !products || products.length === 0) return null;
+
+            const prodCat = String((p as any).cat || (p as any).categorySlug || (p as any).categoryName || p.type || p.name || '').toLowerCase();
+            const isMenPage = prodCat.includes('men') && !prodCat.includes('women');
+            const isWomenPage = prodCat.includes('women');
+
+            // Candidates filtered by gender preference
+            const genderCandidates = products.filter(x => {
+              if (x.id === p.id) return false;
+              const xCat = String((x as any).cat || (x as any).categorySlug || (x as any).categoryName || x.type || x.name || '').toLowerCase();
+              if (isMenPage) return xCat.includes('men') || (!xCat.includes('women'));
+              if (isWomenPage) return xCat.includes('women') || (!xCat.includes('men'));
+              return true;
+            });
+
+            const bundleList = (genderCandidates.length > 0 ? genderCandidates : products.filter(x => x.id !== p.id)).slice(0, 3);
+            if (bundleList.length === 0) return null;
+
+            const activeBundleItem = bundleList[selectedBundleIdx < bundleList.length ? selectedBundleIdx : 0];
+            const combinedOriginal = p.price + activeBundleItem.price;
+            
+            // 15% Margin-Safe Bundle Savings Calculation
+            const bundleDiscount = Math.round(combinedOriginal * 0.15);
+            const bundleFinalPrice = Math.max(0, combinedOriginal - bundleDiscount);
+
+            return (
+              <div style={{ marginTop: '32px', padding: '24px', background: '#f0fdf4', borderRadius: '16px', border: '1.5px solid #bbf7d0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+                  <div style={{ fontSize: '16px', fontWeight: 800, color: '#166534', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span>🛍️ Complete Your Look & Save 15%</span>
+                  </div>
+                  <span style={{ background: '#dcfce7', color: '#15803d', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 900 }}>
+                    15% OFF BUNDLE SAVINGS
+                  </span>
+                </div>
+
+                {/* Interactive Bundle Switcher Pills */}
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                  {bundleList.map((item, idx) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setSelectedBundleIdx(idx)}
+                      style={{
+                        padding: '6px 14px',
+                        borderRadius: '20px',
+                        fontSize: '12px',
+                        fontWeight: 700,
+                        border: selectedBundleIdx === idx ? '2px solid #166534' : '1px solid #cbd5e1',
+                        background: selectedBundleIdx === idx ? '#166534' : '#ffffff',
+                        color: selectedBundleIdx === idx ? '#ffffff' : '#334155',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                    >
+                      + {item.short || item.name} ({fmt(item.price)})
+                    </button>
+                  ))}
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '18px' }}>
+                  <div style={{ width: '64px', height: '82px', borderRadius: '8px', overflow: 'hidden', background: '#ffffff', border: '1px solid #cbd5e1', flexShrink: 0 }}>
+                    {p.imgs && p.imgs[0] ? (
+                      <img src={p.imgs[0].split('?')[0]} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>👕</div>
+                    )}
+                  </div>
+                  <span style={{ fontSize: '20px', fontWeight: 800, color: '#15803d' }}>+</span>
+                  <div style={{ width: '64px', height: '82px', borderRadius: '8px', overflow: 'hidden', background: '#ffffff', border: '1px solid #cbd5e1', flexShrink: 0 }}>
+                    {activeBundleItem.imgs && activeBundleItem.imgs[0] ? (
+                      <img src={activeBundleItem.imgs[0].split('?')[0]} alt={activeBundleItem.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🧢</div>
+                    )}
+                  </div>
+
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: '#0f172a', lineHeight: 1.3 }}>
+                      {p.name} + {activeBundleItem.name}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
+                      <span style={{ fontSize: '16px', fontWeight: 900, color: '#166534' }}>{fmt(bundleFinalPrice)}</span>
+                      <span style={{ fontSize: '13px', textDecoration: 'line-through', color: '#94a3b8' }}>{fmt(combinedOriginal)}</span>
+                      <span style={{ fontSize: '12px', fontWeight: 800, color: '#15803d' }}>(Save {fmt(bundleDiscount)})</span>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const finalSize = isSet ? `Top: ${sz} / Bot: ${btmSz}` : sz;
+                    addToCart(p, ci ?? 0, finalSize || 'M', qty);
+                    addToCart(activeBundleItem, 0, activeBundleItem.sizes?.[0] || 'M', 1);
+                    setIsCartOpen(true);
+                    toast(`Bundle added! Saved ${fmt(bundleDiscount)}`, "ok");
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '14px',
+                    background: '#166534',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '10px',
+                    fontSize: '15px',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    transition: 'background 0.2s',
+                    boxShadow: '0 4px 12px rgba(22, 101, 52, 0.2)'
+                  }}
+                >
+                  ⚡ Add Bundle to Bag — {fmt(bundleFinalPrice)} (Save {fmt(bundleDiscount)})
+                </button>
+              </div>
+            );
+          })()}
 
     </div>
   </div>

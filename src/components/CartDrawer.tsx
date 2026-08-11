@@ -62,81 +62,37 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
           </button>
         </div>
 
-        {/* Dynamic Free Shipping Progress Banner */}
+        {/* Compact Combined Status Banner */}
         {cart.length > 0 && (
-          <div
-            style={{
-              background: isFreeShipUnlocked ? "#f0fdf4" : "#f8fafc",
-              borderBottom: "1px solid #e2e8f0",
-              padding: "12px 20px",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "13px",
-                fontWeight: 700,
-                color: isFreeShipUnlocked ? "#15803d" : "#0f172a",
-                marginBottom: "6px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <span>
-                {isGlobalFreeShip ? (
-                  promoUntilStr ? (
-                    `🎉 Free Shipping Active on ALL Orders (Promo till ${new Date(promoUntilStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })})!`
-                  ) : (
-                    "🎉 COMPLIMENTARY Free Shipping Active on All Orders!"
-                  )
-                ) : isFreeShipUnlocked ? (
-                  "🎉 You unlocked COMPLIMENTARY Free Shipping!"
-                ) : (
-                  <>
-                    Add <strong>{fmt(remForFreeShip)}</strong> more to unlock <strong>FREE Shipping</strong> 🚚
-                  </>
-                )}
+          <div style={{
+            background: '#f8fafc',
+            borderBottom: '1px solid #e2e8f0',
+            padding: '8px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '8px',
+            fontSize: '12px',
+            fontWeight: 700
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+              <span style={{ fontSize: '14px' }}>{totalQty >= 2 ? '🎉' : '🎁'}</span>
+              <span style={{ color: totalQty >= 3 ? '#15803d' : totalQty === 2 ? '#0284c7' : '#334155' }}>
+                {totalQty === 1 && "Add 1 more item for 5% OFF!"}
+                {totalQty === 2 && "5% Multi-Item Discount Applied! (Add 1 more for 10% OFF)"}
+                {totalQty >= 3 && "MAX 10% Multi-Item Savings Applied!"}
               </span>
-              <span style={{ fontSize: "12px", color: "#64748b" }}>{shipProgress}%</span>
             </div>
-            <div
-              style={{
-                width: "100%",
-                height: "6px",
-                background: "#e2e8f0",
-                borderRadius: "10px",
-                overflow: "hidden",
-              }}
-            >
-              <div
-                style={{
-                  width: `${shipProgress}%`,
-                  height: "100%",
-                  background: isFreeShipUnlocked
-                    ? "linear-gradient(90deg, #22c55e, #16a34a)"
-                    : "linear-gradient(90deg, #008080, #0d9488)",
-                  borderRadius: "10px",
-                  transition: "width 0.4s ease",
-                }}
-              />
-            </div>
-          </div>
-        )}
 
-        {/* Multi-Item Volume Discount Banner */}
-        {cart.length > 0 && (
-          <div style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', padding: '10px 20px' }}>
-            <div style={{ fontSize: '12px', fontWeight: 700, color: totalQty >= 3 ? '#16a34a' : totalQty === 2 ? '#0284c7' : '#475569', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span>
-                {totalQty === 1 && "🎁 Add 1 more item to get 5% OFF your order!"}
-                {totalQty === 2 && "🎉 5% Multi-Item Discount Applied! Add 1 more for 10% OFF!"}
-                {totalQty >= 3 && "🔥 MAX 10% Multi-Item Discount Unlocked & Applied!"}
-              </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
               {volumeDiscountAmount > 0 && (
-                <span style={{ background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: 800 }}>
+                <span style={{ background: '#dcfce7', color: '#15803d', padding: '1px 6px', borderRadius: '10px', fontSize: '11px', fontWeight: 800 }}>
                   -{fmt(volumeDiscountAmount)}
                 </span>
               )}
+              <span style={{ background: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0', padding: '1px 6px', borderRadius: '10px', fontSize: '10px', fontWeight: 800 }}>
+                FREE SHIP
+              </span>
             </div>
           </div>
         )}
