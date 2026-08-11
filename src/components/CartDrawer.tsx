@@ -19,11 +19,17 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const totalQty = cart.reduce((a, b) => a + b.qty, 0);
 
-  // Dynamic Free Shipping Calculation
+  // Dynamic Free Shipping Calculation with Admin Promo Date Check
+  const promoUntilStr = storeSettings?.SHIPPING_PROMO_FREE_UNTIL;
+  const isPromoActive = promoUntilStr ? new Date() < new Date(`${promoUntilStr}T23:59:59`) : false;
+  const baseFee = Number(storeSettings?.SHIPPING_BASE_FEE);
+  const isBaseFeeZero = !isNaN(baseFee) && baseFee === 0;
+  const isGlobalFreeShip = isPromoActive || isBaseFeeZero;
+
   const freeThreshold = Number(storeSettings?.SHIPPING_FREE_THRESHOLD) || 999;
-  const remForFreeShip = Math.max(0, freeThreshold - sub);
-  const shipProgress = Math.min(100, Math.round((sub / freeThreshold) * 100));
-  const isFreeShipUnlocked = remForFreeShip === 0;
+  const remForFreeShip = isGlobalFreeShip ? 0 : Math.max(0, freeThreshold - sub);
+  const shipProgress = isGlobalFreeShip ? 100 : Math.min(100, Math.round((sub / freeThreshold) * 100));
+  const isFreeShipUnlocked = isGlobalFreeShip || remForFreeShip === 0;
 
   const handleCheckout = () => {
     onClose();
@@ -72,7 +78,13 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
               }}
             >
               <span>
-                {isFreeShipUnlocked ? (
+                {isGlobalFreeShip ? (
+                  promoUntilStr ? (
+                    `🎉 Free Shipping Active on ALL Orders (Promo till ${new Date(promoUntilStr).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })})!`
+                  ) : (
+                    "🎉 COMPLIMENTARY Free Shipping Active on All Orders!"
+                  )
+                ) : isFreeShipUnlocked ? (
                   "🎉 You unlocked COMPLIMENTARY Free Shipping!"
                 ) : (
                   <>
