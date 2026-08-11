@@ -17,6 +17,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const { cart, updateCartQty, removeFromCart, storeSettings, products, addToCart } = useApp();
   const router = useRouter();
   const [upsellSizes, setUpsellSizes] = useState<Record<number, string>>({});
+  const [upsellColorIdxs, setUpsellColorIdxs] = useState<Record<number, number>>({});
   const [lightboxGallery, setLightboxGallery] = useState<{ imgs: string[]; activeIdx: number } | null>(null);
 
   const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
@@ -34,8 +35,9 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const shipProgress = isGlobalFreeShip ? 100 : Math.min(100, Math.round((sub / freeThreshold) * 100));
   const isFreeShipUnlocked = isGlobalFreeShip || remForFreeShip === 0;
 
-  // Multi-Item Volume Discount Calculation (1 item: 0%, 2 items: 5%, 3+ items: 10%)
-  const volumeDiscountRate = totalQty === 2 ? 0.05 : totalQty >= 3 ? 0.10 : 0;
+  // Multi-Item Volume Discount Calculation (1 item: 0%, 2: 5%, 3-4: 10%, 5+: 15%)
+  const volumeDiscountRate = totalQty === 2 ? 0.05 : (totalQty === 3 || totalQty === 4) ? 0.10 : totalQty >= 5 ? 0.15 : 0;
+  const volumeDiscountPercent = Math.round(volumeDiscountRate * 100);
   const volumeDiscountAmount = Math.round(sub * volumeDiscountRate);
   const grandTotalAfterDiscount = Math.max(0, sub - volumeDiscountAmount);
 
@@ -44,9 +46,24 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
     router.push("/checkout");
   };
 
-  // Upsell candidates (ALL products not already in cart)
+  // Gender-matched curated upsell items (max 4 items, excluding products already in cart)
   const cartProductIds = new Set(cart.map((i) => i.id));
-  const upsellItems = products.filter((p) => !cartProductIds.has(p.id));
+  const cartCatStr = cart.map((i) => (i.name + " " + (i.type || "")).toLowerCase()).join(" ");
+  const isCartWomen = cartCatStr.includes("women");
+  const isCartMen = cartCatStr.includes("men") && !isCartWomen;
+
+  const genderCandidates = products.filter((p) => {
+    if (cartProductIds.has(p.id)) return false;
+    const pCatStr = (p.name + " " + (p.type || "") + " " + String((p as any).cat || "")).toLowerCase();
+    const isPWomen = pCatStr.includes("women");
+    const isPMen = pCatStr.includes("men") && !isPWomen;
+
+    if (isCartWomen) return isPWomen || (!isPMen); // Women or Unisex
+    if (isCartMen) return isPMen || (!isPWomen); // Men or Unisex
+    return true;
+  });
+
+  const upsellItems = (genderCandidates.length > 0 ? genderCandidates : products.filter((p) => !cartProductIds.has(p.id))).slice(0, 4);
 
   return (
     <>
@@ -80,10 +97,11 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
               <span style={{ fontSize: '14px' }}>{totalQty >= 2 ? '🎉' : '🎁'}</span>
-              <span style={{ color: totalQty >= 3 ? '#15803d' : totalQty === 2 ? '#0284c7' : '#334155' }}>
+              <span style={{ color: totalQty >= 5 ? '#15803d' : totalQty >= 2 ? '#0284c7' : '#334155' }}>
                 {totalQty === 1 && "Add 1 more item for 5% OFF!"}
                 {totalQty === 2 && "5% Multi-Item Discount Applied! (Add 1 more for 10% OFF)"}
-                {totalQty >= 3 && "MAX 10% Multi-Item Savings Applied!"}
+                {(totalQty === 3 || totalQty === 4) && `10% Discount Applied! (Add ${5 - totalQty} more for 15% OFF)`}
+                {totalQty >= 5 && "🔥 MAX 15% Multi-Item Savings Applied!"}
               </span>
             </div>
 
@@ -268,88 +286,137 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                     ⚡ Frequently Added Essentials
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    {upsellItems.map((prod) => (
-                      <div
-                        key={prod.id}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          background: "#ffffff",
-                          padding: "8px 12px",
-                          borderRadius: "8px",
-                          border: "1px solid #e2e8f0",
-                        }}
-                      >
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                          <div
-                            style={{
-                              width: "36px",
-                              height: "44px",
-                              borderRadius: "4px",
-                              overflow: "hidden",
-                              background: "#f1f5f9",
-                              flexShrink: 0,
-                              cursor: "pointer",
-                            }}
-                            onClick={() => {
-                              const allImgs = (prod.imgs && prod.imgs.length > 0 ? prod.imgs : []).map((img) => img.split("?")[0]);
-                              if (allImgs.length > 0) setLightboxGallery({ imgs: allImgs, activeIdx: 0 });
-                            }}
-                            title="Click to preview image"
-                          >
-                            {prod.imgs && prod.imgs[0] ? (
-                              <img src={prod.imgs[0].split("?")[0]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                            ) : (
-                              prod.emo
-                            )}
+                    {upsellItems.map((prod) => {
+                      const activeColorIdx = upsellColorIdxs[prod.id] || 0;
+                      const activeSize = upsellSizes[prod.id] || prod.sizes?.[0] || "M";
+                      const colorImages = getImagesForColor(prod, activeColorIdx);
+                      const thumbImg = colorImages[0] || prod.imgs[0];
+
+                      return (
+                        <div
+                          key={prod.id}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            background: "#ffffff",
+                            padding: "10px 12px",
+                            borderRadius: "10px",
+                            border: "1px solid #e2e8f0",
+                            gap: "10px",
+                          }}
+                        >
+                          {/* Item Thumbnail (Click to view ONLY photos for this color) */}
+                          <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0, flex: 1 }}>
+                            <div
+                              style={{
+                                width: "42px",
+                                height: "52px",
+                                borderRadius: "6px",
+                                overflow: "hidden",
+                                background: "#f1f5f9",
+                                flexShrink: 0,
+                                cursor: "pointer",
+                                position: "relative",
+                                border: "1px solid #cbd5e1"
+                              }}
+                              onClick={() => {
+                                const imgsToView = colorImages.length > 0 ? colorImages.map(img => img.split("?")[0]) : [thumbImg.split("?")[0]];
+                                setLightboxGallery({ imgs: imgsToView, activeIdx: 0 });
+                              }}
+                              title="Click to preview color photos"
+                            >
+                              {thumbImg ? (
+                                <img src={thumbImg.split("?")[0]} alt={prod.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                              ) : (
+                                <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>📦</div>
+                              )}
+                              <span style={{ position: "absolute", bottom: "2px", right: "2px", background: "rgba(0,0,0,0.6)", color: "#ffffff", fontSize: "8px", padding: "1px 2px", borderRadius: "2px" }}>🔍</span>
+                            </div>
+
+                            <div style={{ minWidth: 0, flex: 1 }}>
+                              <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                {prod.name}
+                              </div>
+                              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "2px" }}>
+                                <span style={{ fontSize: "12px", fontWeight: 800, color: "#008080" }}>{fmt(prod.price)}</span>
+                                {((prod as any).mrp || prod.origPrice) && ((prod as any).mrp || prod.origPrice) > prod.price && (
+                                  <span style={{ fontSize: "11px", textDecoration: "line-through", color: "#94a3b8" }}>{fmt((prod as any).mrp || prod.origPrice)}</span>
+                                )}
+                              </div>
+
+                              {/* Color Swatches */}
+                              {prod.clrs && prod.clrs.length > 0 && (
+                                <div style={{ display: "flex", gap: "5px", marginTop: "5px", alignItems: "center" }}>
+                                  {prod.clrs.map((clr, cIdx) => (
+                                    <button
+                                      key={clr}
+                                      type="button"
+                                      onClick={() => setUpsellColorIdxs({ ...upsellColorIdxs, [prod.id]: cIdx })}
+                                      title={prod.clrNms?.[cIdx] || clr}
+                                      style={{
+                                        width: "14px",
+                                        height: "14px",
+                                        borderRadius: "50%",
+                                        background: clr,
+                                        border: activeColorIdx === cIdx ? "2px solid #0f172a" : "1px solid #cbd5e1",
+                                        boxShadow: activeColorIdx === cIdx ? "0 0 0 1px #008080" : "none",
+                                        cursor: "pointer",
+                                        padding: 0
+                                      }}
+                                    />
+                                  ))}
+                                  <span style={{ fontSize: "10px", color: "#64748b", marginLeft: "2px" }}>
+                                    {prod.clrNms?.[activeColorIdx] || ""}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
                           </div>
-                          <div>
-                            <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a" }}>{prod.name}</div>
-                            <div style={{ fontSize: "12px", fontWeight: 800, color: "#008080" }}>{fmt(prod.price)}</div>
+
+                          {/* Size Dropdown & Add Button */}
+                          <div style={{ display: "flex", alignItems: "center", gap: "6px", flexShrink: 0 }}>
+                            <select
+                              aria-label="Select size"
+                              value={activeSize}
+                              onChange={(e) => setUpsellSizes({ ...upsellSizes, [prod.id]: e.target.value })}
+                              style={{
+                                padding: "4px 6px",
+                                borderRadius: "6px",
+                                border: "1px solid #cbd5e1",
+                                fontSize: "11px",
+                                fontWeight: 700,
+                                background: "#ffffff",
+                                color: "#0f172a",
+                                outline: "none",
+                                cursor: "pointer",
+                              }}
+                            >
+                              {(prod.sizes && prod.sizes.length > 0 ? prod.sizes : ["S", "M", "L", "XL"]).map((sz) => (
+                                <option key={sz} value={sz}>{sz}</option>
+                              ))}
+                            </select>
+                            <button
+                              type="button"
+                              onClick={() => addToCart(prod, activeColorIdx, activeSize, 1)}
+                              style={{
+                                padding: "6px 12px",
+                                background: "#f0fdf4",
+                                border: "1px solid #bbf7d0",
+                                color: "#166534",
+                                borderRadius: "6px",
+                                fontSize: "12px",
+                                fontWeight: 700,
+                                cursor: "pointer",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              + Add
+                            </button>
                           </div>
                         </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                          <select
-                            aria-label="Select size"
-                            value={upsellSizes[prod.id] || prod.sizes?.[0] || "M"}
-                            onChange={(e) => setUpsellSizes({ ...upsellSizes, [prod.id]: e.target.value })}
-                            style={{
-                              padding: "4px 6px",
-                              borderRadius: "6px",
-                              border: "1px solid #cbd5e1",
-                              fontSize: "11px",
-                              fontWeight: 700,
-                              background: "#ffffff",
-                              color: "#0f172a",
-                              outline: "none",
-                              cursor: "pointer",
-                            }}
-                          >
-                            {(prod.sizes && prod.sizes.length > 0 ? prod.sizes : ["S", "M", "L", "XL"]).map((sz) => (
-                              <option key={sz} value={sz}>{sz}</option>
-                            ))}
-                          </select>
-                          <button
-                            type="button"
-                            onClick={() => addToCart(prod, 0, upsellSizes[prod.id] || prod.sizes?.[0] || "M", 1)}
-                            style={{
-                              padding: "6px 12px",
-                              background: "#f0fdf4",
-                              border: "1px solid #bbf7d0",
-                              color: "#166534",
-                              borderRadius: "6px",
-                              fontSize: "12px",
-                              fontWeight: 700,
-                              cursor: "pointer",
-                              whiteSpace: "nowrap",
-                            }}
-                          >
-                            + Add
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -366,7 +433,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
             </div>
             {volumeDiscountAmount > 0 && (
               <div className="sum-r" style={{ color: "#16a34a" }}>
-                <span>Multi-Item Savings ({totalQty === 2 ? "5%" : "10%"})</span>
+                <span>Multi-Item Savings ({volumeDiscountPercent}%)</span>
                 <span style={{ fontWeight: 800 }}>-{fmt(volumeDiscountAmount)}</span>
               </div>
             )}
