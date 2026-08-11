@@ -927,17 +927,15 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             </DetailAccordion>
 
             <DetailAccordion title="Shipping & Returns">
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {[['🚚', 'Domestic Express Delivery', 'Ships in 24-48 hours. Transit time 3-5 business days across India.'],
-                ['🔁', '7-Day Fit Guarantee', 'Easy size exchange for optimal fit. No questions asked.'],
-                ['📦', 'Secure Packaging', 'Orders are carefully packed to ensure your garment arrives in perfect condition.']
-                ].map(([ico, title, desc]) => (
-                  <div key={title} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-                    <span style={{ fontSize: '22px', flexShrink: 0 }}>{ico}</span>
-                    <div>
-                      <strong style={{ display: 'block', fontSize: '14px', fontWeight: 700, color: 'var(--ink)', marginBottom: '4px' }}>{title}</strong>
-                      <p style={{ fontSize: '13px', color: 'var(--lt)', lineHeight: 1.7, margin: 0 }}>{desc}</p>
-                    </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {[
+                  ['Domestic Express Delivery', 'Ships in 24-48 hours. Transit time 3-5 business days across India.'],
+                  ['7-Day Fit Guarantee', 'Easy size exchange for optimal fit. No questions asked.'],
+                  ['Secure Packaging', 'Orders are carefully packed to ensure your garment arrives in perfect condition.']
+                ].map(([title, desc]) => (
+                  <div key={title}>
+                    <strong style={{ display: 'block', fontSize: '14px', fontWeight: 700, color: 'var(--ink)', marginBottom: '3px' }}>{title}</strong>
+                    <p style={{ fontSize: '13px', color: 'var(--lt)', lineHeight: 1.6, margin: 0 }}>{desc}</p>
                   </div>
                 ))}
               </div>
