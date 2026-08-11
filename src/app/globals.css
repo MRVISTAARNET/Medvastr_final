@@ -7503,8 +7503,8 @@ body.zoom-open {
    ============================================================ */
 .pdp-grid {
   display: grid;
-  grid-template-columns: 80px 1.5fr 1fr;
-  /* 60% Images : 40% Info */
+  grid-template-columns: 80px 1fr 1fr;
+  /* 50% Images : 50% Info */
   gap: 40px !important;
   max-width: 1560px;
   margin: 0 auto;

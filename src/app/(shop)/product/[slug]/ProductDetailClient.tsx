@@ -121,6 +121,8 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const [isAdding, setIsAdding] = useState(false);
   const [addedSuccess, setAddedSuccess] = useState(false);
   const [selectedBundleIdx, setSelectedBundleIdx] = useState(0);
+  const [selectedBundleSize, setSelectedBundleSize] = useState<string>('M');
+  const [bundlePreviewImg, setBundlePreviewImg] = useState<string | null>(null);
 
   const idOrSlug = String(slug || "");
   const numericId = Number(idOrSlug);
@@ -587,6 +589,17 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
         document.body
       )}
 
+      {/* BUNDLE ITEM PREVIEW LIGHTBOX MODAL */}
+      {bundlePreviewImg && mounted && typeof document !== "undefined" && createPortal(
+        <div className="zoom-modal" onClick={() => setBundlePreviewImg(null)} style={{ background: 'rgba(15,23,42,0.85)', backdropFilter: 'blur(4px)', zIndex: 999999 }}>
+          <button className="zoom-close" onClick={() => setBundlePreviewImg(null)} style={{ top: '24px', right: '24px', fontSize: '28px' }}>✕</button>
+          <div style={{ maxWidth: '480px', width: '90%', position: 'relative', borderRadius: '16px', overflow: 'hidden', background: '#ffffff', boxShadow: '0 20px 40px rgba(0,0,0,0.3)', padding: '16px' }} onClick={e => e.stopPropagation()}>
+            <img src={bundlePreviewImg} alt="Bundle Item Preview" style={{ width: '100%', height: 'auto', maxHeight: '70vh', objectFit: 'contain', borderRadius: '12px' }} />
+          </div>
+        </div>,
+        document.body
+      )}
+
       {/* BREADCRUMB */}
       <nav className="pdp-bc">
         <button onClick={() => router.push('/')}>Home</button>
@@ -934,16 +947,22 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
           {(() => {
             if (!p || !products || products.length === 0) return null;
 
+            const prodName = (p.name || '').toLowerCase();
             const prodCat = String((p as any).cat || (p as any).categorySlug || (p as any).categoryName || p.type || p.name || '').toLowerCase();
-            const isMenPage = prodCat.includes('men') && !prodCat.includes('women');
-            const isWomenPage = prodCat.includes('women');
 
-            // Candidates filtered by gender preference
+            const isMainWomen = prodName.includes('women') || prodCat.includes('women');
+            const isMainMen = (prodName.includes('men') || prodCat.includes('men')) && !isMainWomen;
+
+            // Strict Gender Candidates Filter
             const genderCandidates = products.filter(x => {
               if (x.id === p.id) return false;
+              const xName = (x.name || '').toLowerCase();
               const xCat = String((x as any).cat || (x as any).categorySlug || (x as any).categoryName || x.type || x.name || '').toLowerCase();
-              if (isMenPage) return xCat.includes('men') || (!xCat.includes('women'));
-              if (isWomenPage) return xCat.includes('women') || (!xCat.includes('men'));
+              const isXWomen = xName.includes('women') || xCat.includes('women');
+              const isXMen = (xName.includes('men') || xCat.includes('men')) && !isXWomen;
+
+              if (isMainWomen) return isXWomen || (!isXMen); // Women or Unisex
+              if (isMainMen) return isXMen || (!isXWomen); // Men or Unisex
               return true;
             });
 
@@ -957,13 +976,16 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             const bundleDiscount = Math.round(combinedOriginal * 0.15);
             const bundleFinalPrice = Math.max(0, combinedOriginal - bundleDiscount);
 
+            const activeSizes = activeBundleItem.sizes && activeBundleItem.sizes.length > 0 ? activeBundleItem.sizes : ['S', 'M', 'L', 'XL'];
+            const currentBundleSize = activeSizes.includes(selectedBundleSize) ? selectedBundleSize : activeSizes[0];
+
             return (
-              <div style={{ marginTop: '32px', padding: '24px', background: '#f0fdf4', borderRadius: '16px', border: '1.5px solid #bbf7d0' }}>
+              <div style={{ marginTop: '28px', padding: '24px', background: '#f8fafc', borderRadius: '16px', border: '1px solid #e2e8f0' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
-                  <div style={{ fontSize: '16px', fontWeight: 800, color: '#166534', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span>🛍️ Complete Your Look & Save 15%</span>
+                  <div style={{ fontSize: '15px', fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span>🛍️ Complete Your Outfit & Save 15%</span>
                   </div>
-                  <span style={{ background: '#dcfce7', color: '#15803d', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 900 }}>
+                  <span style={{ background: '#ccfbf1', color: '#0f766e', padding: '4px 12px', borderRadius: '20px', fontSize: '11px', fontWeight: 800 }}>
                     15% OFF BUNDLE SAVINGS
                   </span>
                 </div>
@@ -974,14 +996,17 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                     <button
                       key={item.id}
                       type="button"
-                      onClick={() => setSelectedBundleIdx(idx)}
+                      onClick={() => {
+                        setSelectedBundleIdx(idx);
+                        if (item.sizes && item.sizes.length > 0) setSelectedBundleSize(item.sizes[0]);
+                      }}
                       style={{
                         padding: '6px 14px',
                         borderRadius: '20px',
                         fontSize: '12px',
                         fontWeight: 700,
-                        border: selectedBundleIdx === idx ? '2px solid #166534' : '1px solid #cbd5e1',
-                        background: selectedBundleIdx === idx ? '#166534' : '#ffffff',
+                        border: selectedBundleIdx === idx ? '1.5px solid #008080' : '1px solid #cbd5e1',
+                        background: selectedBundleIdx === idx ? '#008080' : '#ffffff',
                         color: selectedBundleIdx === idx ? '#ffffff' : '#334155',
                         cursor: 'pointer',
                         transition: 'all 0.2s'
@@ -992,21 +1017,31 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                   ))}
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '18px' }}>
-                  <div style={{ width: '64px', height: '82px', borderRadius: '8px', overflow: 'hidden', background: '#ffffff', border: '1px solid #cbd5e1', flexShrink: 0 }}>
+                {/* Products Pair Visual & Info */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
+                  <div 
+                    style={{ width: '64px', height: '82px', borderRadius: '8px', overflow: 'hidden', background: '#ffffff', border: '1px solid #cbd5e1', flexShrink: 0, cursor: 'pointer' }}
+                    onClick={() => p.imgs?.[0] && setBundlePreviewImg(p.imgs[0].split('?')[0])}
+                    title="Click to preview image"
+                  >
                     {p.imgs && p.imgs[0] ? (
                       <img src={p.imgs[0].split('?')[0]} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
                       <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>👕</div>
                     )}
                   </div>
-                  <span style={{ fontSize: '20px', fontWeight: 800, color: '#15803d' }}>+</span>
-                  <div style={{ width: '64px', height: '82px', borderRadius: '8px', overflow: 'hidden', background: '#ffffff', border: '1px solid #cbd5e1', flexShrink: 0 }}>
+                  <span style={{ fontSize: '20px', fontWeight: 800, color: '#008080' }}>+</span>
+                  <div 
+                    style={{ width: '64px', height: '82px', borderRadius: '8px', overflow: 'hidden', background: '#ffffff', border: '1px solid #cbd5e1', flexShrink: 0, cursor: 'pointer', position: 'relative' }}
+                    onClick={() => activeBundleItem.imgs?.[0] && setBundlePreviewImg(activeBundleItem.imgs[0].split('?')[0])}
+                    title="Click to preview full image"
+                  >
                     {activeBundleItem.imgs && activeBundleItem.imgs[0] ? (
                       <img src={activeBundleItem.imgs[0].split('?')[0]} alt={activeBundleItem.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
                       <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🧢</div>
                     )}
+                    <span style={{ position: 'absolute', bottom: '2px', right: '2px', background: 'rgba(0,0,0,0.6)', color: 'white', fontSize: '9px', padding: '1px 3px', borderRadius: '3px' }}>🔍</span>
                   </div>
 
                   <div style={{ flex: 1, minWidth: 0 }}>
@@ -1014,10 +1049,36 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                       {p.name} + {activeBundleItem.name}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
-                      <span style={{ fontSize: '16px', fontWeight: 900, color: '#166534' }}>{fmt(bundleFinalPrice)}</span>
+                      <span style={{ fontSize: '16px', fontWeight: 800, color: '#008080' }}>{fmt(bundleFinalPrice)}</span>
                       <span style={{ fontSize: '13px', textDecoration: 'line-through', color: '#94a3b8' }}>{fmt(combinedOriginal)}</span>
-                      <span style={{ fontSize: '12px', fontWeight: 800, color: '#15803d' }}>(Save {fmt(bundleDiscount)})</span>
+                      <span style={{ fontSize: '12px', fontWeight: 800, color: '#0d9488' }}>(Save {fmt(bundleDiscount)})</span>
                     </div>
+                  </div>
+                </div>
+
+                {/* Bundle Item Size Picker */}
+                <div style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#64748b' }}>Select Size for {activeBundleItem.short || 'Bundle Item'}:</span>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    {activeSizes.map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => setSelectedBundleSize(s)}
+                        style={{
+                          padding: '3px 9px',
+                          borderRadius: '6px',
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          border: currentBundleSize === s ? '1.5px solid #0f172a' : '1px solid #cbd5e1',
+                          background: currentBundleSize === s ? '#0f172a' : '#ffffff',
+                          color: currentBundleSize === s ? '#ffffff' : '#475569',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {s}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
@@ -1026,22 +1087,22 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                   onClick={() => {
                     const finalSize = isSet ? `Top: ${sz} / Bot: ${btmSz}` : sz;
                     addToCart(p, ci ?? 0, finalSize || 'M', qty);
-                    addToCart(activeBundleItem, 0, activeBundleItem.sizes?.[0] || 'M', 1);
+                    addToCart(activeBundleItem, 0, currentBundleSize, 1);
                     setIsCartOpen(true);
                     toast(`Bundle added! Saved ${fmt(bundleDiscount)}`, "ok");
                   }}
                   style={{
                     width: '100%',
                     padding: '14px',
-                    background: '#166534',
+                    background: 'var(--ink, #1e1b4b)',
                     color: '#ffffff',
                     border: 'none',
                     borderRadius: '10px',
-                    fontSize: '15px',
+                    fontSize: '14px',
                     fontWeight: 800,
                     cursor: 'pointer',
                     transition: 'background 0.2s',
-                    boxShadow: '0 4px 12px rgba(22, 101, 52, 0.2)'
+                    boxShadow: '0 4px 12px rgba(30, 27, 75, 0.2)'
                   }}
                 >
                   ⚡ Add Bundle to Bag — {fmt(bundleFinalPrice)} (Save {fmt(bundleDiscount)})
