@@ -1,9 +1,13 @@
 "use client";
 
 import React from "react";
+import { useApp } from "@/context/AppContext";
 
 export default function WhatsAppButton() {
+  const { isCartOpen } = useApp();
   const whatsappUrl = "https://wa.me/918976488911?text=Hi!%20I%20have%20a%20question%20about%20Medvarn%20scrubs.";
+
+  if (isCartOpen) return null;
 
   return (
     <>
