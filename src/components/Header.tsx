@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useApp } from "@/context/AppContext";
 import { fmt } from "@/lib/data";
 import { NAV_DATA } from "@/lib/navData";
@@ -16,6 +17,7 @@ interface HeaderProps {
 }
 
 export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
+  const router = useRouter();
   const { cart, wishlist, products, isHydrated } = useApp();
   const [q, setQ] = useState("");
   const [sd, setSd] = useState(false);
@@ -280,20 +282,75 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
                 setQ(e.target.value);
                 setSd(true);
               }}
+              onFocus={() => setSd(true)}
             />
             {q && (
               <span className="srch-clr" onClick={() => setQ("")}>
                 ✕
               </span>
             )}
-            <button className="srch-close-btn" onClick={() => setMs(false)}>
+            <button className="srch-close-btn" onClick={() => { setMs(false); setSd(false); }}>
               Close ✕
             </button>
 
-            {sd && q && (
+            {sd && (
               <div className="srch-drop" onMouseDown={(e) => e.preventDefault()}>
-                {res.length === 0 && pageRes.length === 0 ? (
-                  <div className="s-empty">No results for "{q}"</div>
+                {!q ? (
+                  <div style={{ padding: '16px 20px' }}>
+                    <div style={{ fontSize: '12px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
+                      🔥 Popular Searches
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                      {[
+                        { label: 'Flexi Fit Scrub', term: 'Flexi Fit' },
+                        { label: 'Navy Blue Scrubs', term: 'Navy' },
+                        { label: 'Cotton Crew T-Shirt', term: 'T-Shirt' },
+                        { label: 'Surgical Gowns', term: 'Surgical' },
+                        { label: 'Under Scrub', term: 'Under Scrub' },
+                        { label: 'Size Guide', href: '/sizeguide' },
+                        { label: 'Track Order', href: '/track' },
+                      ].map((tag, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            if (tag.href) {
+                              router.push(tag.href);
+                              setMs(false);
+                              setSd(false);
+                            } else if (tag.term) {
+                              setQ(tag.term);
+                            }
+                          }}
+                          style={{
+                            padding: '6px 14px',
+                            background: '#f1f5f9',
+                            border: '1px solid #e2e8f0',
+                            borderRadius: '20px',
+                            fontSize: '13px',
+                            fontWeight: 600,
+                            color: '#1e293b',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                          }}
+                        >
+                          {tag.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : res.length === 0 && pageRes.length === 0 ? (
+                  <div className="s-empty">
+                    <div>No instant matches for "{q}"</div>
+                    <Link
+                      href={`/products?cat=all`}
+                      className="btn-secondary"
+                      style={{ marginTop: '12px', display: 'inline-block', padding: '8px 16px', fontSize: '13px' }}
+                      onClick={() => { setMs(false); setSd(false); }}
+                    >
+                      Explore All Products →
+                    </Link>
+                  </div>
                 ) : (
                   <>
                     {pageRes.length > 0 && (
@@ -325,7 +382,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
 
                     {res.length > 0 && (
                       <>
-                        <div className="s-hd" style={{ marginTop: pageRes.length > 0 ? '14px' : '0' }}>Products</div>
+                        <div className="s-hd" style={{ marginTop: pageRes.length > 0 ? '14px' : '0' }}>Matching Products ({res.length})</div>
                         {res.map((p) => (
                           <Link
                             href={`/product/${p.slug || p.id}`}
@@ -338,19 +395,39 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
                               setMn(false);
                             }}
                           >
-                            <div className="s-thumb" style={{ background: p.bg, overflow: 'hidden' }}>
+                            <div className="s-thumb" style={{ background: p.bg || '#f8fafc', overflow: 'hidden', borderRadius: '8px', width: '44px', height: '52px' }}>
                               {p.imgs && p.imgs[0] ? (
-                                <img src={p.imgs[0]} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                <img src={p.imgs[0].split('?')[0]} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                               ) : (
                                 p.emo
                               )}
                             </div>
-                            <div>
-                              <div className="s-nm">{p.name}</div>
-                              <div className="s-pr">{fmt(p.price)}</div>
+                            <div style={{ flex: 1 }}>
+                              <div className="s-nm" style={{ fontWeight: 700, fontSize: '14px', color: '#0f172a' }}>{p.name}</div>
+                              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '2px' }}>
+                                <span className="s-pr" style={{ fontWeight: 800, color: '#008080' }}>{fmt(p.price)}</span>
+                                {p.origPrice && p.origPrice > p.price ? (
+                                  <span style={{ fontSize: '11px', textDecoration: 'line-through', color: '#94a3b8' }}>{fmt(p.origPrice)}</span>
+                                ) : null}
+                                {p.categoryName && (
+                                  <span style={{ background: '#f1f5f9', color: '#475569', fontSize: '10px', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>
+                                    {p.categoryName}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </Link>
                         ))}
+
+                        <div style={{ padding: '12px 20px', background: '#f8fafc', borderTop: '1px solid #f1f5f9', textAlign: 'center' }}>
+                          <Link
+                            href={`/products?cat=all`}
+                            style={{ fontSize: '13px', fontWeight: 700, color: '#008080', textDecoration: 'none' }}
+                            onClick={() => { setMs(false); setSd(false); }}
+                          >
+                            View all results for "{q}" →
+                          </Link>
+                        </div>
                       </>
                     )}
                   </>
