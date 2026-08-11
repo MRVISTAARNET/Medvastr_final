@@ -883,6 +883,89 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             </div>
           </div>
 
+          {/* FREQUENTLY BOUGHT TOGETHER / BUNDLE DEALS */}
+          {(() => {
+            const bundleItem = products.find(x => x.id !== p.id && (
+              x.type?.toLowerCase().includes('cap') ||
+              x.type?.toLowerCase().includes('underscrub') ||
+              x.name?.toLowerCase().includes('t-shirt') ||
+              x.name?.toLowerCase().includes('cap')
+            )) || products.find(x => x.id !== p.id);
+
+            if (!bundleItem) return null;
+
+            const combinedOriginal = p.price + bundleItem.price;
+            const bundleDiscount = 200;
+            const bundleFinalPrice = Math.max(0, combinedOriginal - bundleDiscount);
+
+            return (
+              <div style={{ marginTop: '24px', padding: '20px', background: '#f0fdf4', borderRadius: '16px', border: '1.5px solid #bbf7d0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                  <div style={{ fontSize: '15px', fontWeight: 800, color: '#166534', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span>🛍️ Frequently Bought Together</span>
+                  </div>
+                  <span style={{ background: '#dcfce7', color: '#15803d', padding: '4px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 900 }}>
+                    SAVE ₹{bundleDiscount} BUNDLE
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                  <div style={{ width: '60px', height: '75px', borderRadius: '8px', overflow: 'hidden', background: '#ffffff', border: '1px solid #cbd5e1', flexShrink: 0 }}>
+                    {p.imgs && p.imgs[0] ? (
+                      <img src={p.imgs[0].split('?')[0]} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>👕</div>
+                    )}
+                  </div>
+                  <span style={{ fontSize: '18px', fontWeight: 800, color: '#15803d' }}>+</span>
+                  <div style={{ width: '60px', height: '75px', borderRadius: '8px', overflow: 'hidden', background: '#ffffff', border: '1px solid #cbd5e1', flexShrink: 0 }}>
+                    {bundleItem.imgs && bundleItem.imgs[0] ? (
+                      <img src={bundleItem.imgs[0].split('?')[0]} alt={bundleItem.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🧢</div>
+                    )}
+                  </div>
+
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {p.name} + {bundleItem.name}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+                      <span style={{ fontSize: '15px', fontWeight: 900, color: '#166534' }}>{fmt(bundleFinalPrice)}</span>
+                      <span style={{ fontSize: '12px', textDecoration: 'line-through', color: '#94a3b8' }}>{fmt(combinedOriginal)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const finalSize = isSet ? `Top: ${sz} / Bot: ${btmSz}` : sz;
+                    addToCart(p, ci ?? 0, finalSize || 'M', qty);
+                    addToCart(bundleItem, 0, bundleItem.sizes?.[0] || 'M', 1);
+                    setIsCartOpen(true);
+                    toast(`Bundle added! Saved ₹${bundleDiscount}`, "ok");
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    background: '#166534',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '10px',
+                    fontSize: '14px',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    transition: 'background 0.2s',
+                    boxShadow: '0 4px 12px rgba(22, 101, 52, 0.2)'
+                  }}
+                >
+                  ⚡ Add Bundle to Bag — {fmt(bundleFinalPrice)} (Save ₹{bundleDiscount})
+                </button>
+              </div>
+            );
+          })()}
+
           {/* ACCORDIONS */}
           <div className="pdp-details-wrap">
             <DetailAccordion title="Performance & Fabric" defaultOpen={false}>

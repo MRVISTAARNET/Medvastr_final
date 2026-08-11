@@ -76,7 +76,10 @@ export default function CheckoutPage() {
   }, [user]);
 
   const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
-  const tot = Math.max(0, sub + shippingCost - promoDiscount);
+  const totalQty = cart.reduce((a, b) => a + b.qty, 0);
+  const volumeRate = totalQty === 2 ? 0.05 : totalQty >= 3 ? 0.10 : 0;
+  const volumeDiscount = Math.round(sub * volumeRate);
+  const tot = Math.max(0, sub - volumeDiscount + shippingCost - promoDiscount);
   const hasCodDisabled = cart.some(i => i.codDisabled === true);
 
   // Shiprocket Serviceability Call
@@ -583,6 +586,12 @@ export default function CheckoutPage() {
               <span>Subtotal</span>
               <span className="co-val-ink">{fmt(sub)}</span>
             </div>
+            {volumeDiscount > 0 && (
+              <div className="co-total-row">
+                <span>Multi-Item Savings ({totalQty === 2 ? '5%' : '10%'})</span>
+                <span style={{ color: '#16a34a', fontWeight: 700 }}>-{fmt(volumeDiscount)}</span>
+              </div>
+            )}
             <div className="co-total-row">
               <span>Shipping Cost {shippingLoading ? '(Calculating...)' : ''}</span>
               <span className={shippingCost === 0 ? 'co-val-free' : 'co-val-ink'}>{shippingCost === 0 ? 'COMPLIMENTARY' : fmt(shippingCost)}</span>

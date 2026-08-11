@@ -31,6 +31,11 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const shipProgress = isGlobalFreeShip ? 100 : Math.min(100, Math.round((sub / freeThreshold) * 100));
   const isFreeShipUnlocked = isGlobalFreeShip || remForFreeShip === 0;
 
+  // Multi-Item Volume Discount Calculation (1 item: 0%, 2 items: 5%, 3+ items: 10%)
+  const volumeDiscountRate = totalQty === 2 ? 0.05 : totalQty >= 3 ? 0.10 : 0;
+  const volumeDiscountAmount = Math.round(sub * volumeDiscountRate);
+  const grandTotalAfterDiscount = Math.max(0, sub - volumeDiscountAmount);
+
   const handleCheckout = () => {
     onClose();
     router.push("/checkout");
@@ -114,6 +119,24 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                   transition: "width 0.4s ease",
                 }}
               />
+            </div>
+          </div>
+        )}
+
+        {/* Multi-Item Volume Discount Banner */}
+        {cart.length > 0 && (
+          <div style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0', padding: '10px 20px' }}>
+            <div style={{ fontSize: '12px', fontWeight: 700, color: totalQty >= 3 ? '#16a34a' : totalQty === 2 ? '#0284c7' : '#475569', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span>
+                {totalQty === 1 && "🎁 Add 1 more item to get 5% OFF your order!"}
+                {totalQty === 2 && "🎉 5% Multi-Item Discount Applied! Add 1 more for 10% OFF!"}
+                {totalQty >= 3 && "🔥 MAX 10% Multi-Item Discount Unlocked & Applied!"}
+              </span>
+              {volumeDiscountAmount > 0 && (
+                <span style={{ background: '#dcfce7', color: '#15803d', padding: '2px 8px', borderRadius: '12px', fontSize: '11px', fontWeight: 800 }}>
+                  -{fmt(volumeDiscountAmount)}
+                </span>
+              )}
             </div>
           </div>
         )}
@@ -347,6 +370,12 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
               <span>Subtotal</span>
               <span style={{ fontWeight: 700 }}>{fmt(sub)}</span>
             </div>
+            {volumeDiscountAmount > 0 && (
+              <div className="sum-r" style={{ color: "#16a34a" }}>
+                <span>Multi-Item Savings ({totalQty === 2 ? "5%" : "10%"})</span>
+                <span style={{ fontWeight: 800 }}>-{fmt(volumeDiscountAmount)}</span>
+              </div>
+            )}
             <div className="sum-r">
               <span>Shipping</span>
               <span style={{ fontSize: isFreeShipUnlocked ? "13px" : "12px", fontWeight: 700, color: isFreeShipUnlocked ? "#16a34a" : "#475569" }}>
@@ -355,7 +384,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
             </div>
             <div className="sum-r tot">
               <span>Grand Total</span>
-              <span>{fmt(sub)}</span>
+              <span>{fmt(grandTotalAfterDiscount)}</span>
             </div>
             <button className="co-cta" onClick={handleCheckout}>
               Checkout Now →
