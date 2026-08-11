@@ -163,13 +163,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                         overflow: "hidden",
                         background: "#f8fafc",
                         flexShrink: 0,
-                        cursor: "pointer",
                       }}
-                      onClick={() => {
-                        const allImgs = (item.imgs && item.imgs.length > 0 ? item.imgs : [thumb]).map((img) => img.split("?")[0]);
-                        setLightboxGallery({ imgs: allImgs, activeIdx: 0 });
-                      }}
-                      title="Click to preview image"
                     >
                       {thumb ? (
                         <Image src={thumb.split("?")[0]} alt={item.name} fill style={{ objectFit: "cover" }} sizes="80px" />
@@ -187,7 +181,6 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                           {item.emo || "📦"}
                         </div>
                       )}
-                      <span style={{ position: "absolute", bottom: "3px", right: "3px", background: "rgba(0,0,0,0.6)", color: "#ffffff", fontSize: "9px", padding: "1px 3px", borderRadius: "3px" }}>🔍</span>
                     </div>
 
                     <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
@@ -344,38 +337,36 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                                   <span style={{ fontSize: "11px", textDecoration: "line-through", color: "#94a3b8" }}>{fmt((prod as any).mrp || prod.origPrice)}</span>
                                 )}
                               </div>
-
-                              {/* Color Swatches */}
-                              {prod.clrs && prod.clrs.length > 0 && (
-                                <div style={{ display: "flex", gap: "5px", marginTop: "5px", alignItems: "center" }}>
-                                  {prod.clrs.map((clr, cIdx) => (
-                                    <button
-                                      key={clr}
-                                      type="button"
-                                      onClick={() => setUpsellColorIdxs({ ...upsellColorIdxs, [prod.id]: cIdx })}
-                                      title={prod.clrNms?.[cIdx] || clr}
-                                      style={{
-                                        width: "14px",
-                                        height: "14px",
-                                        borderRadius: "50%",
-                                        background: clr,
-                                        border: activeColorIdx === cIdx ? "2px solid #0f172a" : "1px solid #cbd5e1",
-                                        boxShadow: activeColorIdx === cIdx ? "0 0 0 1px #008080" : "none",
-                                        cursor: "pointer",
-                                        padding: 0
-                                      }}
-                                    />
-                                  ))}
-                                  <span style={{ fontSize: "10px", color: "#64748b", marginLeft: "2px" }}>
-                                    {prod.clrNms?.[activeColorIdx] || ""}
-                                  </span>
-                                </div>
-                              )}
                             </div>
                           </div>
 
-                          {/* Size Dropdown & Add Button */}
+                          {/* Color Dropdown, Size Dropdown & Add Button */}
                           <div style={{ display: "flex", alignItems: "center", gap: "6px", flexShrink: 0 }}>
+                            {prod.clrs && prod.clrs.length > 0 && (
+                              <select
+                                aria-label="Select color"
+                                value={activeColorIdx}
+                                onChange={(e) => setUpsellColorIdxs({ ...upsellColorIdxs, [prod.id]: Number(e.target.value) })}
+                                style={{
+                                  padding: "4px 6px",
+                                  borderRadius: "6px",
+                                  border: "1px solid #cbd5e1",
+                                  fontSize: "11px",
+                                  fontWeight: 700,
+                                  background: "#ffffff",
+                                  color: "#0f172a",
+                                  outline: "none",
+                                  cursor: "pointer",
+                                  maxWidth: "95px"
+                                }}
+                              >
+                                {prod.clrs.map((clr, cIdx) => (
+                                  <option key={cIdx} value={cIdx}>
+                                    {prod.clrNms?.[cIdx] || `Color ${cIdx + 1}`}
+                                  </option>
+                                ))}
+                              </select>
+                            )}
                             <select
                               aria-label="Select size"
                               value={activeSize}
