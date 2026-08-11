@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import { useApp } from "@/context/AppContext";
 import { fmt } from "@/lib/data";
 import { useRouter } from "next/navigation";
@@ -16,6 +17,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const { cart, updateCartQty, removeFromCart, storeSettings, products, addToCart } = useApp();
   const router = useRouter();
   const [upsellSizes, setUpsellSizes] = useState<Record<number, string>>({});
+  const [previewModalImg, setPreviewModalImg] = useState<{ src: string; title: string; subtitle?: string; price?: number } | null>(null);
 
   const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const totalQty = cart.reduce((a, b) => a + b.qty, 0);
@@ -143,7 +145,10 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                         overflow: "hidden",
                         background: "#f8fafc",
                         flexShrink: 0,
+                        cursor: "pointer",
                       }}
+                      onClick={() => thumb && setPreviewModalImg({ src: thumb.split("?")[0], title: item.name, subtitle: `Size: ${item.size} | Color: ${item.colNm || 'Standard'}`, price: item.price * item.qty })}
+                      title="Click to preview image"
                     >
                       {thumb ? (
                         <Image src={thumb.split("?")[0]} alt={item.name} fill style={{ objectFit: "cover" }} sizes="80px" />
@@ -161,6 +166,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                           {item.emo || "📦"}
                         </div>
                       )}
+                      <span style={{ position: "absolute", bottom: "3px", right: "3px", background: "rgba(0,0,0,0.6)", color: "#ffffff", fontSize: "9px", padding: "1px 3px", borderRadius: "3px" }}>🔍</span>
                     </div>
 
                     <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
@@ -281,7 +287,10 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                               overflow: "hidden",
                               background: "#f1f5f9",
                               flexShrink: 0,
+                              cursor: "pointer",
                             }}
+                            onClick={() => prod.imgs?.[0] && setPreviewModalImg({ src: prod.imgs[0].split("?")[0], title: prod.name, subtitle: `Category: ${prod.type || 'Apparel'}`, price: prod.price })}
+                            title="Click to preview image"
                           >
                             {prod.imgs && prod.imgs[0] ? (
                               <img src={prod.imgs[0].split("?")[0]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -374,6 +383,88 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
           </div>
         )}
       </div>
+
+      {/* CART ITEM IMAGE PREVIEW LIGHTBOX MODAL */}
+      {previewModalImg && typeof document !== "undefined" && createPortal(
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(15, 23, 42, 0.85)",
+            backdropFilter: "blur(6px)",
+            zIndex: 999999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "20px",
+          }}
+          onClick={() => setPreviewModalImg(null)}
+        >
+          <div
+            style={{
+              maxWidth: "460px",
+              width: "100%",
+              background: "#ffffff",
+              borderRadius: "16px",
+              overflow: "hidden",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.35)",
+              position: "relative",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setPreviewModalImg(null)}
+              style={{
+                position: "absolute",
+                top: "16px",
+                right: "16px",
+                width: "32px",
+                height: "32px",
+                borderRadius: "50%",
+                background: "rgba(15, 23, 42, 0.75)",
+                color: "#ffffff",
+                border: "none",
+                fontSize: "16px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                zIndex: 10,
+              }}
+            >
+              ✕
+            </button>
+
+            <div style={{ width: "100%", height: "380px", position: "relative", background: "#f8fafc" }}>
+              <img
+                src={previewModalImg.src}
+                alt={previewModalImg.title}
+                style={{ width: "100%", height: "100%", objectFit: "contain", padding: "12px" }}
+              />
+            </div>
+
+            <div style={{ padding: "20px", background: "#ffffff", borderTop: "1px solid #e2e8f0" }}>
+              <h4 style={{ fontSize: "16px", fontWeight: 800, color: "#0f172a", margin: 0, lineHeight: 1.3 }}>
+                {previewModalImg.title}
+              </h4>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "10px" }}>
+                {previewModalImg.subtitle && (
+                  <span style={{ fontSize: "13px", color: "#64748b", fontWeight: 600 }}>
+                    {previewModalImg.subtitle}
+                  </span>
+                )}
+                {previewModalImg.price && (
+                  <span style={{ fontSize: "16px", fontWeight: 900, color: "#008080" }}>
+                    {fmt(previewModalImg.price)}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </>
   );
 }

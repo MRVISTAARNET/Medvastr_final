@@ -4704,8 +4704,9 @@ footer {
 .cart-drw {
   position: fixed;
   top: 0;
-  right: -508px;
-  width: 488px;
+  right: -540px;
+  width: 520px;
+  max-width: 95vw;
   height: 100vh;
   background: var(--wh);
   z-index: 1801;
