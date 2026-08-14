@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import dynamic from 'next/dynamic';
 import Hero from "@/components/Hero";
+import IndependenceDayBanner from "@/components/IndependenceDayBanner";
 import ProductCard from "@/components/ProductCard";
 
 // Dynamically import "below the fold" sections to drastically reduce bundle size and LCP times
@@ -90,6 +91,7 @@ export default function Home() {
   return (
     <div className="page">
       <Hero onShop={() => (window.location.href = "/products")} />
+      <IndependenceDayBanner />
 
       <div className="trust">
         <div className="trust-in">
