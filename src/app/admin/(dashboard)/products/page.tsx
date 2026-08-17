@@ -92,6 +92,65 @@ const downloadCSV = (data: any[], fileName: string) => {
   link.click();
 };
 
+// Full listing sheet — every field that exists in the Add Product form
+const exportListingSheet = (products: any[]) => {
+  if (!products || !products.length) return alert('No products to export.');
+  const rows = products.map(p => {
+    const clrNames = (p.clrNms || p.colorNames || []).join(', ');
+    const sizes = (p.sizes || []).join(', ');
+    const weight = p.weight || p.wt || '';
+    const numWeight = parseFloat(weight) || '';
+    const weightUnit = weight.toString().toLowerCase().includes('g') && !weight.toString().toLowerCase().includes('kg') ? 'g' : 'kg';
+    const primaryImg = (p.imageUrls || p.imgs || [])[0] || '';
+    const allImgs = (p.imageUrls || p.imgs || []).join(' | ');
+    const seoTitle = p.seoTitle || `${p.name} | Premium ${p.type} - Medvarn`;
+    const seoDesc = p.seoDescription || p.shortDescription || (p.desc || p.description || '').slice(0, 160);
+    const seoKw = p.seoKeywords || `${(p.name || '').toLowerCase()}, medvarn, ${(p.type || '')}`;
+    return {
+      'Product ID': p.id || '',
+      'Product Name': p.name || '',
+      'Brand': p.brand || 'Medvarn',
+      'Gender': p.gen || p.gender || '',
+      'Style': p.styleId || p.style || 'Standard',
+      'Product Type': p.type || '',
+      'Featured Badge': p.badge || 'None',
+      'Status': p.active ? 'Active' : 'Inactive',
+      'COD': p.codDisabled ? 'Disabled' : 'Enabled',
+      'Parent Category ID': p.categoryId || p.catId || '',
+      'Sub Category ID': p.subcategoryId || '',
+      'Child Category ID': p.childCategoryId || '',
+      'Category IDs': p.categoryIds || '',
+      'Selling Price (₹)': p.price || '',
+      'Original MRP (₹)': p.originalPrice || p.origPrice || '',
+      'Tax (%)': p.tax || 0,
+      'Parent SKU': p.sku || '',
+      'Stock (Per Variant)': p.variants?.[0]?.stockQuantity ?? '',
+      'Colors': clrNames,
+      'Sizes': sizes,
+      'Silhouette / Fit': p.fit || '',
+      'Pocket Count': p.pockets || p.pocketCount || 0,
+      'Fabric / Composition': p.fab || p.fabric || '',
+      'Fabric Composition Detail (Material)': p.material || '',
+      'Product Weight Value': numWeight,
+      'Weight Unit': weightUnit,
+      'Care Instructions': p.care || p.careInstructions || '',
+      'Product Hook (Short Desc)': p.shortDescription || '',
+      'Performance Description': p.desc || p.description || '',
+      'SEO Meta Title': seoTitle,
+      'SEO Meta Description': seoDesc,
+      'SEO Meta Keywords': seoKw,
+      'Slug': p.slug || '',
+      'Primary Image URL': primaryImg,
+      'All Images (pipe-separated)': allImgs,
+      'Video URL': p.videoUrl || '',
+      'Total Variants': (p.variants || []).length,
+      'Variant SKUs': (p.variants || []).map((v: any) => v.sku).join(' | '),
+    };
+  });
+  const date = new Date().toISOString().slice(0, 10);
+  downloadCSV(rows, `medvarn_product_listing_${date}.csv`);
+};
+
 export default function AdminProducts() {
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -504,6 +563,7 @@ export default function AdminProducts() {
               <div className="table-hd-right">
                 <input className="tbl-search" placeholder="Search..." value={search} onChange={e => setSearch(e.target.value)} />
                 <button className="btn-secondary" style={{ marginRight: '8px' }} onClick={exportProductFeed}>📊 Export SKUs</button>
+                <button className="btn-secondary" style={{ marginRight: '8px', background: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0' }} onClick={() => exportListingSheet(products)}>📥 Listing Sheet</button>
                 <button className="btn-primary" onClick={openAddModal}>+ Add Product</button>
               </div>
             </div>
