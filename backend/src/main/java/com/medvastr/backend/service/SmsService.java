@@ -98,7 +98,7 @@ public class SmsService {
             variables.put("var1", order.getOrderNumber());
             variables.put("number", order.getTotalAmount().toString());
             variables.put("num1", order.getTotalAmount().toString());
-        } else if ("PREPAID".equalsIgnoreCase(templateType)) {
+        } else if ("PREPAID".equalsIgnoreCase(templateType) || "ONLINE".equalsIgnoreCase(templateType) || "PAYMENT".equalsIgnoreCase(templateType)) {
             flowId = orderPrepaidFlowId;
             templateId = orderPrepaidTemplateId;
             variables.put("OrderID", order.getOrderNumber());
