@@ -141,6 +141,7 @@ public class SmsService {
         triggerOneApiFlow(flowId, templateId, cleanPhone, variables);
     }
 
+    private void triggerOneApiFlow(String flowId, String templateId, String cleanPhone, Map<String, String> variables) {
         triggerOneApiFlowWithSlug(flowId, templateId, cleanPhone, variables);
         // Also try underscore variant if flowId contains hyphen (e.g. medvarn-prepaid -> medvarn_prepaid)
         if (flowId != null && flowId.contains("-")) {
