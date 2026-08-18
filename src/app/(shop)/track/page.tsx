@@ -4,7 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { B, fmt } from "@/lib/data";
-import { apiJson, API_BASE } from "@/lib/api";
+import { apiJson, API_BASE, normalizeMediaUrl } from "@/lib/api";
 import GenericPage from "@/components/GenericPage";
 import { useApp } from "@/context/AppContext";
 
@@ -317,7 +317,7 @@ function TrackContent() {
                   {orderData.items.map((item: any, i: number) => (
                     <div key={i} style={{ display: "flex", gap: "16px", padding: "16px", borderBottom: i !== orderData.items.length - 1 ? "1px solid #e2e8f0" : "none", background: "#f8fafc" }}>
                       <div style={{ width: "80px", height: "80px", borderRadius: "8px", background: "white", border: "1px solid #e2e8f0", overflow: "hidden" }}>
-                        <img src={item.imageUrl || "https://via.placeholder.com/80"} alt={item.productName} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        <img src={normalizeMediaUrl(item.imageUrl) || "https://via.placeholder.com/80"} alt={item.productName} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                       </div>
                       <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
                         <div style={{ fontSize: "15px", fontWeight: "700", color: "#0f172a" }}>{item.productName}</div>

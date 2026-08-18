@@ -342,12 +342,32 @@ public class EmailService {
 
         if (order.getItems() != null) {
             for (OrderItem item : order.getItems()) {
+                String imgUrl = null;
+                if (item.getVariant() != null && item.getVariant().getImageUrl() != null && !item.getVariant().getImageUrl().isBlank()) {
+                    imgUrl = item.getVariant().getImageUrl();
+                } else if (item.getProduct() != null && item.getProduct().getImageUrls() != null && !item.getProduct().getImageUrls().isEmpty()) {
+                    imgUrl = item.getProduct().getImageUrls().get(0);
+                }
+                if (imgUrl != null) {
+                    if (imgUrl.contains("api.medvastr.com")) {
+                        imgUrl = imgUrl.replace("http://api.medvastr.com", "https://api.medvarn.com").replace("https://api.medvastr.com", "https://api.medvarn.com");
+                    } else if (imgUrl.startsWith("/api/media/")) {
+                        imgUrl = "https://api.medvarn.com" + imgUrl;
+                    }
+                }
+                String imgTag = (imgUrl != null && !imgUrl.isBlank()) 
+                    ? "<img src=\"" + HtmlUtils.htmlEscape(imgUrl) + "\" width=\"60\" height=\"60\" style=\"border-radius: 8px; object-fit: cover; margin-right: 12px; vertical-align: middle; border: 1px solid #e2e8f0;\" />"
+                    : "";
+
                 itemsHtml
                         .append("""
                                 <tr>
-                                    <td style="padding: 15px 0; border-bottom: 1px solid #f1f5f9;">
-                                        <div style="font-weight: 700; color: #1e293b; font-size: 15px;">%s</div>
-                                        <div style="font-size: 12px; color: #64748b; margin-top: 4px;">SIZE: %s &nbsp;|&nbsp; COLOR: %s</div>
+                                    <td style="padding: 15px 0; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center;">
+                                        %s
+                                        <div>
+                                            <div style="font-weight: 700; color: #1e293b; font-size: 15px;">%s</div>
+                                            <div style="font-size: 12px; color: #64748b; margin-top: 4px;">SIZE: %s &nbsp;|&nbsp; COLOR: %s</div>
+                                        </div>
                                     </td>
                                     <td style="padding: 15px 0; border-bottom: 1px solid #f1f5f9; text-align: right; color: #1e293b; font-weight: 600;">
                                         %d × %s
@@ -355,6 +375,7 @@ public class EmailService {
                                 </tr>
                                 """
                                 .formatted(
+                                        imgTag,
                                         HtmlUtils.htmlEscape(item.getProductName()),
                                         HtmlUtils.htmlEscape(item.getSize()),
                                         HtmlUtils.htmlEscape(item.getColorName()),

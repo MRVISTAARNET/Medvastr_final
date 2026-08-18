@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useApp } from "@/context/AppContext";
 import { fmt } from "@/lib/data";
-import { apiJson, API_BASE, RAZORPAY_KEY, getToken } from "@/lib/api";
+import { apiJson, API_BASE, RAZORPAY_KEY, getToken, normalizeMediaUrl } from "@/lib/api";
 import { getImagesForColor } from "@/lib/productUtils";
 import { trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
 
@@ -565,7 +565,7 @@ export default function CheckoutPage() {
             {cart.map(i => {
               const colorIdx = i.clrs?.indexOf(i.col) ?? 0;
               const images = getImagesForColor(i, colorIdx !== -1 ? colorIdx : 0);
-              const thumb = images[0] || i.imgs?.[0];
+              const thumb = normalizeMediaUrl(images[0] || i.imgs?.[0]);
               return (
                 <div key={i.k} className="co-item-box">
                   <div className="co-item-thumb">

@@ -31,19 +31,19 @@ export function normalizeMediaUrl(url?: string): string {
   if (!url) return "";
   if (url.startsWith("/api/media/")) return `${API_ORIGIN}${url}`;
 
-  const isOldHttp = url.startsWith("http://api.medvastr.com");
+  // Replace any old api.medvastr.com domain with live API_ORIGIN (api.medvarn.com)
+  if (url.includes("api.medvastr.com")) {
+    url = url.replace(/https?:\/\/api\.medvastr\.com/g, API_ORIGIN);
+  }
+
   const isLocal =
     url.startsWith("http://localhost") ||
     url.startsWith("https://localhost") ||
     url.startsWith("http://127.0.0.1");
 
-  if (isOldHttp || isLocal) {
+  if (isLocal) {
     const i = url.indexOf("/api/media/");
     if (i !== -1) return `${API_ORIGIN}${url.substring(i)}`;
-  }
-
-  if (url.startsWith("http://api.medvastr.com")) {
-    return url.replace("http://", "https://");
   }
 
   return url;
