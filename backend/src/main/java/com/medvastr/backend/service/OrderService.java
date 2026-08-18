@@ -797,16 +797,27 @@ public class OrderService {
                         .size(i.getSize())
                         .colorName(i.getColorName())
                         .colorHex(i.getColorHex())
-                        .imageUrl(i.getVariant() != null && i.getVariant().getImageUrl() != null
+                        .imageUrl(normalizeImageUrl(i.getVariant() != null && i.getVariant().getImageUrl() != null
                                 ? i.getVariant().getImageUrl()
                                 : (i.getProduct() != null && !i.getProduct().getImages().isEmpty()
                                         ? i.getProduct().getImages().iterator().next().getImageUrl()
-                                        : null))
+                                        : null)))
                         .sku(i.getVariant() != null && i.getVariant().getSku() != null ? i.getVariant().getSku() : (i.getProduct() != null ? i.getProduct().getSku() : ""))
                         .quantity(i.getQuantity())
                         .unitPrice(i.getUnitPrice())
                         .totalPrice(i.getTotalPrice())
                         .build()).collect(Collectors.toList()) : new ArrayList<>())
                 .build();
+    }
+
+    private String normalizeImageUrl(String url) {
+        if (url == null || url.isBlank()) return null;
+        if (url.contains("api.medvastr.com")) {
+            url = url.replace("http://api.medvastr.com", "https://api.medvarn.com")
+                     .replace("https://api.medvastr.com", "https://api.medvarn.com");
+        } else if (url.startsWith("/api/media/")) {
+            url = "https://api.medvarn.com" + url;
+        }
+        return url;
     }
 }

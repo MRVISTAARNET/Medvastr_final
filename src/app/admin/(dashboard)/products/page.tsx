@@ -227,7 +227,10 @@ export default function AdminProducts() {
         childCategoryId: editingProduct.childCategoryId || (editingProduct.categoryIds ? editingProduct.categoryIds.split(',')[2] : '') || '',
         style: editingProduct.styleId || editingProduct.style || 'Standard',
         origPrice: editingProduct.originalPrice || editingProduct.origPrice || 0,
-        imgs: editingProduct.imageUrls || editingProduct.imgs || [],
+        imgs: (() => {
+          const rawList = editingProduct.imageUrls || editingProduct.imgs || (editingProduct.images ? editingProduct.images.map((img: any) => typeof img === 'string' ? img : (img.imageUrl || img.url)) : []);
+          return (rawList || []).map((u: string) => u ? u.replace(/https?:\/\/api\.medvastr\.com/g, 'https://api.medvarn.com') : '').filter(Boolean);
+        })(),
         imgsByColor: editingProduct.clrImgs || {},
         sizes: editingProduct.sizes?.join(', ') || 'S, M, L, XL',
         clrs: editingProduct.clrNms?.join(', ') || '',
