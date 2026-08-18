@@ -70,6 +70,28 @@ public class RazorpayService {
         }
     }
 
+    /**
+     * Fetches the live payment status from Razorpay's API.
+     * Returns "captured" when money was actually received.
+     * Returns "failed", "created", or other strings when payment was NOT successful.
+     *
+     * IMPORTANT: Signature verification alone does NOT confirm money was received.
+     * A "Business – Website Mismatch" payment has a valid signature but is NEVER captured.
+     * Always call this method after signature verification before marking an order PAID.
+     */
+    public String fetchPaymentStatus(String paymentId) {
+        try {
+            com.razorpay.Payment payment = getClient().payments.fetch(paymentId);
+            String status = payment.get("status").toString();
+            log.info("Razorpay payment {} live status: {}", paymentId, status);
+            return status;
+        } catch (RazorpayException e) {
+            log.error("Failed to fetch payment status from Razorpay for paymentId {}: {}", paymentId, e.getMessage());
+            // Fail safe: if we cannot confirm, do NOT mark as paid
+            return "unknown";
+        }
+    }
+
     private String getDbWebhookSecret() {
         return storeSettingRepo.findById("razorpay_webhook_secret").map(StoreSetting::getSettingValue).orElse(webhookSecret);
     }

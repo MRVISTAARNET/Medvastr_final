@@ -283,10 +283,25 @@ public class OrderService {
             throw new RuntimeException("Payment order mismatch");
         }
 
-        boolean valid = razorpayService.verifySignature(
+        // Step 1: Verify HMAC signature — proves data came from Razorpay
+        boolean signatureValid = razorpayService.verifySignature(
                 r.getRazorpayOrderId(), r.getRazorpayPaymentId(), r.getRazorpaySignature());
 
-        if (valid) {
+        if (!signatureValid) {
+            o.setPaymentStatus(Order.PaymentStatus.FAILED);
+            log.error("Payment signature invalid for order: {}", o.getOrderNumber());
+            orderRepo.save(o);
+            throw new RuntimeException("Invalid payment signature");
+        }
+
+        // Step 2: Confirm money was ACTUALLY captured via Razorpay API.
+        // A "Business – Website Mismatch" payment has a valid HMAC signature
+        // but status = "failed" because Razorpay never captured the money.
+        // We MUST check the live status before marking the order as PAID.
+        String paymentStatus = razorpayService.fetchPaymentStatus(r.getRazorpayPaymentId());
+        log.info("Razorpay live payment status for order {}: {}", o.getOrderNumber(), paymentStatus);
+
+        if ("captured".equalsIgnoreCase(paymentStatus)) {
             o.setPaymentStatus(Order.PaymentStatus.PAID);
             o.setStatus(Order.OrderStatus.CONFIRMED);
             o.setPaymentId(r.getRazorpayPaymentId());
@@ -297,9 +312,13 @@ public class OrderService {
             return toDTO(saved);
         }
 
+        // Payment was attempted but NOT captured (failed, website mismatch, etc.)
         o.setPaymentStatus(Order.PaymentStatus.FAILED);
-        log.error("Payment verification failed for order: {}", o.getOrderNumber());
-        return toDTO(orderRepo.save(o));
+        o.setPaymentId(r.getRazorpayPaymentId());
+        orderRepo.save(o);
+        log.error("Payment NOT captured for order {} — Razorpay status: {}. Order marked FAILED.",
+                o.getOrderNumber(), paymentStatus);
+        throw new RuntimeException("Payment was not captured. Status: " + paymentStatus + ". Please try again or use COD.");
     }
 
     public Page<OrderDTO> getMyOrders(Pageable p) {
