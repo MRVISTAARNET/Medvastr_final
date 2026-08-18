@@ -345,8 +345,8 @@ public class EmailService {
                 String imgUrl = null;
                 if (item.getVariant() != null && item.getVariant().getImageUrl() != null && !item.getVariant().getImageUrl().isBlank()) {
                     imgUrl = item.getVariant().getImageUrl();
-                } else if (item.getProduct() != null && item.getProduct().getImageUrls() != null && !item.getProduct().getImageUrls().isEmpty()) {
-                    imgUrl = item.getProduct().getImageUrls().get(0);
+                } else if (item.getProduct() != null && item.getProduct().getImages() != null && !item.getProduct().getImages().isEmpty()) {
+                    imgUrl = item.getProduct().getImages().iterator().next().getImageUrl();
                 }
                 if (imgUrl != null) {
                     if (imgUrl.contains("api.medvastr.com")) {
