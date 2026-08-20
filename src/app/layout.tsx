@@ -129,10 +129,10 @@ export default function RootLayout({
         {children}
         <Script
           strategy="afterInteractive"
-          src="https://www.googletagmanager.com/gtag/js?id=G-6W495VS5P5"
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18377676045"
         />
         <Script
-          id="google-analytics"
+          id="google-tags"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
@@ -142,6 +142,7 @@ export default function RootLayout({
               gtag('config', 'G-6W495VS5P5', {
                 page_path: window.location.pathname,
               });
+              gtag('config', 'AW-18377676045');
             `,
           }}
         />
