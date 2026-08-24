@@ -868,23 +868,18 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
   if (failed) return null;
 
   return (
-    <>
-      <div className="cat-banner">
+    <div className="cat-banner">
+      <picture style={{ display: "block", width: "100%" }}>
+        <source media="(max-width: 768px)" srcSet={srcMob} onError={tryNextMob as any} />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={src}
           alt={title}
           onError={tryNext}
-          className="cat-banner-img hero-image-desktop"
+          className="cat-banner-img"
+          style={{ width: "100%", height: "auto", display: "block" }}
         />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={srcMob}
-          alt={title + " Mobile"}
-          onError={tryNextMob}
-          className="cat-banner-img hero-image-mobile"
-        />
-      </div>
+      </picture>
       <style jsx>{`
         .cat-banner {
           width: 100%;
@@ -904,18 +899,14 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
           .cat-banner {
             border-radius: 12px;
             margin-bottom: 12px;
-            min-height: 140px;
-            display: flex;
-            align-items: center;
           }
           .cat-banner-img {
-            min-height: 140px;
-            object-fit: cover;
-            object-position: center;
+            width: 100%;
+            height: auto;
           }
         }
       `}</style>
-    </>
+    </div>
   );
 }
 

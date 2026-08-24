@@ -1,11 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import Image from "next/image";
 import Link from "next/link";
-
 import { useApp } from "@/context/AppContext";
-import { normalizeMediaUrl } from "@/lib/api";
 
 function getMobileImageUrl(desktopUrl: string | null): string | null {
   if (!desktopUrl) return null;
@@ -76,20 +73,14 @@ export default function Hero({ onShop }: HeroProps) {
       <div className="hero-track" style={{ transform: `translateX(-${cur * 100}%)` }}>
         {slides.map((s: any, i: number) => {
           const content = s.src ? (
-            <>
+            <picture className="hero-picture" style={{ display: "block", width: "100%" }}>
+              <source media="(max-width: 768px)" srcSet={s.srcMob || s.src} />
               <img
                 src={s.src}
                 alt={s.title || "Hero Promotional Banner"}
-                className="hero-image-desktop"
                 style={{ width: "100%", height: "auto", display: "block" }}
               />
-              <img
-                src={s.srcMob || ""}
-                alt={s.title || "Hero Promotional Banner Mobile"}
-                className="hero-image-mobile"
-                style={{ width: "100%", height: "auto", display: "block" }}
-              />
-            </>
+            </picture>
           ) : (
             <SmartSlide base={s.base} />
           );
@@ -109,10 +100,10 @@ export default function Hero({ onShop }: HeroProps) {
       </div>
       {slides.length > 1 && (
         <>
-          <button className="hero-arr hero-p" onClick={() => go(-1)}>
+          <button className="hero-arr hero-p" onClick={() => go(-1)} aria-label="Previous slide">
             ‹
           </button>
-          <button className="hero-arr hero-n" onClick={() => go(1)}>
+          <button className="hero-arr hero-n" onClick={() => go(1)} aria-label="Next slide">
             ›
           </button>
         </>
@@ -163,7 +154,7 @@ export default function Hero({ onShop }: HeroProps) {
   );
 }
 
-// SmartSlide: always hides text, tries jpg/png/webp for both desktop and mobile, and renders crop-free with height: auto
+// SmartSlide: Uses HTML5 picture element to load exact mobile/desktop asset with zero stacking
 function SmartSlide({ base }: { base: string }) {
   const [src, setSrc] = useState(base + ".jpg");
   const [srcMob, setSrcMob] = useState(base + "-mob.jpg");
@@ -179,21 +170,14 @@ function SmartSlide({ base }: { base: string }) {
   };
 
   return (
-    <>
+    <picture className="hero-picture" style={{ display: "block", width: "100%" }}>
+      <source media="(max-width: 768px)" srcSet={srcMob} onError={tryNextMob as any} />
       <img
         src={src}
         alt="Hero Promotional Banner"
         onError={tryNext}
-        className="hero-image-desktop"
         style={{ width: "100%", height: "auto", display: "block" }}
       />
-      <img
-        src={srcMob}
-        alt="Hero Promotional Banner Mobile"
-        onError={tryNextMob}
-        className="hero-image-mobile"
-        style={{ width: "100%", height: "auto", display: "block" }}
-      />
-    </>
+    </picture>
   );
 }
