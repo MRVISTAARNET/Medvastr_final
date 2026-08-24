@@ -9,6 +9,7 @@ const inter = Inter({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
   variable: "--font-inter",
+  display: "swap",
 });
 
 const serif = Cormorant_Garamond({
@@ -16,12 +17,14 @@ const serif = Cormorant_Garamond({
   weight: ["300", "400", "500", "600", "700"],
   style: ["normal", "italic"],
   variable: "--font-serif",
+  display: "swap",
 });
 
 const sans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700", "800"],
   variable: "--font-sans",
+  display: "swap",
 });
 
 const siteTitle = "Medvarn | Premium Medical Apparel & Professional Scrubs";
@@ -123,6 +126,29 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${serif.variable} ${sans.variable} ${inter.variable}`}>
+      <head>
+        {/* Preconnect to CloudFront CDN for instant image preloading */}
+        <link rel="preconnect" href="https://d2tnzshqdaedbc.cloudfront.net" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://d2tnzshqdaedbc.cloudfront.net" />
+        
+        {/* Preload Mobile LCP Hero Image for 90+ Lighthouse Score */}
+        <link
+          rel="preload"
+          as="image"
+          href="https://d2tnzshqdaedbc.cloudfront.net/home-hero-1-mob.jpg"
+          media="(max-width: 768px)"
+          // @ts-ignore
+          fetchPriority="high"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="https://d2tnzshqdaedbc.cloudfront.net/home-hero-1.jpg"
+          media="(min-width: 769px)"
+          // @ts-ignore
+          fetchPriority="high"
+        />
+      </head>
       <body>
         {/* Google Tag Manager (noscript) */}
         <noscript>
@@ -136,6 +162,8 @@ export default function RootLayout({
         <JsonLd data={organizationSchema as any} />
         <JsonLd data={websiteSchema as any} />
         {children}
+        
+        {/* High performance async script loading */}
         <Script
           id="gtm-script"
           strategy="afterInteractive"
@@ -150,12 +178,12 @@ export default function RootLayout({
           }}
         />
         <Script
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           src="https://www.googletagmanager.com/gtag/js?id=AW-18377676045"
         />
         <Script
           id="google-ads"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
@@ -167,7 +195,7 @@ export default function RootLayout({
         />
         <Script
           id="meta-pixel"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `
               !function(f,b,e,v,n,t,s)

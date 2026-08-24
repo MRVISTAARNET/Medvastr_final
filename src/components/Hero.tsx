@@ -72,17 +72,21 @@ export default function Hero({ onShop }: HeroProps) {
     <div className="hero">
       <div className="hero-track" style={{ transform: `translateX(-${cur * 100}%)` }}>
         {slides.map((s: any, i: number) => {
+          const isFirst = i === 0;
           const content = s.src ? (
             <picture className="hero-picture" style={{ display: "block", width: "100%" }}>
               <source media="(max-width: 768px)" srcSet={s.srcMob || s.src} />
               <img
                 src={s.src}
                 alt={s.title || "Hero Promotional Banner"}
+                // @ts-ignore
+                fetchPriority={isFirst ? "high" : "auto"}
+                loading={isFirst ? "eager" : "lazy"}
                 style={{ width: "100%", height: "auto", display: "block" }}
               />
             </picture>
           ) : (
-            <SmartSlide base={s.base} />
+            <SmartSlide base={s.base} isFirst={isFirst} />
           );
 
           return (
@@ -154,8 +158,8 @@ export default function Hero({ onShop }: HeroProps) {
   );
 }
 
-// SmartSlide: Uses HTML5 picture element to load exact mobile/desktop asset with zero stacking
-function SmartSlide({ base }: { base: string }) {
+// SmartSlide: Uses HTML5 picture element with fetchPriority="high" for fast LCP
+function SmartSlide({ base, isFirst = false }: { base: string; isFirst?: boolean }) {
   const [src, setSrc] = useState(base + ".jpg");
   const [srcMob, setSrcMob] = useState(base + "-mob.jpg");
 
@@ -176,6 +180,9 @@ function SmartSlide({ base }: { base: string }) {
         src={src}
         alt="Hero Promotional Banner"
         onError={tryNext}
+        // @ts-ignore
+        fetchPriority={isFirst ? "high" : "auto"}
+        loading={isFirst ? "eager" : "lazy"}
         style={{ width: "100%", height: "auto", display: "block" }}
       />
     </picture>
