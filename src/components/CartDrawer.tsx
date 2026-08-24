@@ -197,10 +197,14 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                 );
               })}
 
-              {/* 1-Click Upsell Essentials */}
+              {/* Redesigned 1-Click Essentials Section */}
               {upsellItems.length > 0 && (
                 <div className="upsell-container">
-                  <div className="upsell-title">⚡ Frequently Added Essentials</div>
+                  <div className="upsell-header-row">
+                    <span className="upsell-title">⚡ Frequently Added Essentials</span>
+                    <span className="upsell-subtitle">Curated for your order</span>
+                  </div>
+
                   <div className="upsell-list">
                     {upsellItems.map((prod) => {
                       const activeColorIdx = upsellColorIdxs[prod.id] || 0;
@@ -210,7 +214,8 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
 
                       return (
                         <div key={prod.id} className="upsell-card">
-                          <div className="upsell-info-wrap">
+                          {/* Top: Product Image + Title & Price */}
+                          <div className="upsell-top-row">
                             <div
                               className="upsell-thumb"
                               onClick={() => {
@@ -220,7 +225,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                                     : [thumbImg.split("?")[0]];
                                 setLightboxGallery({ imgs: imgsToView, activeIdx: 0 });
                               }}
-                              title="Click to preview color photos"
+                              title="Click to zoom image"
                             >
                               {thumbImg ? (
                                 <img
@@ -231,10 +236,10 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                               ) : (
                                 <div className="upsell-thumb-emoji">📦</div>
                               )}
-                              <span className="upsell-zoom-badge">🔍</span>
+                              <span className="upsell-zoom-icon">🔍</span>
                             </div>
 
-                            <div className="upsell-text">
+                            <div className="upsell-meta">
                               <div className="upsell-name">{prod.name}</div>
                               <div className="upsell-prices">
                                 <span className="upsell-price">{fmt(prod.price)}</span>
@@ -248,52 +253,57 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                             </div>
                           </div>
 
-                          <div className="upsell-controls">
-                            {prod.clrs && prod.clrs.length > 0 && (
+                          {/* Bottom: Options Select & Add to Bag Button */}
+                          <div className="upsell-action-row">
+                            <div className="upsell-selects">
+                              {prod.clrs && prod.clrs.length > 0 && (
+                                <select
+                                  aria-label="Select color"
+                                  value={activeColorIdx}
+                                  onChange={(e) =>
+                                    setUpsellColorIdxs({
+                                      ...upsellColorIdxs,
+                                      [prod.id]: Number(e.target.value),
+                                    })
+                                  }
+                                  className="upsell-select color-select"
+                                >
+                                  {prod.clrs.map((clr, cIdx) => (
+                                    <option key={cIdx} value={cIdx}>
+                                      {prod.clrNms?.[cIdx] || `Color ${cIdx + 1}`}
+                                    </option>
+                                  ))}
+                                </select>
+                              )}
+
                               <select
-                                aria-label="Select color"
-                                value={activeColorIdx}
+                                aria-label="Select size"
+                                value={activeSize}
                                 onChange={(e) =>
-                                  setUpsellColorIdxs({
-                                    ...upsellColorIdxs,
-                                    [prod.id]: Number(e.target.value),
+                                  setUpsellSizes({
+                                    ...upsellSizes,
+                                    [prod.id]: e.target.value,
                                   })
                                 }
-                                className="upsell-select"
+                                className="upsell-select size-select"
                               >
-                                {prod.clrs.map((clr, cIdx) => (
-                                  <option key={cIdx} value={cIdx}>
-                                    {prod.clrNms?.[cIdx] || `Color ${cIdx + 1}`}
+                                {(prod.sizes && prod.sizes.length > 0
+                                  ? prod.sizes
+                                  : ["S", "M", "L", "XL"]
+                                ).map((sz) => (
+                                  <option key={sz} value={sz}>
+                                    Size {sz}
                                   </option>
                                 ))}
                               </select>
-                            )}
-                            <select
-                              aria-label="Select size"
-                              value={activeSize}
-                              onChange={(e) =>
-                                setUpsellSizes({
-                                  ...upsellSizes,
-                                  [prod.id]: e.target.value,
-                                })
-                              }
-                              className="upsell-select size-select"
-                            >
-                              {(prod.sizes && prod.sizes.length > 0
-                                ? prod.sizes
-                                : ["S", "M", "L", "XL"]
-                              ).map((sz) => (
-                                <option key={sz} value={sz}>
-                                  {sz}
-                                </option>
-                              ))}
-                            </select>
+                            </div>
+
                             <button
                               type="button"
                               onClick={() => addToCart(prod, activeColorIdx, activeSize, 1)}
                               className="upsell-add-btn"
                             >
-                              + Add
+                              + Add to Bag
                             </button>
                           </div>
                         </div>
@@ -623,55 +633,66 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
           color: #ef4444;
         }
 
-        /* Upsells */
+        /* NEW E-COMMERCE UPSELL DESIGN */
         .upsell-container {
           margin-top: 20px;
-          padding: 14px;
+          padding: 16px;
           background: #f8fafc;
-          border-radius: 14px;
-          border: 1px solid #e2e8f0;
+          border-radius: 16px;
+          border: 1.5px solid #e2e8f0;
+        }
+        .upsell-header-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 14px;
         }
         .upsell-title {
-          font-size: 11.5px;
+          font-size: 12px;
           font-weight: 800;
           color: #0f172a;
           text-transform: uppercase;
           letter-spacing: 0.05em;
-          margin-bottom: 10px;
+        }
+        .upsell-subtitle {
+          font-size: 11px;
+          color: #64748b;
+          font-weight: 500;
         }
         .upsell-list {
           display: flex;
           flex-direction: column;
-          gap: 10px;
+          gap: 12px;
         }
         .upsell-card {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
           background: #ffffff;
-          padding: 10px 12px;
-          border-radius: 10px;
-          border: 1px solid #e2e8f0;
-          gap: 10px;
-          flex-wrap: wrap;
+          padding: 14px;
+          border-radius: 12px;
+          border: 1.5px solid #e2e8f0;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+          transition: border-color 0.2s;
         }
-        .upsell-info-wrap {
+        .upsell-card:hover {
+          border-color: #008080;
+        }
+        .upsell-top-row {
           display: flex;
           align-items: center;
-          gap: 10px;
-          min-width: 0;
-          flex: 1;
+          gap: 12px;
         }
         .upsell-thumb {
-          width: 42px;
-          height: 52px;
-          border-radius: 6px;
+          width: 52px;
+          height: 68px;
+          border-radius: 8px;
           overflow: hidden;
           background: #f1f5f9;
           flex-shrink: 0;
           cursor: pointer;
           position: relative;
-          border: 1px solid #cbd5e1;
+          border: 1px solid #e2e8f0;
         }
         .upsell-thumb-img {
           width: 100%;
@@ -685,82 +706,95 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
           align-items: center;
           justify-content: center;
         }
-        .upsell-zoom-badge {
+        .upsell-zoom-icon {
           position: absolute;
           bottom: 2px;
           right: 2px;
-          background: rgba(0,0,0,0.6);
+          background: rgba(15, 23, 42, 0.7);
           color: #ffffff;
-          font-size: 8px;
-          padding: 1px 2px;
-          border-radius: 2px;
+          font-size: 9px;
+          padding: 1px 3px;
+          border-radius: 3px;
         }
-        .upsell-text {
-          min-width: 0;
+        .upsell-meta {
           flex: 1;
+          min-width: 0;
         }
         .upsell-name {
-          font-size: 13px;
+          font-size: 13.5px;
           font-weight: 700;
           color: #0f172a;
-          line-height: 1.25;
-          white-space: nowrap;
+          line-height: 1.35;
+          margin-bottom: 4px;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
           overflow: hidden;
-          text-overflow: ellipsis;
         }
         .upsell-prices {
           display: flex;
           align-items: center;
-          gap: 6px;
-          margin-top: 2px;
+          gap: 8px;
         }
         .upsell-price {
-          font-size: 12px;
+          font-size: 14px;
           font-weight: 800;
           color: #008080;
         }
         .upsell-mrp {
-          font-size: 11px;
+          font-size: 12px;
           text-decoration: line-through;
           color: #94a3b8;
         }
-        .upsell-controls {
+        .upsell-action-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+          padding-top: 10px;
+          border-top: 1px solid #f1f5f9;
+        }
+        .upsell-selects {
           display: flex;
           align-items: center;
           gap: 6px;
-          flex-shrink: 0;
+          flex: 1;
+          min-width: 0;
         }
         .upsell-select {
-          padding: 4px 6px;
+          padding: 6px 8px;
           border-radius: 6px;
           border: 1.5px solid #cbd5e1;
-          font-size: 11px;
+          font-size: 11.5px;
           font-weight: 700;
           background: #ffffff;
           color: #0f172a;
           outline: none;
           cursor: pointer;
-          max-width: 90px;
+        }
+        .color-select {
+          flex: 1;
+          min-width: 0;
         }
         .size-select {
-          max-width: 55px;
+          flex: 0 0 auto;
         }
         .upsell-add-btn {
-          padding: 6px 12px;
-          background: #f0fdf4;
-          border: 1.5px solid #bbf7d0;
-          color: #166534;
-          border-radius: 6px;
-          font-size: 12px;
-          font-weight: 800;
+          padding: 8px 16px;
+          background: #008080;
+          color: #ffffff;
+          border: none;
+          border-radius: 8px;
+          font-size: 12.5px;
+          font-weight: 700;
           cursor: pointer;
           white-space: nowrap;
           transition: all 0.2s;
+          box-shadow: 0 2px 6px rgba(0, 128, 128, 0.2);
         }
         .upsell-add-btn:hover {
-          background: #166534;
-          color: white;
-          border-color: #166534;
+          background: #0d9488;
+          transform: translateY(-1px);
         }
 
         /* Footer */
@@ -845,20 +879,13 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         }
 
         @media (max-width: 480px) {
-          .upsell-card {
+          .upsell-action-row {
             flex-direction: column;
             align-items: stretch;
           }
-          .upsell-controls {
+          .upsell-add-btn {
             width: 100%;
-            justify-content: space-between;
-          }
-          .upsell-select {
-            flex: 1;
-            max-width: none;
-          }
-          .size-select {
-            flex: 0 0 60px;
+            text-align: center;
           }
         }
       `}</style>
