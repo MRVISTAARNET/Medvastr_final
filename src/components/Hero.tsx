@@ -81,13 +81,13 @@ export default function Hero({ onShop }: HeroProps) {
                 src={s.src}
                 alt={s.title || "Hero Promotional Banner"}
                 className="hero-image-desktop"
-                style={{ width: "100%", height: "auto", objectFit: "contain", objectPosition: "center bottom", display: "block" }}
+                style={{ width: "100%", height: "auto", objectFit: "cover", objectPosition: "center top", display: "block" }}
               />
               <img
                 src={s.srcMob || ""}
                 alt={s.title || "Hero Promotional Banner Mobile"}
                 className="hero-image-mobile"
-                style={{ width: "100%", height: "auto", objectFit: "contain", objectPosition: "center bottom", display: "block" }}
+                style={{ width: "100%", height: "auto", objectFit: "cover", objectPosition: "center top", display: "block" }}
               />
             </>
           ) : (
@@ -185,14 +185,14 @@ function SmartSlide({ base }: { base: string }) {
         alt="Hero Promotional Banner"
         onError={tryNext}
         className="hero-image-desktop"
-        style={{ width: "100%", height: "auto", objectFit: "contain", objectPosition: "center bottom", display: "block" }}
+        style={{ width: "100%", height: "auto", objectFit: "cover", objectPosition: "center top", display: "block" }}
       />
       <img
         src={srcMob}
         alt="Hero Promotional Banner Mobile"
         onError={tryNextMob}
         className="hero-image-mobile"
-        style={{ width: "100%", height: "auto", objectFit: "contain", objectPosition: "center bottom", display: "block" }}
+        style={{ width: "100%", height: "auto", objectFit: "cover", objectPosition: "center top", display: "block" }}
       />
     </>
   );

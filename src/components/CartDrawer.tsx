@@ -23,7 +23,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const totalQty = cart.reduce((a, b) => a + b.qty, 0);
 
-  // Dynamic Free Shipping Calculation with Admin Promo Date Check
+  // Dynamic Free Shipping Calculation
   const promoUntilStr = storeSettings?.SHIPPING_PROMO_FREE_UNTIL;
   const isPromoActive = promoUntilStr ? new Date() < new Date(`${promoUntilStr}T23:59:59`) : false;
   const baseFee = Number(storeSettings?.SHIPPING_BASE_FEE);
@@ -32,7 +32,6 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
 
   const freeThreshold = Number(storeSettings?.SHIPPING_FREE_THRESHOLD) || 999;
   const remForFreeShip = isGlobalFreeShip ? 0 : Math.max(0, freeThreshold - sub);
-  const shipProgress = isGlobalFreeShip ? 100 : Math.min(100, Math.round((sub / freeThreshold) * 100));
   const isFreeShipUnlocked = isGlobalFreeShip || remForFreeShip === 0;
 
   // Multi-Item Volume Discount Calculation (1 item: 0%, 2: 5%, 3-4: 10%, 5+: 15%)
@@ -58,8 +57,8 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
     const isPWomen = pCatStr.includes("women");
     const isPMen = pCatStr.includes("men") && !isPWomen;
 
-    if (isCartWomen) return isPWomen || (!isPMen); // Women or Unisex
-    if (isCartMen) return isPMen || (!isPWomen); // Men or Unisex
+    if (isCartWomen) return isPWomen || (!isPMen);
+    if (isCartMen) return isPMen || (!isPWomen);
     return true;
   });
 
@@ -72,32 +71,22 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         {/* Drawer Header */}
         <div className="drw-hd">
           <div>
-            <h3 style={{ fontSize: "20px", fontWeight: 800, color: "#0f172a" }}>Shopping Bag</h3>
+            <h3 style={{ fontSize: "20px", fontWeight: 800, color: "#0f172a", margin: 0 }}>Shopping Bag</h3>
             <div className="drw-hd-s" style={{ fontSize: "13px", color: "#64748b", marginTop: "2px" }}>
               {totalQty} {totalQty === 1 ? "item" : "items"} in your bag
             </div>
           </div>
-          <button className="drw-x" onClick={onClose} style={{ fontSize: "20px", color: "#94a3b8" }}>
+          <button className="drw-x" onClick={onClose} aria-label="Close Shopping Bag">
             ✕
           </button>
         </div>
 
-        {/* Compact Combined Status Banner */}
+        {/* Status / Shipping Banner */}
         {cart.length > 0 && (
-          <div style={{
-            background: '#f8fafc',
-            borderBottom: '1px solid #e2e8f0',
-            padding: '8px 16px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '8px',
-            fontSize: '12px',
-            fontWeight: 700
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
-              <span style={{ fontSize: '14px' }}>{totalQty >= 2 ? '🎉' : '🎁'}</span>
-              <span style={{ color: totalQty >= 5 ? '#15803d' : totalQty >= 2 ? '#0284c7' : '#334155' }}>
+          <div className="cart-status-bar">
+            <div className="status-msg">
+              <span className="status-icon">{totalQty >= 2 ? "🎉" : "🎁"}</span>
+              <span className="status-text">
                 {totalQty === 1 && "Add 1 more item for 5% OFF!"}
                 {totalQty === 2 && "5% Multi-Item Discount Applied! (Add 1 more for 10% OFF)"}
                 {(totalQty === 3 || totalQty === 4) && `10% Discount Applied! (Add ${5 - totalQty} more for 15% OFF)`}
@@ -105,13 +94,13 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
               </span>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+            <div className="status-badges">
               {volumeDiscountAmount > 0 && (
-                <span style={{ background: '#dcfce7', color: '#15803d', padding: '1px 6px', borderRadius: '10px', fontSize: '11px', fontWeight: 800 }}>
+                <span className="badge-disc">
                   -{fmt(volumeDiscountAmount)}
                 </span>
               )}
-              <span style={{ background: '#f0fdf4', color: '#166534', border: '1px solid #bbf7d0', padding: '1px 6px', borderRadius: '10px', fontSize: '10px', fontWeight: 800 }}>
+              <span className="badge-free">
                 FREE SHIP
               </span>
             </div>
@@ -119,21 +108,15 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         )}
 
         {/* Drawer Body */}
-        <div className="drw-body" style={{ padding: "0 20px" }}>
+        <div className="drw-body">
           {cart.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "80px 20px" }}>
-              <div style={{ fontSize: "64px", marginBottom: "20px", opacity: 0.8 }}>🛍️</div>
-              <div style={{ fontSize: "18px", fontWeight: 800, color: "#0f172a", marginBottom: "8px" }}>
-                Your bag is empty
-              </div>
-              <div style={{ fontSize: "14px", color: "#64748b", marginBottom: "28px" }}>
+            <div className="empty-cart-state">
+              <div className="empty-cart-icon">🛍️</div>
+              <div className="empty-cart-title">Your bag is empty</div>
+              <div className="empty-cart-sub">
                 Explore our premium medical apparel collection and start adding items.
               </div>
-              <button
-                className="btn-p"
-                onClick={onClose}
-                style={{ width: "100%", padding: "14px", borderRadius: "12px", fontSize: "14px", fontWeight: 700 }}
-              >
+              <button className="btn-p empty-cart-btn" onClick={onClose}>
                 Continue Shopping
               </button>
             </div>
@@ -145,123 +128,65 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                 const thumb = images[0] || item.imgs[0];
 
                 return (
-                  <div
-                    key={item.k}
-                    style={{
-                      display: "flex",
-                      gap: "16px",
-                      padding: "20px 0",
-                      borderBottom: "1px solid #f1f5f9",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "80px",
-                        height: "104px",
-                        position: "relative",
-                        borderRadius: "10px",
-                        overflow: "hidden",
-                        background: "#f8fafc",
-                        flexShrink: 0,
-                      }}
-                    >
+                  <div key={item.k} className="cart-item-row">
+                    <div className="cart-item-thumb">
                       {thumb ? (
-                        <Image src={thumb.split("?")[0]} alt={item.name} fill style={{ objectFit: "cover" }} sizes="80px" />
+                        <Image
+                          src={thumb.split("?")[0]}
+                          alt={item.name}
+                          fill
+                          style={{ objectFit: "cover" }}
+                          sizes="80px"
+                        />
                       ) : (
-                        <div
-                          style={{
-                            width: "100%",
-                            height: "100%",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: "24px",
-                          }}
-                        >
+                        <div className="cart-item-emoji">
                           {item.emo || "📦"}
                         </div>
                       )}
                     </div>
 
-                    <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                    <div className="cart-item-details">
                       <div>
-                        <div
-                          style={{
-                            fontSize: "14px",
-                            fontWeight: 700,
-                            color: "#0f172a",
-                            lineHeight: 1.3,
-                            marginBottom: "4px",
-                          }}
-                        >
-                          {item.name}
-                        </div>
-                        <div style={{ fontSize: "12px", color: "#64748b", display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                          <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                            <span style={{ fontWeight: 600, color: "#94a3b8" }}>SIZE:</span> {item.size}
+                        <div className="cart-item-name">{item.name}</div>
+                        <div className="cart-item-meta">
+                          <span className="meta-tag">
+                            <span className="meta-lbl">SIZE:</span> {item.size}
                           </span>
-                          <span style={{ color: "#e2e8f0" }}>|</span>
-                          <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                            <span style={{ fontWeight: 600, color: "#94a3b8" }}>COLOR:</span>
-                            <div
-                              style={{
-                                width: "10px",
-                                height: "10px",
-                                borderRadius: "50%",
-                                background: item.col,
-                                border: "1px solid #cbd5e1",
-                              }}
+                          <span className="meta-sep">|</span>
+                          <span className="meta-tag">
+                            <span className="meta-lbl">COLOR:</span>
+                            <span
+                              className="color-swatch-dot"
+                              style={{ background: item.col }}
                             />
                             {item.colNm}
                           </span>
                         </div>
                       </div>
 
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "10px" }}>
-                        <div
-                          className="qty-ctl"
-                          style={{
-                            background: "#f8fafc",
-                            border: "1px solid #e2e8f0",
-                            borderRadius: "8px",
-                            padding: "2px",
-                          }}
-                        >
+                      <div className="cart-item-bottom">
+                        <div className="qty-ctl">
                           <button
                             className="qb"
                             onClick={() => updateCartQty(idx, -1)}
-                            style={{ width: "26px", height: "26px", fontSize: "14px" }}
+                            aria-label="Decrease quantity"
                           >
                             –
                           </button>
-                          <span className="qv" style={{ fontSize: "13px", minWidth: "24px", fontWeight: 700 }}>
-                            {item.qty}
-                          </span>
+                          <span className="qv">{item.qty}</span>
                           <button
                             className="qb"
                             onClick={() => updateCartQty(idx, 1)}
-                            style={{ width: "26px", height: "26px", fontSize: "14px" }}
+                            aria-label="Increase quantity"
                           >
                             +
                           </button>
                         </div>
-                        <div style={{ textAlign: "right" }}>
-                          <div style={{ fontSize: "14px", fontWeight: 800, color: "#0f172a" }}>
-                            {fmt(item.price * item.qty)}
-                          </div>
+                        <div className="cart-item-price-wrap">
+                          <div className="cart-item-price">{fmt(item.price * item.qty)}</div>
                           <button
                             className="ci-del"
                             onClick={() => removeFromCart(idx)}
-                            style={{
-                              fontSize: "11px",
-                              color: "#94a3b8",
-                              background: "none",
-                              border: "none",
-                              padding: 0,
-                              textDecoration: "underline",
-                              marginTop: "2px",
-                              cursor: "pointer",
-                            }}
                           >
                             Remove
                           </button>
@@ -272,13 +197,11 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                 );
               })}
 
-              {/* 1-Click Upsell Strip */}
+              {/* 1-Click Upsell Essentials */}
               {upsellItems.length > 0 && (
-                <div style={{ marginTop: "24px", padding: "16px", background: "#f8fafc", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
-                  <div style={{ fontSize: "12px", fontWeight: 800, color: "#0f172a", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "10px" }}>
-                    ⚡ Frequently Added Essentials
-                  </div>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                <div className="upsell-container">
+                  <div className="upsell-title">⚡ Frequently Added Essentials</div>
+                  <div className="upsell-list">
                     {upsellItems.map((prod) => {
                       const activeColorIdx = upsellColorIdxs[prod.id] || 0;
                       const activeSize = upsellSizes[prod.id] || prod.sizes?.[0] || "M";
@@ -286,79 +209,57 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                       const thumbImg = colorImages[0] || prod.imgs[0];
 
                       return (
-                        <div
-                          key={prod.id}
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                            background: "#ffffff",
-                            padding: "10px 12px",
-                            borderRadius: "10px",
-                            border: "1px solid #e2e8f0",
-                            gap: "10px",
-                          }}
-                        >
-                          {/* Item Thumbnail (Click to view ONLY photos for this color) */}
-                          <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0, flex: 1 }}>
+                        <div key={prod.id} className="upsell-card">
+                          <div className="upsell-info-wrap">
                             <div
-                              style={{
-                                width: "42px",
-                                height: "52px",
-                                borderRadius: "6px",
-                                overflow: "hidden",
-                                background: "#f1f5f9",
-                                flexShrink: 0,
-                                cursor: "pointer",
-                                position: "relative",
-                                border: "1px solid #cbd5e1"
-                              }}
+                              className="upsell-thumb"
                               onClick={() => {
-                                const imgsToView = colorImages.length > 0 ? colorImages.map(img => img.split("?")[0]) : [thumbImg.split("?")[0]];
+                                const imgsToView =
+                                  colorImages.length > 0
+                                    ? colorImages.map((img) => img.split("?")[0])
+                                    : [thumbImg.split("?")[0]];
                                 setLightboxGallery({ imgs: imgsToView, activeIdx: 0 });
                               }}
                               title="Click to preview color photos"
                             >
                               {thumbImg ? (
-                                <img src={thumbImg.split("?")[0]} alt={prod.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                <img
+                                  src={thumbImg.split("?")[0]}
+                                  alt={prod.name}
+                                  className="upsell-thumb-img"
+                                />
                               ) : (
-                                <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>📦</div>
+                                <div className="upsell-thumb-emoji">📦</div>
                               )}
-                              <span style={{ position: "absolute", bottom: "2px", right: "2px", background: "rgba(0,0,0,0.6)", color: "#ffffff", fontSize: "8px", padding: "1px 2px", borderRadius: "2px" }}>🔍</span>
+                              <span className="upsell-zoom-badge">🔍</span>
                             </div>
 
-                            <div style={{ minWidth: 0, flex: 1 }}>
-                              <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a", lineHeight: 1.25 }}>
-                                {prod.name}
-                              </div>
-                              <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "2px" }}>
-                                <span style={{ fontSize: "12px", fontWeight: 800, color: "#008080" }}>{fmt(prod.price)}</span>
-                                {((prod as any).mrp || prod.origPrice) && ((prod as any).mrp || prod.origPrice) > prod.price && (
-                                  <span style={{ fontSize: "11px", textDecoration: "line-through", color: "#94a3b8" }}>{fmt((prod as any).mrp || prod.origPrice)}</span>
-                                )}
+                            <div className="upsell-text">
+                              <div className="upsell-name">{prod.name}</div>
+                              <div className="upsell-prices">
+                                <span className="upsell-price">{fmt(prod.price)}</span>
+                                {((prod as any).mrp || prod.origPrice) &&
+                                  ((prod as any).mrp || prod.origPrice) > prod.price && (
+                                    <span className="upsell-mrp">
+                                      {fmt((prod as any).mrp || prod.origPrice)}
+                                    </span>
+                                  )}
                               </div>
                             </div>
                           </div>
 
-                          {/* Color Dropdown, Size Dropdown & Add Button */}
-                          <div style={{ display: "flex", alignItems: "center", gap: "6px", flexShrink: 0 }}>
+                          <div className="upsell-controls">
                             {prod.clrs && prod.clrs.length > 0 && (
                               <select
                                 aria-label="Select color"
                                 value={activeColorIdx}
-                                onChange={(e) => setUpsellColorIdxs({ ...upsellColorIdxs, [prod.id]: Number(e.target.value) })}
-                                style={{
-                                  padding: "4px 6px",
-                                  borderRadius: "6px",
-                                  border: "1px solid #cbd5e1",
-                                  fontSize: "11px",
-                                  fontWeight: 700,
-                                  background: "#ffffff",
-                                  color: "#0f172a",
-                                  outline: "none",
-                                  cursor: "pointer",
-                                  maxWidth: "95px"
-                                }}
+                                onChange={(e) =>
+                                  setUpsellColorIdxs({
+                                    ...upsellColorIdxs,
+                                    [prod.id]: Number(e.target.value),
+                                  })
+                                }
+                                className="upsell-select"
                               >
                                 {prod.clrs.map((clr, cIdx) => (
                                   <option key={cIdx} value={cIdx}>
@@ -370,37 +271,27 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                             <select
                               aria-label="Select size"
                               value={activeSize}
-                              onChange={(e) => setUpsellSizes({ ...upsellSizes, [prod.id]: e.target.value })}
-                              style={{
-                                padding: "4px 6px",
-                                borderRadius: "6px",
-                                border: "1px solid #cbd5e1",
-                                fontSize: "11px",
-                                fontWeight: 700,
-                                background: "#ffffff",
-                                color: "#0f172a",
-                                outline: "none",
-                                cursor: "pointer",
-                              }}
+                              onChange={(e) =>
+                                setUpsellSizes({
+                                  ...upsellSizes,
+                                  [prod.id]: e.target.value,
+                                })
+                              }
+                              className="upsell-select size-select"
                             >
-                              {(prod.sizes && prod.sizes.length > 0 ? prod.sizes : ["S", "M", "L", "XL"]).map((sz) => (
-                                <option key={sz} value={sz}>{sz}</option>
+                              {(prod.sizes && prod.sizes.length > 0
+                                ? prod.sizes
+                                : ["S", "M", "L", "XL"]
+                              ).map((sz) => (
+                                <option key={sz} value={sz}>
+                                  {sz}
+                                </option>
                               ))}
                             </select>
                             <button
                               type="button"
                               onClick={() => addToCart(prod, activeColorIdx, activeSize, 1)}
-                              style={{
-                                padding: "6px 12px",
-                                background: "#f0fdf4",
-                                border: "1px solid #bbf7d0",
-                                color: "#166534",
-                                borderRadius: "6px",
-                                fontSize: "12px",
-                                fontWeight: 700,
-                                cursor: "pointer",
-                                whiteSpace: "nowrap",
-                              }}
+                              className="upsell-add-btn"
                             >
                               + Add
                             </button>
@@ -423,14 +314,20 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
               <span style={{ fontWeight: 700 }}>{fmt(sub)}</span>
             </div>
             {volumeDiscountAmount > 0 && (
-              <div className="sum-r" style={{ color: "#16a34a" }}>
+              <div className="sum-r savings-row">
                 <span>Multi-Item Savings ({volumeDiscountPercent}%)</span>
                 <span style={{ fontWeight: 800 }}>-{fmt(volumeDiscountAmount)}</span>
               </div>
             )}
             <div className="sum-r">
               <span>Shipping</span>
-              <span style={{ fontSize: isFreeShipUnlocked ? "13px" : "12px", fontWeight: 700, color: isFreeShipUnlocked ? "#16a34a" : "#475569" }}>
+              <span
+                style={{
+                  fontSize: isFreeShipUnlocked ? "13px" : "12px",
+                  fontWeight: 700,
+                  color: isFreeShipUnlocked ? "#16a34a" : "#475569",
+                }}
+              >
                 {isFreeShipUnlocked ? "COMPLIMENTARY FREE" : "Calculated at checkout"}
               </span>
             </div>
@@ -441,152 +338,530 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
             <button className="co-cta" onClick={handleCheckout}>
               Checkout Now →
             </button>
-            <div style={{ textAlign: "center", fontSize: 11, color: "var(--lt)", marginTop: 12 }}>
+            <div className="ssl-badge">
               🔒 256-Bit SSL Encrypted Checkout
             </div>
           </div>
         )}
       </div>
 
-      {/* PURE IMAGE-ONLY LIGHTBOX GALLERY MODAL */}
-      {lightboxGallery && typeof document !== "undefined" && createPortal(
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(15, 23, 42, 0.90)",
-            backdropFilter: "blur(8px)",
-            zIndex: 999999,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "20px",
-          }}
-          onClick={() => setLightboxGallery(null)}
-        >
-          {/* Close Button */}
-          <button
-            type="button"
-            onClick={() => setLightboxGallery(null)}
-            style={{
-              position: "absolute",
-              top: "24px",
-              right: "24px",
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              background: "rgba(255, 255, 255, 0.2)",
-              color: "#ffffff",
-              border: "1px solid rgba(255, 255, 255, 0.4)",
-              fontSize: "20px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              zIndex: 100,
-            }}
-          >
-            ✕
-          </button>
-
-          {/* Prev Nav Button */}
-          {lightboxGallery.imgs.length > 1 && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setLightboxGallery(prev => prev ? {
-                  ...prev,
-                  activeIdx: (prev.activeIdx - 1 + prev.imgs.length) % prev.imgs.length
-                } : null);
-              }}
-              style={{
-                position: "absolute",
-                left: "24px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                width: "44px",
-                height: "44px",
-                borderRadius: "50%",
-                background: "rgba(255, 255, 255, 0.25)",
-                color: "#ffffff",
-                border: "1px solid rgba(255, 255, 255, 0.4)",
-                fontSize: "24px",
-                fontWeight: 700,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                zIndex: 100,
-              }}
-            >
-              ‹
-            </button>
-          )}
-
-          {/* Pure High-Res Photo Container */}
+      {/* LIGHTBOX GALLERY MODAL */}
+      {lightboxGallery &&
+        typeof document !== "undefined" &&
+        createPortal(
           <div
-            style={{
-              maxWidth: "640px",
-              maxHeight: "82vh",
-              width: "90%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "relative",
-            }}
-            onClick={(e) => e.stopPropagation()}
+            className="lightbox-overlay"
+            onClick={() => setLightboxGallery(null)}
           >
-            <img
-              src={lightboxGallery.imgs[lightboxGallery.activeIdx]}
-              alt="Product View"
-              style={{
-                maxWidth: "100%",
-                maxHeight: "80vh",
-                objectFit: "contain",
-                borderRadius: "16px",
-                boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)"
-              }}
-            />
-          </div>
-
-          {/* Next Nav Button */}
-          {lightboxGallery.imgs.length > 1 && (
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setLightboxGallery(prev => prev ? {
-                  ...prev,
-                  activeIdx: (prev.activeIdx + 1) % prev.imgs.length
-                } : null);
-              }}
-              style={{
-                position: "absolute",
-                right: "24px",
-                top: "50%",
-                transform: "translateY(-50%)",
-                width: "44px",
-                height: "44px",
-                borderRadius: "50%",
-                background: "rgba(255, 255, 255, 0.25)",
-                color: "#ffffff",
-                border: "1px solid rgba(255, 255, 255, 0.4)",
-                fontSize: "24px",
-                fontWeight: 700,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                zIndex: 100,
-              }}
+              onClick={() => setLightboxGallery(null)}
+              className="lightbox-close"
+              aria-label="Close Preview"
             >
-              ›
+              ✕
             </button>
-          )}
-        </div>,
-        document.body
-      )}
+
+            {lightboxGallery.imgs.length > 1 && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLightboxGallery((prev) =>
+                    prev
+                      ? {
+                          ...prev,
+                          activeIdx:
+                            (prev.activeIdx - 1 + prev.imgs.length) % prev.imgs.length,
+                        }
+                      : null
+                  );
+                }}
+                className="lightbox-nav lightbox-prev"
+                aria-label="Previous image"
+              >
+                ‹
+              </button>
+            )}
+
+            <div
+              className="lightbox-img-wrap"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={lightboxGallery.imgs[lightboxGallery.activeIdx]}
+                alt="Product View"
+                className="lightbox-img"
+              />
+            </div>
+
+            {lightboxGallery.imgs.length > 1 && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setLightboxGallery((prev) =>
+                    prev
+                      ? {
+                          ...prev,
+                          activeIdx: (prev.activeIdx + 1) % prev.imgs.length,
+                        }
+                      : null
+                  );
+                }}
+                className="lightbox-nav lightbox-next"
+                aria-label="Next image"
+              >
+                ›
+              </button>
+            )}
+          </div>,
+          document.body
+        )}
+
+      <style jsx>{`
+        .cart-status-bar {
+          background: #f8fafc;
+          border-bottom: 1px solid #e2e8f0;
+          padding: 10px 16px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 10px;
+          font-size: 12px;
+          font-weight: 700;
+        }
+        .status-msg {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          min-width: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .status-icon {
+          font-size: 14px;
+        }
+        .status-text {
+          color: #334155;
+        }
+        .status-badges {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          flex-shrink: 0;
+        }
+        .badge-disc {
+          background: #dcfce7;
+          color: #15803d;
+          padding: 2px 8px;
+          border-radius: 10px;
+          font-size: 11px;
+          font-weight: 800;
+        }
+        .badge-free {
+          background: #f0fdf4;
+          color: #166534;
+          border: 1px solid #bbf7d0;
+          padding: 2px 8px;
+          border-radius: 10px;
+          font-size: 10px;
+          font-weight: 800;
+        }
+
+        .drw-body {
+          flex: 1;
+          overflow-y: auto;
+          padding: 16px 20px;
+        }
+        .empty-cart-state {
+          text-align: center;
+          padding: 60px 20px;
+        }
+        .empty-cart-icon {
+          font-size: 56px;
+          margin-bottom: 16px;
+          opacity: 0.8;
+        }
+        .empty-cart-title {
+          font-size: 18px;
+          font-weight: 800;
+          color: #0f172a;
+          margin-bottom: 6px;
+        }
+        .empty-cart-sub {
+          font-size: 13px;
+          color: #64748b;
+          margin-bottom: 24px;
+          line-height: 1.5;
+        }
+        .empty-cart-btn {
+          width: 100%;
+          padding: 12px;
+          border-radius: 10px;
+          font-size: 14px;
+          font-weight: 700;
+        }
+
+        .cart-item-row {
+          display: flex;
+          gap: 14px;
+          padding: 16px 0;
+          border-bottom: 1px solid #f1f5f9;
+        }
+        .cart-item-thumb {
+          width: 76px;
+          height: 96px;
+          position: relative;
+          border-radius: 10px;
+          overflow: hidden;
+          background: #f8fafc;
+          flex-shrink: 0;
+          border: 1px solid #e2e8f0;
+        }
+        .cart-item-emoji {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 24px;
+        }
+        .cart-item-details {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          min-width: 0;
+        }
+        .cart-item-name {
+          font-size: 14px;
+          font-weight: 700;
+          color: #0f172a;
+          line-height: 1.3;
+          margin-bottom: 4px;
+        }
+        .cart-item-meta {
+          font-size: 12px;
+          color: #64748b;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          flex-wrap: wrap;
+        }
+        .meta-tag {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+        .meta-lbl {
+          font-weight: 700;
+          color: #94a3b8;
+          font-size: 10.5px;
+        }
+        .meta-sep {
+          color: #cbd5e1;
+        }
+        .color-swatch-dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          border: 1px solid #cbd5e1;
+        }
+        .cart-item-bottom {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-top: 10px;
+          gap: 10px;
+        }
+        .qty-ctl {
+          background: #f8fafc;
+          border: 1.5px solid #e2e8f0;
+          border-radius: 8px;
+          padding: 2px;
+          display: flex;
+          align-items: center;
+        }
+        .qb {
+          width: 28px;
+          height: 28px;
+          font-size: 14px;
+          border: none;
+          background: transparent;
+          cursor: pointer;
+          font-weight: 700;
+          color: #0f172a;
+        }
+        .qv {
+          font-size: 13px;
+          min-width: 24px;
+          font-weight: 800;
+          text-align: center;
+          color: #0f172a;
+        }
+        .cart-item-price-wrap {
+          text-align: right;
+        }
+        .cart-item-price {
+          font-size: 14px;
+          font-weight: 800;
+          color: #0f172a;
+        }
+        .ci-del {
+          font-size: 11px;
+          color: #94a3b8;
+          background: none;
+          border: none;
+          padding: 0;
+          text-decoration: underline;
+          margin-top: 2px;
+          cursor: pointer;
+        }
+        .ci-del:hover {
+          color: #ef4444;
+        }
+
+        /* Upsells */
+        .upsell-container {
+          margin-top: 20px;
+          padding: 14px;
+          background: #f8fafc;
+          border-radius: 14px;
+          border: 1px solid #e2e8f0;
+        }
+        .upsell-title {
+          font-size: 11.5px;
+          font-weight: 800;
+          color: #0f172a;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          margin-bottom: 10px;
+        }
+        .upsell-list {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .upsell-card {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: #ffffff;
+          padding: 10px 12px;
+          border-radius: 10px;
+          border: 1px solid #e2e8f0;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+        .upsell-info-wrap {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          min-width: 0;
+          flex: 1;
+        }
+        .upsell-thumb {
+          width: 42px;
+          height: 52px;
+          border-radius: 6px;
+          overflow: hidden;
+          background: #f1f5f9;
+          flex-shrink: 0;
+          cursor: pointer;
+          position: relative;
+          border: 1px solid #cbd5e1;
+        }
+        .upsell-thumb-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        .upsell-thumb-emoji {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .upsell-zoom-badge {
+          position: absolute;
+          bottom: 2px;
+          right: 2px;
+          background: rgba(0,0,0,0.6);
+          color: #ffffff;
+          font-size: 8px;
+          padding: 1px 2px;
+          border-radius: 2px;
+        }
+        .upsell-text {
+          min-width: 0;
+          flex: 1;
+        }
+        .upsell-name {
+          font-size: 13px;
+          font-weight: 700;
+          color: #0f172a;
+          line-height: 1.25;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .upsell-prices {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin-top: 2px;
+        }
+        .upsell-price {
+          font-size: 12px;
+          font-weight: 800;
+          color: #008080;
+        }
+        .upsell-mrp {
+          font-size: 11px;
+          text-decoration: line-through;
+          color: #94a3b8;
+        }
+        .upsell-controls {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          flex-shrink: 0;
+        }
+        .upsell-select {
+          padding: 4px 6px;
+          border-radius: 6px;
+          border: 1.5px solid #cbd5e1;
+          font-size: 11px;
+          font-weight: 700;
+          background: #ffffff;
+          color: #0f172a;
+          outline: none;
+          cursor: pointer;
+          max-width: 90px;
+        }
+        .size-select {
+          max-width: 55px;
+        }
+        .upsell-add-btn {
+          padding: 6px 12px;
+          background: #f0fdf4;
+          border: 1.5px solid #bbf7d0;
+          color: #166534;
+          border-radius: 6px;
+          font-size: 12px;
+          font-weight: 800;
+          cursor: pointer;
+          white-space: nowrap;
+          transition: all 0.2s;
+        }
+        .upsell-add-btn:hover {
+          background: #166534;
+          color: white;
+          border-color: #166534;
+        }
+
+        /* Footer */
+        .savings-row {
+          color: #16a34a;
+        }
+        .ssl-badge {
+          text-align: center;
+          font-size: 11px;
+          color: #64748b;
+          margin-top: 10px;
+        }
+
+        /* Lightbox */
+        .lightbox-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(15, 23, 42, 0.9);
+          backdrop-filter: blur(8px);
+          z-index: 999999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+        }
+        .lightbox-close {
+          position: absolute;
+          top: 24px;
+          right: 24px;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.2);
+          color: #ffffff;
+          border: 1px solid rgba(255, 255, 255, 0.4);
+          font-size: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          z-index: 100;
+        }
+        .lightbox-nav {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.25);
+          color: #ffffff;
+          border: 1px solid rgba(255, 255, 255, 0.4);
+          font-size: 24px;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          z-index: 100;
+        }
+        .lightbox-prev {
+          left: 24px;
+        }
+        .lightbox-next {
+          right: 24px;
+        }
+        .lightbox-img-wrap {
+          max-width: 640px;
+          max-height: 82vh;
+          width: 90%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+        }
+        .lightbox-img {
+          max-width: 100%;
+          max-height: 80vh;
+          object-fit: contain;
+          border-radius: 16px;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (max-width: 480px) {
+          .upsell-card {
+            flex-direction: column;
+            align-items: stretch;
+          }
+          .upsell-controls {
+            width: 100%;
+            justify-content: space-between;
+          }
+          .upsell-select {
+            flex: 1;
+            max-width: none;
+          }
+          .size-select {
+            flex: 0 0 60px;
+          }
+        }
+      `}</style>
     </>
   );
 }

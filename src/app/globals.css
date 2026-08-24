@@ -1372,6 +1372,9 @@ p {
   height: auto !important;
   min-height: unset !important;
   max-height: unset !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  line-height: 0;
 }
 
 .hero-track {
@@ -1383,16 +1386,18 @@ p {
 .hero-slide {
   min-width: 100%;
   position: relative;
-  display: block;
+  display: flex;
+  align-items: flex-end;
   height: auto !important;
 }
 
 .hero-slide img {
   width: 100% !important;
   height: auto !important;
-  object-fit: contain !important;
-  object-position: center bottom;
-  display: block;
+  object-fit: cover !important;
+  object-position: center top !important;
+  display: block !important;
+  vertical-align: bottom !important;
 }
 
 @media (max-width: 1024px) {
@@ -1408,12 +1413,20 @@ p {
     height: auto !important;
     min-height: unset !important;
     max-height: unset !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
   }
   .hero-slide {
     height: auto !important;
   }
   .hero-slide img {
-    object-position: center bottom !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: 520px;
+    object-fit: cover !important;
+    object-position: center top !important;
+    display: block !important;
+    vertical-align: bottom !important;
   }
 }
 

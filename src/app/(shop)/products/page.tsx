@@ -452,7 +452,7 @@ function ProductsContent() {
       <div className="sec" style={{ paddingBottom: 60 }}>
         {/* Breadcrumb ... (rest of JSX) */}
         {/* Breadcrumb */}
-        <div className="breadcrumb" style={{ marginBottom: 35 }}>
+        <div className="breadcrumb" style={{ marginBottom: 12 }}>
           <Link href="/">Home</Link>
           <span className="sep">/</span>
           <Link href="/products">Shop</Link>
@@ -758,7 +758,7 @@ function ProductsContent() {
       </div>
 
       <style jsx>{`
-        .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b; margin: 15px 0 25px; font-weight: 500; }
+        .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #64748b; margin: 4px 0 12px; font-weight: 500; }
         .breadcrumb a { color: #64748b; text-decoration: none; transition: color 0.2s; }
         .breadcrumb a:hover { color: #008080; }
         .breadcrumb .sep { opacity: 0.4; }
@@ -888,7 +888,7 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
       <style jsx>{`
         .cat-banner {
           width: 100%;
-          margin-bottom: 36px;
+          margin-bottom: 14px;
           border-radius: 16px;
           overflow: hidden;
           position: relative;
@@ -903,7 +903,7 @@ function SmartBanner({ base, title }: { base: string; title: string; }) {
         @media (max-width: 768px) {
           .cat-banner {
             border-radius: 12px;
-            margin-bottom: 36px;
+            margin-bottom: 12px;
             min-height: 140px;
             display: flex;
             align-items: center;
