@@ -1,6 +1,7 @@
 declare global {
   interface Window {
     fbq?: (...args: any[]) => void;
+    gtag?: (...args: any[]) => void;
   }
 }
 
@@ -49,6 +50,7 @@ export const trackInitiateCheckout = (numItems: number, totalValue: number) => {
 };
 
 export const trackPurchase = (orderId: string | number, totalValue: number, numItems: number) => {
+  // Track Meta Pixel Purchase
   trackMetaEvent("Purchase", {
     content_type: "product",
     value: totalValue,
@@ -56,6 +58,20 @@ export const trackPurchase = (orderId: string | number, totalValue: number, numI
     order_id: String(orderId),
     num_items: numItems,
   });
+
+  // Track Google Ads Conversion Event
+  if (typeof window !== "undefined" && window.gtag) {
+    try {
+      window.gtag("event", "conversion", {
+        send_to: "AW-18377676045/WkFcCMSNpeccEI2qlLtE",
+        value: Number(totalValue),
+        currency: "INR",
+        transaction_id: String(orderId),
+      });
+    } catch (e) {
+      console.warn("[GoogleAds] Purchase conversion tracking error:", e);
+    }
+  }
 };
 
 export const trackSearch = (searchQuery: string) => {

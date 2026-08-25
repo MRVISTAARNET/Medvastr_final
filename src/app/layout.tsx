@@ -130,7 +130,7 @@ export default function RootLayout({
         {/* Preconnect to CloudFront CDN for instant image preloading */}
         <link rel="preconnect" href="https://d2tnzshqdaedbc.cloudfront.net" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://d2tnzshqdaedbc.cloudfront.net" />
-        
+
         {/* Preload Mobile LCP Hero Image for 90+ Lighthouse Score */}
         <link
           rel="preload"
@@ -162,7 +162,7 @@ export default function RootLayout({
         <JsonLd data={organizationSchema as any} />
         <JsonLd data={websiteSchema as any} />
         {children}
-        
+
         {/* High performance async script loading */}
         <Script
           id="gtm-script"
