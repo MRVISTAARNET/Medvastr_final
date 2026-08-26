@@ -62,6 +62,7 @@ public class SecurityConfig {
                                     "/api/blog/**", "/blog/**",
                                     "/api/attributes/**", "/attributes/**",
                                     "/api/promos/**", "/promos/**",
+                                    "/api/catalog/**", "/catalog/**",
                                     "/api/shipping/**", "/shipping/**")
                             .permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/orders/track/**", "/orders/track/**", "/api/orders/*", "/orders/*", "/api/orders/shipping-fee", "/orders/shipping-fee").permitAll()
