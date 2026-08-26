@@ -44,8 +44,8 @@ public class MetaCatalogController {
 
             if (p.getImages() != null && !p.getImages().isEmpty()) {
                 ProductImage firstImg = p.getImages().iterator().next();
-                if (firstImg != null && firstImg.getUrl() != null) {
-                    imageUrl = firstImg.getUrl();
+                if (firstImg != null && firstImg.getImageUrl() != null) {
+                    imageUrl = firstImg.getImageUrl();
                 }
             }
 
