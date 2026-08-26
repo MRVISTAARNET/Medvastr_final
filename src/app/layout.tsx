@@ -4,6 +4,8 @@ import "./globals.css";
 import { SITE_URL } from "@/lib/api";
 import Script from "next/script";
 import JsonLd from "@/components/JsonLd";
+import { Suspense } from "react";
+import MetaPixelRouteTracker from "@/components/MetaPixelRouteTracker";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -150,6 +152,9 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <Suspense fallback={null}>
+          <MetaPixelRouteTracker />
+        </Suspense>
         {/* Google Tag Manager (noscript) */}
         <noscript>
           <iframe
