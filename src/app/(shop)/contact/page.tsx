@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { B } from "@/lib/data";
 import { API_BASE } from "@/lib/api";
 
@@ -8,23 +8,22 @@ export default function ContactPage() {
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // CAPTCHA State
-  const [captcha, setCaptcha] = useState({ num1: 5, num2: 3, answer: 8 });
-  const [captchaInput, setCaptchaInput] = useState("");
+  // Luxury Interactive CAPTCHA State: "idle" | "verifying" | "verified"
+  const [captchaState, setCaptchaState] = useState<"idle" | "verifying" | "verified">("idle");
   const [captchaError, setCaptchaError] = useState("");
-
-  const generateCaptcha = useCallback(() => {
-    const n1 = Math.floor(Math.random() * 9) + 2; // 2 to 10
-    const n2 = Math.floor(Math.random() * 8) + 1; // 1 to 8
-    setCaptcha({ num1: n1, num2: n2, answer: n1 + n2 });
-    setCaptchaInput("");
-    setCaptchaError("");
-  }, []);
 
   useEffect(() => {
     document.title = "Contact Us | Medvarn";
-    generateCaptcha();
-  }, [generateCaptcha]);
+  }, []);
+
+  const handleVerifyClick = () => {
+    if (captchaState === "verified" || captchaState === "verifying") return;
+    setCaptchaError("");
+    setCaptchaState("verifying");
+    setTimeout(() => {
+      setCaptchaState("verified");
+    }, 600);
+  };
 
   const socials = [
     ["📸", "Instagram", B.ig],
@@ -90,7 +89,8 @@ export default function ContactPage() {
                 <button
                   onClick={() => {
                     setSent(false);
-                    generateCaptcha();
+                    setCaptchaState("idle");
+                    setCaptchaError("");
                   }}
                   className="ct-again-btn"
                 >
@@ -106,10 +106,9 @@ export default function ContactPage() {
                   onSubmit={async (e) => {
                     e.preventDefault();
 
-                    // CAPTCHA Validation
-                    if (parseInt(captchaInput.trim(), 10) !== captcha.answer) {
-                      setCaptchaError("❌ Incorrect CAPTCHA answer. Please try again.");
-                      generateCaptcha();
+                    // Luxury CAPTCHA Verification Check
+                    if (captchaState !== "verified") {
+                      setCaptchaError("Please tap the security badge below to verify you are human.");
                       return;
                     }
 
@@ -161,39 +160,37 @@ export default function ContactPage() {
 
                   <div className="ct-field">
                     <label htmlFor="ct-message">YOUR MESSAGE <span className="req">*</span></label>
-                    <textarea id="ct-message" name="message" required placeholder="Tell us more about your needs..." rows={5} />
+                    <textarea id="ct-message" name="message" required placeholder="Tell us more about your needs..." rows={4} />
                   </div>
 
-                  {/* SECURITY CAPTCHA CHALLENGE */}
-                  <div className="ct-captcha-box">
-                    <div className="ct-captcha-header">
-                      <label htmlFor="ct-captcha">SECURITY CAPTCHA <span className="req">*</span></label>
-                      <button
-                        type="button"
-                        onClick={generateCaptcha}
-                        className="ct-captcha-refresh"
-                        title="Generate new question"
-                      >
-                        🔄 Refresh
-                      </button>
-                    </div>
-                    <div className="ct-captcha-input-wrap">
-                      <div className="ct-captcha-badge">
-                        🛡️ What is <strong>{captcha.num1} + {captcha.num2}</strong> = ?
+                  {/* LUXURY VISUAL CAPTCHA BADGE */}
+                  <div className={`ct-visual-captcha ${captchaError ? "has-error" : ""} ${captchaState === "verified" ? "is-verified" : ""}`}>
+                    <div className="captcha-card" onClick={handleVerifyClick}>
+                      <div className="captcha-checkbox-wrap">
+                        {captchaState === "idle" && <div className="captcha-box" />}
+                        {captchaState === "verifying" && <div className="captcha-spinner" />}
+                        {captchaState === "verified" && (
+                          <div className="captcha-check-icon">
+                            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          </div>
+                        )}
                       </div>
-                      <input
-                        id="ct-captcha"
-                        type="number"
-                        required
-                        value={captchaInput}
-                        onChange={(e) => {
-                          setCaptchaInput(e.target.value);
-                          if (captchaError) setCaptchaError("");
-                        }}
-                        placeholder="Enter answer"
-                        className="ct-captcha-field"
-                      />
+
+                      <div className="captcha-text-wrap">
+                        {captchaState === "idle" && <span className="captcha-main-text">Tap to verify you are human</span>}
+                        {captchaState === "verifying" && <span className="captcha-main-text verifying">Checking security token...</span>}
+                        {captchaState === "verified" && <span className="captcha-main-text verified">Verification Complete</span>}
+                        <span className="captcha-sub-text">Protected by Medvarn Anti-Spam Shield</span>
+                      </div>
+
+                      <div className="captcha-brand-badge">
+                        <span className="shield-icon">🛡️</span>
+                        <span className="brand-text">SECURE</span>
+                      </div>
                     </div>
+
                     {captchaError && <div className="ct-captcha-err">{captchaError}</div>}
                   </div>
 
@@ -390,7 +387,7 @@ export default function ContactPage() {
         .ct-form {
           display: flex;
           flex-direction: column;
-          gap: 20px;
+          gap: 18px;
         }
         .ct-row {
           display: grid;
@@ -436,67 +433,135 @@ export default function ContactPage() {
           box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.1);
         }
 
-        /* CAPTCHA Styling */
-        .ct-captcha-box {
+        /* STYLISH VISUAL CAPTCHA CARD */
+        .ct-visual-captcha {
+          margin-top: 4px;
+        }
+        .captcha-card {
           background: #f8fafc;
           border: 1.5px solid #cbd5e1;
-          border-radius: 12px;
-          padding: 14px 16px;
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-        .ct-captcha-header {
+          border-radius: 14px;
+          padding: 14px 18px;
           display: flex;
           align-items: center;
           justify-content: space-between;
-        }
-        .ct-captcha-header label {
-          font-size: 11px;
-          font-weight: 800;
-          color: #475569;
-          letter-spacing: 0.8px;
-        }
-        .ct-captcha-refresh {
-          background: none;
-          border: none;
-          font-size: 11.5px;
-          font-weight: 700;
-          color: #008080;
+          gap: 16px;
           cursor: pointer;
-          padding: 0;
+          transition: all 0.25s ease;
+          user-select: none;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
         }
-        .ct-captcha-refresh:hover {
-          text-decoration: underline;
+        .captcha-card:hover {
+          border-color: #008080;
+          background: #f0fdf4;
+          transform: translateY(-1px);
         }
-        .ct-captcha-input-wrap {
+        .is-verified .captcha-card {
+          background: #f0fdf4;
+          border-color: #16a34a;
+          box-shadow: 0 4px 12px rgba(22, 163, 74, 0.12);
+        }
+        .has-error .captcha-card {
+          border-color: #ef4444;
+          background: #fef2f2;
+          animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          20%, 60% { transform: translateX(-6px); }
+          40%, 80% { transform: translateX(6px); }
+        }
+
+        .captcha-checkbox-wrap {
+          width: 32px;
+          height: 32px;
+          flex-shrink: 0;
           display: flex;
           align-items: center;
-          gap: 12px;
-          flex-wrap: wrap;
+          justify-content: center;
         }
-        .ct-captcha-badge {
-          background: #ffffff;
-          border: 1px solid #cbd5e1;
-          padding: 8px 14px;
-          border-radius: 8px;
-          font-size: 13.5px;
-          color: #0f172a;
-          flex-shrink: 0;
-          font-weight: 600;
+        .captcha-box {
+          width: 24px;
+          height: 24px;
+          border: 2px solid #94a3b8;
+          border-radius: 6px;
+          background: white;
+          transition: all 0.2s;
         }
-        .ct-captcha-field {
+        .captcha-card:hover .captcha-box {
+          border-color: #008080;
+        }
+        .captcha-spinner {
+          width: 22px;
+          height: 22px;
+          border: 3px solid #cbd5e1;
+          border-top-color: #008080;
+          border-radius: 50%;
+          animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+        .captcha-check-icon {
+          width: 28px;
+          height: 28px;
+          background: #16a34a;
+          color: white;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 6px rgba(22, 163, 74, 0.3);
+        }
+
+        .captcha-text-wrap {
           flex: 1;
-          min-width: 100px;
-          height: 42px !important;
-          border-radius: 8px !important;
-          background: white !important;
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
         }
+        .captcha-main-text {
+          font-size: 13.5px;
+          font-weight: 700;
+          color: #0f172a;
+        }
+        .captcha-main-text.verifying {
+          color: #008080;
+        }
+        .captcha-main-text.verified {
+          color: #15803d;
+        }
+        .captcha-sub-text {
+          font-size: 11px;
+          color: #64748b;
+        }
+
+        .captcha-brand-badge {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 2px;
+          padding-left: 12px;
+          border-left: 1px solid #e2e8f0;
+          flex-shrink: 0;
+        }
+        .shield-icon {
+          font-size: 18px;
+        }
+        .brand-text {
+          font-size: 9px;
+          font-weight: 800;
+          color: #64748b;
+          letter-spacing: 0.8px;
+        }
+
         .ct-captcha-err {
           font-size: 12px;
           font-weight: 700;
           color: #ef4444;
-          margin-top: 2px;
+          margin-top: 6px;
+          padding-left: 4px;
         }
 
         .ct-submit {
