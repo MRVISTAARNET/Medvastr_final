@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   poweredByHeader: false,
   typescript: {
     ignoreBuildErrors: false,
@@ -11,6 +11,14 @@ const nextConfig = {
         source: "/bulk",
         destination: "/bulk-orders",
         permanent: true,
+      },
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/meta-catalog.xml",
+        destination: "/api/meta-catalog",
       },
     ];
   },
