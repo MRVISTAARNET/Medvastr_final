@@ -1,16 +1,30 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { B } from "@/lib/data";
 import { API_BASE } from "@/lib/api";
 
 export default function ContactPage() {
-  React.useEffect(() => {
-    document.title = "Contact Us | Medvarn";
-  }, []);
-
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // CAPTCHA State
+  const [captcha, setCaptcha] = useState({ num1: 5, num2: 3, answer: 8 });
+  const [captchaInput, setCaptchaInput] = useState("");
+  const [captchaError, setCaptchaError] = useState("");
+
+  const generateCaptcha = useCallback(() => {
+    const n1 = Math.floor(Math.random() * 9) + 2; // 2 to 10
+    const n2 = Math.floor(Math.random() * 8) + 1; // 1 to 8
+    setCaptcha({ num1: n1, num2: n2, answer: n1 + n2 });
+    setCaptchaInput("");
+    setCaptchaError("");
+  }, []);
+
+  useEffect(() => {
+    document.title = "Contact Us | Medvarn";
+    generateCaptcha();
+  }, [generateCaptcha]);
 
   const socials = [
     ["📸", "Instagram", B.ig],
@@ -73,7 +87,13 @@ export default function ContactPage() {
                 <p className="ct-success-text">
                   We've received your query. Our team will reach out within 24 hours.
                 </p>
-                <button onClick={() => setSent(false)} className="ct-again-btn">
+                <button
+                  onClick={() => {
+                    setSent(false);
+                    generateCaptcha();
+                  }}
+                  className="ct-again-btn"
+                >
                   Send another message
                 </button>
               </div>
@@ -85,6 +105,14 @@ export default function ContactPage() {
                 <form
                   onSubmit={async (e) => {
                     e.preventDefault();
+
+                    // CAPTCHA Validation
+                    if (parseInt(captchaInput.trim(), 10) !== captcha.answer) {
+                      setCaptchaError("❌ Incorrect CAPTCHA answer. Please try again.");
+                      generateCaptcha();
+                      return;
+                    }
+
                     setLoading(true);
                     const form = new FormData(e.currentTarget);
                     try {
@@ -107,17 +135,17 @@ export default function ContactPage() {
                 >
                   <div className="ct-row">
                     <div className="ct-field">
-                      <label htmlFor="ct-name">YOUR NAME</label>
+                      <label htmlFor="ct-name">YOUR NAME <span className="req">*</span></label>
                       <input id="ct-name" name="name" required placeholder="Enter your full name" />
                     </div>
                     <div className="ct-field">
-                      <label htmlFor="ct-phone">MOBILE NUMBER</label>
+                      <label htmlFor="ct-phone">MOBILE NUMBER <span className="req">*</span></label>
                       <input id="ct-phone" name="phone" required type="tel" placeholder="Enter your phone number" />
                     </div>
                   </div>
 
                   <div className="ct-field">
-                    <label htmlFor="ct-email">EMAIL ADDRESS</label>
+                    <label htmlFor="ct-email">EMAIL ADDRESS <span className="req">*</span></label>
                     <input id="ct-email" name="email" required type="email" placeholder="Enter your email address" />
                   </div>
 
@@ -132,8 +160,41 @@ export default function ContactPage() {
                   </div>
 
                   <div className="ct-field">
-                    <label htmlFor="ct-message">YOUR MESSAGE</label>
+                    <label htmlFor="ct-message">YOUR MESSAGE <span className="req">*</span></label>
                     <textarea id="ct-message" name="message" required placeholder="Tell us more about your needs..." rows={5} />
+                  </div>
+
+                  {/* SECURITY CAPTCHA CHALLENGE */}
+                  <div className="ct-captcha-box">
+                    <div className="ct-captcha-header">
+                      <label htmlFor="ct-captcha">SECURITY CAPTCHA <span className="req">*</span></label>
+                      <button
+                        type="button"
+                        onClick={generateCaptcha}
+                        className="ct-captcha-refresh"
+                        title="Generate new question"
+                      >
+                        🔄 Refresh
+                      </button>
+                    </div>
+                    <div className="ct-captcha-input-wrap">
+                      <div className="ct-captcha-badge">
+                        🛡️ What is <strong>{captcha.num1} + {captcha.num2}</strong> = ?
+                      </div>
+                      <input
+                        id="ct-captcha"
+                        type="number"
+                        required
+                        value={captchaInput}
+                        onChange={(e) => {
+                          setCaptchaInput(e.target.value);
+                          if (captchaError) setCaptchaError("");
+                        }}
+                        placeholder="Enter answer"
+                        className="ct-captcha-field"
+                      />
+                    </div>
+                    {captchaError && <div className="ct-captcha-err">{captchaError}</div>}
                   </div>
 
                   <button type="submit" disabled={loading} className="ct-submit">
@@ -167,6 +228,9 @@ export default function ContactPage() {
           background: #f8fafc;
           min-height: 100vh;
           font-family: var(--sans), sans-serif;
+        }
+        .req {
+          color: #ef4444;
         }
 
         /* Banner */
@@ -371,6 +435,70 @@ export default function ContactPage() {
           background: white;
           box-shadow: 0 0 0 3px rgba(0, 128, 128, 0.1);
         }
+
+        /* CAPTCHA Styling */
+        .ct-captcha-box {
+          background: #f8fafc;
+          border: 1.5px solid #cbd5e1;
+          border-radius: 12px;
+          padding: 14px 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .ct-captcha-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .ct-captcha-header label {
+          font-size: 11px;
+          font-weight: 800;
+          color: #475569;
+          letter-spacing: 0.8px;
+        }
+        .ct-captcha-refresh {
+          background: none;
+          border: none;
+          font-size: 11.5px;
+          font-weight: 700;
+          color: #008080;
+          cursor: pointer;
+          padding: 0;
+        }
+        .ct-captcha-refresh:hover {
+          text-decoration: underline;
+        }
+        .ct-captcha-input-wrap {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+        .ct-captcha-badge {
+          background: #ffffff;
+          border: 1px solid #cbd5e1;
+          padding: 8px 14px;
+          border-radius: 8px;
+          font-size: 13.5px;
+          color: #0f172a;
+          flex-shrink: 0;
+          font-weight: 600;
+        }
+        .ct-captcha-field {
+          flex: 1;
+          min-width: 100px;
+          height: 42px !important;
+          border-radius: 8px !important;
+          background: white !important;
+        }
+        .ct-captcha-err {
+          font-size: 12px;
+          font-weight: 700;
+          color: #ef4444;
+          margin-top: 2px;
+        }
+
         .ct-submit {
           width: 100%;
           padding: 14px;
