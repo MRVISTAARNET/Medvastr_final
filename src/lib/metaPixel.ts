@@ -41,17 +41,33 @@ export const trackAddToCart = (product: { id: number; name: string; price: numbe
   });
 };
 
-export const trackInitiateCheckout = (numItems: number, totalValue: number) => {
+export const trackInitiateCheckout = (
+  cart: Array<{ id: number; price: number; qty: number }>,
+  totalValue: number
+) => {
+  const contentIds = Array.from(new Set(cart.map((i) => String(i.id))));
+  const numItems = cart.reduce((a, b) => a + (b.qty || 1), 0);
+
   trackMetaEvent("InitiateCheckout", {
+    content_ids: contentIds,
+    content_type: "product",
     num_items: numItems,
     value: totalValue,
     currency: "INR",
   });
 };
 
-export const trackPurchase = (orderId: string | number, totalValue: number, numItems: number) => {
-  // Track Meta Pixel Purchase
+export const trackPurchase = (
+  orderId: string | number,
+  totalValue: number,
+  cart: Array<{ id: number; price: number; qty: number }>
+) => {
+  const contentIds = Array.from(new Set((cart || []).map((i) => String(i.id))));
+  const numItems = (cart || []).reduce((a, b) => a + (b.qty || 1), 0);
+
+  // Track Meta Pixel Purchase with 100% Meta Catalog content_ids matching
   trackMetaEvent("Purchase", {
+    content_ids: contentIds.length > 0 ? contentIds : undefined,
     content_type: "product",
     value: totalValue,
     currency: "INR",

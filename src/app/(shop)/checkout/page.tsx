@@ -20,7 +20,7 @@ export default function CheckoutPage() {
     document.title = "Checkout | Medvarn";
     if (cart.length > 0) {
       const currentSub = cart.reduce((s, i) => s + i.price * i.qty, 0);
-      try { trackInitiateCheckout(cart.length, currentSub); } catch {}
+      try { trackInitiateCheckout(cart, currentSub); } catch {}
     }
   }, []);
   const [submitting, setSubmitting] = useState(false);
@@ -201,7 +201,7 @@ export default function CheckoutPage() {
         });
         if (data.success && data.data?.paymentStatus === 'PAID') {
           setOrderNum(orderData.orderNumber);
-          try { trackPurchase(orderData.orderNumber, orderData.totalAmount || tot, cart.length); } catch {}
+          try { trackPurchase(orderData.orderNumber, orderData.totalAmount || tot, cart); } catch {}
           clearCart();
           toast("Payment Successful!", "ok");
         } else {
@@ -309,7 +309,7 @@ export default function CheckoutPage() {
           handleOnlinePayment(data.data);
         } else {
           setOrderNum(data.data.orderNumber);
-          try { trackPurchase(data.data.orderNumber, data.data.totalAmount || tot, cart.length); } catch {}
+          try { trackPurchase(data.data.orderNumber, data.data.totalAmount || tot, cart); } catch {}
           clearCart();
           setSubmitting(false);
         }
