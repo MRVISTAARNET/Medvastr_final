@@ -23,8 +23,10 @@ export default function CategoryPathPage() {
         ? [params.categoryPath]
         : [];
 
-    if (!segments.length) {
-      router.replace("/products");
+    if (!segments.length || segments[0] === "api" || segments[0] === "meta-catalog.xml") {
+      if (segments[0] !== "api" && segments[0] !== "meta-catalog.xml") {
+        router.replace("/products");
+      }
       return;
     }
 

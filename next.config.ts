@@ -14,14 +14,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  async rewrites() {
-    return [
-      {
-        source: "/meta-catalog.xml",
-        destination: "/api/meta-catalog",
-      },
-    ];
-  },
   images: {
     remotePatterns: [
       {
