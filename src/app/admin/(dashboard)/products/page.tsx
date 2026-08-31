@@ -395,6 +395,7 @@ export default function AdminProducts() {
       slug,
       variants,
       imgs: finalImgs,
+      imageUrls: finalImgs,
       price: Number(form.price),
       originalPrice: Number(form.origPrice) || undefined,
       tax: Number(form.tax) || 0,
