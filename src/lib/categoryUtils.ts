@@ -139,6 +139,9 @@ export function productMatchesCategory(
   if (slug.includes("scrub-suit") || slug.includes("scrubs")) {
     return type.includes("scrub") && !type.includes("under");
   }
+  if (slug.includes("classic-solitaire") || slug.includes("classic-solitaire-scrubs")) {
+    return type.includes("scrub") && !type.includes("under") && (name.includes("classic") || name.includes("solitaire"));
+  }
   if (slug.includes("flexi-fit-v-scrub") || slug.includes("flexi-v-scrub")) {
     return type.includes("scrub") && !type.includes("under") && name.includes("flexi");
   }

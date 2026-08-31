@@ -23,6 +23,7 @@ export const HARDCODED_CATEGORIES: CategoryNode[] = [
             {
                 id: 10, name: "Scrub Suit", slug: "men-scrub-suit",
                 children: [
+                    { id: 102, name: "Classic Solitaire Scrubs", slug: "men-classic-solitaire-scrubs" },
                     { id: 101, name: "Flexi Fit V Scrub", slug: "men-flexi-fit-v-scrub" }
                 ]
             },
@@ -43,6 +44,7 @@ export const HARDCODED_CATEGORIES: CategoryNode[] = [
             {
                 id: 20, name: "Scrub Suit", slug: "women-scrub-suit",
                 children: [
+                    { id: 202, name: "Classic Solitaire Scrubs", slug: "women-classic-solitaire-scrubs" },
                     { id: 201, name: "Flexi Fit V Scrub", slug: "women-flexi-fit-v-scrub" }
                 ]
             },
@@ -85,6 +87,7 @@ export const NAV_DATA: NavItem[] = [
                 title: 'SCRUB SUITS',
                 items: [
                     { label: 'All Scrub Suits', href: '/products?cat=women-scrub-suit&gender=women' },
+                    { label: 'Classic Solitaire Scrubs', href: '/products?cat=women-classic-solitaire-scrubs&gender=women' },
                     { label: 'Flexi Fit V Scrub', href: '/products?cat=women-flexi-fit-v-scrub&gender=women' },
                 ]
             },
@@ -113,6 +116,7 @@ export const NAV_DATA: NavItem[] = [
                 title: 'SCRUB SUITS',
                 items: [
                     { label: 'All Scrub Suits', href: '/products?cat=men-scrub-suit&gender=men' },
+                    { label: 'Classic Solitaire Scrubs', href: '/products?cat=men-classic-solitaire-scrubs&gender=men' },
                     { label: 'Flexi Fit V Scrub', href: '/products?cat=men-flexi-fit-v-scrub&gender=men' },
                 ]
             },
