@@ -332,10 +332,13 @@ public class ProductService {
         assignSubAndChildCategories(p, r);
 
         if (r.getImageUrls() != null) {
-            Set<String> newUrls = new java.util.HashSet<>(r.getImageUrls());
+            Set<String> cleanNewUrls = r.getImageUrls().stream()
+                    .map(this::stripColorQuery)
+                    .collect(Collectors.toSet());
             for (ProductImage oldImg : p.getImages()) {
-                if (oldImg.getImageUrl() != null && !newUrls.contains(oldImg.getImageUrl())) {
-                    s3StorageService.deleteFileByUrl(oldImg.getImageUrl());
+                String oldClean = stripColorQuery(oldImg.getImageUrl());
+                if (oldClean != null && !cleanNewUrls.contains(oldClean)) {
+                    s3StorageService.deleteFileByUrl(oldClean);
                 }
             }
             p.getImages().clear();
