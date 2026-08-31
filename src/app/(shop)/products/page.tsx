@@ -560,17 +560,64 @@ function ProductsContent() {
               <div className="sb3-section">
                 <div className="sb3-sec-hd">CATEGORIES</div>
                 <div className="sb3-list">
-                  {cats.map((c) => (
-                    <div
-                      key={c.id}
-                      className={`sb3-item${cat === c.id ? " active" : ""}`}
-                      onClick={() => { updateURL({ cat: c.id, type: null, pg: "1" }); if (mobF) setMobF(false); }}
-                      style={{ paddingLeft: c.depth * 14 }}
-                    >
-                      <div className="sb3-check-box" />
-                      <span className="sb3-label">{c.l}</span>
-                    </div>
-                  ))}
+                  {cats.map((c) => {
+                    const isSelected = cat === c.id || (cat.includes("scrub-suit") && c.id.includes("scrub-suit"));
+                    return (
+                      <div
+                        key={c.id}
+                        className={`sb3-item${isSelected ? " active" : ""}`}
+                        onClick={() => { updateURL({ cat: c.id, type: null, pg: "1" }); if (mobF) setMobF(false); }}
+                        style={{ paddingLeft: c.depth * 14 }}
+                      >
+                        <div className="sb3-check-box" />
+                        <span className="sb3-label">{c.l}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* FABRIC TECHNOLOGY */}
+              <div className="sb3-section">
+                <div className="sb3-sec-hd">FABRIC TECHNOLOGY</div>
+                <div className="sb3-list">
+                  {(() => {
+                    const isScrubContext = cat === "all" || cat.includes("scrub") || cat.includes("solitaire") || typeFilter === "scrubs" || typeFilter === "scrub";
+                    const currentGender = genKey === "women" ? "women" : (genKey === "men" ? "men" : "women");
+
+                    const fabricTechItems = [
+                      {
+                        label: "Classic Solitaire Scrubs",
+                        slug: `${currentGender}-classic-solitaire-scrubs`,
+                        isActive: cat.includes("classic-solitaire")
+                      },
+                      {
+                        label: "Flexi Fit V Scrub",
+                        slug: `${currentGender}-flexi-fit-v-scrub`,
+                        isActive: cat.includes("flexi-fit") || cat.includes("flexi-v-scrub")
+                      }
+                    ];
+
+                    return fabricTechItems.map((item) => (
+                      <div
+                        key={item.slug}
+                        className={`sb3-item${item.isActive ? " active" : ""}${!isScrubContext ? " disabled" : ""}`}
+                        onClick={() => {
+                          if (!isScrubContext) return;
+                          updateURL({ cat: item.isActive ? `${currentGender}-scrub-suit` : item.slug, type: null, pg: "1" });
+                          if (mobF) setMobF(false);
+                        }}
+                        style={{
+                          opacity: isScrubContext ? 1 : 0.4,
+                          cursor: isScrubContext ? 'pointer' : 'not-allowed',
+                          pointerEvents: isScrubContext ? 'auto' : 'none'
+                        }}
+                      >
+                        <div className="sb3-check-box" />
+                        <span className="sb3-label">{item.label}</span>
+                      </div>
+                    ));
+                  })()}
                 </div>
               </div>
 
