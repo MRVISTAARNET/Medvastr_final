@@ -66,7 +66,7 @@
 }
 
 html {
-  /* Natural crisp browser scroll */
+  overflow-x: hidden;
 }
 
 body {
@@ -74,7 +74,6 @@ body {
   background: var(--off);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
   line-height: 1.6;
 }
 
