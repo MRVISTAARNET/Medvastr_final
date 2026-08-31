@@ -139,8 +139,8 @@ export function productMatchesCategory(
   if (slug.includes("classic-solitaire") || slug.includes("classic-solitaire-scrubs")) {
     return type.includes("scrub") && !type.includes("under") && (name.includes("classic") || name.includes("solitaire") || pChildCatName.includes("classic") || pChildCatName.includes("solitaire"));
   }
-  if (slug.includes("flexi-fit-v-scrub") || slug.includes("flexi-v-scrub")) {
-    return type.includes("scrub") && !type.includes("under") && (name.includes("flexi") || pChildCatName.includes("flexi"));
+  if (slug.includes("flexi-fit-v-scrub") || slug.includes("flexi-v-scrub") || slug.includes("flexi")) {
+    return type.includes("scrub") && !type.includes("under") && (name.includes("flexi") || pChildCatName.includes("flexi") || !name.includes("classic"));
   }
   // General scrub suit override SECOND
   if (slug.includes("scrub-suit") || slug === "scrubs" || slug === "scrub") {

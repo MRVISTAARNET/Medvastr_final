@@ -561,7 +561,7 @@ function ProductsContent() {
                 <div className="sb3-sec-hd">CATEGORIES</div>
                 <div className="sb3-list">
                   {cats.map((c) => {
-                    const isSelected = cat === c.id || (cat.includes("scrub-suit") && c.id.includes("scrub-suit"));
+                    const isSelected = cat === c.id || (c.id.includes("scrub-suit") && (cat.includes("scrub") || cat.includes("solitaire") || cat.includes("flexi")));
                     return (
                       <div
                         key={c.id}
@@ -582,7 +582,7 @@ function ProductsContent() {
                 <div className="sb3-sec-hd">FABRIC TECHNOLOGY</div>
                 <div className="sb3-list">
                   {(() => {
-                    const isScrubContext = cat === "all" || cat.includes("scrub") || cat.includes("solitaire") || typeFilter === "scrubs" || typeFilter === "scrub";
+                    const isScrubContext = cat === "all" || cat.includes("scrub") || cat.includes("solitaire") || cat.includes("flexi") || typeFilter === "scrubs" || typeFilter === "scrub";
                     const currentGender = genKey === "women" ? "women" : (genKey === "men" ? "men" : "women");
 
                     const fabricTechItems = [
@@ -594,7 +594,7 @@ function ProductsContent() {
                       {
                         label: "Flexi Fit V Scrub",
                         slug: `${currentGender}-flexi-fit-v-scrub`,
-                        isActive: cat.includes("flexi-fit") || cat.includes("flexi-v-scrub")
+                        isActive: cat.includes("flexi-fit") || cat.includes("flexi-v-scrub") || cat.includes("flexi")
                       }
                     ];
 
