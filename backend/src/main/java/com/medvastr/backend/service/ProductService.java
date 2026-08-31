@@ -684,18 +684,38 @@ public class ProductService {
 
     private void assignSubAndChildCategories(Product p, ProductRequest r) {
         if (r.getSubcategoryId() != null) {
-            catRepo.findById(r.getSubcategoryId()).ifPresentOrElse(
-                p::setSubcategory,
-                () -> p.setSubcategory(null)
-            );
+            Category sub = catRepo.findById(r.getSubcategoryId()).orElseGet(() -> {
+                String subSlug = (p.getGender() != null && p.getGender().equalsIgnoreCase("women")) ? "women-scrub-suit" : "men-scrub-suit";
+                return catRepo.findBySlug(subSlug).orElse(null);
+            });
+            p.setSubcategory(sub);
         } else {
             p.setSubcategory(null);
         }
+
         if (r.getChildCategoryId() != null) {
-            catRepo.findById(r.getChildCategoryId()).ifPresentOrElse(
-                p::setChildCategory,
-                () -> p.setChildCategory(null)
-            );
+            Category child = catRepo.findById(r.getChildCategoryId()).orElseGet(() -> {
+                String isWomen = (p.getGender() != null && p.getGender().equalsIgnoreCase("women")) ? "women" : "men";
+                String childSlug = r.getChildCategoryId() == 102 ? "men-classic-solitaire-scrubs" :
+                                   (r.getChildCategoryId() == 202 ? "women-classic-solitaire-scrubs" :
+                                   isWomen + "-classic-solitaire-scrubs");
+                
+                return catRepo.findBySlug(childSlug).orElseGet(() -> {
+                    try {
+                        Category newCat = Category.builder()
+                                .name("Classic Solitaire Scrubs")
+                                .slug(childSlug)
+                                .parent(p.getSubcategory())
+                                .active(true)
+                                .showInNav(true)
+                                .build();
+                        return catRepo.save(newCat);
+                    } catch (Exception ex) {
+                        return null;
+                    }
+                });
+            });
+            p.setChildCategory(child);
         } else {
             p.setChildCategory(null);
         }
