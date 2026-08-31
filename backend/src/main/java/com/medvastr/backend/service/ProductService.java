@@ -684,16 +684,18 @@ public class ProductService {
 
     private void assignSubAndChildCategories(Product p, ProductRequest r) {
         if (r.getSubcategoryId() != null) {
-            Category sub = catRepo.findById(r.getSubcategoryId())
-                    .orElseThrow(() -> new RuntimeException("Subcategory not found"));
-            p.setSubcategory(sub);
+            catRepo.findById(r.getSubcategoryId()).ifPresentOrElse(
+                p::setSubcategory,
+                () -> p.setSubcategory(null)
+            );
         } else {
             p.setSubcategory(null);
         }
         if (r.getChildCategoryId() != null) {
-            Category child = catRepo.findById(r.getChildCategoryId())
-                    .orElseThrow(() -> new RuntimeException("Child category not found"));
-            p.setChildCategory(child);
+            catRepo.findById(r.getChildCategoryId()).ifPresentOrElse(
+                p::setChildCategory,
+                () -> p.setChildCategory(null)
+            );
         } else {
             p.setChildCategory(null);
         }
