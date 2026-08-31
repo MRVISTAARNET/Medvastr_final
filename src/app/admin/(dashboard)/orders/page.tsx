@@ -58,6 +58,7 @@ export default function AdminOrders() {
           razorpayId: o.paymentId || null,
           awb: o.trackingNumber || '',
           courier: o.courierName || '',
+          promoCode: o.promoCode || '',
           shiprocketOrderId: o.shiprocketOrderId || null
         })));
       }
@@ -74,6 +75,7 @@ export default function AdminOrders() {
     const matchesSearch = !search ||
       o.num.toLowerCase().includes(search.toLowerCase()) ||
       o.customer.toLowerCase().includes(search.toLowerCase()) ||
+      (o.promoCode && o.promoCode.toLowerCase().includes(search.toLowerCase())) ||
       (o.awb && o.awb.toLowerCase().includes(search.toLowerCase()));
 
     let matchesFilter = false;
@@ -109,6 +111,7 @@ export default function AdminOrders() {
       'City': o.city,
       'Date': o.date ? fmtDateTime(o.date) : '—',
       'Payment Method': o.payment,
+      'Promo Code': o.promoCode || 'None',
       'Total Amount (₹)': o.total,
       'Items Count': o.items,
       'Status': o.status,
@@ -413,7 +416,14 @@ export default function AdminOrders() {
                       <div className="td-bold">{fmt(o.total)}</div>
                       <div className="td-meta">{o.items} item(s)</div>
                     </td>
-                    <td><span className="badge b-gray">{o.payment}</span></td>
+                    <td>
+                      <span className="badge b-gray">{o.payment}</span>
+                      {o.promoCode && (
+                        <div style={{ marginTop: '4px' }}>
+                          <span className="badge b-purple" style={{ fontSize: '11px', fontWeight: 700 }}>🎟️ {o.promoCode}</span>
+                        </div>
+                      )}
+                    </td>
                     <td>{o.city}</td>
                     <td>
                       {o.awb ? (
