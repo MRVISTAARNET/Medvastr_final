@@ -134,7 +134,9 @@ public class PromoCodeService {
         BigDecimal d = pc.getDiscountType() == PromoCode.DiscountType.PERCENTAGE
                 ? subtotal.multiply(pc.getDiscountValue()).divide(BigDecimal.valueOf(100))
                 : pc.getDiscountValue();
-        if (pc.getMaximumDiscountAmount() != null && d.compareTo(pc.getMaximumDiscountAmount()) > 0) {
+        if (pc.getMaximumDiscountAmount() != null
+                && pc.getMaximumDiscountAmount().compareTo(BigDecimal.ZERO) > 0
+                && d.compareTo(pc.getMaximumDiscountAmount()) > 0) {
             d = pc.getMaximumDiscountAmount();
         }
         return d;

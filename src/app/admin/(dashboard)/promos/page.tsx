@@ -43,10 +43,15 @@ export default function AdminPromos() {
   const handleSave = async () => {
     const token = localStorage.getItem("token");
     const url = editingId ? `${API_BASE}/admin/promos/${editingId}` : `${API_BASE}/admin/promos`;
+    const payload = {
+      ...form,
+      minimumOrderAmount: form.minimumOrderAmount || 0,
+      maximumDiscountAmount: form.maximumDiscountAmount > 0 ? form.maximumDiscountAmount : null,
+    };
     const res = await fetch(url, {
       method: editingId ? "PUT" : "POST",
       headers: { "Content-Type": "application/json", ...authHeaders(token) },
-      body: JSON.stringify(form),
+      body: JSON.stringify(payload),
     });
     if (res.ok) {
       setIsModalOpen(false);
