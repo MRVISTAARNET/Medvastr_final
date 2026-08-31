@@ -4,13 +4,13 @@ import { serverFetchJson } from "@/lib/server-api";
 import JsonLd from "@/components/JsonLd";
 import ProductDetailClient from "./ProductDetailClient";
 
-export const revalidate = 300;
+export const revalidate = 0;
 
 type PageProps = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = await serverFetchJson<any>(`/products/slug/${encodeURIComponent(slug)}`, 300);
+  const product = await serverFetchJson<any>(`/products/slug/${encodeURIComponent(slug)}`, 0);
   if (!product) return { title: "Product" };
   const title = product.seoTitle || product.name;
   const description = product.seoDescription || product.description?.slice(0, 160) || "";
@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ProductPage({ params }: PageProps) {
   const { slug } = await params;
-  const product = await serverFetchJson<any>(`/products/slug/${encodeURIComponent(slug)}`, 300);
+  const product = await serverFetchJson<any>(`/products/slug/${encodeURIComponent(slug)}`, 0);
 
   const jsonLd = product
     ? {

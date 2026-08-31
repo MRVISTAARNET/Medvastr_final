@@ -41,7 +41,13 @@ function buildClrImgs(api: any, normalizedImgs: string[]): Record<string, string
 
     const tagged = taggedFromMeta.length
       ? taggedFromMeta
-      : normalizedImgs.filter((u) => u.toLowerCase().includes(`?clr=${c.hex.toLowerCase()}`));
+      : normalizedImgs.filter((u) => {
+          try {
+            return decodeURIComponent(u).toLowerCase().includes(`?clr=${c.hex.toLowerCase()}`);
+          } catch {
+            return u.toLowerCase().includes(`?clr=${c.hex.toLowerCase()}`);
+          }
+        });
 
     // 2. Second priority: Variant Hero Image
     const variantImg = (api.variants || []).find(
