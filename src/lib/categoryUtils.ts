@@ -86,7 +86,8 @@ export function productMatchesCategory(
     childCategoryName?: string;
   },
   categorySlug: string,
-  tree: CategoryNode[]
+  tree: CategoryNode[],
+  activeGenderFilter: string = "all"
 ): boolean {
   if (!categorySlug || categorySlug === "all") return true;
 
@@ -112,7 +113,10 @@ export function productMatchesCategory(
   if (slug.startsWith("men-")) reqGen = "men";
   else if (slug.startsWith("women-")) reqGen = "women";
 
-  if (reqGen && gen !== "all") {
+  // If active gender filter is 'all', ignore gender restriction from slug prefix!
+  const isGenderAll = !activeGenderFilter || activeGenderFilter.toLowerCase() === "all";
+
+  if (reqGen && gen !== "all" && !isGenderAll) {
     const pGens = gen.split(',').map(g => g.trim().toLowerCase());
     if (pGens.length > 0 && !pGens.includes(reqGen) && !pGens.includes("unisex")) {
       return false; // Strict reject if gender explicitly doesn't match

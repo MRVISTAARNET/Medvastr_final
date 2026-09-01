@@ -14,14 +14,65 @@ function sortSizes(sizes: string[]): string[] {
   });
 }
 
+export const GLOBAL_COLOR_MAP: Record<string, string> = {
+  'dark navy': '#1b2a4a',
+  'navy': '#000080',
+  'navy blue': '#1a2b4a',
+  'dark blue': '#00008b',
+  'midnight blue': '#191970',
+  'royal blue': '#4169e1',
+  'light blue': '#add8e6',
+  'sky blue': '#87ceeb',
+  'ceil blue': '#92a8d1',
+  'caribbean blue': '#008b8b',
+  'maroon': '#800000',
+  'wine': '#3D274E',
+  'burgundy': '#800020',
+  'black': '#000000',
+  'white': '#ffffff',
+  'grey': '#6b7280',
+  'gray': '#6b7280',
+  'dark grey': '#374151',
+  'dark gray': '#374151',
+  'light grey': '#d1d5db',
+  'light gray': '#d1d5db',
+  'charcoal': '#333333',
+  'slate': '#708090',
+  'slate grey': '#708090',
+  'slate gray': '#708090',
+  'steel blue': '#4682b4',
+  'green': '#2e7d32',
+  'hunter green': '#355e3b',
+  'olive': '#556b2f',
+  'teal': '#008080',
+  'pink': '#ffc0cb',
+  'purple': '#800080',
+  'lavender': '#e6e6fa',
+  'red': '#dc2626',
+  'blue': '#2563eb'
+};
+
+export function getColorHex(name: string, fallbackHex?: string): string {
+  if (!name) return fallbackHex || '#6b7280';
+  const n = name.trim().toLowerCase();
+  if (GLOBAL_COLOR_MAP[n]) return GLOBAL_COLOR_MAP[n];
+  if (n.startsWith('#')) return name.trim();
+  if (fallbackHex && fallbackHex.startsWith('#') && fallbackHex !== '#cccccc' && fallbackHex !== '#808080') {
+    return fallbackHex;
+  }
+  return '#6b7280';
+}
+
 function uniqueColors(variants: any[]): { hex: string; name: string }[] {
   const seen = new Set<string>();
   const out: { hex: string; name: string }[] = [];
   for (const v of variants || []) {
-    const hex = v.colorHex || "#000000";
+    const rawHex = v.colorHex || "#000000";
+    const name = v.colorName || "Default";
+    const hex = getColorHex(name, rawHex);
     if (!seen.has(hex)) {
       seen.add(hex);
-      out.push({ hex, name: v.colorName || "Default" });
+      out.push({ hex, name });
     }
   }
   return out;
@@ -51,7 +102,7 @@ function buildClrImgs(api: any, normalizedImgs: string[]): Record<string, string
 
     // 2. Second priority: Variant Hero Image
     const variantImg = (api.variants || []).find(
-      (v: any) => v.colorHex === c.hex && v.imageUrl
+      (v: any) => (v.colorHex === c.hex || getColorHex(v.colorName) === c.hex) && v.imageUrl
     )?.imageUrl;
 
     if (tagged.length > 0) {
@@ -77,7 +128,7 @@ export function mapApiProduct(p: any): Product {
 
   const variants = (p.variants || []).map((v: any) => ({
     ...v,
-    colorHex: fixColor(v.colorHex)
+    colorHex: getColorHex(v.colorName, fixColor(v.colorHex))
   }));
 
   if (p.images) {

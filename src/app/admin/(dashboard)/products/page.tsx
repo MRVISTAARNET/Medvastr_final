@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import AdminTopbar from '@/components/admin/AdminTopbar';
 import { fmt, B } from '@/lib/data';
+import { getColorHex } from '@/lib/productUtils';
 import { useApp } from '@/context/AppContext';
 import { API_BASE, authHeaders, getToken } from '@/lib/api';
 import { logError } from '@/lib/logger';
@@ -262,8 +263,7 @@ export default function AdminProducts() {
   };
 
   const getColHex = (name: string) => {
-    const n = name.trim().toLowerCase();
-    return COLOR_MAP[n] || (n.startsWith('#') ? n : '#cccccc');
+    return getColorHex(name);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {

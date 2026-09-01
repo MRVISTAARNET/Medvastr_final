@@ -143,7 +143,7 @@ function ProductsContent() {
     if (gen !== "all" && !pGens.includes(gen.toLowerCase()) && !pGens.includes("unisex") && pGens.length > 0) return false;
 
     // Category Filter
-    if (cat !== "all" && !productMatchesCategory(p, cat, categoryTree)) return false;
+    if (cat !== "all" && !productMatchesCategory(p, cat, categoryTree, gen)) return false;
 
     // Type Filter (used by home page "Shop by Category" cards — e.g. ?type=scrubs)
     if (typeFilter) {
@@ -542,7 +542,15 @@ function ProductsContent() {
                           className={`sb3-item${gen === v ? " active" : ""}${isDisabled ? " disabled" : ""}`}
                           onClick={() => { 
                             if (isDisabled) return;
-                            updateURL({ gender: v, pg: "1" }); 
+                            let newCat = cat;
+                            if (v === "all") {
+                              newCat = cat.replace(/^women-/, '').replace(/^men-/, '');
+                            } else if (v === "men" && cat.startsWith("women-")) {
+                              newCat = cat.replace(/^women-/, 'men-');
+                            } else if (v === "women" && cat.startsWith("men-")) {
+                              newCat = cat.replace(/^men-/, 'women-');
+                            }
+                            updateURL({ gender: v, cat: newCat, pg: "1" }); 
                             if (mobF) setMobF(false); 
                           }}
                           style={{ opacity: isDisabled ? 0.4 : 1, cursor: isDisabled ? 'not-allowed' : 'pointer' }}
