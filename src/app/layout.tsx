@@ -6,6 +6,7 @@ import Script from "next/script";
 import JsonLd from "@/components/JsonLd";
 import { Suspense } from "react";
 import MetaPixelRouteTracker from "@/components/MetaPixelRouteTracker";
+import AnalyticsTrackerProvider from "@/components/AnalyticsTrackerProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -166,7 +167,11 @@ export default function RootLayout({
         </noscript>
         <JsonLd data={organizationSchema as any} />
         <JsonLd data={websiteSchema as any} />
-        {children}
+        <Suspense fallback={null}>
+          <AnalyticsTrackerProvider>
+            {children}
+          </AnalyticsTrackerProvider>
+        </Suspense>
 
         {/* High performance async script loading */}
         <Script

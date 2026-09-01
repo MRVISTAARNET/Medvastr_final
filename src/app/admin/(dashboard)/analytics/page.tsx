@@ -1,172 +1,478 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import AdminTopbar from '@/components/admin/AdminTopbar';
-import { fmt } from '@/lib/data';
-import { API_BASE, authHeaders } from '@/lib/api';
+import React, { useState, useEffect } from "react";
+import AdminTopbar from "@/components/admin/AdminTopbar";
+import { API_BASE, authHeaders } from "@/lib/api";
 
-export default function AdminAnalytics() {
-  const [orders, setOrders] = useState<any[]>([]);
-  const [products, setProducts] = useState<any[]>([]);
+type DatePreset = "today" | "yesterday" | "last7" | "last30" | "thisMonth" | "prevMonth" | "custom";
+
+export default function AdminAnalyticsPage() {
+  const [preset, setPreset] = useState<DatePreset>("last30");
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<"overview" | "pages" | "traffic" | "devices" | "geo" | "activity">("overview");
+
   const [loading, setLoading] = useState(true);
+  const [overview, setOverview] = useState<any>(null);
+  const [trends, setTrends] = useState<any[]>([]);
+  const [traffic, setTraffic] = useState<any[]>([]);
+  const [pages, setPages] = useState<any[]>([]);
+  const [devices, setDevices] = useState<any>(null);
+  const [geo, setGeo] = useState<any>(null);
+  const [activities, setActivities] = useState<any[]>([]);
+  const [realtime, setRealtime] = useState<any[]>([]);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        const [ordRes, prodRes] = await Promise.all([
-          fetch(`${API_BASE}/orders/admin/all?size=500`, { headers: authHeaders(token) }),
-          fetch(`${API_BASE}/products?size=100`),
-        ]);
-        const [ordData, prodData] = await Promise.all([ordRes.json(), prodRes.json()]);
-        if (ordData.success) setOrders(ordData.data.content || ordData.data || []);
-        if (prodData.success) setProducts(prodData.data.content || []);
-      } catch (e) { }
-      setLoading(false);
-    };
-    load();
-  }, []);
+    calculatePresetDates(preset);
+  }, [preset]);
 
-  const totalRevenue = orders.reduce((s, o) => s + (parseFloat(o.totalAmount) || 0), 0);
-  const avgOrder = orders.length > 0 ? totalRevenue / orders.length : 0;
+  useEffect(() => {
+    fetchAnalyticsData();
+  }, [startDate, endDate]);
 
-  const now = new Date();
-  const thisMonth = orders.filter(o => {
-    const d = new Date(o.createdAt);
-    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-  });
-  const monthlyRevenue = thisMonth.reduce((s, o) => s + (parseFloat(o.totalAmount) || 0), 0);
+  const calculatePresetDates = (p: DatePreset) => {
+    const today = new Date();
+    let s = new Date();
+    let e = new Date();
 
-  const monthlyData = Array.from({ length: 6 }, (_, i) => {
-    const d = new Date();
-    d.setMonth(d.getMonth() - (5 - i));
-    const label = d.toLocaleString('default', { month: 'short' });
-    const monthOrders = orders.filter(o => {
-      const od = new Date(o.createdAt);
-      return od.getMonth() === d.getMonth() && od.getFullYear() === d.getFullYear();
-    });
-    const revenue = monthOrders.reduce((s, o) => s + (parseFloat(o.totalAmount) || 0), 0);
-    return { label, revenue, count: monthOrders.length };
-  });
+    if (p === "today") {
+      s = today;
+      e = today;
+    } else if (p === "yesterday") {
+      s = new Date(today);
+      s.setDate(today.getDate() - 1);
+      e = new Date(s);
+    } else if (p === "last7") {
+      s = new Date(today);
+      s.setDate(today.getDate() - 7);
+    } else if (p === "last30") {
+      s = new Date(today);
+      s.setDate(today.getDate() - 30);
+    } else if (p === "thisMonth") {
+      s = new Date(today.getFullYear(), today.getMonth(), 1);
+    } else if (p === "prevMonth") {
+      s = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+      e = new Date(today.getFullYear(), today.getMonth(), 0);
+    } else if (p === "custom") {
+      return;
+    }
 
-  // Top products by order item count
-  const productSales: Record<string, { name: string; emoji: string; count: number; revenue: number }> = {};
-  orders.forEach(o => {
-    (o.items || []).forEach((item: any) => {
-      const name = item.productName || 'Unknown';
-      if (!productSales[name]) productSales[name] = { name, emoji: '📦', count: 0, revenue: 0 };
-      productSales[name].count += item.quantity || 1;
-      productSales[name].revenue += parseFloat(item.totalPrice) || 0;
-    });
-  });
-  const topProducts = Object.values(productSales).sort((a, b) => b.revenue - a.revenue).slice(0, 5);
+    setStartDate(s.toISOString().split("T")[0]);
+    setEndDate(e.toISOString().split("T")[0]);
+  };
 
-  const maxRev = Math.max(...monthlyData.map(m => m.revenue), 1);
-  const circumference = 2 * Math.PI * 58;
+  const fetchAnalyticsData = async () => {
+    if (!startDate || !endDate) return;
+    setLoading(true);
 
-  if (loading) return (
-    <>
-      <AdminTopbar title="Analytics" sub="Sales trends, traffic and conversion insights" />
-      <div className="admin-content"><div className="panel" style={{ textAlign: 'center', padding: '60px', color: 'var(--txt3)' }}>Loading analytics...</div></div>
-    </>
-  );
+    try {
+      const h = authHeaders();
+      const params = `startDate=${startDate}&endDate=${endDate}`;
+
+      const [r1, r2, r3, r4, r5, r6, r7, r8] = await Promise.all([
+        fetch(`${API_BASE}/analytics/admin/overview?${params}`, { headers: h }).then(r => r.json()),
+        fetch(`${API_BASE}/analytics/admin/trends?${params}`, { headers: h }).then(r => r.json()),
+        fetch(`${API_BASE}/analytics/admin/traffic?${params}`, { headers: h }).then(r => r.json()),
+        fetch(`${API_BASE}/analytics/admin/pages?${params}`, { headers: h }).then(r => r.json()),
+        fetch(`${API_BASE}/analytics/admin/devices?${params}`, { headers: h }).then(r => r.json()),
+        fetch(`${API_BASE}/analytics/admin/geo?${params}`, { headers: h }).then(r => r.json()),
+        fetch(`${API_BASE}/analytics/admin/activities?${params}&page=0&size=50`, { headers: h }).then(r => r.json()),
+        fetch(`${API_BASE}/analytics/admin/realtime`, { headers: h }).then(r => r.json())
+      ]);
+
+      if (r1?.data) setOverview(r1.data);
+      if (r2?.data) setTrends(r2.data);
+      if (r3?.data) setTraffic(r3.data);
+      if (r4?.data) setPages(r4.data);
+      if (r5?.data) setDevices(r5.data);
+      if (r6?.data) setGeo(r6.data);
+      if (r7?.data?.content) setActivities(r7.data.content);
+      if (r8?.data) setRealtime(r8.data);
+
+    } catch (e) {
+      console.error("Error fetching analytics", e);
+    }
+    setLoading(false);
+  };
+
+  const handleExportCsv = async () => {
+    setExporting(true);
+    try {
+      const h = authHeaders();
+      const res = await fetch(`${API_BASE}/analytics/admin/export?startDate=${startDate}&endDate=${endDate}`, { headers: h });
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `medvarn_analytics_${startDate}_to_${endDate}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (e) {
+      alert("Error exporting CSV report");
+    }
+    setExporting(false);
+  };
+
+  const formatDuration = (secs: number) => {
+    if (!secs || isNaN(secs)) return "0s";
+    const m = Math.floor(secs / 60);
+    const s = Math.round(secs % 60);
+    return m > 0 ? `${m}m ${s}s` : `${s}s`;
+  };
+
+  const cardStyle = {
+    background: "#ffffff",
+    borderRadius: "16px",
+    border: "1px solid var(--bdr)",
+    padding: "24px",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.03)"
+  } as React.CSSProperties;
+
+  const maxTrendVisitors = Math.max(...trends.map(t => t.visitors || 0), 10);
 
   return (
     <>
-      <AdminTopbar title="Analytics" sub="Sales trends, traffic and conversion insights" />
-      <div className="admin-content">
-        <div className="panel">
-          <div className="stats-grid" style={{ marginBottom: '22px' }}>
-            <StatCard ico="💰" label={`${now.toLocaleString('default', { month: 'long' })} Revenue`} val={fmt(monthlyRevenue)} sub={`${thisMonth.length} orders`} dir="up" bg="#daf3ef" />
-            <StatCard ico="📦" label="Total Orders" val={String(orders.length)} sub="All time" dir="up" bg="#dbeafe" />
-            <StatCard ico="🔄" label="Avg Order Value" val={fmt(avgOrder)} sub="Per transaction" dir="neu" bg="#fef5e4" />
-            <StatCard ico="📦" label="Live Products" val={String(products.length)} sub="In catalogue" dir="neu" bg="#ede9fe" />
+      <AdminTopbar title="Website Analytics" sub="Visitor sessions, traffic sources, pageviews and live user activity" />
+      <div className="p-xl" style={{ maxWidth: 1400 }}>
+
+        {/* CONTROLS & DATE FILTER STRIP */}
+        <div style={{ ...cardStyle, padding: "16px 24px", marginBottom: 24, display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
+          
+          {/* Preset Buttons */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
+            {[
+              ["today", "Today"],
+              ["yesterday", "Yesterday"],
+              ["last7", "Last 7 Days"],
+              ["last30", "Last 30 Days"],
+              ["thisMonth", "This Month"],
+              ["prevMonth", "Prev Month"],
+              ["custom", "Custom"]
+            ].map(([val, label]) => (
+              <button
+                key={val}
+                onClick={() => setPreset(val as DatePreset)}
+                style={{
+                  padding: "8px 14px",
+                  borderRadius: "20px",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  border: preset === val ? "none" : "1px solid var(--bdr)",
+                  background: preset === val ? "var(--n)" : "#f8fafc",
+                  color: preset === val ? "#ffffff" : "var(--t)",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease"
+                }}
+              >
+                {label}
+              </button>
+            ))}
+
+            {preset === "custom" && (
+              <div style={{ display: "flex", gap: 8, alignItems: "center", marginLeft: 8 }}>
+                <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid var(--bdr)", fontSize: 12 }} />
+                <span style={{ fontSize: 12, color: "var(--lt)" }}>to</span>
+                <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid var(--bdr)", fontSize: 12 }} />
+              </div>
+            )}
           </div>
 
-          <div className="charts-row">
-            <div className="chart-card">
-              <div className="chart-hd">
-                <div><div className="chart-title">Revenue Trend</div><div className="chart-sub">Last 6 months (live)</div></div>
-              </div>
-              <div className="bar-chart">
-                {monthlyData.map((m, i) => (
-                  <div className="bar-col" key={i}>
-                    <div className="bar" style={{ height: `${Math.max(Math.round((m.revenue / maxRev) * 170), m.revenue > 0 ? 4 : 0)}px` }}>
-                      <div className="bar-tooltip">{fmt(m.revenue)}</div>
+          {/* Real-time Indicator & Export Button */}
+          <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#f0fdf4", border: "1px solid #bbf7d0", padding: "8px 14px", borderRadius: 20 }}>
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e", display: "inline-block", boxShadow: "0 0 8px #22c55e" }} />
+              <span style={{ fontSize: 12, fontWeight: 700, color: "#15803d" }}>
+                {realtime.length} Active Visitors Now
+              </span>
+            </div>
+
+            <button
+              onClick={handleExportCsv}
+              disabled={exporting}
+              style={{
+                padding: "8px 18px",
+                borderRadius: 10,
+                background: "var(--p)",
+                color: "white",
+                border: "none",
+                fontWeight: 700,
+                fontSize: 13,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 6
+              }}
+            >
+              📥 {exporting ? "Exporting..." : "Export CSV Report"}
+            </button>
+          </div>
+        </div>
+
+        {/* OVERVIEW STAT CARDS */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16, marginBottom: 24 }}>
+          {[
+            ["👥 Unique Visitors", overview?.uniqueVisitors || 0, "Individual users"],
+            ["🔄 Total Sessions", overview?.totalSessions || 0, "Visits"],
+            ["📄 Page Views", overview?.totalPageViews || 0, "Total pages viewed"],
+            ["✨ New Visitors", `${overview?.newVisitors || 0} (${overview?.uniqueVisitors ? Math.round((overview.newVisitors / overview.uniqueVisitors) * 100) : 0}%)`, "First-time visitors"],
+            ["⏱️ Avg Session", formatDuration(overview?.avgSessionDurationSeconds || 0), "Time on site"],
+            ["🛍️ Orders Placed", overview?.totalOrders || 0, "Completed sales"],
+            ["📈 Conversion Rate", `${overview?.conversionRatePercent || 0}%`, "Visitors to buyers"]
+          ].map(([label, val, sub]) => (
+            <div key={label as string} style={cardStyle}>
+              <span style={{ fontSize: 12, fontWeight: 700, color: "var(--lt)", textTransform: "uppercase", letterSpacing: "0.5px" }}>{label}</span>
+              <div style={{ fontSize: 26, fontWeight: 800, color: "var(--n)", margin: "8px 0 2px 0" }}>{val}</div>
+              <span style={{ fontSize: 11, color: "#94a3b8" }}>{sub}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* TAB NAVIGATION */}
+        <div style={{ display: "flex", gap: 12, borderBottom: "1.5px solid var(--bdr)", marginBottom: 24 }}>
+          {[
+            ["overview", "📊 Overview & Trends"],
+            ["pages", "📄 Top Visited Pages"],
+            ["traffic", "🌐 Traffic Sources"],
+            ["devices", "📱 Devices & Browsers"],
+            ["geo", "🗺️ Geographic Location"],
+            ["activity", "⚡ Real-Time Activity Log"]
+          ].map(([key, label]) => (
+            <button
+              key={key}
+              onClick={() => setActiveTab(key as any)}
+              style={{
+                padding: "12px 20px",
+                border: "none",
+                background: "none",
+                fontSize: 14,
+                fontWeight: activeTab === key ? 800 : 600,
+                color: activeTab === key ? "var(--p)" : "var(--lt)",
+                borderBottom: activeTab === key ? "3px solid var(--p)" : "3px solid transparent",
+                cursor: "pointer"
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* TAB CONTENT */}
+
+        {/* TAB 1: OVERVIEW & TRENDS */}
+        {activeTab === "overview" && (
+          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24 }}>
+            {/* Visitors & Pageviews Daily Trend Area Chart */}
+            <div style={cardStyle}>
+              <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16 }}>📈 Visitor Traffic Trend</h3>
+              {trends.length === 0 ? (
+                <div style={{ height: 260, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--lt)" }}>No trend data for selected range</div>
+              ) : (
+                <div style={{ height: 260, display: "flex", alignItems: "flex-end", gap: 12, paddingBottom: 20, borderBottom: "1px solid #f1f5f9" }}>
+                  {trends.map((t, i) => {
+                    const hPct = Math.max(10, Math.min(100, (t.visitors / maxTrendVisitors) * 100));
+                    return (
+                      <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, height: "100%", justifyContent: "flex-end" }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: "var(--p)" }}>{t.visitors}</span>
+                        <div
+                          title={`${t.date}: ${t.visitors} visitors, ${t.pageViews} views`}
+                          style={{
+                            width: "100%",
+                            height: `${hPct}%`,
+                            background: "linear-gradient(180deg, #38bdf8 0%, #0284c7 100%)",
+                            borderRadius: "6px 6px 0 0",
+                            transition: "height 0.3s ease"
+                          }}
+                        />
+                        <span style={{ fontSize: 9, color: "#94a3b8", whiteSpace: "nowrap" }}>{t.date.split("-").slice(1).join("/")}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* Traffic Sources Quick Breakdown */}
+            <div style={cardStyle}>
+              <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16 }}>🎯 Traffic Sources</h3>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                {traffic.map(t => (
+                  <div key={t.source}>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, fontWeight: 700, marginBottom: 6 }}>
+                      <span>{t.source}</span>
+                      <span style={{ color: "var(--lt)" }}>{t.count} ({t.percentage}%)</span>
                     </div>
-                    <div className="bar-label">{m.label}</div>
+                    <div style={{ height: 8, background: "#f1f5f9", borderRadius: 4, overflow: "hidden" }}>
+                      <div style={{ height: "100%", width: `${t.percentage}%`, background: t.source === "DIRECT" ? "#0284c7" : t.source === "ORGANIC" ? "#16a34a" : t.source === "SOCIAL" ? "#e11d48" : "#8b5cf6" }} />
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="chart-card">
-              <div className="chart-hd">
-                <div><div className="chart-title">Top Products</div><div className="chart-sub">By order revenue</div></div>
-              </div>
-              <div className="mini-list">
-                {topProducts.length > 0 ? topProducts.map((p, i) => (
-                  <div className="mini-item" key={i}>
-                    <div className={`mini-rank ${i === 0 ? 'gold-rank' : ''}`}>{i + 1}</div>
-                    <div className="mini-info">
-                      <div className="mini-name">{p.emoji} {p.name}</div>
-                      <div className="mini-sub">{p.count} sold</div>
-                    </div>
-                    <div className="mini-val">{fmt(p.revenue)}</div>
-                  </div>
-                )) : (
-                  <div style={{ textAlign: 'center', color: 'var(--lt)', fontSize: '13px', padding: '20px 0' }}>No order data yet</div>
-                )}
-              </div>
-            </div>
           </div>
+        )}
 
-          <div className="chart-card" style={{ marginBottom: 0 }}>
-            <div className="chart-hd">
-              <div><div className="chart-title">Monthly Breakdown</div><div className="chart-sub">Revenue & order count</div></div>
-            </div>
-            <table className="admin-table">
+        {/* TAB 2: TOP VISITED PAGES */}
+        {activeTab === "pages" && (
+          <div style={cardStyle}>
+            <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16 }}>📄 Most Visited Pages Report</h3>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
               <thead>
-                <tr><th>Month</th><th>Revenue</th><th>Orders</th><th>Avg Order</th><th>vs Prev Month</th></tr>
+                <tr style={{ background: "#f8fafc", textTransform: "uppercase", fontSize: 11, color: "var(--lt)", textAlign: "left" }}>
+                  <th style={{ padding: "12px 16px" }}>Page Title & Path</th>
+                  <th style={{ padding: "12px 16px" }}>Page Views</th>
+                  <th style={{ padding: "12px 16px" }}>Unique Visitors</th>
+                  <th style={{ padding: "12px 16px" }}>Avg Duration</th>
+                  <th style={{ padding: "12px 16px" }}>Entry Visits</th>
+                </tr>
               </thead>
               <tbody>
-                {monthlyData.map((m, i) => (
-                  <tr key={i}>
-                    <td className="td-bold">{m.label}</td>
-                    <td className="td-bold">{fmt(m.revenue)}</td>
-                    <td>{m.count}</td>
-                    <td>{m.count > 0 ? fmt(m.revenue / m.count) : '—'}</td>
-                    <td>
-                      {i === 0 ? '—' : (
-                        <span className={`badge ${m.revenue >= monthlyData[i - 1].revenue ? 'b-grn' : 'b-red'}`}>
-                          {m.revenue >= monthlyData[i - 1].revenue ? '↑' : '↓'}{' '}
-                          {monthlyData[i - 1].revenue > 0
-                            ? Math.abs(Math.round(((m.revenue - monthlyData[i - 1].revenue) / monthlyData[i - 1].revenue) * 100))
-                            : 0}%
-                        </span>
-                      )}
+                {pages.map((p, i) => (
+                  <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                    <td style={{ padding: "12px 16px" }}>
+                      <div style={{ fontWeight: 700, color: "var(--n)" }}>{p.pageTitle || "Untitled Page"}</div>
+                      <div style={{ fontSize: 11, color: "#64748b" }}>{p.pageUrl}</div>
                     </td>
+                    <td style={{ padding: "12px 16px", fontWeight: 700 }}>{p.views}</td>
+                    <td style={{ padding: "12px 16px" }}>{p.uniqueVisitors}</td>
+                    <td style={{ padding: "12px 16px" }}>{formatDuration(p.avgTimeSeconds)}</td>
+                    <td style={{ padding: "12px 16px" }}>{p.entryVisits}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </div>
+        )}
+
+        {/* TAB 3: TRAFFIC SOURCES */}
+        {activeTab === "traffic" && (
+          <div style={cardStyle}>
+            <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16 }}>🌐 Full Traffic Channels</h3>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20 }}>
+              {traffic.map(t => (
+                <div key={t.source} style={{ padding: 20, background: "#f8fafc", borderRadius: 12, border: "1px solid var(--bdr)" }}>
+                  <span style={{ fontSize: 12, fontWeight: 800, color: "var(--lt)", textTransform: "uppercase" }}>{t.source} TRAFFIC</span>
+                  <div style={{ fontSize: 28, fontWeight: 800, color: "var(--n)", margin: "8px 0" }}>{t.count} visits</div>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: "var(--p)" }}>{t.percentage}% of total traffic</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: DEVICES & BROWSERS */}
+        {activeTab === "devices" && (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
+            {/* Devices */}
+            <div style={cardStyle}>
+              <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16 }}>📱 Device Category</h3>
+              {devices?.deviceTypes?.map((d: any) => (
+                <div key={d.name} style={{ marginBottom: 14 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, fontWeight: 700 }}>
+                    <span>{d.name}</span>
+                    <span>{d.count} ({d.percentage}%)</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Browsers */}
+            <div style={cardStyle}>
+              <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16 }}>🌐 Web Browsers</h3>
+              {devices?.browsers?.map((b: any) => (
+                <div key={b.name} style={{ marginBottom: 14 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, fontWeight: 700 }}>
+                    <span>{b.name}</span>
+                    <span>{b.count} ({b.percentage}%)</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Operating Systems */}
+            <div style={cardStyle}>
+              <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16 }}>💻 Operating Systems</h3>
+              {devices?.operatingSystems?.map((o: any) => (
+                <div key={o.name} style={{ marginBottom: 14 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, fontWeight: 700 }}>
+                    <span>{o.name}</span>
+                    <span>{o.count} ({o.percentage}%)</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 5: GEOGRAPHIC BREAKDOWN */}
+        {activeTab === "geo" && (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+            <div style={cardStyle}>
+              <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16 }}>🌍 Visitors by Country</h3>
+              {geo?.countries?.map((c: any) => (
+                <div key={c.location} style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid #f1f5f9", fontSize: 13, fontWeight: 700 }}>
+                  <span>🇮🇳 {c.location}</span>
+                  <span>{c.visitors} visitors ({c.percentage}%)</span>
+                </div>
+              ))}
+            </div>
+
+            <div style={cardStyle}>
+              <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16 }}>🏙️ Top Cities</h3>
+              {geo?.cities?.map((c: any) => (
+                <div key={c.location} style={{ display: "flex", justifyContent: "space-between", padding: "10px 0", borderBottom: "1px solid #f1f5f9", fontSize: 13, fontWeight: 700 }}>
+                  <span>📍 {c.location}</span>
+                  <span>{c.visitors} visitors ({c.percentage}%)</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* TAB 6: REAL-TIME USER ACTIVITY FEED */}
+        {activeTab === "activity" && (
+          <div style={cardStyle}>
+            <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16 }}>⚡ Real-Time User Activity Log</h3>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+              <thead>
+                <tr style={{ background: "#f8fafc", textTransform: "uppercase", fontSize: 11, color: "var(--lt)", textAlign: "left" }}>
+                  <th style={{ padding: "12px 16px" }}>Time</th>
+                  <th style={{ padding: "12px 16px" }}>User / Visitor</th>
+                  <th style={{ padding: "12px 16px" }}>Event Activity</th>
+                  <th style={{ padding: "12px 16px" }}>Page Path</th>
+                  <th style={{ padding: "12px 16px" }}>Device</th>
+                  <th style={{ padding: "12px 16px" }}>Source</th>
+                </tr>
+              </thead>
+              <tbody>
+                {activities.map((a, i) => (
+                  <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                    <td style={{ padding: "12px 16px", fontSize: 12, color: "#64748b" }}>{new Date(a.timestamp).toLocaleTimeString()}</td>
+                    <td style={{ padding: "12px 16px", fontWeight: 700 }}>{a.userEmail || a.visitorId}</td>
+                    <td style={{ padding: "12px 16px" }}>
+                      <span style={{
+                        padding: "4px 10px",
+                        borderRadius: 12,
+                        fontSize: 11,
+                        fontWeight: 800,
+                        background: a.eventType === "ORDER_CREATED" ? "#dcfce7" : a.eventType === "ADD_TO_CART" ? "#e0f2fe" : "#f1f5f9",
+                        color: a.eventType === "ORDER_CREATED" ? "#166534" : a.eventType === "ADD_TO_CART" ? "#0369a1" : "#475569"
+                      }}>
+                        {a.eventType}
+                      </span>
+                    </td>
+                    <td style={{ padding: "12px 16px", fontSize: 12 }}>{a.pageUrl}</td>
+                    <td style={{ padding: "12px 16px" }}>{a.deviceType} ({a.browser})</td>
+                    <td style={{ padding: "12px 16px" }}>{a.trafficSource}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
       </div>
     </>
-  );
-}
-
-function StatCard({ ico, label, val, sub, dir, bg }: any) {
-  return (
-    <div className="stat-card">
-      <div className="stat-top">
-        <div className="stat-ico" style={{ background: bg }}>{ico}</div>
-        <div className={`stat-badge badge-${dir === 'up' ? 'up' : dir === 'dn' ? 'dn' : 'neu'}`}>
-          {dir === 'up' ? '↑' : dir === 'dn' ? '↓' : '—'} {sub.split(' ')[0]}
-        </div>
-      </div>
-      <div className="stat-n">{val}</div>
-      <div className="stat-l">{label}</div>
-    </div>
   );
 }

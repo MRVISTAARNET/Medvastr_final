@@ -7,6 +7,7 @@ import { fmt } from "@/lib/data";
 import { apiJson, API_BASE, RAZORPAY_KEY, getToken, normalizeMediaUrl } from "@/lib/api";
 import { getImagesForColor } from "@/lib/productUtils";
 import { trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
+import { trackAnalyticsEvent } from "@/lib/analyticsTracker";
 
 declare global {
   interface Window {
@@ -21,6 +22,7 @@ export default function CheckoutPage() {
     if (cart.length > 0) {
       const currentSub = cart.reduce((s, i) => s + i.price * i.qty, 0);
       try { trackInitiateCheckout(cart, currentSub); } catch {}
+      try { trackAnalyticsEvent("CHECKOUT_STARTED", { subtotal: currentSub, itemsCount: cart.length }); } catch {}
     }
   }, []);
   const [submitting, setSubmitting] = useState(false);
