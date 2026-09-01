@@ -8429,5 +8429,182 @@ h1, h2, h3, h4 {
   }
 }
 
+/* ── DUAL VIDEO REEL SHOWCASE ("WHAT DOCTORS SAY") ── */
+.vid-sec {
+  padding: 60px 24px;
+  background: linear-gradient(180deg, #111827 0%, #1e293b 100%);
+  color: #ffffff;
+  text-align: center;
+}
+
+.vid-in {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.vid-ey {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.1);
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  margin-bottom: 14px;
+}
+
+.vid-t {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
+}
+
+.vid-t em {
+  font-style: normal;
+  color: #38bdf8;
+}
+
+.vid-s {
+  font-size: 15px;
+  color: #94a3b8;
+  max-width: 600px;
+  margin: 0 auto 36px auto;
+  line-height: 1.6;
+}
+
+.vid-reels-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+@media (max-width: 640px) {
+  .vid-reels-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+.vid-reel-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 9 / 14;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  background: #0f172a;
+}
+
+.vid-reel-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.vid-reel-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(56, 189, 248, 0.5);
+}
+
+.vid-reel-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+  background-size: cover;
+  background-position: center;
+}
+
+.vid-reel-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.2) 0%, rgba(15, 23, 42, 0.85) 100%);
+}
+
+.vid-reel-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 3;
+}
+
+.vid-reel-card:hover .vid-reel-play-btn {
+  scale: 1.1;
+  background: rgba(56, 189, 248, 0.9);
+  border-color: #ffffff;
+  box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
+}
+
+.vid-play-icon {
+  font-size: 24px;
+  color: #ffffff;
+  margin-left: 4px;
+}
+
+.vid-reel-caption {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  text-align: left;
+  z-index: 3;
+}
+
+.vid-reel-title {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.vid-reel-sub {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #38bdf8;
+}
+
+.vid-perks {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.vp {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
 
 

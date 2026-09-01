@@ -11,7 +11,8 @@ export default function AdminAppearance() {
         { img: "" }
     ]);
     const [bulkBanner, setBulkBanner] = useState("");
-    const [homeVideo, setHomeVideo] = useState("");
+    const [homeVideo1, setHomeVideo1] = useState("");
+    const [homeVideo2, setHomeVideo2] = useState("");
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
@@ -19,14 +20,18 @@ export default function AdminAppearance() {
 
     const fetchSettings = async () => {
         try {
-            const [r1, r2, r3] = await Promise.all([
+            const [r1, r2, r3, r4, rOld] = await Promise.all([
                 fetch(`${API_BASE}/settings/hero_slides`),
                 fetch(`${API_BASE}/settings/bulk_banner`),
+                fetch(`${API_BASE}/settings/home_video_1`),
+                fetch(`${API_BASE}/settings/home_video_2`),
                 fetch(`${API_BASE}/settings/home_video`)
             ]);
             const d1 = await r1.json();
             const d2 = await r2.json();
             const d3 = await r3.json();
+            const d4 = await r4.json();
+            const dOld = await rOld.json();
 
             if (d1.success && d1.data) {
                 try { setSlides(JSON.parse(d1.data)); } catch (e) { }
@@ -39,7 +44,11 @@ export default function AdminAppearance() {
             }
             if (d2.success && d2.data) setBulkBanner(d2.data);
             else setBulkBanner("");
-            if (d3.success && d3.data) setHomeVideo(d3.data);
+
+            if (d3.success && d3.data) setHomeVideo1(d3.data);
+            else if (dOld.success && dOld.data) setHomeVideo1(dOld.data);
+
+            if (d4.success && d4.data) setHomeVideo2(d4.data);
         } catch (e) { }
         setLoading(false);
     };
@@ -57,9 +66,17 @@ export default function AdminAppearance() {
                     method: "POST", headers: h,
                     body: JSON.stringify({ value: bulkBanner })
                 }),
+                fetch(`${API_BASE}/settings/home_video_1`, {
+                    method: "POST", headers: h,
+                    body: JSON.stringify({ value: homeVideo1 })
+                }),
+                fetch(`${API_BASE}/settings/home_video_2`, {
+                    method: "POST", headers: h,
+                    body: JSON.stringify({ value: homeVideo2 })
+                }),
                 fetch(`${API_BASE}/settings/home_video`, {
                     method: "POST", headers: h,
-                    body: JSON.stringify({ value: homeVideo })
+                    body: JSON.stringify({ value: homeVideo1 })
                 })
             ]);
             alert("✅ Appearance settings saved! Changes will reflect on the site.");
@@ -161,31 +178,58 @@ export default function AdminAppearance() {
                         ))}
                     </div>
 
-                    {/* HOME VIDEO */}
+                    {/* HOME DUAL VIDEO REELS */}
                     <div style={card}>
-                        <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 6 }}>🎬 Homepage Video — "Built for the Front Lines"</h3>
+                        <h3 style={{ fontSize: 18, fontWeight: 700, marginBottom: 6 }}>🎬 Homepage Dual Video Reels — "What Doctors Say"</h3>
                         <p style={{ fontSize: 13, color: "var(--lt)", marginBottom: 24 }}>
-                            Paste a YouTube link (e.g. <code>https://www.youtube.com/watch?v=XXXX</code>) or YouTube short link. Leave blank to show the placeholder.
+                            Upload video files directly to S3 bucket (`.mp4` / `.webm`) using the 📤 Upload Video buttons, or paste YouTube links.
                         </p>
-                        <label style={label}>YouTube Video URL or Direct Upload</label>
-                        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                            <input
-                                type="text"
-                                value={homeVideo}
-                                onChange={(e) => setHomeVideo(e.target.value)}
-                                placeholder="https://www.youtube.com/watch?v=..."
-                                style={{ ...inp, flex: 1 }}
-                            />
-                            <div style={{ position: 'relative', overflow: 'hidden', display: 'inline-block' }}>
-                                <button className="btn-s" style={{ padding: '12px 15px', borderRadius: 8, whiteSpace: 'nowrap' }}>📤 Upload Video</button>
-                                <input type="file" accept="video/mp4,video/webm" onChange={(e) => handleFileUpload(e, setHomeVideo, homeVideo)} style={{ position: 'absolute', left: 0, top: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }} />
+
+                        {/* Video 1 */}
+                        <div style={{ marginBottom: 20 }}>
+                            <label style={label}>Reel Video 1 (Left Card - e.g. Women's Scrub Reel)</label>
+                            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                <input
+                                    type="text"
+                                    value={homeVideo1}
+                                    onChange={(e) => setHomeVideo1(e.target.value)}
+                                    placeholder="https://medvastr-media-upload.s3.ap-south-1.amazonaws.com/video1.mp4 or YouTube URL"
+                                    style={{ ...inp, flex: 1 }}
+                                />
+                                <div style={{ position: 'relative', overflow: 'hidden', display: 'inline-block' }}>
+                                    <button className="btn-s" style={{ padding: '12px 15px', borderRadius: 8, whiteSpace: 'nowrap' }}>📤 Upload Video 1</button>
+                                    <input type="file" accept="video/mp4,video/webm,video/quicktime" onChange={(e) => handleFileUpload(e, setHomeVideo1, homeVideo1)} style={{ position: 'absolute', left: 0, top: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }} />
+                                </div>
                             </div>
+                            {homeVideo1 && (
+                                <div style={{ marginTop: 8, fontSize: 12, color: "#166534", fontWeight: 600 }}>
+                                    ✅ Video 1 set: {homeVideo1.split('?')[0].slice(-40)}
+                                </div>
+                            )}
                         </div>
-                        {homeVideo && (
-                            <div style={{ marginTop: 14, padding: "10px 14px", background: "var(--off)", borderRadius: 8, fontSize: 13, color: "var(--t)", fontWeight: 600 }}>
-                                ✅ Video will show as an embedded player on the homepage.
+
+                        {/* Video 2 */}
+                        <div style={{ marginBottom: 10 }}>
+                            <label style={label}>Reel Video 2 (Right Card - e.g. Men's Scrub Reel)</label>
+                            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                <input
+                                    type="text"
+                                    value={homeVideo2}
+                                    onChange={(e) => setHomeVideo2(e.target.value)}
+                                    placeholder="https://medvastr-media-upload.s3.ap-south-1.amazonaws.com/video2.mp4 or YouTube URL"
+                                    style={{ ...inp, flex: 1 }}
+                                />
+                                <div style={{ position: 'relative', overflow: 'hidden', display: 'inline-block' }}>
+                                    <button className="btn-s" style={{ padding: '12px 15px', borderRadius: 8, whiteSpace: 'nowrap' }}>📤 Upload Video 2</button>
+                                    <input type="file" accept="video/mp4,video/webm,video/quicktime" onChange={(e) => handleFileUpload(e, setHomeVideo2, homeVideo2)} style={{ position: 'absolute', left: 0, top: 0, opacity: 0, cursor: 'pointer', width: '100%', height: '100%' }} />
+                                </div>
                             </div>
-                        )}
+                            {homeVideo2 && (
+                                <div style={{ marginTop: 8, fontSize: 12, color: "#166534", fontWeight: 600 }}>
+                                    ✅ Video 2 set: {homeVideo2.split('?')[0].slice(-40)}
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {/* BULK BANNER */}
