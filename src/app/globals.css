@@ -8423,7 +8423,13 @@ h1, h2, h3, h4 {
   .hdr-row {
     height: 70px;
     padding: 0 16px;
-  }/* ── PORTRAIT VIDEO REEL SHOWCASE ("WHAT DOCTORS SAY") ── */
+  }
+  .mob-hide {
+    display: none !important;
+  }
+}
+
+/* ── PORTRAIT VIDEO REEL SHOWCASE ("WHAT DOCTORS SAY") ── */
 .vid-sec {
   padding: 64px 24px;
   background: #ffffff;
