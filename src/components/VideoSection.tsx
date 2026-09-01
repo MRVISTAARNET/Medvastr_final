@@ -9,6 +9,8 @@ const DEFAULT_VIDEO_2 = "https://medvastr-assets.s3.ap-south-1.amazonaws.com/vid
 export default function VideoSection() {
   const [video1, setVideo1] = useState(DEFAULT_VIDEO_1);
   const [video2, setVideo2] = useState(DEFAULT_VIDEO_2);
+  const [title1, setTitle1] = useState("FlexiFit™ Women's V-Neck Scrub Suit");
+  const [title2, setTitle2] = useState("Classic Solitaire™ Scrub Suit");
 
   useEffect(() => {
     Promise.all([
@@ -26,14 +28,14 @@ export default function VideoSection() {
   const reels = [
     {
       id: 1,
-      title: "ecoflex™ Women's V-Neck",
-      sub: "Date with A Doctor 🩺",
+      title: title1 || "FlexiFit™ Women's V-Neck Scrub Suit",
+      sub: "Clinical Doctor Review 🩺",
       url: video1 || DEFAULT_VIDEO_1
     },
     {
       id: 2,
-      title: "6sense (Black), Steel Blue",
-      sub: "Clinical Performance in Action ✨",
+      title: title2 || "Classic Solitaire™ Scrub Suit",
+      sub: "Performance in Action ✨",
       url: video2 || DEFAULT_VIDEO_2
     }
   ];
@@ -118,7 +120,7 @@ function ReelCard({ reel }: { reel: { id: number; title: string; sub: string; ur
         className="vid-reel-video"
       />
 
-      {/* Subtle Gradient Overlay */}
+      {/* Subtle Bottom Gradient Overlay */}
       <div className="vid-reel-gradient-overlay" />
 
       {/* Floating Audio Mute/Unmute Pill */}
@@ -128,7 +130,7 @@ function ReelCard({ reel }: { reel: { id: number; title: string; sub: string; ur
         </button>
       )}
 
-      {/* Play/Pause Center Circle Icon */}
+      {/* Play Center Circle Icon */}
       {!isPlaying && (
         <div className="vid-reel-play-btn">
           <div className="vid-play-icon">▶</div>
