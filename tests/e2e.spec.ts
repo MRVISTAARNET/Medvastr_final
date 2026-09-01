@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Medvarn Store E2E User Flow Verification', () => {
+test.describe('Medvarn Store E2E User Flow & Catalog Filter Verification', () => {
 
   test('1. Homepage & Doctor Reels Verification', async ({ page }) => {
     await page.goto('http://localhost:3000');
@@ -12,12 +12,38 @@ test.describe('Medvarn Store E2E User Flow Verification', () => {
     console.log('✅ 1. Homepage & Video Reels verified!');
   });
 
-  test('2. Product Catalog Page (/products)', async ({ page }) => {
+  test('2. Category & Gender Filters Verification (/products)', async ({ page }) => {
+    // 2a. Visit All Products
     await page.goto('http://localhost:3000/products');
     await page.waitForTimeout(1000);
-    const bodyText = await page.innerText('body');
-    expect(bodyText.length).toBeGreaterThan(10);
-    console.log('✅ 2. Catalog page verified!');
+    let bodyText = await page.innerText('body');
+    expect(bodyText.length).toBeGreaterThan(100);
+
+    // 2b. Gender Filter: Women
+    await page.goto('http://localhost:3000/products?gender=women');
+    await page.waitForTimeout(1000);
+    bodyText = await page.innerText('body');
+    expect(bodyText.toLowerCase()).toContain('women');
+
+    // 2c. Category Filter: Surgical Wear
+    await page.goto('http://localhost:3000/products?cat=surgical-wear');
+    await page.waitForTimeout(1000);
+    bodyText = await page.innerText('body');
+    expect(bodyText.toLowerCase()).toContain('surgical');
+
+    // 2d. Category Filter: Surgical Gown
+    await page.goto('http://localhost:3000/products?cat=surgical-surgeon-gown');
+    await page.waitForTimeout(1000);
+    bodyText = await page.innerText('body');
+    expect(bodyText.toLowerCase()).toContain('gown');
+
+    // 2e. Category Filter: Underscrub
+    await page.goto('http://localhost:3000/products?cat=women-full-sleeve-compression-underscrub&gender=women');
+    await page.waitForTimeout(1000);
+    bodyText = await page.innerText('body');
+    expect(bodyText.length).toBeGreaterThan(100);
+
+    console.log('✅ 2. Catalog & Category Filters verified!');
   });
 
   test('3. Shopping Cart Page (/cart)', async ({ page }) => {
