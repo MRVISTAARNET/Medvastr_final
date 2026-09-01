@@ -12,19 +12,26 @@ export default function AnalyticsTrackerProvider({ children }: { children: React
   useEffect(() => {
     if (!pathname) return;
 
-    // Avoid tracking admin panel pageviews in public visitor analytics
-    if (pathname.startsWith("/admin")) return;
-
     const fullUrl = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : "");
 
     if (lastTrackedPath.current !== fullUrl) {
       lastTrackedPath.current = fullUrl;
-      // Slight timeout to let document.title render
       setTimeout(() => {
         trackAnalyticsEvent("PAGE_VIEW", null, fullUrl, document.title);
       }, 300);
     }
   }, [pathname, searchParams]);
+
+  // Periodic heartbeat pulse every 30 seconds to maintain live active visitor status
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (typeof window !== "undefined" && !document.hidden) {
+        trackAnalyticsEvent("HEARTBEAT_PING");
+      }
+    }, 30000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   return <>{children}</>;
 }

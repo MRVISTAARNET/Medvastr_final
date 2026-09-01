@@ -258,15 +258,35 @@ export default function CheckoutPage() {
           ondismiss: () => {
             setSubmitting(false);
             pendingOrderRef.current = null;
+            try {
+              trackAnalyticsEvent("PAYMENT_CANCELLED", {
+                orderNumber: orderData.orderNumber,
+                amount: orderData.totalAmount,
+                status: "CANCELLED_BY_USER"
+              });
+            } catch {}
             toast("Payment cancelled", "bad");
           },
         },
       };
 
+      try {
+        trackAnalyticsEvent("PAYMENT_POPUP_OPENED", {
+          orderNumber: orderData.orderNumber,
+          amount: orderData.totalAmount
+        });
+      } catch {}
+
       const rzp = new window.Razorpay(options);
       rzp.on("payment.failed", () => {
         setSubmitting(false);
         pendingOrderRef.current = null;
+        try {
+          trackAnalyticsEvent("PAYMENT_FAILED", {
+            orderNumber: orderData.orderNumber,
+            amount: orderData.totalAmount
+          });
+        } catch {}
         toast("Payment failed. Please try again.", "bad");
       });
       rzp.open();
