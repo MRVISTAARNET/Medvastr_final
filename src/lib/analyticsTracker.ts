@@ -57,12 +57,6 @@ export function trackAnalyticsEvent(
     const targetUrl = `${API_BASE}/analytics/track`;
     const jsonString = JSON.stringify(payload);
 
-    if (navigator && typeof navigator.sendBeacon === "function") {
-      const blob = new Blob([jsonString], { type: "application/json" });
-      const sent = navigator.sendBeacon(targetUrl, blob);
-      if (sent) return;
-    }
-
     fetch(targetUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
