@@ -133,6 +133,8 @@ public class AnalyticsService {
                 session.setDurationSeconds(Math.max(0, dur));
             }
 
+            session = sessionRepo.save(session);
+
             String eventType = req.getEventType() != null && !req.getEventType().isBlank() ? req.getEventType() : "PAGE_VIEW";
 
             if ("PAGE_VIEW".equalsIgnoreCase(eventType)) {

@@ -103,27 +103,8 @@ export default function AdminAnalyticsPage() {
         days = Math.max(1, Math.round((d2.getTime() - d1.getTime()) / (1000 * 3600 * 24)) + 1);
       }
 
-      if (r1?.data && r1?.data?.uniqueVisitors > 0) {
+      if (r1?.data) {
         setOverview(r1.data);
-      } else {
-        const uv = Math.max(14, Math.round(days * 15 + (days === 1 ? 6 : 14)));
-        const sess = Math.round(uv * 1.38);
-        const pvs = Math.round(sess * 3.8);
-        const nv = Math.round(uv * 0.74);
-        const ret = Math.max(0, uv - nv);
-        const ords = Math.max(1, Math.round(days * 1.2));
-        const conv = Math.round((ords / uv) * 1000) / 10;
-        setOverview({
-          uniqueVisitors: uv,
-          totalSessions: sess,
-          totalPageViews: pvs,
-          newVisitors: nv,
-          returningVisitors: ret,
-          avgSessionDurationSeconds: 152,
-          totalOrders: ords,
-          conversionRatePercent: conv,
-          bounceRatePercent: 17.8
-        });
       }
 
       if (r2?.data && r2.data.length > 0) {
