@@ -9,8 +9,8 @@ const DEFAULT_VIDEO_2 = "https://medvastr-assets.s3.ap-south-1.amazonaws.com/vid
 export default function VideoSection() {
   const [video1, setVideo1] = useState(DEFAULT_VIDEO_1);
   const [video2, setVideo2] = useState(DEFAULT_VIDEO_2);
-  const [title1, setTitle1] = useState("FlexiFit™ Women's V-Neck Scrub Suit");
-  const [title2, setTitle2] = useState("Classic Solitaire™ Scrub Suit");
+  const [title1, setTitle1] = useState("FlexiFit Women's V-Neck Scrub Suit");
+  const [title2, setTitle2] = useState("Classic Solitaire Scrub Suit");
 
   useEffect(() => {
     Promise.all([
@@ -28,13 +28,13 @@ export default function VideoSection() {
   const reels = [
     {
       id: 1,
-      title: title1 || "FlexiFit™ Women's V-Neck Scrub Suit",
+      title: title1 ? title1.replace(/™/g, "") : "FlexiFit Women's V-Neck Scrub Suit",
       sub: "Clinical Doctor Review 🩺",
       url: video1 || DEFAULT_VIDEO_1
     },
     {
       id: 2,
-      title: title2 || "Classic Solitaire™ Scrub Suit",
+      title: title2 ? title2.replace(/™/g, "") : "Classic Solitaire Scrub Suit",
       sub: "Performance in Action ✨",
       url: video2 || DEFAULT_VIDEO_2
     }
