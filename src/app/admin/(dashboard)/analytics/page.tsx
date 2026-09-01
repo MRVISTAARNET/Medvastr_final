@@ -135,10 +135,10 @@ export default function AdminAnalyticsPage() {
   return (
     <>
       <AdminTopbar title="Website Analytics" sub="Visitor sessions, traffic sources, pageviews and live user activity" />
-      <div className="p-xl" style={{ maxWidth: 1400 }}>
+      <div className="p-xl" style={{ maxWidth: 1400, width: "100%", boxSizing: "border-box", overflowX: "hidden" }}>
 
         {/* CONTROLS & DATE FILTER STRIP */}
-        <div style={{ ...cardStyle, padding: "16px 24px", marginBottom: 24, display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
+        <div style={{ ...cardStyle, padding: "16px 20px", marginBottom: 24, display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
           
           {/* Preset Buttons */}
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
@@ -171,7 +171,7 @@ export default function AdminAnalyticsPage() {
             ))}
 
             {preset === "custom" && (
-              <div style={{ display: "flex", gap: 8, alignItems: "center", marginLeft: 8 }}>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center", marginLeft: 4 }}>
                 <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid var(--bdr)", fontSize: 12 }} />
                 <span style={{ fontSize: 12, color: "var(--lt)" }}>to</span>
                 <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid var(--bdr)", fontSize: 12 }} />
@@ -180,7 +180,7 @@ export default function AdminAnalyticsPage() {
           </div>
 
           {/* Real-time Indicator & Export Button */}
-          <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#f0fdf4", border: "1px solid #bbf7d0", padding: "8px 14px", borderRadius: 20 }}>
               <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e", display: "inline-block", boxShadow: "0 0 8px #22c55e" }} />
               <span style={{ fontSize: 12, fontWeight: 700, color: "#15803d" }}>
@@ -211,7 +211,7 @@ export default function AdminAnalyticsPage() {
         </div>
 
         {/* OVERVIEW STAT CARDS */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16, marginBottom: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, marginBottom: 24 }}>
           {[
             ["👥 Unique Visitors", overview?.uniqueVisitors || 0, "Individual users"],
             ["🔄 Total Sessions", overview?.totalSessions || 0, "Visits"],
@@ -222,15 +222,15 @@ export default function AdminAnalyticsPage() {
             ["📈 Conversion Rate", `${overview?.conversionRatePercent || 0}%`, "Visitors to buyers"]
           ].map(([label, val, sub]) => (
             <div key={label as string} style={cardStyle}>
-              <span style={{ fontSize: 12, fontWeight: 700, color: "var(--lt)", textTransform: "uppercase", letterSpacing: "0.5px" }}>{label}</span>
-              <div style={{ fontSize: 26, fontWeight: 800, color: "var(--n)", margin: "8px 0 2px 0" }}>{val}</div>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "var(--lt)", textTransform: "uppercase", letterSpacing: "0.5px" }}>{label}</span>
+              <div style={{ fontSize: 24, fontWeight: 800, color: "var(--n)", margin: "6px 0 2px 0" }}>{val}</div>
               <span style={{ fontSize: 11, color: "#94a3b8" }}>{sub}</span>
             </div>
           ))}
         </div>
 
         {/* TAB NAVIGATION */}
-        <div style={{ display: "flex", gap: 12, borderBottom: "1.5px solid var(--bdr)", marginBottom: 24 }}>
+        <div style={{ display: "flex", gap: 8, overflowX: "auto", whiteSpace: "nowrap", borderBottom: "1.5px solid var(--bdr)", marginBottom: 24, paddingBottom: 4, WebkitOverflowScrolling: "touch" }}>
           {[
             ["overview", "📊 Overview & Trends"],
             ["pages", "📄 Top Visited Pages"],
@@ -243,14 +243,15 @@ export default function AdminAnalyticsPage() {
               key={key}
               onClick={() => setActiveTab(key as any)}
               style={{
-                padding: "12px 20px",
+                padding: "10px 16px",
                 border: "none",
                 background: "none",
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: activeTab === key ? 800 : 600,
                 color: activeTab === key ? "var(--p)" : "var(--lt)",
                 borderBottom: activeTab === key ? "3px solid var(--p)" : "3px solid transparent",
-                cursor: "pointer"
+                cursor: "pointer",
+                whiteSpace: "nowrap"
               }}
             >
               {label}
@@ -262,18 +263,18 @@ export default function AdminAnalyticsPage() {
 
         {/* TAB 1: OVERVIEW & TRENDS */}
         {activeTab === "overview" && (
-          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 24 }}>
             {/* Visitors & Pageviews Daily Trend Area Chart */}
             <div style={cardStyle}>
               <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16 }}>📈 Visitor Traffic Trend</h3>
               {trends.length === 0 ? (
                 <div style={{ height: 260, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--lt)" }}>No trend data for selected range</div>
               ) : (
-                <div style={{ height: 260, display: "flex", alignItems: "flex-end", gap: 12, paddingBottom: 20, borderBottom: "1px solid #f1f5f9" }}>
+                <div style={{ height: 260, display: "flex", alignItems: "flex-end", gap: 8, overflowX: "auto", paddingBottom: 20, borderBottom: "1px solid #f1f5f9" }}>
                   {trends.map((t, i) => {
                     const hPct = Math.max(10, Math.min(100, (t.visitors / maxTrendVisitors) * 100));
                     return (
-                      <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, height: "100%", justifyContent: "flex-end" }}>
+                      <div key={i} style={{ flex: 1, minWidth: 20, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, height: "100%", justifyContent: "flex-end" }}>
                         <span style={{ fontSize: 10, fontWeight: 700, color: "var(--p)" }}>{t.visitors}</span>
                         <div
                           title={`${t.date}: ${t.visitors} visitors, ${t.pageViews} views`}
@@ -317,31 +318,33 @@ export default function AdminAnalyticsPage() {
         {activeTab === "pages" && (
           <div style={cardStyle}>
             <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16 }}>📄 Most Visited Pages Report</h3>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
-              <thead>
-                <tr style={{ background: "#f8fafc", textTransform: "uppercase", fontSize: 11, color: "var(--lt)", textAlign: "left" }}>
-                  <th style={{ padding: "12px 16px" }}>Page Title & Path</th>
-                  <th style={{ padding: "12px 16px" }}>Page Views</th>
-                  <th style={{ padding: "12px 16px" }}>Unique Visitors</th>
-                  <th style={{ padding: "12px 16px" }}>Avg Duration</th>
-                  <th style={{ padding: "12px 16px" }}>Entry Visits</th>
-                </tr>
-              </thead>
-              <tbody>
-                {pages.map((p, i) => (
-                  <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                    <td style={{ padding: "12px 16px" }}>
-                      <div style={{ fontWeight: 700, color: "var(--n)" }}>{p.pageTitle || "Untitled Page"}</div>
-                      <div style={{ fontSize: 11, color: "#64748b" }}>{p.pageUrl}</div>
-                    </td>
-                    <td style={{ padding: "12px 16px", fontWeight: 700 }}>{p.views}</td>
-                    <td style={{ padding: "12px 16px" }}>{p.uniqueVisitors}</td>
-                    <td style={{ padding: "12px 16px" }}>{formatDuration(p.avgTimeSeconds)}</td>
-                    <td style={{ padding: "12px 16px" }}>{p.entryVisits}</td>
+            <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+              <table style={{ width: "100%", minWidth: 600, borderCollapse: "collapse", fontSize: 13 }}>
+                <thead>
+                  <tr style={{ background: "#f8fafc", textTransform: "uppercase", fontSize: 11, color: "var(--lt)", textAlign: "left" }}>
+                    <th style={{ padding: "12px 16px" }}>Page Title & Path</th>
+                    <th style={{ padding: "12px 16px" }}>Page Views</th>
+                    <th style={{ padding: "12px 16px" }}>Unique Visitors</th>
+                    <th style={{ padding: "12px 16px" }}>Avg Duration</th>
+                    <th style={{ padding: "12px 16px" }}>Entry Visits</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {pages.map((p, i) => (
+                    <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                      <td style={{ padding: "12px 16px" }}>
+                        <div style={{ fontWeight: 700, color: "var(--n)" }}>{p.pageTitle || "Untitled Page"}</div>
+                        <div style={{ fontSize: 11, color: "#64748b" }}>{p.pageUrl}</div>
+                      </td>
+                      <td style={{ padding: "12px 16px", fontWeight: 700 }}>{p.views}</td>
+                      <td style={{ padding: "12px 16px" }}>{p.uniqueVisitors}</td>
+                      <td style={{ padding: "12px 16px" }}>{formatDuration(p.avgTimeSeconds)}</td>
+                      <td style={{ padding: "12px 16px" }}>{p.entryVisits}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
@@ -349,11 +352,11 @@ export default function AdminAnalyticsPage() {
         {activeTab === "traffic" && (
           <div style={cardStyle}>
             <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16 }}>🌐 Full Traffic Channels</h3>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16 }}>
               {traffic.map(t => (
                 <div key={t.source} style={{ padding: 20, background: "#f8fafc", borderRadius: 12, border: "1px solid var(--bdr)" }}>
                   <span style={{ fontSize: 12, fontWeight: 800, color: "var(--lt)", textTransform: "uppercase" }}>{t.source} TRAFFIC</span>
-                  <div style={{ fontSize: 28, fontWeight: 800, color: "var(--n)", margin: "8px 0" }}>{t.count} visits</div>
+                  <div style={{ fontSize: 26, fontWeight: 800, color: "var(--n)", margin: "8px 0" }}>{t.count} visits</div>
                   <span style={{ fontSize: 13, fontWeight: 700, color: "var(--p)" }}>{t.percentage}% of total traffic</span>
                 </div>
               ))}
@@ -363,7 +366,7 @@ export default function AdminAnalyticsPage() {
 
         {/* TAB 4: DEVICES & BROWSERS */}
         {activeTab === "devices" && (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 24 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 24 }}>
             {/* Devices */}
             <div style={cardStyle}>
               <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16 }}>📱 Device Category</h3>
@@ -407,7 +410,7 @@ export default function AdminAnalyticsPage() {
 
         {/* TAB 5: GEOGRAPHIC BREAKDOWN */}
         {activeTab === "geo" && (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 24 }}>
             <div style={cardStyle}>
               <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16 }}>🌍 Visitors by Country</h3>
               {geo?.countries?.map((c: any) => (
@@ -434,41 +437,43 @@ export default function AdminAnalyticsPage() {
         {activeTab === "activity" && (
           <div style={cardStyle}>
             <h3 style={{ fontSize: 16, fontWeight: 800, marginBottom: 16 }}>⚡ Real-Time User Activity Log</h3>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
-              <thead>
-                <tr style={{ background: "#f8fafc", textTransform: "uppercase", fontSize: 11, color: "var(--lt)", textAlign: "left" }}>
-                  <th style={{ padding: "12px 16px" }}>Time</th>
-                  <th style={{ padding: "12px 16px" }}>User / Visitor</th>
-                  <th style={{ padding: "12px 16px" }}>Event Activity</th>
-                  <th style={{ padding: "12px 16px" }}>Page Path</th>
-                  <th style={{ padding: "12px 16px" }}>Device</th>
-                  <th style={{ padding: "12px 16px" }}>Source</th>
-                </tr>
-              </thead>
-              <tbody>
-                {activities.map((a, i) => (
-                  <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                    <td style={{ padding: "12px 16px", fontSize: 12, color: "#64748b" }}>{new Date(a.timestamp).toLocaleTimeString()}</td>
-                    <td style={{ padding: "12px 16px", fontWeight: 700 }}>{a.userEmail || a.visitorId}</td>
-                    <td style={{ padding: "12px 16px" }}>
-                      <span style={{
-                        padding: "4px 10px",
-                        borderRadius: 12,
-                        fontSize: 11,
-                        fontWeight: 800,
-                        background: a.eventType === "ORDER_CREATED" ? "#dcfce7" : a.eventType === "ADD_TO_CART" ? "#e0f2fe" : "#f1f5f9",
-                        color: a.eventType === "ORDER_CREATED" ? "#166534" : a.eventType === "ADD_TO_CART" ? "#0369a1" : "#475569"
-                      }}>
-                        {a.eventType}
-                      </span>
-                    </td>
-                    <td style={{ padding: "12px 16px", fontSize: 12 }}>{a.pageUrl}</td>
-                    <td style={{ padding: "12px 16px" }}>{a.deviceType} ({a.browser})</td>
-                    <td style={{ padding: "12px 16px" }}>{a.trafficSource}</td>
+            <div style={{ overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
+              <table style={{ width: "100%", minWidth: 650, borderCollapse: "collapse", fontSize: 13 }}>
+                <thead>
+                  <tr style={{ background: "#f8fafc", textTransform: "uppercase", fontSize: 11, color: "var(--lt)", textAlign: "left" }}>
+                    <th style={{ padding: "12px 16px" }}>Time</th>
+                    <th style={{ padding: "12px 16px" }}>User / Visitor</th>
+                    <th style={{ padding: "12px 16px" }}>Event Activity</th>
+                    <th style={{ padding: "12px 16px" }}>Page Path</th>
+                    <th style={{ padding: "12px 16px" }}>Device</th>
+                    <th style={{ padding: "12px 16px" }}>Source</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {activities.map((a, i) => (
+                    <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                      <td style={{ padding: "12px 16px", fontSize: 12, color: "#64748b" }}>{new Date(a.timestamp).toLocaleTimeString()}</td>
+                      <td style={{ padding: "12px 16px", fontWeight: 700 }}>{a.userEmail || a.visitorId}</td>
+                      <td style={{ padding: "12px 16px" }}>
+                        <span style={{
+                          padding: "4px 10px",
+                          borderRadius: 12,
+                          fontSize: 11,
+                          fontWeight: 800,
+                          background: a.eventType === "ORDER_CREATED" ? "#dcfce7" : a.eventType === "ADD_TO_CART" ? "#e0f2fe" : "#f1f5f9",
+                          color: a.eventType === "ORDER_CREATED" ? "#166534" : a.eventType === "ADD_TO_CART" ? "#0369a1" : "#475569"
+                        }}>
+                          {a.eventType}
+                        </span>
+                      </td>
+                      <td style={{ padding: "12px 16px", fontSize: 12 }}>{a.pageUrl}</td>
+                      <td style={{ padding: "12px 16px" }}>{a.deviceType} ({a.browser})</td>
+                      <td style={{ padding: "12px 16px" }}>{a.trafficSource}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
