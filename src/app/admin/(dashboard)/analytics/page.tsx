@@ -103,80 +103,14 @@ export default function AdminAnalyticsPage() {
         days = Math.max(1, Math.round((d2.getTime() - d1.getTime()) / (1000 * 3600 * 24)) + 1);
       }
 
-      if (r1?.data) {
-        setOverview(r1.data);
-      }
-
-      if (r2?.data && r2.data.length > 0) {
-        setTrends(r2.data);
-      } else {
-        const dynamicTrends = [];
-        const startD = new Date(startDate);
-        for (let i = 0; i < Math.min(days, 30); i++) {
-          const dt = new Date(startD);
-          dt.setDate(startD.getDate() + i);
-          const dStr = dt.toISOString().split("T")[0];
-          const v = Math.round(14 + (i * 7 + 13) % 24);
-          dynamicTrends.push({
-            date: dStr,
-            visitors: v,
-            sessions: Math.round(v * 1.35),
-            pageViews: Math.round(v * 3.9),
-            orders: Math.round(v * 0.08)
-          });
-        }
-        setTrends(dynamicTrends);
-      }
-
-      if (r3?.data && r3.data.length > 0) setTraffic(r3.data);
-      else {
-        setTraffic([
-          { source: "DIRECT", count: Math.round(days * 6.5), percentage: 44.4 },
-          { source: "ORGANIC", count: Math.round(days * 4.8), percentage: 32.3 },
-          { source: "SOCIAL", count: Math.round(days * 2.4), percentage: 16.2 },
-          { source: "REFERRAL", count: Math.round(days * 1.1), percentage: 7.1 }
-        ]);
-      }
-
-      if (r4?.data && r4.data.length > 0) setPages(r4.data);
-      else {
-        setPages([
-          { pageTitle: "Medvarn | Premium Medical Apparel", pageUrl: "/", views: Math.round(days * 8.2), uniqueVisitors: Math.round(days * 5.1), avgTimeSeconds: 120, entryVisits: Math.round(days * 3.8) },
-          { pageTitle: "Medical Scrubs & Apparel Catalog", pageUrl: "/products", views: Math.round(days * 6.1), uniqueVisitors: Math.round(days * 3.9), avgTimeSeconds: 165, entryVisits: Math.round(days * 1.8) },
-          { pageTitle: "FlexiFit Women's V-Neck Scrub Suit", pageUrl: "/product/flexi-fit-v-scrub", views: Math.round(days * 4.2), uniqueVisitors: Math.round(days * 2.8), avgTimeSeconds: 190, entryVisits: Math.round(days * 0.9) },
-          { pageTitle: "Classic Solitaire Scrub Suit", pageUrl: "/product/classic-solitaire-scrub", views: Math.round(days * 3.1), uniqueVisitors: Math.round(days * 2.1), avgTimeSeconds: 145, entryVisits: Math.round(days * 0.5) },
-          { pageTitle: "Shopping Cart | Medvarn", pageUrl: "/cart", views: Math.round(days * 1.8), uniqueVisitors: Math.round(days * 1.4), avgTimeSeconds: 85, entryVisits: Math.round(days * 0.2) }
-        ]);
-      }
-
+      if (r1?.data) setOverview(r1.data);
+      if (r2?.data) setTrends(r2.data);
+      if (r3?.data) setTraffic(r3.data);
+      if (r4?.data) setPages(r4.data);
       if (r5?.data) setDevices(r5.data);
-      else {
-        setDevices({
-          deviceTypes: [{ name: "MOBILE", count: Math.round(days * 9.8), percentage: 67.7 }, { name: "DESKTOP", count: Math.round(days * 4.1), percentage: 28.3 }, { name: "TABLET", count: Math.round(days * 0.6), percentage: 4.0 }],
-          browsers: [{ name: "Chrome", count: Math.round(days * 10.4), percentage: 71.7 }, { name: "Safari", count: Math.round(days * 3.1), percentage: 21.2 }, { name: "Edge", count: Math.round(days * 1.0), percentage: 7.1 }],
-          operatingSystems: [{ name: "Android", count: Math.round(days * 7.9), percentage: 54.5 }, { name: "iOS", count: Math.round(days * 3.2), percentage: 22.2 }, { name: "Windows", count: Math.round(days * 2.8), percentage: 19.2 }, { name: "macOS", count: Math.round(days * 0.6), percentage: 4.1 }]
-        });
-      }
-
       if (r6?.data) setGeo(r6.data);
-      else {
-        setGeo({
-          countries: [{ location: "India", visitors: Math.round(days * 14.1), percentage: 97.2 }, { location: "United States", visitors: Math.round(days * 0.4), percentage: 2.8 }],
-          cities: [{ location: "Mumbai", visitors: Math.round(days * 4.2), percentage: 29.6 }, { location: "Delhi NCR", visitors: Math.round(days * 3.8), percentage: 26.8 }, { location: "Bengaluru", visitors: Math.round(days * 2.8), percentage: 19.7 }, { location: "Ahmedabad", visitors: Math.round(days * 1.8), percentage: 12.7 }, { location: "Chennai", visitors: Math.round(days * 1.2), percentage: 8.5 }]
-        });
-      }
-
-      if (r7?.data?.content && r7.data.content.length > 0) setActivities(r7.data.content);
-      else {
-        setActivities([
-          { timestamp: new Date().toISOString(), visitorId: "v_9a82b_active", userEmail: "dr.sharma@medvarn.com", eventType: "PAGE_VIEW", pageUrl: "/products", deviceType: "MOBILE", browser: "Chrome", trafficSource: "DIRECT" },
-          { timestamp: new Date(Date.now() - 120000).toISOString(), visitorId: "v_3k19a_guest", userEmail: null, eventType: "ADD_TO_CART", pageUrl: "/product/flexi-fit-v-scrub", deviceType: "DESKTOP", browser: "Chrome", trafficSource: "ORGANIC" },
-          { timestamp: new Date(Date.now() - 340000).toISOString(), visitorId: "v_87ff1_guest", userEmail: null, eventType: "ORDER_CREATED", pageUrl: "/checkout", deviceType: "MOBILE", browser: "Safari", trafficSource: "SOCIAL" }
-        ]);
-      }
-
+      if (r7?.data?.content) setActivities(r7.data.content);
       if (r8?.data) setRealtime(r8.data);
-      else setRealtime([{ sessionId: "s_active_1" }, { sessionId: "s_active_2" }, { sessionId: "s_active_3" }]);
 
     } catch (e) {
       console.error("Error fetching analytics", e);
