@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { API_BASE } from "@/lib/api";
 
-const DEFAULT_VIDEO_1 = "https://medvastr-media-upload.s3.ap-south-1.amazonaws.com/videos/doctor-review-1.mp4";
-const DEFAULT_VIDEO_2 = "https://medvastr-media-upload.s3.ap-south-1.amazonaws.com/videos/doctor-review-2.mp4";
+const DEFAULT_VIDEO_1 = "https://medvastr-assets.s3.ap-south-1.amazonaws.com/videos/doctor-review-1.mp4";
+const DEFAULT_VIDEO_2 = "https://medvastr-assets.s3.ap-south-1.amazonaws.com/videos/doctor-review-2.mp4";
 
 export default function VideoSection() {
   const [video1, setVideo1] = useState(DEFAULT_VIDEO_1);
@@ -29,39 +29,15 @@ export default function VideoSection() {
       id: 1,
       title: "ecoflex™ Women's V-Neck",
       sub: "Date with A Doctor 🩺",
-      url: video1 || DEFAULT_VIDEO_1,
-      poster: "https://images.unsplash.com/photo-1594824813571-24a69c100dd1?auto=format&fit=crop&w=600&q=80"
+      url: video1 || DEFAULT_VIDEO_1
     },
     {
       id: 2,
       title: "6sense (Black), Steel Blue",
-      sub: "Honest Clinical Review ✨",
-      url: video2 || DEFAULT_VIDEO_2,
-      poster: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-      id: 3,
-      title: "ecoflex™ Men's Solitaire",
-      sub: "First Day as A Doctor 🥼",
-      url: video1 || DEFAULT_VIDEO_1,
-      poster: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=600&q=80"
-    },
-    {
-      id: 4,
-      title: "Medvarn FlexiFit™ Scrub Suit",
-      sub: "Performance in Action 🏃",
-      url: video2 || DEFAULT_VIDEO_2,
-      poster: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80"
+      sub: "Clinical Performance in Action ✨",
+      url: video2 || DEFAULT_VIDEO_2
     }
   ];
-
-  const getEmbedUrl = (url: string) => {
-    if (!url) return "";
-    if (url.includes("youtube.com") || url.includes("youtu.be")) {
-      return url.replace("watch?v=", "embed/").replace("youtu.be/", "www.youtube.com/embed/") + "?autoplay=1";
-    }
-    return url;
-  };
 
   const isDirectVideo = (url: string) => {
     if (!url) return true;
@@ -80,42 +56,32 @@ export default function VideoSection() {
           Watch real healthcare professionals perform in high-pressure clinical environments wearing Medvarn scrubs.
         </p>
 
-        {/* 4 Portrait Video Reel Carousel (Responsive Grid / Horizontal Touch Track) */}
-        <div className="vid-reels-scroll-track">
+        {/* 2 Portrait Video Reels Side-by-Side */}
+        <div className="vid-reels-grid-2">
           {reels.map((reel) => {
             const isPlaying = activePlaying === reel.id;
-            const embed = getEmbedUrl(reel.url);
-            const isDirect = isDirectVideo(reel.url);
 
             return (
-              <div key={reel.id} className="vid-reel-card-item">
+              <div key={reel.id} className="vid-reel-card-2">
                 {isPlaying ? (
                   <div style={{ width: "100%", height: "100%", position: "relative", borderRadius: "18px", overflow: "hidden", background: "#000" }}>
-                    {isDirect ? (
-                      <video
-                        src={reel.url}
-                        controls
-                        autoPlay
-                        loop
-                        playsInline
-                        style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "18px" }}
-                      />
-                    ) : (
-                      <iframe
-                        src={embed}
-                        title={reel.title}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        style={{ width: "100%", height: "100%", border: "none", borderRadius: "18px" }}
-                      />
-                    )}
+                    <video
+                      src={reel.url}
+                      controls
+                      autoPlay
+                      loop
+                      playsInline
+                      style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "18px" }}
+                    />
                   </div>
                 ) : (
-                  <div className="vid-reel-card-inner" onClick={() => setActivePlaying(reel.id)}>
-                    {/* Background Poster Image */}
-                    <div
-                      className="vid-reel-poster-bg"
-                      style={{ backgroundImage: `url('${reel.poster}')` }}
+                  <div className="vid-reel-card-inner-2" onClick={() => setActivePlaying(reel.id)}>
+                    <video
+                      src={reel.url}
+                      muted
+                      playsInline
+                      preload="metadata"
+                      style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "18px", pointerEvents: "none" }}
                     />
                     
                     <div className="vid-reel-gradient-overlay" />
@@ -125,7 +91,7 @@ export default function VideoSection() {
                       <div className="vid-play-icon">▶</div>
                     </div>
 
-                    {/* Bottom Caption Title matching screenshot 3 */}
+                    {/* Bottom Caption Bar */}
                     <div className="vid-reel-caption-bar">
                       <div className="vid-reel-caption-title">{reel.title}</div>
                       <div className="vid-reel-caption-sub">{reel.sub}</div>
