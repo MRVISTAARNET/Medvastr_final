@@ -3,9 +3,12 @@
 import React, { useState, useEffect } from "react";
 import { API_BASE } from "@/lib/api";
 
+const DEFAULT_VIDEO_1 = "https://medvastr-media-upload.s3.ap-south-1.amazonaws.com/videos/doctor-review-1.mp4";
+const DEFAULT_VIDEO_2 = "https://medvastr-media-upload.s3.ap-south-1.amazonaws.com/videos/doctor-review-2.mp4";
+
 export default function VideoSection() {
-  const [video1, setVideo1] = useState("");
-  const [video2, setVideo2] = useState("");
+  const [video1, setVideo1] = useState(DEFAULT_VIDEO_1);
+  const [video2, setVideo2] = useState(DEFAULT_VIDEO_2);
   const [title1, setTitle1] = useState("FlexiFit™ Women's V-Neck Scrub Suit");
   const [title2, setTitle2] = useState("Classic Solitaire™ Scrub Suit in Action");
   const [playing1, setPlaying1] = useState(false);
