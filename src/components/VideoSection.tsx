@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { API_BASE } from "@/lib/api";
 
 const DEFAULT_VIDEO_1 = "https://medvastr-assets.s3.ap-south-1.amazonaws.com/videos/doctor-review-1.mp4";
@@ -9,7 +9,6 @@ const DEFAULT_VIDEO_2 = "https://medvastr-assets.s3.ap-south-1.amazonaws.com/vid
 export default function VideoSection() {
   const [video1, setVideo1] = useState(DEFAULT_VIDEO_1);
   const [video2, setVideo2] = useState(DEFAULT_VIDEO_2);
-  const [activePlaying, setActivePlaying] = useState<number | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -39,12 +38,6 @@ export default function VideoSection() {
     }
   ];
 
-  const isDirectVideo = (url: string) => {
-    if (!url) return true;
-    const clean = url.split("?")[0].toLowerCase();
-    return clean.endsWith(".mp4") || clean.endsWith(".webm") || clean.endsWith(".mov") || url.includes("/upload") || url.includes(".s3.");
-  };
-
   return (
     <div className="vid-sec">
       <div className="vid-in">
@@ -56,51 +49,11 @@ export default function VideoSection() {
           Watch real healthcare professionals perform in high-pressure clinical environments wearing Medvarn scrubs.
         </p>
 
-        {/* 2 Portrait Video Reels Side-by-Side */}
-        <div className="vid-reels-grid-2">
-          {reels.map((reel) => {
-            const isPlaying = activePlaying === reel.id;
-
-            return (
-              <div key={reel.id} className="vid-reel-card-2">
-                {isPlaying ? (
-                  <div style={{ width: "100%", height: "100%", position: "relative", borderRadius: "18px", overflow: "hidden", background: "#000" }}>
-                    <video
-                      src={reel.url}
-                      controls
-                      autoPlay
-                      loop
-                      playsInline
-                      style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "18px" }}
-                    />
-                  </div>
-                ) : (
-                  <div className="vid-reel-card-inner-2" onClick={() => setActivePlaying(reel.id)}>
-                    <video
-                      src={reel.url}
-                      muted
-                      playsInline
-                      preload="metadata"
-                      style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "18px", pointerEvents: "none" }}
-                    />
-                    
-                    <div className="vid-reel-gradient-overlay" />
-
-                    {/* Play Circle Icon */}
-                    <div className="vid-reel-play-btn">
-                      <div className="vid-play-icon">▶</div>
-                    </div>
-
-                    {/* Bottom Caption Bar */}
-                    <div className="vid-reel-caption-bar">
-                      <div className="vid-reel-caption-title">{reel.title}</div>
-                      <div className="vid-reel-caption-sub">{reel.sub}</div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+        {/* 2 Portrait Video Reels (Natural 9:16 Ratio - No Cropping) */}
+        <div className="vid-reels-row">
+          {reels.map((reel) => (
+            <ReelCard key={reel.id} reel={reel} />
+          ))}
         </div>
 
         {/* Feature Badges Strip */}
@@ -117,6 +70,75 @@ export default function VideoSection() {
             </div>
           ))}
         </div>
+      </div>
+    </div>
+  );
+}
+
+function ReelCard({ reel }: { reel: { id: number; title: string; sub: string; url: string } }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const togglePlay = () => {
+    if (!videoRef.current) return;
+    if (isPlaying) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      videoRef.current.play().then(() => {
+        setIsPlaying(true);
+      }).catch(() => {
+        if (videoRef.current) {
+          videoRef.current.muted = true;
+          setIsMuted(true);
+          videoRef.current.play();
+          setIsPlaying(true);
+        }
+      });
+    }
+  };
+
+  const toggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!videoRef.current) return;
+    videoRef.current.muted = !isMuted;
+    setIsMuted(!isMuted);
+  };
+
+  return (
+    <div className="vid-reel-card-portrait group" onClick={togglePlay}>
+      <video
+        ref={videoRef}
+        src={reel.url}
+        loop
+        playsInline
+        muted={isMuted}
+        preload="metadata"
+        className="vid-reel-video"
+      />
+
+      {/* Subtle Gradient Overlay */}
+      <div className="vid-reel-gradient-overlay" />
+
+      {/* Floating Audio Mute/Unmute Pill */}
+      {isPlaying && (
+        <button className="vid-reel-mute-btn" onClick={toggleMute} title={isMuted ? "Unmute Sound" : "Mute Sound"}>
+          {isMuted ? "🔇 Muted" : "🔊 Sound On"}
+        </button>
+      )}
+
+      {/* Play/Pause Center Circle Icon */}
+      {!isPlaying && (
+        <div className="vid-reel-play-btn">
+          <div className="vid-play-icon">▶</div>
+        </div>
+      )}
+
+      {/* Bottom Title Caption Bar */}
+      <div className="vid-reel-caption-bar">
+        <div className="vid-reel-caption-title">{reel.title}</div>
+        <div className="vid-reel-caption-sub">{reel.sub}</div>
       </div>
     </div>
   );
