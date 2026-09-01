@@ -51,11 +51,13 @@ export default function AdminOrders() {
           itemsList: o.items || [],
           total: o.totalAmount,
           status: o.status,
+          paymentStatus: o.paymentStatus || 'PENDING',
           shiprocketStatus: o.shiprocketSyncStatus || '',
           date: o.createdAt,
           city: o.shippingCity || '—',
           payment: o.paymentMethod || 'COD',
           razorpayId: o.paymentId || null,
+          razorpayOrderId: o.razorpayOrderId || null,
           awb: o.trackingNumber || '',
           courier: o.courierName || '',
           promoCode: o.promoCode || '',
@@ -81,12 +83,16 @@ export default function AdminOrders() {
     let matchesFilter = false;
     if (filter === 'ALL') {
       matchesFilter = true;
+    } else if (filter === 'UNPAID') {
+      matchesFilter = o.payment === 'ONLINE' && o.paymentStatus !== 'PAID';
     } else if (filter === 'PROCESSING') {
       matchesFilter = o.status === 'PROCESSING' || o.status === 'PACKED';
     } else if (filter === 'SHIPPED') {
       matchesFilter = o.status === 'SHIPPED' || o.status === 'OUT_FOR_DELIVERY';
     } else if (filter === 'RETURNED') {
       matchesFilter = o.status === 'RETURNED' || o.status === 'RETURN_REQUESTED';
+    } else if (filter === 'PENDING') {
+      matchesFilter = o.status === 'PENDING' && (o.payment !== 'ONLINE' || o.paymentStatus === 'PAID');
     } else {
       matchesFilter = o.status === filter;
     }
@@ -111,6 +117,7 @@ export default function AdminOrders() {
       'City': o.city,
       'Date': o.date ? fmtDateTime(o.date) : '—',
       'Payment Method': o.payment,
+      'Payment Status': o.paymentStatus,
       'Promo Code': o.promoCode || 'None',
       'Total Amount (₹)': o.total,
       'Items Count': o.items,
@@ -179,34 +186,28 @@ export default function AdminOrders() {
       }
       const data = await res.json();
       if (data.success) {
-        const updated = data.data;
-        const newStatus = updated.status;
-        const newSrStatus = updated.shiprocketSyncStatus || '';
-        const newAwb = updated.trackingNumber || '';
-        const newCourier = updated.courierName || '';
-        const newSrOrderId = updated.shiprocketOrderId || null;
-        setOrders(orders.map(o => o.id === editingOrder.id
-          ? { ...o, status: newStatus, shiprocketStatus: newSrStatus, awb: newAwb, courier: newCourier, shiprocketOrderId: newSrOrderId }
-          : o));
-        setEditingOrder({ ...editingOrder, status: newStatus, shiprocketStatus: newSrStatus, awb: newAwb, courier: newCourier, shiprocketOrderId: newSrOrderId });
-        alert(`✅ Synced! Internal status: ${newStatus}\nShiprocket status: ${newSrStatus || 'N/A'}`);
+        alert('✅ Live status synced from Shiprocket');
+        await fetchOrders();
+        setIsModalOpen(false);
       } else {
         alert(`❌ ${data.message || 'Sync failed'}`);
       }
     } catch (e) {
-      alert('❌ Sync request failed');
+      alert('❌ Request failed');
     } finally {
       setSingleSyncing(false);
     }
   };
 
-  const renderUnifiedStatusBadge = (status: string, srStatus: string) => {
-    if (srStatus) {
+  const renderUnifiedStatusBadge = (status: string, srStatus?: string, paymentMethod?: string, paymentStatus?: string) => {
+    if (paymentMethod === 'ONLINE' && paymentStatus !== 'PAID') {
+      return <span className="badge b-warn" style={{ background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', fontWeight: 700 }}>⚠️ Unpaid / Abandoned</span>;
+    }
+
+    if (srStatus && srStatus.trim() !== '') {
+      let cls = 'b-blue';
       const s = srStatus.toLowerCase();
-      let cls = 'b-gray';
-      if (s.includes('delivered') && !s.includes('undelivered')) cls = 'b-grn';
-      else if (s.includes('out for delivery')) cls = 'b-blue';
-      else if (s.includes('in transit') || s.includes('reached') || s.includes('shipped')) cls = 'b-blue';
+      if (s.includes('delivered')) cls = 'b-grn';
       else if (s.includes('pickup') || s.includes('manifest') || s.includes('label') || s.includes('delay') || s.includes('schedule')) cls = 'b-warn';
       else if (s.includes('rto') || s.includes('return') || s.includes('cancel') || s.includes('exception') || s.includes('failed') || s.includes('ndr') || s.includes('undelivered')) cls = 'b-red';
 
@@ -242,17 +243,19 @@ export default function AdminOrders() {
       <div className="admin-content">
         <div className="panel">
           {/* ── Status Summary Cards ── */}
-          <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', marginBottom: '22px' }}>
-            {['ALL', 'PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED'].map(s => {
+          <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(6, 1fr)', marginBottom: '22px' }}>
+            {['ALL', 'UNPAID', 'PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED'].map(s => {
               const labelMap: any = {
                 ALL: 'All Orders',
-                PENDING: 'New',
+                UNPAID: 'Unpaid / Abandoned',
+                PENDING: 'New / Confirmed',
                 PROCESSING: 'Pickups & Manifests',
                 SHIPPED: 'In Transit',
                 DELIVERED: 'Delivered'
               };
               const count = s === 'ALL' ? orders.length :
-                            s === 'PENDING' ? orders.filter(o => o.status === 'PENDING').length :
+                            s === 'UNPAID' ? orders.filter(o => o.payment === 'ONLINE' && o.paymentStatus !== 'PAID').length :
+                            s === 'PENDING' ? orders.filter(o => o.status === 'PENDING' && (o.payment !== 'ONLINE' || o.paymentStatus === 'PAID')).length :
                             s === 'PROCESSING' ? orders.filter(o => o.status === 'PROCESSING' || o.status === 'PACKED').length :
                             s === 'SHIPPED' ? orders.filter(o => o.status === 'SHIPPED' || o.status === 'OUT_FOR_DELIVERY').length :
                             orders.filter(o => o.status === 'DELIVERED').length;
@@ -264,8 +267,8 @@ export default function AdminOrders() {
                   style={{ cursor: 'pointer', padding: '14px 16px', borderColor: filter === s ? 'var(--teal)' : '', background: filter === s ? 'var(--teal4)' : '' }}
                   onClick={() => setFilter(s)}
                 >
-                  <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: 'var(--txt3)' }}>{labelMap[s]}</div>
-                  <div className="stat-n" style={{ fontSize: '22px', marginTop: '6px' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px', color: s === 'UNPAID' ? '#b45309' : 'var(--txt3)' }}>{labelMap[s]}</div>
+                  <div className="stat-n" style={{ fontSize: '22px', marginTop: '6px', color: s === 'UNPAID' && count > 0 ? '#d97706' : undefined }}>
                     {fmtNum(count)}
                   </div>
                 </div>
@@ -417,7 +420,19 @@ export default function AdminOrders() {
                       <div className="td-meta">{o.items} item(s)</div>
                     </td>
                     <td>
-                      <span className="badge b-gray">{o.payment}</span>
+                      {o.payment === 'ONLINE' ? (
+                        o.paymentStatus === 'PAID' ? (
+                          <span className="badge b-grn" style={{ fontWeight: 700 }}>💳 ONLINE • PAID</span>
+                        ) : o.paymentStatus === 'FAILED' ? (
+                          <span className="badge b-red" style={{ fontWeight: 700 }}>💳 ONLINE • FAILED</span>
+                        ) : (
+                          <span className="badge b-warn" style={{ background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', fontWeight: 700 }}>
+                            💳 ONLINE • UNPAID
+                          </span>
+                        )
+                      ) : (
+                        <span className="badge b-gray">🚚 COD</span>
+                      )}
                       {o.promoCode && (
                         <div style={{ marginTop: '4px' }}>
                           <span className="badge b-purple" style={{ fontSize: '11px', fontWeight: 700 }}>🎟️ {o.promoCode}</span>
@@ -437,7 +452,7 @@ export default function AdminOrders() {
                     </td>
                     <td>{fmtDateTime(o.date)}</td>
                     <td>
-                      {renderUnifiedStatusBadge(o.status, o.shiprocketStatus)}
+                      {renderUnifiedStatusBadge(o.status, o.shiprocketStatus, o.payment, o.paymentStatus)}
                     </td>
                     <td>
                       <div className="act-btns">
@@ -470,6 +485,27 @@ export default function AdminOrders() {
               <button className="modal-x" onClick={() => setIsModalOpen(false)}>✕</button>
             </div>
             <div className="modal-body">
+              {/* ── Unpaid Online Order Alert Banner ── */}
+              {editingOrder.payment === 'ONLINE' && editingOrder.paymentStatus !== 'PAID' && (
+                <div style={{
+                  marginBottom: '16px',
+                  padding: '14px 16px',
+                  borderRadius: '10px',
+                  background: '#fffbeb',
+                  border: '1.5px solid #fde68a',
+                  color: '#92400e'
+                }}>
+                  <div style={{ fontSize: '13px', fontWeight: 800, color: '#b45309', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    ⚠️ UNPAID ONLINE ORDER (Razorpay Checkout Abandoned)
+                  </div>
+                  <div style={{ fontSize: '12px', lineHeight: '1.5' }}>
+                    This customer clicked "Place Order" for <strong>{fmt(editingOrder.total)}</strong>, but closed/abandoned the Razorpay payment window before entering card/UPI details (Razorpay Receipt: <code>{editingOrder.num}</code>, Razorpay Order ID: <code>{editingOrder.razorpayOrderId || 'Created'}</code>, Attempts: 0, Collected: ₹0.00). 
+                    <br />
+                    <strong style={{ color: '#9a3412' }}>Note:</strong> Shiprocket sync and confirmation emails are paused until payment is completed. Do NOT dispatch this order.
+                  </div>
+                </div>
+              )}
+
               {/* ── Shiprocket Status Info Bar ── */}
               {(editingOrder.awb || editingOrder.shiprocketStatus) && (
                 <div style={{
