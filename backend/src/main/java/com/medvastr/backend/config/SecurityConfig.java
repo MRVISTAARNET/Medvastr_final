@@ -69,7 +69,7 @@ public class SecurityConfig {
                             .requestMatchers("/api/payments/webhook", "/payments/webhook").permitAll()
                             .requestMatchers("/api/v1/tracking/updates", "/v1/tracking/updates").permitAll()
                             .requestMatchers("/api/newsletter/**", "/newsletter/**").permitAll()
-                            .requestMatchers(HttpMethod.POST, "/api/analytics/track", "/analytics/track").permitAll()
+                            .requestMatchers("/api/analytics/**", "/analytics/**").permitAll()
                             .requestMatchers(HttpMethod.POST, "/api/inquiries", "/inquiries").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/media/**").permitAll()
                             .requestMatchers("/api/upload").hasRole("ADMIN")

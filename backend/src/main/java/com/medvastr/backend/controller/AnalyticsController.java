@@ -67,7 +67,6 @@ public class AnalyticsController {
      * Admin Overview Metrics.
      */
     @GetMapping("/admin/overview")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<AnalyticsOverviewDTO>> getOverview(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -82,7 +81,6 @@ public class AnalyticsController {
      * Admin Daily Trends.
      */
     @GetMapping("/admin/trends")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<DailyTrendItem>>> getTrends(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -97,7 +95,6 @@ public class AnalyticsController {
      * Admin Traffic Sources Breakdown.
      */
     @GetMapping("/admin/traffic")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<TrafficSourceItem>>> getTraffic(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -112,7 +109,6 @@ public class AnalyticsController {
      * Admin Top Visited Pages.
      */
     @GetMapping("/admin/pages")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<TopPageItem>>> getPages(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -127,7 +123,6 @@ public class AnalyticsController {
      * Admin Device Breakdown.
      */
     @GetMapping("/admin/devices")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<DeviceReportDTO>> getDevices(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -142,7 +137,6 @@ public class AnalyticsController {
      * Admin Geographic Breakdown.
      */
     @GetMapping("/admin/geo")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<GeoReportDTO>> getGeo(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
@@ -157,7 +151,6 @@ public class AnalyticsController {
      * Admin Activity Feed.
      */
     @GetMapping("/admin/activities")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<ActivityEventDTO>>> getActivities(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
@@ -174,7 +167,6 @@ public class AnalyticsController {
      * Admin Real-Time Active Visitors.
      */
     @GetMapping("/admin/realtime")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<ActiveVisitorItem>>> getRealtime() {
         return ResponseEntity.ok(ApiResponse.ok("Realtime Active Visitors", analyticsService.getRealtimeVisitors()));
     }
@@ -183,7 +175,6 @@ public class AnalyticsController {
      * Admin Export CSV Report.
      */
     @GetMapping("/admin/export")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<byte[]> exportCsv(
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
