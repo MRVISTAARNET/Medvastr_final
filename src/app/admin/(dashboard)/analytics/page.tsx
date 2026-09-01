@@ -30,17 +30,10 @@ export default function AdminAnalyticsPage() {
   useEffect(() => {
     fetchAnalyticsData();
 
-    // 5-second live polling for real-time active visitors badge
-    const timer = setInterval(async () => {
-      try {
-        const token = typeof window !== "undefined" ? (localStorage.getItem("token") || localStorage.getItem("adminToken")) : null;
-        const h: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
-        const res = await fetch(`${API_BASE}/analytics/admin/realtime`, { headers: h }).then(r => r.json()).catch(() => ({}));
-        if (res?.data && Array.isArray(res.data) && res.data.length > 0) {
-          setRealtime(res.data);
-        }
-      } catch {}
-    }, 5000);
+    // 10-second live polling for complete dashboard auto-refresh
+    const timer = setInterval(() => {
+      fetchAnalyticsData();
+    }, 10000);
 
     return () => clearInterval(timer);
   }, [startDate, endDate]);
