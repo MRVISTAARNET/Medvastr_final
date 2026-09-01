@@ -21,6 +21,8 @@ import com.medvastr.backend.repository.UserRepository;
 import com.medvastr.backend.repository.StoreSettingRepository;
 import com.medvastr.backend.model.InventoryLog;
 import com.medvastr.backend.repository.InventoryLogRepository;
+import com.medvastr.backend.model.UserActivityEvent;
+import com.medvastr.backend.repository.UserActivityEventRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -61,6 +63,7 @@ public class OrderService {
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
     private final WhatsAppService whatsAppService;
     private final SmsService smsService;
+    private final UserActivityEventRepository userActivityEventRepo;
 
     private User me() {
         String principal = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -246,6 +249,18 @@ public class OrderService {
         saved.setItems(orderItems);
 
         Order finalSaved = orderRepo.save(saved);
+
+        try {
+            userActivityEventRepo.save(UserActivityEvent.builder()
+                    .user(u)
+                    .eventType("ORDER_CREATED")
+                    .pageUrl("/checkout")
+                    .eventData("Order #" + finalSaved.getOrderNumber() + " created (" + finalSaved.getPaymentMethod() + ") for ₹" + finalSaved.getTotalAmount())
+                    .createdAt(LocalDateTime.now())
+                    .build());
+        } catch (Exception e) {
+            log.warn("Failed to save ORDER_CREATED activity event", e);
+        }
         if (!isGuest) {
             try {
                 cartService.clearCart();

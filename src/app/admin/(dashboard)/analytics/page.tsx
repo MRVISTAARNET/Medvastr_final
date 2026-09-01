@@ -189,19 +189,61 @@ export default function AdminAnalyticsPage() {
     setLoading(false);
   };
 
-  const handleExportCsv = async () => {
+  const handleExportCsv = () => {
     setExporting(true);
     try {
-      const h = authHeaders();
-      const res = await fetch(`${API_BASE}/analytics/admin/export?startDate=${startDate}&endDate=${endDate}`, { headers: h });
-      const blob = await res.blob();
-      const url = window.URL.createObjectURL(blob);
+      let csv = `MEDVARN STORE ANALYTICS REPORT\n`;
+      csv += `Date Range: ${startDate} to ${endDate}\n`;
+      csv += `Generated At: ${new Date().toLocaleString()}\n\n`;
+
+      csv += `1. OVERVIEW METRICS\n`;
+      csv += `Metric,Value\n`;
+      csv += `Unique Visitors,${overview?.uniqueVisitors || 0}\n`;
+      csv += `Total Sessions,${overview?.totalSessions || 0}\n`;
+      csv += `Total Page Views,${overview?.totalPageViews || 0}\n`;
+      csv += `New Visitors,${overview?.newVisitors || 0}\n`;
+      csv += `Returning Visitors,${overview?.returningVisitors || 0}\n`;
+      csv += `Avg Session Duration,${formatDuration(overview?.avgSessionDurationSeconds || 0)}\n`;
+      csv += `Total Orders,${overview?.totalOrders || 0}\n`;
+      csv += `Conversion Rate,${overview?.conversionRatePercent || 0}%\n`;
+      csv += `Bounce Rate,${overview?.bounceRatePercent || 0}%\n\n`;
+
+      csv += `2. DAILY VISITOR TRENDS\n`;
+      csv += `Date,Visitors,Sessions,Page Views,Orders\n`;
+      trends.forEach(t => {
+        csv += `${t.date},${t.visitors || 0},${t.sessions || 0},${t.pageViews || 0},${t.orders || 0}\n`;
+      });
+      csv += `\n`;
+
+      csv += `3. TOP VISITED PAGES\n`;
+      csv += `Page Title,URL,Page Views,Unique Visitors,Avg Time (s)\n`;
+      pages.forEach(p => {
+        csv += `"${(p.pageTitle || "").replace(/"/g, '""')}","${p.pageUrl}",${p.views || 0},${p.uniqueVisitors || 0},${p.avgTimeSeconds || 0}\n`;
+      });
+      csv += `\n`;
+
+      csv += `4. TRAFFIC SOURCES\n`;
+      csv += `Channel,Visits,Percentage\n`;
+      traffic.forEach(tr => {
+        csv += `${tr.source},${tr.count},${tr.percentage}%\n`;
+      });
+      csv += `\n`;
+
+      csv += `5. RECENT ACTIVITY LOG\n`;
+      csv += `Timestamp,Visitor ID,User,Event,Page URL,Device,Browser\n`;
+      activities.forEach(a => {
+        csv += `"${a.timestamp}","${a.visitorId}","${a.userEmail || 'Guest'}","${a.eventType}","${a.pageUrl}","${a.deviceType}","${a.browser}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
       a.download = `medvarn_analytics_${startDate}_to_${endDate}.csv`;
       document.body.appendChild(a);
       a.click();
       a.remove();
+      URL.revokeObjectURL(url);
     } catch (e) {
       alert("Error exporting CSV report");
     }
