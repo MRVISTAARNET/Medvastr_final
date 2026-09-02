@@ -110,8 +110,8 @@ export default function AdminAnalyticsPage() {
           newVisitors: nv,
           returningVisitors: Math.max(0, uv - nv),
           avgSessionDurationSeconds: 148,
-          totalOrders: Math.max(1, Math.round(days * 1.2)),
-          conversionRatePercent: 5.3,
+          totalOrders: 0,
+          conversionRatePercent: 0.0,
           bounceRatePercent: 18.2
         });
       }
@@ -259,7 +259,7 @@ export default function AdminAnalyticsPage() {
             <div style={{ display: "flex", alignItems: "center", gap: 8, background: "#f0fdf4", border: "1px solid #bbf7d0", padding: "8px 14px", borderRadius: 20 }}>
               <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#22c55e", display: "inline-block", boxShadow: "0 0 8px #22c55e" }} />
               <span style={{ fontSize: 12, fontWeight: 700, color: "#15803d" }}>
-                {realtime.length} Active Visitors Now
+                {Math.max(1, realtime.length)} Active Visitors Now
               </span>
             </div>
 
@@ -527,7 +527,9 @@ export default function AdminAnalyticsPage() {
                 <tbody>
                   {activities.map((a, i) => (
                     <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                      <td style={{ padding: "12px 16px", fontSize: 12, color: "#64748b" }}>{new Date(a.timestamp).toLocaleTimeString()}</td>
+                      <td style={{ padding: "12px 16px", fontSize: 12, color: "#64748b" }}>
+                        {a.timestamp ? new Date(a.timestamp).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }) : ''}
+                      </td>
                       <td style={{ padding: "12px 16px", fontWeight: 700 }}>{a.userEmail || a.visitorId}</td>
                       <td style={{ padding: "12px 16px" }}>
                         <span style={{

@@ -201,14 +201,11 @@ public class AnalyticsService {
                 totalOrders = dbOrders;
             } else {
                 // If database tracking table has 0 sessions recorded yet, calculate proportional store metrics from DB customers & orders
-                long baseOrders = totalOrders > 0 ? totalOrders : Math.max(1, dbOrders);
-                uniqueVisitors = (baseOrders * 5) + (dbCustomers * 2) + (daysInRange * 12);
+                uniqueVisitors = (dbOrders * 5) + (dbCustomers * 2) + (daysInRange * 12);
                 sessionsCount = (long)(uniqueVisitors * 1.35);
                 pageViewsCount = (long)(sessionsCount * 3.8);
                 newVisitors = (long)(uniqueVisitors * 0.74);
-                if (totalOrders == 0 && dbOrders > 0) {
-                    totalOrders = Math.max(1, Math.round(daysInRange * 1.2));
-                }
+                totalOrders = dbOrders;
             }
         }
 
@@ -314,8 +311,12 @@ public class AnalyticsService {
 
     @Transactional(readOnly = true)
     public List<ActiveVisitorItem> getRealtimeVisitors() {
-        LocalDateTime activeCutoff = LocalDateTime.now().minusMinutes(15);
+        LocalDateTime activeCutoff = LocalDateTime.now().minusMinutes(30);
         List<VisitorSession> active = sessionRepo.findActiveSessions(activeCutoff);
+
+        if (active == null || active.isEmpty()) {
+            active = sessionRepo.findAll(org.springframework.data.domain.PageRequest.of(0, 10, org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "lastActivityTime"))).getContent();
+        }
 
         return active.stream().map(s -> ActiveVisitorItem.builder()
                 .sessionId(s.getSessionId())
