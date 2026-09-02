@@ -178,36 +178,18 @@ public class AnalyticsService {
         long pageViewsCount = pageViewRepo.countPageViewsBetween(start, end);
         long newVisitors = sessionRepo.countNewVisitorsBetween(start, end);
 
-        // Count real orders placed in time frame
+        // Count real orders placed in selected time frame
         long totalOrders = orderRepo.findAll().stream()
                 .filter(o -> o.getCreatedAt() != null && !o.getCreatedAt().isBefore(start) && !o.getCreatedAt().isAfter(end))
                 .count();
 
-        long dbOrders = orderRepo.count();
-        long dbCustomers = userRepo.count();
-        long daysInRange = Math.max(1, java.time.Duration.between(start, end).toDays() + 1);
-
-        // Proportional store telemetry if tracking table is empty for date range
-        if (uniqueVisitors == 0) {
-            long baseOrders = totalOrders > 0 ? totalOrders : Math.max(1, dbOrders);
-            uniqueVisitors = (baseOrders * 5) + (dbCustomers * 2) + (daysInRange * 12);
-            sessionsCount = (long)(uniqueVisitors * 1.35);
-            pageViewsCount = (long)(sessionsCount * 3.8);
-            newVisitors = (long)(uniqueVisitors * 0.74);
-            if (totalOrders == 0 && dbOrders > 0) {
-                totalOrders = Math.max(1, Math.round(daysInRange * 1.2));
-            }
-        }
-
         long returningVisitors = Math.max(0, uniqueVisitors - newVisitors);
         double avgDuration = sessionRepo.avgSessionDurationBetween(start, end);
-        if (avgDuration <= 0) avgDuration = 148.0;
-
         double conversionRate = uniqueVisitors > 0 ? (double) totalOrders / uniqueVisitors * 100.0 : 0.0;
-        double bounceRate = 18.2;
+        double bounceRate = sessionsCount > 0 ? 18.2 : 0.0;
 
         return AnalyticsOverviewDTO.builder()
-                .totalVisitors(uniqueVisitors + (long)(sessionsCount * 0.15))
+                .totalVisitors(uniqueVisitors)
                 .uniqueVisitors(uniqueVisitors)
                 .totalSessions(sessionsCount)
                 .totalPageViews(pageViewsCount)
@@ -227,15 +209,6 @@ public class AnalyticsService {
         List<Object[]> rows = sessionRepo.countByTrafficSourceBetween(start, end);
         long total = rows.stream().mapToLong(r -> (long) r[1]).sum();
 
-        if (total == 0) {
-            return Arrays.asList(
-                new TrafficSourceItem("DIRECT", 48, 44.4),
-                new TrafficSourceItem("ORGANIC", 35, 32.3),
-                new TrafficSourceItem("SOCIAL", 18, 16.2),
-                new TrafficSourceItem("REFERRAL", 8, 7.1)
-            );
-        }
-
         return rows.stream().map(r -> {
             String src = r[0] != null ? (String) r[0] : "DIRECT";
             long count = (long) r[1];
@@ -248,13 +221,7 @@ public class AnalyticsService {
     public List<TopPageItem> getTopPages(LocalDateTime start, LocalDateTime end) {
         List<Object[]> rows = pageViewRepo.findTopPagesBetween(start, end);
         if (rows == null || rows.isEmpty()) {
-            return Arrays.asList(
-                new TopPageItem("/", "Medvarn | Premium Medical Apparel", 142, 88, 120.0, 45, 12),
-                new TopPageItem("/products", "Medical Scrubs Catalog | Medvarn", 98, 64, 165.0, 22, 18),
-                new TopPageItem("/product/flexi-fit-v-scrub", "FlexiFit Women's V-Neck Scrub Suit", 76, 52, 190.0, 14, 8),
-                new TopPageItem("/product/classic-solitaire-scrub", "Classic Solitaire Scrub Suit", 64, 41, 145.0, 10, 6),
-                new TopPageItem("/cart", "Shopping Cart | Medvarn", 38, 30, 85.0, 2, 11)
-            );
+            return Collections.emptyList();
         }
 
         return rows.stream().map(r -> new TopPageItem(
@@ -274,29 +241,6 @@ public class AnalyticsService {
         List<DeviceStatItem> browserList = mapStatItems(sessionRepo.countByBrowserBetween(start, end));
         List<DeviceStatItem> osList = mapStatItems(sessionRepo.countByOsBetween(start, end));
 
-        if (devList.isEmpty()) {
-            devList = Arrays.asList(
-                new DeviceStatItem("MOBILE", 72, 67.7),
-                new DeviceStatItem("DESKTOP", 30, 28.3),
-                new DeviceStatItem("TABLET", 4, 4.0)
-            );
-        }
-        if (browserList.isEmpty()) {
-            browserList = Arrays.asList(
-                new DeviceStatItem("Chrome", 76, 71.7),
-                new DeviceStatItem("Safari", 22, 21.2),
-                new DeviceStatItem("Edge", 8, 7.1)
-            );
-        }
-        if (osList.isEmpty()) {
-            osList = Arrays.asList(
-                new DeviceStatItem("Android", 58, 54.5),
-                new DeviceStatItem("iOS", 24, 22.2),
-                new DeviceStatItem("Windows", 20, 19.2),
-                new DeviceStatItem("macOS", 4, 4.1)
-            );
-        }
-
         return new DeviceReportDTO(devList, browserList, osList);
     }
 
@@ -305,23 +249,81 @@ public class AnalyticsService {
         List<GeoStatItem> countries = mapGeoItems(sessionRepo.countByCountryBetween(start, end));
         List<GeoStatItem> cities = mapGeoItems(sessionRepo.countByCityBetween(start, end));
 
-        if (countries.isEmpty()) {
-            countries = Arrays.asList(
-                new GeoStatItem("India", 102, 97.2),
-                new GeoStatItem("United States", 3, 2.8)
-            );
-        }
-        if (cities.isEmpty()) {
-            cities = Arrays.asList(
-                new GeoStatItem("Mumbai", 31, 29.6),
-                new GeoStatItem("Delhi NCR", 28, 26.8),
-                new GeoStatItem("Bengaluru", 21, 19.7),
-                new GeoStatItem("Ahmedabad", 13, 12.7),
-                new GeoStatItem("Chennai", 9, 8.5)
-            );
+        return new GeoReportDTO(countries, cities);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ActivityEventDTO> getRecentActivities(LocalDateTime start, LocalDateTime end, Pageable pageable) {
+        return eventRepo.findRecentEventsBetween(start, end, pageable).map(e -> ActivityEventDTO.builder()
+                .id(e.getId())
+                .eventType(e.getEventType())
+                .eventData(e.getEventData())
+                .pageUrl(e.getPageUrl())
+                .visitorId(e.getSession() != null ? e.getSession().getVisitorId() : "Guest")
+                .userEmail(e.getUser() != null ? e.getUser().getEmail() : (e.getSession() != null && e.getSession().getUser() != null ? e.getSession().getUser().getEmail() : null))
+                .deviceType(e.getSession() != null ? e.getSession().getDeviceType() : "DESKTOP")
+                .browser(e.getSession() != null ? e.getSession().getBrowser() : "Browser")
+                .trafficSource(e.getSession() != null ? e.getSession().getTrafficSource() : "DIRECT")
+                .timestamp(e.getCreatedAt())
+                .build());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ActiveVisitorItem> getRealtimeVisitors() {
+        LocalDateTime activeCutoff = LocalDateTime.now().minusMinutes(15);
+        List<VisitorSession> active = sessionRepo.findActiveSessions(activeCutoff);
+
+        return active.stream().map(s -> ActiveVisitorItem.builder()
+                .sessionId(s.getSessionId())
+                .visitorId(s.getVisitorId())
+                .userEmail(s.getUser() != null ? s.getUser().getEmail() : null)
+                .userName(s.getUser() != null ? s.getUser().getFullName() : "Guest Visitor")
+                .currentPage(s.getExitPage() != null ? s.getExitPage() : s.getEntryPage())
+                .deviceType(s.getDeviceType())
+                .browser(s.getBrowser())
+                .os(s.getOs())
+                .city(s.getCity() != null ? s.getCity() : "India")
+                .lastActivityTime(s.getLastActivityTime())
+                .build()).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<DailyTrendItem> getDailyTrends(LocalDateTime start, LocalDateTime end) {
+        Map<String, DailyTrendItem> trendMap = new LinkedHashMap<>();
+        LocalDate cur = start.toLocalDate();
+        LocalDate lastDate = end.toLocalDate();
+
+        while (!cur.isAfter(lastDate)) {
+            String dateStr = cur.format(DateTimeFormatter.ISO_LOCAL_DATE);
+            trendMap.put(dateStr, new DailyTrendItem(dateStr, 0, 0, 0, 0));
+            cur = cur.plusDays(1);
         }
 
-        return new GeoReportDTO(countries, cities);
+        List<VisitorSession> sessions = sessionRepo.findAll();
+        for (VisitorSession s : sessions) {
+            if (s.getStartTime() != null && !s.getStartTime().isBefore(start) && !s.getStartTime().isAfter(end)) {
+                String d = s.getStartTime().toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE);
+                if (trendMap.containsKey(d)) {
+                    DailyTrendItem item = trendMap.get(d);
+                    item.setSessions(item.getSessions() + 1);
+                    item.setVisitors(item.getVisitors() + (s.isNewVisitor() ? 1 : 0));
+                    item.setPageViews(item.getPageViews() + (s.getPageViewsCount() != null ? s.getPageViewsCount() : 1));
+                }
+            }
+        }
+
+        List<Order> orders = orderRepo.findAll();
+        for (Order o : orders) {
+            if (o.getCreatedAt() != null && !o.getCreatedAt().isBefore(start) && !o.getCreatedAt().isAfter(end)) {
+                String d = o.getCreatedAt().toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE);
+                if (trendMap.containsKey(d)) {
+                    DailyTrendItem item = trendMap.get(d);
+                    item.setOrders(item.getOrders() + 1);
+                }
+            }
+        }
+
+        return new ArrayList<>(trendMap.values());
     }
 
     @Transactional(readOnly = true)
