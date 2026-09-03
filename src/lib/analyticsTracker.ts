@@ -4,6 +4,8 @@ import { API_BASE } from "@/lib/api";
 
 const VISITOR_KEY = "medvastr_vid";
 const SESSION_KEY = "medvastr_sid";
+const LAST_ACTIVITY_KEY = "medvastr_last_act";
+const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes inactivity timeout
 
 function getOrGenerateId(key: string, isSession = false): string {
   if (typeof window === "undefined") return "";
@@ -25,7 +27,21 @@ export function getVisitorId(): string {
 }
 
 export function getSessionId(): string {
-  return getOrGenerateId(SESSION_KEY, true);
+  if (typeof window === "undefined") return "";
+  try {
+    const now = Date.now();
+    const lastAct = sessionStorage.getItem(LAST_ACTIVITY_KEY);
+    let sid = sessionStorage.getItem(SESSION_KEY);
+
+    if (!sid || (lastAct && now - parseInt(lastAct, 10) > SESSION_TIMEOUT_MS)) {
+      sid = "s_" + Math.random().toString(36).substring(2, 11) + "_" + now;
+      sessionStorage.setItem(SESSION_KEY, sid);
+    }
+    sessionStorage.setItem(LAST_ACTIVITY_KEY, now.toString());
+    return sid;
+  } catch {
+    return "s_" + Math.random().toString(36).substring(2, 11) + "_" + Date.now();
+  }
 }
 
 export function trackAnalyticsEvent(

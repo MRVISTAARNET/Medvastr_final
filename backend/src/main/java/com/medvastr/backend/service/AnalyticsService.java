@@ -92,6 +92,21 @@ public class AnalyticsService {
             }
 
             LocalDateTime now = LocalDateTime.now();
+            String eventType = req.getEventType() != null && !req.getEventType().isBlank() ? req.getEventType() : "PAGE_VIEW";
+
+            // If heartbeat pulse, only update session last activity time without creating event log rows
+            if ("HEARTBEAT_PING".equalsIgnoreCase(eventType)) {
+                sessionRepo.findBySessionId(req.getSessionId()).ifPresent(session -> {
+                    session.setLastActivityTime(now);
+                    if (session.getStartTime() != null) {
+                        long dur = java.time.Duration.between(session.getStartTime(), now).getSeconds();
+                        session.setDurationSeconds(Math.max(0, dur));
+                    }
+                    sessionRepo.save(session);
+                });
+                return;
+            }
+
             String hashedIp = hashIp(clientIp);
             String devType = parseDeviceType(userAgent);
             String browser = parseBrowser(userAgent);
@@ -99,9 +114,16 @@ public class AnalyticsService {
             String trafficSrc = parseTrafficSource(req.getReferrer());
             String domain = extractDomain(req.getReferrer());
 
-            VisitorSession session = sessionRepo.findBySessionId(req.getSessionId()).orElseGet(() -> {
+            VisitorSession session = sessionRepo.findBySessionId(req.getSessionId()).orElse(null);
+
+            // Inactivity session expiration check (30 minutes)
+            if (session != null && session.getLastActivityTime() != null && session.getLastActivityTime().isBefore(now.minusMinutes(30))) {
+                session = null;
+            }
+
+            if (session == null) {
                 boolean isNew = !sessionRepo.existsByVisitorId(req.getVisitorId());
-                return VisitorSession.builder()
+                session = VisitorSession.builder()
                         .sessionId(req.getSessionId())
                         .visitorId(req.getVisitorId())
                         .user(authenticatedUser)
@@ -121,7 +143,7 @@ public class AnalyticsService {
                         .lastActivityTime(now)
                         .isNewVisitor(isNew)
                         .build();
-            });
+            }
 
             if (authenticatedUser != null && session.getUser() == null) {
                 session.setUser(authenticatedUser);
@@ -133,10 +155,6 @@ public class AnalyticsService {
                 long dur = java.time.Duration.between(session.getStartTime(), now).getSeconds();
                 session.setDurationSeconds(Math.max(0, dur));
             }
-
-            session = sessionRepo.save(session);
-
-            String eventType = req.getEventType() != null && !req.getEventType().isBlank() ? req.getEventType() : "PAGE_VIEW";
 
             if ("PAGE_VIEW".equalsIgnoreCase(eventType)) {
                 session.setPageViewsCount(session.getPageViewsCount() + 1);
@@ -179,10 +197,8 @@ public class AnalyticsService {
         long pageViewsCount = pageViewRepo.countPageViewsBetween(start, end);
         long newVisitors = sessionRepo.countNewVisitorsBetween(start, end);
 
-        // Count real orders placed in selected time frame
-        long totalOrders = orderRepo.findAll().stream()
-                .filter(o -> o.getCreatedAt() != null && !o.getCreatedAt().isBefore(start) && !o.getCreatedAt().isAfter(end))
-                .count();
+        // Count completed orders directly from MySQL Order table
+        long totalOrders = orderRepo.countCompletedOrdersBetween(start, end);
 
         long returningVisitors = Math.max(0, uniqueVisitors - newVisitors);
         double avgDuration = sessionRepo.avgSessionDurationBetween(start, end);
@@ -191,7 +207,7 @@ public class AnalyticsService {
         double bounceRate = sessionsCount > 0 ? 18.2 : 0.0;
 
         return AnalyticsOverviewDTO.builder()
-                .totalVisitors(uniqueVisitors + (long)(sessionsCount * 0.15))
+                .totalVisitors(uniqueVisitors)
                 .uniqueVisitors(uniqueVisitors)
                 .totalSessions(sessionsCount)
                 .totalPageViews(pageViewsCount)
@@ -350,7 +366,7 @@ public class AnalyticsService {
 
     @Transactional(readOnly = true)
     public List<ActiveVisitorItem> getRealtimeVisitors() {
-        LocalDateTime activeCutoff = LocalDateTime.now().minusMinutes(15);
+        LocalDateTime activeCutoff = LocalDateTime.now().minusMinutes(5);
         List<VisitorSession> active = sessionRepo.findActiveSessions(activeCutoff);
 
         return active.stream().map(s -> ActiveVisitorItem.builder()

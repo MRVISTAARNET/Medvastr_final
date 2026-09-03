@@ -111,6 +111,7 @@ public class OrderService {
                 LocalDateTime promoDate = LocalDateTime.parse(promoDateStr);
                 if (LocalDateTime.now().isBefore(promoDate)) {
                     ship = BigDecimal.ZERO;
+                    
                 }
             } catch (Exception ignored) {}
         }
