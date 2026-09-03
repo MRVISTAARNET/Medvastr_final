@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -315,7 +316,7 @@ public class AnalyticsService {
         List<VisitorSession> active = sessionRepo.findActiveSessions(activeCutoff);
 
         if (active == null || active.isEmpty()) {
-            active = sessionRepo.findAll(org.springframework.data.domain.PageRequest.of(0, 10, org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "lastActivityTime"))).getContent();
+            active = sessionRepo.findAll(PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "lastActivityTime"))).getContent();
         }
 
         return active.stream().map(s -> ActiveVisitorItem.builder()

@@ -324,6 +324,8 @@ export default function AdminProducts() {
     if (!form.price || form.price <= 0) return alert("Selling Price must be greater than 0");
     if (!form.sku?.trim()) return alert("Parent SKU is required");
     if (form.stock === undefined || form.stock < 0) return alert("Stock quantity is required and cannot be negative");
+    if (!form.clrs?.trim()) return alert("At least one Color is required (e.g. Navy Blue)");
+    if (!form.sizes?.trim()) return alert("At least one Size is required (e.g. S, M, L, XL)");
     if (!form.imgs || form.imgs.length === 0) return alert("At least one product image is required");
     if (form.imgs.length > 30) return alert("Maximum 30 images allowed");
 
@@ -417,17 +419,23 @@ export default function AdminProducts() {
       body: JSON.stringify(body)
     });
     
-    const data = await res.json();
-    if (data.success) {
+    let data: any = {};
+    try {
+      data = await res.json();
+    } catch {
+      data = { message: `Server returned HTTP ${res.status}` };
+    }
+
+    if (res.ok && data.success) {
       alert("Product saved successfully!");
       refreshProducts();
       setIsModalOpen(false);
     } else {
-      alert(data.message || "Save failed");
+      alert(data.message || data.error || `Save failed (HTTP ${res.status})`);
     }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Error saving product.");
+      alert(err?.message || "Error saving product.");
     } finally {
       setIsSaving(false);
     }
