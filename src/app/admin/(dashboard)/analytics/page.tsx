@@ -38,6 +38,13 @@ export default function AdminAnalyticsPage() {
     return () => clearInterval(timer);
   }, [startDate, endDate]);
 
+  const formatDateLocal = (d: Date) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const calculatePresetDates = (p: DatePreset) => {
     const today = new Date();
     let s = new Date();
@@ -65,8 +72,8 @@ export default function AdminAnalyticsPage() {
       return;
     }
 
-    setStartDate(s.toISOString().split("T")[0]);
-    setEndDate(e.toISOString().split("T")[0]);
+    setStartDate(formatDateLocal(s));
+    setEndDate(formatDateLocal(e));
   };
 
   const fetchAnalyticsData = async () => {
@@ -89,35 +96,24 @@ export default function AdminAnalyticsPage() {
         fetch(`${API_BASE}/analytics/admin/realtime`, { headers: h }).then(r => r.json()).catch(() => ({}))
       ]);
 
-      let days = 30;
-      if (startDate && endDate) {
-        const d1 = new Date(startDate);
-        const d2 = new Date(endDate);
-        days = Math.max(1, Math.round((d2.getTime() - d1.getTime()) / (1000 * 3600 * 24)) + 1);
-      }
-
       if (r1?.data) {
         setOverview(r1.data);
       } else {
-        const uv = Math.max(12, Math.round(days * 12));
-        const sess = Math.round(uv * 1.35);
-        const pvs = Math.round(sess * 3.8);
-        const nv = Math.round(uv * 0.74);
         setOverview({
-          uniqueVisitors: uv,
-          totalSessions: sess,
-          totalPageViews: pvs,
-          newVisitors: nv,
-          returningVisitors: Math.max(0, uv - nv),
-          avgSessionDurationSeconds: 148,
+          uniqueVisitors: 0,
+          totalSessions: 0,
+          totalPageViews: 0,
+          newVisitors: 0,
+          returningVisitors: 0,
+          avgSessionDurationSeconds: 0,
           totalOrders: 0,
           conversionRatePercent: 0.0,
-          bounceRatePercent: 18.2
+          bounceRatePercent: 0.0
         });
       }
-      if (r2?.data && r2.data.length > 0) setTrends(r2.data);
-      if (r3?.data && r3.data.length > 0) setTraffic(r3.data);
-      if (r4?.data && r4.data.length > 0) setPages(r4.data);
+      if (r2?.data) setTrends(r2.data);
+      if (r3?.data) setTraffic(r3.data);
+      if (r4?.data) setPages(r4.data);
       if (r5?.data) setDevices(r5.data);
       if (r6?.data) setGeo(r6.data);
       if (r7?.data?.content) setActivities(r7.data.content);

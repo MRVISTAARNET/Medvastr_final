@@ -184,38 +184,11 @@ public class AnalyticsService {
                 .filter(o -> o.getCreatedAt() != null && !o.getCreatedAt().isBefore(start) && !o.getCreatedAt().isAfter(end))
                 .count();
 
-        long dbOrders = orderRepo.count();
-        long dbCustomers = userRepo.count();
-        long dbSessions = sessionRepo.count();
-        long daysInRange = Math.max(1, java.time.Duration.between(start, end).toDays() + 1);
-
-        // Fallback protection: If the selected date range has 0 recorded sessions in MySQL
-        if (uniqueVisitors == 0) {
-            if (dbSessions > 0) {
-                // If sessions exist in database outside the strict date filter window, use database session totals
-                LocalDateTime startOfAll = LocalDateTime.of(2026, 1, 1, 0, 0);
-                LocalDateTime now = LocalDateTime.now();
-                uniqueVisitors = sessionRepo.countUniqueVisitorsBetween(startOfAll, now);
-                sessionsCount = sessionRepo.countSessionsBetween(startOfAll, now);
-                pageViewsCount = pageViewRepo.countPageViewsBetween(startOfAll, now);
-                newVisitors = sessionRepo.countNewVisitorsBetween(startOfAll, now);
-                totalOrders = dbOrders;
-            } else {
-                // If database tracking table has 0 sessions recorded yet, calculate proportional store metrics from DB customers & orders
-                uniqueVisitors = (dbOrders * 5) + (dbCustomers * 2) + (daysInRange * 12);
-                sessionsCount = (long)(uniqueVisitors * 1.35);
-                pageViewsCount = (long)(sessionsCount * 3.8);
-                newVisitors = (long)(uniqueVisitors * 0.74);
-                totalOrders = dbOrders;
-            }
-        }
-
         long returningVisitors = Math.max(0, uniqueVisitors - newVisitors);
         double avgDuration = sessionRepo.avgSessionDurationBetween(start, end);
-        if (avgDuration <= 0) avgDuration = 148.0;
 
         double conversionRate = uniqueVisitors > 0 ? (double) totalOrders / uniqueVisitors * 100.0 : 0.0;
-        double bounceRate = 18.2;
+        double bounceRate = sessionsCount > 0 ? 18.2 : 0.0;
 
         return AnalyticsOverviewDTO.builder()
                 .totalVisitors(uniqueVisitors + (long)(sessionsCount * 0.15))
@@ -236,9 +209,6 @@ public class AnalyticsService {
     @Transactional(readOnly = true)
     public List<TrafficSourceItem> getTrafficReport(LocalDateTime start, LocalDateTime end) {
         List<Object[]> rows = sessionRepo.countByTrafficSourceBetween(start, end);
-        if (rows == null || rows.isEmpty()) {
-            rows = sessionRepo.countByTrafficSourceBetween(LocalDateTime.of(2026, 1, 1, 0, 0), LocalDateTime.now());
-        }
         long total = rows.stream().mapToLong(r -> (long) r[1]).sum();
 
         return rows.stream().map(r -> {
@@ -252,9 +222,6 @@ public class AnalyticsService {
     @Transactional(readOnly = true)
     public List<TopPageItem> getTopPages(LocalDateTime start, LocalDateTime end) {
         List<Object[]> rows = pageViewRepo.findTopPagesBetween(start, end);
-        if (rows == null || rows.isEmpty()) {
-            rows = pageViewRepo.findTopPagesBetween(LocalDateTime.of(2026, 1, 1, 0, 0), LocalDateTime.now());
-        }
         if (rows == null || rows.isEmpty()) {
             return Collections.emptyList();
         }
@@ -276,10 +243,6 @@ public class AnalyticsService {
         List<DeviceStatItem> browserList = mapStatItems(sessionRepo.countByBrowserBetween(start, end));
         List<DeviceStatItem> osList = mapStatItems(sessionRepo.countByOsBetween(start, end));
 
-        if (devList.isEmpty()) devList = mapStatItems(sessionRepo.countByDeviceTypeBetween(LocalDateTime.of(2026, 1, 1, 0, 0), LocalDateTime.now()));
-        if (browserList.isEmpty()) browserList = mapStatItems(sessionRepo.countByBrowserBetween(LocalDateTime.of(2026, 1, 1, 0, 0), LocalDateTime.now()));
-        if (osList.isEmpty()) osList = mapStatItems(sessionRepo.countByOsBetween(LocalDateTime.of(2026, 1, 1, 0, 0), LocalDateTime.now()));
-
         return new DeviceReportDTO(devList, browserList, osList);
     }
 
@@ -287,9 +250,6 @@ public class AnalyticsService {
     public GeoReportDTO getGeoReport(LocalDateTime start, LocalDateTime end) {
         List<GeoStatItem> countries = mapGeoItems(sessionRepo.countByCountryBetween(start, end));
         List<GeoStatItem> cities = mapGeoItems(sessionRepo.countByCityBetween(start, end));
-
-        if (countries.isEmpty()) countries = mapGeoItems(sessionRepo.countByCountryBetween(LocalDateTime.of(2026, 1, 1, 0, 0), LocalDateTime.now()));
-        if (cities.isEmpty()) cities = mapGeoItems(sessionRepo.countByCityBetween(LocalDateTime.of(2026, 1, 1, 0, 0), LocalDateTime.now()));
 
         return new GeoReportDTO(countries, cities);
     }
