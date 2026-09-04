@@ -94,6 +94,13 @@ public class AnalyticsService {
             LocalDateTime now = LocalDateTime.now();
             String eventType = req.getEventType() != null && !req.getEventType().isBlank() ? req.getEventType() : "PAGE_VIEW";
 
+            String hashedIp = hashIp(clientIp);
+            String devType = parseDeviceType(userAgent);
+            String browser = parseBrowser(userAgent);
+            String os = parseOS(userAgent);
+            String trafficSrc = parseTrafficSource(req.getReferrer());
+            String domain = extractDomain(req.getReferrer());
+
             // If heartbeat pulse, update or create session last activity time without creating event log rows
             if ("HEARTBEAT_PING".equalsIgnoreCase(eventType)) {
                 VisitorSession session = sessionRepo.findBySessionId(req.getSessionId()).orElseGet(() -> {
@@ -127,13 +134,6 @@ public class AnalyticsService {
                 sessionRepo.save(session);
                 return;
             }
-
-            String hashedIp = hashIp(clientIp);
-            String devType = parseDeviceType(userAgent);
-            String browser = parseBrowser(userAgent);
-            String os = parseOS(userAgent);
-            String trafficSrc = parseTrafficSource(req.getReferrer());
-            String domain = extractDomain(req.getReferrer());
 
             VisitorSession session = sessionRepo.findBySessionId(req.getSessionId()).orElse(null);
 
