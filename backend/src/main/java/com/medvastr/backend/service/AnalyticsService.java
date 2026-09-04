@@ -347,8 +347,9 @@ public class AnalyticsService {
 
         List<VisitorSession> sessions = sessionRepo.findAll();
         for (VisitorSession s : sessions) {
-            if (s.getStartTime() != null && !s.getStartTime().isBefore(start) && !s.getStartTime().isAfter(end)) {
-                String d = s.getStartTime().toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE);
+            LocalDateTime st = s.getStartTime() != null ? s.getStartTime() : s.getCreatedAt();
+            if (st != null && !st.isBefore(start) && !st.isAfter(end)) {
+                String d = st.toLocalDate().format(DateTimeFormatter.ISO_LOCAL_DATE);
                 if (trendMap.containsKey(d)) {
                     DailyTrendItem item = trendMap.get(d);
                     item.setSessions(item.getSessions() + 1);
