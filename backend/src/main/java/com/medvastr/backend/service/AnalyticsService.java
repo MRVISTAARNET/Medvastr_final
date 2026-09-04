@@ -94,16 +94,37 @@ public class AnalyticsService {
             LocalDateTime now = LocalDateTime.now();
             String eventType = req.getEventType() != null && !req.getEventType().isBlank() ? req.getEventType() : "PAGE_VIEW";
 
-            // If heartbeat pulse, only update session last activity time without creating event log rows
+            // If heartbeat pulse, update or create session last activity time without creating event log rows
             if ("HEARTBEAT_PING".equalsIgnoreCase(eventType)) {
-                sessionRepo.findBySessionId(req.getSessionId()).ifPresent(session -> {
-                    session.setLastActivityTime(now);
-                    if (session.getStartTime() != null) {
-                        long dur = java.time.Duration.between(session.getStartTime(), now).getSeconds();
-                        session.setDurationSeconds(Math.max(0, dur));
-                    }
-                    sessionRepo.save(session);
+                VisitorSession session = sessionRepo.findBySessionId(req.getSessionId()).orElseGet(() -> {
+                    boolean isNew = !sessionRepo.existsByVisitorId(req.getVisitorId());
+                    return VisitorSession.builder()
+                            .sessionId(req.getSessionId())
+                            .visitorId(req.getVisitorId())
+                            .user(authenticatedUser)
+                            .ipHash(hashedIp)
+                            .country("India")
+                            .deviceType(devType)
+                            .browser(browser)
+                            .os(os)
+                            .referrer(req.getReferrer())
+                            .referrerDomain(domain)
+                            .trafficSource(trafficSrc)
+                            .entryPage(req.getPageUrl())
+                            .exitPage(req.getPageUrl())
+                            .pageViewsCount(0)
+                            .eventsCount(0)
+                            .startTime(now)
+                            .lastActivityTime(now)
+                            .isNewVisitor(isNew)
+                            .build();
                 });
+                session.setLastActivityTime(now);
+                if (session.getStartTime() != null) {
+                    long dur = java.time.Duration.between(session.getStartTime(), now).getSeconds();
+                    session.setDurationSeconds(Math.max(0, dur));
+                }
+                sessionRepo.save(session);
                 return;
             }
 
@@ -155,6 +176,9 @@ public class AnalyticsService {
                 long dur = java.time.Duration.between(session.getStartTime(), now).getSeconds();
                 session.setDurationSeconds(Math.max(0, dur));
             }
+
+            // CRITICAL FIX: Save session FIRST so it gets an ID in MySQL before creating PageView or UserActivityEvent
+            session = sessionRepo.save(session);
 
             if ("PAGE_VIEW".equalsIgnoreCase(eventType)) {
                 session.setPageViewsCount(session.getPageViewsCount() + 1);
