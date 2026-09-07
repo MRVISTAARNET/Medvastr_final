@@ -55,7 +55,14 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT COUNT(o) FROM Order o WHERE o.createdAt >= :start AND o.createdAt <= :end")
     long countOrdersBetween(@Param("start") java.time.LocalDateTime start, @Param("end") java.time.LocalDateTime end);
 
-    @Query("SELECT COUNT(o) FROM Order o WHERE o.createdAt >= :start AND o.createdAt <= :end AND (o.paymentStatus = com.medvastr.backend.model.Order.PaymentStatus.PAID OR o.status != com.medvastr.backend.model.Order.OrderStatus.CANCELLED)")
-    long countCompletedOrdersBetween(@Param("start") java.time.LocalDateTime start, @Param("end") java.time.LocalDateTime end);
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.createdAt >= :start AND o.createdAt <= :end AND (o.paymentStatus = :paidStatus OR o.status != :cancelledStatus)")
+    long countCompletedOrdersBetweenWithStatus(@Param("start") java.time.LocalDateTime start,
+                                               @Param("end") java.time.LocalDateTime end,
+                                               @Param("paidStatus") Order.PaymentStatus paidStatus,
+                                               @Param("cancelledStatus") Order.OrderStatus cancelledStatus);
+
+    default long countCompletedOrdersBetween(java.time.LocalDateTime start, java.time.LocalDateTime end) {
+        return countCompletedOrdersBetweenWithStatus(start, end, Order.PaymentStatus.PAID, Order.OrderStatus.CANCELLED);
+    }
 }
 
