@@ -64,11 +64,11 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
                 }}
                 className="mt-1 w-4 h-4 accent-[#462D8C] cursor-pointer flex-shrink-0"
               />
-              <label htmlFor="showEmb" className="cursor-pointer flex-1">
-                <span className="block font-bold text-[#462D8C] text-sm sm:text-base leading-tight">
+              <label htmlFor="showEmb" style={{ cursor: 'pointer', flex: 1, display: 'block' }}>
+                <strong style={{ display: 'block', color: '#462D8C', fontSize: '15px', fontWeight: 700, lineHeight: '1.3' }}>
                   Add Embroidery
-                </span>
-                <span className="block text-xs text-[#554e65] mt-1 leading-normal">
+                </strong>
+                <span style={{ display: 'block', fontSize: '12px', color: '#554e65', marginTop: '4px', lineHeight: '1.4' }}>
                   Make it yours - name, hospital logo, or icon
                 </span>
               </label>
@@ -78,6 +78,7 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
             <div
               onClick={() => onToggleAddEmbroidery(false)}
               className="flex items-start gap-3 p-3 rounded-lg border border-transparent hover:bg-gray-100 cursor-pointer transition"
+              style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px' }}
             >
               <input
                 type="radio"
@@ -86,12 +87,13 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
                 checked={!isEmbroiderySelected}
                 onChange={() => onToggleAddEmbroidery(false)}
                 className="mt-1 w-4 h-4 accent-[#462D8C] cursor-pointer flex-shrink-0"
+                style={{ marginTop: '3px' }}
               />
-              <label htmlFor="dontShowEmbroidery" className="cursor-pointer flex-1">
-                <span className="block font-bold text-[#462D8C] text-sm sm:text-base leading-tight">
+              <label htmlFor="dontShowEmbroidery" style={{ cursor: 'pointer', flex: 1, display: 'block' }}>
+                <strong style={{ display: 'block', color: '#462D8C', fontSize: '15px', fontWeight: 700, lineHeight: '1.3' }}>
                   Skip for Now
-                </span>
-                <span className="block text-xs text-[#554e65] mt-1 leading-normal">
+                </strong>
+                <span style={{ display: 'block', fontSize: '12px', color: '#554e65', marginTop: '4px', lineHeight: '1.4' }}>
                   and risk misplacing your scrubs
                 </span>
               </label>

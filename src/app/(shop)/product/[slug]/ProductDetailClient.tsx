@@ -812,43 +812,46 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                   }}
                 />
 
-                <EmbroideryModal
-                  isOpen={isEmbroideryModalOpen}
-                  onClose={() => setIsEmbroideryModalOpen(false)}
-                  onSaveCustomization={(customization) => {
-                    setEmbroideryState(customization);
-                    setIsEmbroiderySelected(true);
-                  }}
-                  baseScrubImage={colorImages[0] || (p.imgs?.[0] || '')}
-                  embroideryPreviewImage={(() => {
-                    try {
-                      const config = JSON.parse((p as any).embroideryConfig || '{}');
-                      const colorName = ci !== null ? (p.clrNms?.[ci] || p.clrs?.[ci]) : 'Navy Blue';
-                      if (colorName && config?.colorPreviewImages?.[colorName]) {
-                        return config.colorPreviewImages[colorName];
-                      }
-                      if (colorName && config?.colorPreviewImages) {
-                        const foundKey = Object.keys(config.colorPreviewImages).find(
-                          k => k.trim().toLowerCase() === colorName.trim().toLowerCase()
-                        );
-                        if (foundKey && config.colorPreviewImages[foundKey]) {
-                          return config.colorPreviewImages[foundKey];
+                {isEmbroideryModalOpen && mounted && typeof document !== "undefined" && createPortal(
+                  <EmbroideryModal
+                    isOpen={isEmbroideryModalOpen}
+                    onClose={() => setIsEmbroideryModalOpen(false)}
+                    onSaveCustomization={(customization) => {
+                      setEmbroideryState(customization);
+                      setIsEmbroiderySelected(true);
+                    }}
+                    baseScrubImage={colorImages[0] || (p.imgs?.[0] || '')}
+                    embroideryPreviewImage={(() => {
+                      try {
+                        const config = JSON.parse((p as any).embroideryConfig || '{}');
+                        const colorName = ci !== null ? (p.clrNms?.[ci] || p.clrs?.[ci]) : 'Navy Blue';
+                        if (colorName && config?.colorPreviewImages?.[colorName]) {
+                          return config.colorPreviewImages[colorName];
                         }
+                        if (colorName && config?.colorPreviewImages) {
+                          const foundKey = Object.keys(config.colorPreviewImages).find(
+                            k => k.trim().toLowerCase() === colorName.trim().toLowerCase()
+                          );
+                          if (foundKey && config.colorPreviewImages[foundKey]) {
+                            return config.colorPreviewImages[foundKey];
+                          }
+                        }
+                        return config?.previewImage || undefined;
+                      } catch {
+                        return undefined;
                       }
-                      return config?.previewImage || undefined;
-                    } catch {
-                      return undefined;
-                    }
-                  })()}
-                  selectedColorName={ci !== null ? (p.clrNms?.[ci] || p.clrs?.[ci]) : 'Navy Blue'}
-                  customPrices={(() => {
-                    try {
-                      return JSON.parse((p as any).embroideryConfig || '{}')?.prices;
-                    } catch {
-                      return undefined;
-                    }
-                  })()}
-                />
+                    })()}
+                    selectedColorName={ci !== null ? (p.clrNms?.[ci] || p.clrs?.[ci]) : 'Navy Blue'}
+                    customPrices={(() => {
+                      try {
+                        return JSON.parse((p as any).embroideryConfig || '{}')?.prices;
+                      } catch {
+                        return undefined;
+                      }
+                    })()}
+                  />,
+                  document.body
+                )}
               </>
             )}
 

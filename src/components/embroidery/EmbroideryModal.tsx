@@ -113,9 +113,28 @@ export const EmbroideryModal: React.FC<EmbroideryModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/70 backdrop-blur-xs animate-fadeIn">
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 99999,
+        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px',
+      }}
+      className="animate-fadeIn"
+      onClick={onClose}
+    >
       {/* Centered Desktop Panel (1080px x 540px) */}
-      <div className="relative w-full max-w-[1080px] h-[90vh] max-h-[580px] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
+      <div
+        className="relative w-full max-w-[1080px] h-[90vh] max-h-[580px] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-100"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Left Panel (55-60% width on desktop): Scrub Live Preview */}
         <div className="w-full md:w-[58%] h-[240px] md:h-full relative bg-[#0A1128]">
           <EmbroideryScrubPreview
