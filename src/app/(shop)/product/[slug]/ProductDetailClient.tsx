@@ -822,7 +822,20 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                   baseScrubImage={colorImages[0] || (p.imgs?.[0] || '')}
                   embroideryPreviewImage={(() => {
                     try {
-                      return JSON.parse((p as any).embroideryConfig || '{}')?.previewImage;
+                      const config = JSON.parse((p as any).embroideryConfig || '{}');
+                      const colorName = ci !== null ? (p.clrNms?.[ci] || p.clrs?.[ci]) : 'Navy Blue';
+                      if (colorName && config?.colorPreviewImages?.[colorName]) {
+                        return config.colorPreviewImages[colorName];
+                      }
+                      if (colorName && config?.colorPreviewImages) {
+                        const foundKey = Object.keys(config.colorPreviewImages).find(
+                          k => k.trim().toLowerCase() === colorName.trim().toLowerCase()
+                        );
+                        if (foundKey && config.colorPreviewImages[foundKey]) {
+                          return config.colorPreviewImages[foundKey];
+                        }
+                      }
+                      return config?.previewImage || undefined;
                     } catch {
                       return undefined;
                     }

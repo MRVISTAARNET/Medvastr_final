@@ -246,6 +246,9 @@ export default function AdminProducts() {
         embroideryPreviewImage: (() => {
           try { return JSON.parse(editingProduct.embroideryConfig || '{}')?.previewImage || ''; } catch { return ''; }
         })(),
+        embroideryColorPreviewImages: (() => {
+          try { return JSON.parse(editingProduct.embroideryConfig || '{}')?.colorPreviewImages || {}; } catch { return {}; }
+        })(),
         embroideryBundlePrice: (() => {
           try { return JSON.parse(editingProduct.embroideryConfig || '{}')?.prices?.bundlePrice || 99; } catch { return 99; }
         })(),
@@ -269,7 +272,7 @@ export default function AdminProducts() {
         sizes: 'S, M, L, XL', clrs: '', imgs: [], videoUrl: '', active: true, imgsByColor: {},
         badge: 'None', fit: 'Classic Fit', pocketCount: 0, weightValue: '0.5', weightUnit: 'kg', careInstructions: 'Machine Wash Cold', shortDescription: '',
         material: '', sku: '', stock: 100, seoTitle: '', seoDescription: '', seoKeywords: '', codDisabled: false,
-        embroideryEnabled: false, embroideryPreviewImage: '', embroideryBundlePrice: 99, embroideryBundleOrigPrice: 199, embroideryTopPrice: 99, embroideryBottomPrice: 99, embroideryLogoPrice: 100
+        embroideryEnabled: false, embroideryPreviewImage: '', embroideryColorPreviewImages: {}, embroideryBundlePrice: 99, embroideryBundleOrigPrice: 199, embroideryTopPrice: 99, embroideryBottomPrice: 99, embroideryLogoPrice: 100
       });
     }
   }, [editingProduct, isModalOpen]);
@@ -433,6 +436,7 @@ export default function AdminProducts() {
       embroideryEnabled: Boolean(form.embroideryEnabled),
       embroideryConfig: JSON.stringify({
         previewImage: form.embroideryPreviewImage || '',
+        colorPreviewImages: form.embroideryColorPreviewImages || {},
         prices: {
           bundlePrice: Number(form.embroideryBundlePrice) || 99,
           bundleOriginalPrice: Number(form.embroideryBundleOrigPrice) || 199,
@@ -1081,6 +1085,115 @@ export default function AdminProducts() {
                           >
                             🗑️ Remove Photo
                           </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* COLOR-SPECIFIC EMBROIDERY CLOSE-UP PHOTO UPLOADERS */}
+                    <div className="fg" style={{ gridColumn: 'span 2', marginTop: '16px' }}>
+                      <label style={{ fontSize: '14px', fontWeight: 700, color: '#1e293b', marginBottom: '4px', display: 'block' }}>
+                        🎨 Color-Specific Embroidery Close-Up Photos
+                      </label>
+                      <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '14px' }}>
+                        Upload dedicated high-res close-up scrub chest images for each specific color variant of this product.
+                      </p>
+
+                      {(form.clrs || '').split(',').map((c: string) => c.trim()).filter(Boolean).length === 0 ? (
+                        <div style={{ padding: '12px', background: '#fffbe6', border: '1px solid #ffe58f', borderRadius: '8px', fontSize: '12px', color: '#856404' }}>
+                          ⚠️ Please add at least one color in Tab 1 (Basic Details) first to upload color-specific embroidery photos.
+                        </div>
+                      ) : (
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '14px' }}>
+                          {(form.clrs || '').split(',').map((c: string) => c.trim()).filter(Boolean).map((colorName: string) => {
+                            const hex = getColHex(colorName);
+                            const existingUrl = form.embroideryColorPreviewImages?.[colorName] || '';
+
+                            return (
+                              <div key={colorName} style={{ padding: '14px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                                  <span style={{ width: '14px', height: '14px', borderRadius: '50%', background: hex, display: 'inline-block', border: '1px solid #cbd5e1' }} />
+                                  <strong style={{ fontSize: '13px', color: '#0f172a' }}>{colorName} Scrub Photo</strong>
+                                </div>
+
+                                {!existingUrl ? (
+                                  <label style={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    padding: '16px 12px',
+                                    border: '1.5px dashed #93c5fd',
+                                    borderRadius: '8px',
+                                    background: '#eff6ff',
+                                    cursor: 'pointer',
+                                    textAlign: 'center',
+                                    transition: 'all 0.2s ease'
+                                  }}>
+                                    <span style={{ fontSize: '20px', marginBottom: '4px' }}>📸</span>
+                                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#1d4ed8' }}>
+                                      Upload {colorName} Photo
+                                    </span>
+                                    <input
+                                      type="file"
+                                      accept="image/*"
+                                      style={{ display: 'none' }}
+                                      onChange={async (e) => {
+                                        const files = e.target.files;
+                                        if (!files || files.length === 0) return;
+                                        const token = getToken() || "";
+                                        const formData = new FormData();
+                                        formData.append("file", files[0]);
+                                        try {
+                                          const res = await fetch(`${API_BASE}/upload`, {
+                                            method: "POST",
+                                            headers: { "Authorization": `Bearer ${token}` },
+                                            body: formData
+                                          });
+                                          const d = await res.json();
+                                          if (d.success && d.data) {
+                                            setForm((prev: any) => ({
+                                              ...prev,
+                                              embroideryColorPreviewImages: {
+                                                ...(prev.embroideryColorPreviewImages || {}),
+                                                [colorName]: d.data
+                                              }
+                                            }));
+                                            alert(`Close-up photo uploaded for ${colorName}!`);
+                                          } else {
+                                            alert(`Upload failed: ${d.message || "Invalid file"}`);
+                                          }
+                                        } catch (err) {
+                                          alert("Upload failed: Connection error");
+                                        }
+                                        e.target.value = '';
+                                      }}
+                                    />
+                                  </label>
+                                ) : (
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#f0fdf4', padding: '10px', borderRadius: '8px', border: '1px solid #86efac' }}>
+                                    <img src={existingUrl} alt={colorName} style={{ width: '50px', height: '60px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                      <span style={{ fontSize: '12px', fontWeight: 700, color: '#166534', display: 'block' }}>✓ Active Photo</span>
+                                      <span style={{ fontSize: '10px', color: '#15803d', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block', marginTop: '2px' }}>{colorName}</span>
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setForm((prev: any) => {
+                                          const updated = { ...(prev.embroideryColorPreviewImages || {}) };
+                                          delete updated[colorName];
+                                          return { ...prev, embroideryColorPreviewImages: updated };
+                                        });
+                                      }}
+                                      style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', padding: '6px 10px', borderRadius: '6px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' }}
+                                    >
+                                      ✕ Remove
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
                       )}
                     </div>
