@@ -39,7 +39,11 @@ public class RazorpayService {
         if (dbVal != null && !dbVal.isBlank()) {
             return dbVal.trim();
         }
-        return keyId != null ? keyId.trim() : "";
+        if (keyId != null && !keyId.isBlank()) {
+            return keyId.trim();
+        }
+        String envVal = System.getenv("RAZORPAY_KEY_ID");
+        return envVal != null ? envVal.trim() : "";
     }
 
     private String getDbKeySecret() {
@@ -49,7 +53,11 @@ public class RazorpayService {
         if (dbVal != null && !dbVal.isBlank()) {
             return dbVal.trim();
         }
-        return keySecret != null ? keySecret.trim() : "";
+        if (keySecret != null && !keySecret.isBlank()) {
+            return keySecret.trim();
+        }
+        String envVal = System.getenv("RAZORPAY_KEY_SECRET");
+        return envVal != null ? envVal.trim() : "";
     }
 
     public RazorpayClient getClient() throws RazorpayException {

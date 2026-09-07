@@ -30,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.medvastr.backend.exception.CheckoutErrorContext;
 import java.util.Optional;
 
 import java.math.BigDecimal;
@@ -140,7 +141,9 @@ public class OrderService {
         String generatedPassword = null;
         if (isGuest) {
             if (r.getEmail() == null || r.getEmail().isBlank()) {
-                throw new RuntimeException("Email is required for guest checkout");
+                String err = "Email is required for guest checkout";
+                CheckoutErrorContext.setLastError(err);
+                throw new RuntimeException(err);
             }
             String guestEmail = r.getEmail().trim().toLowerCase();
             User found = userRepo.findByEmail(guestEmail).orElse(null);
@@ -179,9 +182,15 @@ public class OrderService {
                 subtotal = subtotal.add(orderItems.get(orderItems.size() - 1).getTotalPrice());
             }
         } else {
-            Cart cart = cartRepo.findByUser(u).orElseThrow(() -> new RuntimeException("Cart is empty"));
+            Cart cart = cartRepo.findByUser(u).orElseThrow(() -> {
+                String err = "Cart is empty";
+                CheckoutErrorContext.setLastError(err);
+                return new RuntimeException(err);
+            });
             if (cart.getItems().isEmpty()) {
-                throw new RuntimeException("Cart is empty");
+                String err = "Cart is empty";
+                CheckoutErrorContext.setLastError(err);
+                throw new RuntimeException(err);
             }
 
             subtotal = cart.getItems().stream()
@@ -292,7 +301,9 @@ public class OrderService {
                 } catch (Exception e) {
                     log.error("Razorpay order creation failed for order {}: {}", orderNum, e.getMessage());
                     String errMsg = e.getMessage() != null && !e.getMessage().isBlank() ? e.getMessage() : "Failed to connect to Razorpay API";
-                    throw new RuntimeException("Online Payment Gateway Error: " + errMsg);
+                    String fullErr = "Online Payment Gateway Error: " + errMsg;
+                    CheckoutErrorContext.setLastError(fullErr);
+                    throw new RuntimeException(fullErr);
                 }
             }
         }
@@ -720,20 +731,29 @@ public class OrderService {
 
     private OrderItem buildOrderItem(CartItemRequest itemReq) {
         if (itemReq == null || itemReq.getProductId() == null) {
-            throw new RuntimeException("Invalid item request in cart");
+            String err = "Invalid item request in cart";
+            CheckoutErrorContext.setLastError(err);
+            throw new RuntimeException(err);
         }
         Product product = productRepo.findById(itemReq.getProductId())
-                .orElseThrow(() -> new RuntimeException("Product not found: " + itemReq.getProductId()));
+                .orElseThrow(() -> {
+                    String err = "Product not found: " + itemReq.getProductId();
+                    CheckoutErrorContext.setLastError(err);
+                    return new RuntimeException(err);
+                });
         int qty = itemReq.getQuantity() != null && itemReq.getQuantity() > 0 ? itemReq.getQuantity() : 1;
         ProductVariant variant = resolveVariant(product, itemReq);
         if (variant != null) {
             if (variant.getActive() != null && !variant.getActive()) {
-                throw new RuntimeException("Variant unavailable for " + (product.getName() != null ? product.getName() : "item"));
+                String err = "Variant unavailable for " + (product.getName() != null ? product.getName() : "item");
+                CheckoutErrorContext.setLastError(err);
+                throw new RuntimeException(err);
             }
             int availableStock = variant.getStockQuantity() != null ? variant.getStockQuantity() : 0;
             if (availableStock < qty) {
-                throw new RuntimeException(
-                        "Insufficient stock for " + (product.getName() != null ? product.getName() : "item") + " (" + (variant.getSize() != null ? variant.getSize() : "") + ")");
+                String err = "Insufficient stock for " + (product.getName() != null ? product.getName() : "item") + " (" + (variant.getSize() != null ? variant.getSize() : "") + ")";
+                CheckoutErrorContext.setLastError(err);
+                throw new RuntimeException(err);
             }
         }
         BigDecimal unitPrice = (variant != null && variant.getVariantPrice() != null)

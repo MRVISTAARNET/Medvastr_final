@@ -17,17 +17,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(org.springframework.transaction.UnexpectedRollbackException.class)
     public ResponseEntity<ApiResponse<Object>> unexpectedRollback(org.springframework.transaction.UnexpectedRollbackException e) {
         log.error("[CHECKOUT_ERROR] Unexpected Rollback Exception: ", e);
-        Throwable mostSpecific = e.getMostSpecificCause();
-        if (mostSpecific != null) {
-            log.error("[CHECKOUT_ERROR] Root Cause Exception: {} - Message: {}", mostSpecific.getClass().getName(), mostSpecific.getMessage());
-        }
         
-        String message = null;
-        if (mostSpecific != null && mostSpecific.getMessage() != null && !mostSpecific.getMessage().contains("marked as rollback-only")) {
-            message = mostSpecific.getMessage();
+        String message = CheckoutErrorContext.getLastError();
+        CheckoutErrorContext.clear();
+
+        if (message == null || message.isBlank() || message.contains("marked as rollback-only") || message.contains("Transaction silently rolled back")) {
+            Throwable mostSpecific = e.getMostSpecificCause();
+            if (mostSpecific != null && mostSpecific.getMessage() != null 
+                    && !mostSpecific.getMessage().contains("marked as rollback-only")
+                    && !mostSpecific.getMessage().contains("Transaction silently rolled back")) {
+                message = mostSpecific.getMessage();
+            }
         }
 
-        if (message == null || message.isBlank()) {
+        if (message == null || message.isBlank() || message.contains("marked as rollback-only") || message.contains("Transaction silently rolled back")) {
             Throwable current = e;
             while (current != null) {
                 String m = current.getMessage();
@@ -40,15 +43,17 @@ public class GlobalExceptionHandler {
             }
         }
 
-        if (message == null || message.isBlank()) {
-            message = mostSpecific != null && mostSpecific.getMessage() != null ? mostSpecific.getMessage() : e.getMessage();
+        if (message == null || message.isBlank() || message.contains("marked as rollback-only") || message.contains("Transaction silently rolled back")) {
+            message = "Payment or order processing failed. Please check Payment Settings / Razorpay API keys or item availability.";
         }
-        return ResponseEntity.badRequest().body(ApiResponse.err("Transaction issue: " + message));
+
+        return ResponseEntity.badRequest().body(ApiResponse.err(message));
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<Object>> runtime(RuntimeException e) {
         log.error("[CHECKOUT_ERROR] Runtime Exception: ", e);
+        CheckoutErrorContext.clear();
         return ResponseEntity.badRequest().body(ApiResponse.err(e.getMessage()));
     }
 
