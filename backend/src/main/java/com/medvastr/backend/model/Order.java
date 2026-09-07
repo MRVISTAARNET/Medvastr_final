@@ -44,7 +44,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false, length = 30)
+    @Column(unique = true, nullable = false, length = 60)
     private String orderNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)

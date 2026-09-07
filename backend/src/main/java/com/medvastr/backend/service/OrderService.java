@@ -226,7 +226,7 @@ public class OrderService {
         if (total.compareTo(BigDecimal.ZERO) < 0) {
             total = BigDecimal.ZERO;
         }
-        String tempNum = "TEMP-" + java.util.UUID.randomUUID().toString();
+        String tempNum = "TMP" + System.currentTimeMillis() + (int) (Math.random() * 1000);
 
         BigDecimal taxVal = BigDecimal.ZERO;
         for (var oi : orderItems) {
@@ -719,31 +719,35 @@ public class OrderService {
     }
 
     private OrderItem buildOrderItem(CartItemRequest itemReq) {
+        if (itemReq == null || itemReq.getProductId() == null) {
+            throw new RuntimeException("Invalid item request in cart");
+        }
         Product product = productRepo.findById(itemReq.getProductId())
                 .orElseThrow(() -> new RuntimeException("Product not found: " + itemReq.getProductId()));
+        int qty = itemReq.getQuantity() != null && itemReq.getQuantity() > 0 ? itemReq.getQuantity() : 1;
         ProductVariant variant = resolveVariant(product, itemReq);
         if (variant != null) {
             if (variant.getActive() != null && !variant.getActive()) {
-                throw new RuntimeException("Variant unavailable for " + product.getName());
+                throw new RuntimeException("Variant unavailable for " + (product.getName() != null ? product.getName() : "item"));
             }
             int availableStock = variant.getStockQuantity() != null ? variant.getStockQuantity() : 0;
-            if (availableStock < itemReq.getQuantity()) {
+            if (availableStock < qty) {
                 throw new RuntimeException(
-                        "Insufficient stock for " + product.getName() + " (" + (variant.getSize() != null ? variant.getSize() : "") + ")");
+                        "Insufficient stock for " + (product.getName() != null ? product.getName() : "item") + " (" + (variant.getSize() != null ? variant.getSize() : "") + ")");
             }
         }
-        BigDecimal unitPrice = variant != null && variant.getVariantPrice() != null
+        BigDecimal unitPrice = (variant != null && variant.getVariantPrice() != null)
                 ? variant.getVariantPrice()
-                : product.getPrice();
-        BigDecimal itemTotal = unitPrice.multiply(BigDecimal.valueOf(itemReq.getQuantity()));
+                : (product.getPrice() != null ? product.getPrice() : BigDecimal.ZERO);
+        BigDecimal itemTotal = unitPrice.multiply(BigDecimal.valueOf(qty));
         return OrderItem.builder()
                 .product(product)
                 .variant(variant)
-                .productName(product.getName())
+                .productName(product.getName() != null ? product.getName() : "Product")
                 .size(itemReq.getSize())
                 .colorName(itemReq.getColorName())
                 .colorHex(itemReq.getColorHex())
-                .quantity(itemReq.getQuantity())
+                .quantity(qty)
                 .unitPrice(unitPrice)
                 .totalPrice(itemTotal)
                 .build();
