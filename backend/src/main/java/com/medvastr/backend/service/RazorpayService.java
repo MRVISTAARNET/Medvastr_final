@@ -33,13 +33,23 @@ public class RazorpayService {
     }
 
     public String getKeyId() {
-        String k = storeSettingRepo.findById("razorpay_key").map(StoreSetting::getSettingValue).orElse(keyId);
-        return k != null ? k.trim() : "";
+        String dbVal = storeSettingRepo.findById("razorpay_key")
+                .map(StoreSetting::getSettingValue)
+                .orElse(null);
+        if (dbVal != null && !dbVal.isBlank()) {
+            return dbVal.trim();
+        }
+        return keyId != null ? keyId.trim() : "";
     }
 
     private String getDbKeySecret() {
-        String s = storeSettingRepo.findById("razorpay_secret").map(StoreSetting::getSettingValue).orElse(keySecret);
-        return s != null ? s.trim() : "";
+        String dbVal = storeSettingRepo.findById("razorpay_secret")
+                .map(StoreSetting::getSettingValue)
+                .orElse(null);
+        if (dbVal != null && !dbVal.isBlank()) {
+            return dbVal.trim();
+        }
+        return keySecret != null ? keySecret.trim() : "";
     }
 
     public RazorpayClient getClient() throws RazorpayException {
@@ -100,7 +110,13 @@ public class RazorpayService {
     }
 
     private String getDbWebhookSecret() {
-        return storeSettingRepo.findById("razorpay_webhook_secret").map(StoreSetting::getSettingValue).orElse(webhookSecret);
+        String dbVal = storeSettingRepo.findById("razorpay_webhook_secret")
+                .map(StoreSetting::getSettingValue)
+                .orElse(null);
+        if (dbVal != null && !dbVal.isBlank()) {
+            return dbVal.trim();
+        }
+        return webhookSecret != null ? webhookSecret.trim() : "";
     }
 
     public boolean verifyWebhookSignature(String payload, String signature) {
