@@ -6,8 +6,20 @@ import { EmbroideryCustomizationState, FontStyleType, TextColorChoice } from '@/
 interface EmbroideryScrubPreviewProps {
   customization: EmbroideryCustomizationState;
   baseScrubImage?: string;
+  embroideryPreviewImage?: string;
   selectedColorName?: string;
 }
+
+// Dedicated high-resolution close-up scrub top chest images by color
+const closeUpScrubImageMap: Record<string, string> = {
+  'navy blue': 'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_navy_close_up_scrub_top.jpg',
+  navy: 'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_navy_close_up_scrub_top.jpg',
+  black: 'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_black_close_up_scrub_top.jpg',
+  'royal blue': 'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_royal_blue_close_up_scrub_top.jpg',
+  wine: 'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_wine_close_up_scrub_top.jpg',
+  burgundy: 'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_wine_close_up_scrub_top.jpg',
+  'ceil blue': 'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_ceil_blue_close_up_scrub_top.jpg',
+};
 
 // Color hex mappings for preview overlay
 const textColorHexMap: Record<TextColorChoice, string> = {
@@ -27,11 +39,17 @@ const fontStyleFamilyMap: Record<FontStyleType, string> = {
 export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
   customization,
   baseScrubImage,
+  embroideryPreviewImage,
   selectedColorName = 'Navy Blue',
 }) => {
-  // Default base image if none provided
+  const normalizedColor = selectedColorName.toLowerCase().trim();
+  const colorCloseUp = closeUpScrubImageMap[normalizedColor];
+
+  // Priority: 1. Custom embroidery close-up image, 2. Base scrub image, 3. Color close-up map, 4. High-res default
   const scrubImage =
+    embroideryPreviewImage ||
     baseScrubImage ||
+    colorCloseUp ||
     'https://cdn.shopify.com/s/files/1/0562/9247/5063/products/1_3a8c17b8-8e65-4fef-b5bb-413158f333fb.jpg?v=1700000000';
 
   const textColorHex = textColorHexMap[customization.textColor] || '#FFFFFF';
@@ -39,15 +57,15 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
 
   return (
     <div className="relative w-full h-full min-h-[380px] bg-[#0A1128] overflow-hidden flex items-center justify-center select-none">
-      {/* Background Scrub Image */}
+      {/* Background Scrub Close-Up Image */}
       <img
         src={scrubImage}
-        alt={`Scrub top preview - ${selectedColorName}`}
-        className="w-full h-full object-cover object-top filter brightness-[0.98]"
+        alt={`Scrub top chest embroidery preview - ${selectedColorName}`}
+        className="w-full h-full object-cover object-center filter brightness-[0.98] transition-all duration-300"
         onError={(e) => {
-          // Fallback image if image fails to load
+          // Fallback image if custom image fails to load
           (e.target as HTMLImageElement).src =
-            'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya-scrub-placeholder.jpg';
+            'https://cdn.shopify.com/s/files/1/0562/9247/5063/products/1_3a8c17b8-8e65-4fef-b5bb-413158f333fb.jpg?v=1700000000';
         }}
       />
 

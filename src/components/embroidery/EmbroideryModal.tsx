@@ -15,6 +15,7 @@ interface EmbroideryModalProps {
   onClose: () => void;
   onSaveCustomization: (customization: EmbroideryCustomizationState) => void;
   baseScrubImage?: string;
+  embroideryPreviewImage?: string;
   selectedColorName?: string;
   customPrices?: Partial<EmbroideryPrices>;
 }
@@ -47,6 +48,7 @@ export const EmbroideryModal: React.FC<EmbroideryModalProps> = ({
   onClose,
   onSaveCustomization,
   baseScrubImage,
+  embroideryPreviewImage,
   selectedColorName,
   customPrices,
 }) => {
@@ -121,6 +123,7 @@ export const EmbroideryModal: React.FC<EmbroideryModalProps> = ({
           <EmbroideryScrubPreview
             customization={customization}
             baseScrubImage={baseScrubImage}
+            embroideryPreviewImage={embroideryPreviewImage}
             selectedColorName={selectedColorName}
           />
         </div>
