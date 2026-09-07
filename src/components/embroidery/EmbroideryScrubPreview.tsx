@@ -57,12 +57,12 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
   const fontStyleFamily = fontStyleFamilyMap[customization.fontStyle] || 'sans-serif';
 
   return (
-    <div className="relative w-full h-full min-h-[380px] bg-[#0A1128] overflow-hidden flex items-center justify-center select-none">
+    <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '320px', backgroundColor: '#0A1128', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', userSelect: 'none' }}>
       {/* Background Scrub Close-Up Image */}
       <img
         src={scrubImage}
         alt={`Scrub top chest embroidery preview - ${selectedColorName}`}
-        className="w-full h-full object-cover object-center filter brightness-[0.98] transition-all duration-300"
+        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
         onError={(e) => {
           (e.target as HTMLImageElement).src =
             'https://cdn.shopify.com/s/files/1/0562/9247/5063/products/1_3a8c17b8-8e65-4fef-b5bb-413158f333fb.jpg?v=1700000000';
@@ -74,7 +74,24 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-4 left-4 z-30 bg-white hover:bg-gray-100 text-gray-900 font-bold px-3 py-1.5 rounded-md shadow-md text-xs tracking-wider uppercase border border-gray-200 cursor-pointer flex items-center gap-1.5 transition"
+          style={{
+            position: 'absolute',
+            top: '16px',
+            left: '16px',
+            zIndex: 30,
+            backgroundColor: '#ffffff',
+            color: '#111827',
+            fontWeight: 700,
+            padding: '6px 12px',
+            borderRadius: '6px',
+            fontSize: '12px',
+            border: '1px solid #e5e7eb',
+            cursor: 'pointer',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+          }}
         >
           <span>✕</span> CLOSE
         </button>

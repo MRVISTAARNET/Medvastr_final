@@ -130,13 +130,26 @@ export const EmbroideryModal: React.FC<EmbroideryModalProps> = ({
       className="animate-fadeIn"
       onClick={onClose}
     >
-      {/* Centered Desktop Panel (1080px x 540px) */}
+      {/* Centered Desktop Panel */}
       <div
-        className="relative w-full max-w-[1080px] h-[90vh] max-h-[580px] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-100"
+        style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: '960px',
+          height: '85vh',
+          maxHeight: '540px',
+          backgroundColor: '#ffffff',
+          borderRadius: '16px',
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'row',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35)',
+          border: '1px solid #e5e7eb',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Left Panel (55-60% width on desktop): Scrub Live Preview */}
-        <div className="w-full md:w-[58%] h-[240px] md:h-full relative bg-[#0A1128]">
+        {/* Left Panel (52% width): Scrub Live Preview */}
+        <div style={{ width: '52%', height: '100%', position: 'relative', backgroundColor: '#0A1128', overflow: 'hidden', flexShrink: 0 }}>
           <EmbroideryScrubPreview
             customization={customization}
             baseScrubImage={baseScrubImage}
@@ -146,8 +159,8 @@ export const EmbroideryModal: React.FC<EmbroideryModalProps> = ({
           />
         </div>
 
-        {/* Right Panel (40-45% width on desktop): Selection or Configurator */}
-        <div className="w-full md:w-[42%] h-full flex flex-col bg-white overflow-hidden">
+        {/* Right Panel (48% width): Configurator */}
+        <div style={{ width: '48%', height: '100%', backgroundColor: '#ffffff', display: 'flex', flexDirection: 'column', overflowY: 'auto', flexShrink: 0 }}>
           {currentStep === 'selection' ? (
             <EmbroiderySelection
               selectedOption={customization.selectedOption}

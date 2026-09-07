@@ -19,24 +19,33 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
   onDeleteEmbroidery,
 }) => {
   return (
-    <div className="w-full my-4 font-sans text-gray-900 select-none">
+    <div style={{ width: '100%', margin: '16px 0', fontFamily: 'sans-serif', userSelect: 'none' }}>
       {/* Embroidery Card Wrapper */}
-      <div className="rounded-xl overflow-hidden shadow-sm border border-gray-200 bg-white">
+      <div style={{ borderRadius: '12px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid #e2e8f0', backgroundColor: '#ffffff' }}>
         {/* Purple Branding Header */}
         <div
           onClick={onOpenModal}
-          className="bg-[#462D8C] text-white p-3.5 sm:p-4 cursor-pointer flex items-center gap-3 transition-opacity hover:opacity-95"
+          style={{
+            backgroundColor: '#462D8C',
+            color: '#ffffff',
+            padding: '14px 16px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            borderRadius: '12px 12px 0 0',
+          }}
         >
           {/* Pencil / Embroidery Icon */}
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white/15 flex items-center justify-center flex-shrink-0">
-            <span className="text-xl">✏️</span>
+          <div style={{ width: '38px', height: '38px', borderRadius: '50%', backgroundColor: 'rgba(255, 255, 255, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '20px' }}>
+            ✏️
           </div>
 
-          <div className="flex-1">
-            <h3 className="font-semibold text-base sm:text-lg text-white leading-tight tracking-wide">
+          <div style={{ flex: 1 }}>
+            <h3 style={{ fontWeight: 700, fontSize: '17px', color: '#ffffff', margin: 0, lineHeight: '1.2' }}>
               Custom Embroidery
             </h3>
-            <p className="text-xs sm:text-sm text-[#E0D8F3] font-medium mt-0.5">
+            <p style={{ fontSize: '13px', color: '#E0D8F3', fontWeight: 500, margin: '2px 0 0 0', lineHeight: '1.2' }}>
               Starting at ₹99 personalise your scrubs
             </p>
           </div>
@@ -44,14 +53,23 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
 
         {/* Content Area: Not Configured Yet vs Configured */}
         {!isEmbroiderySelected || !customization || (!customization.line1 && !customization.selectedIconId && !customization.customLogoUrl) ? (
-          <div className="bg-[#F9F9FB] p-3.5 sm:p-4 space-y-2.5">
+          <div style={{ backgroundColor: '#F9F9FB', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {/* Option 1: Add Embroidery */}
             <div
               onClick={() => {
                 onToggleAddEmbroidery(true);
                 onOpenModal();
               }}
-              className="flex items-start gap-3 p-3 rounded-lg border border-transparent hover:bg-[#F0EBFA] cursor-pointer transition"
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '12px',
+                padding: '10px 12px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                backgroundColor: isEmbroiderySelected ? '#F0EBFA' : 'transparent',
+                transition: 'background 0.2s',
+              }}
             >
               <input
                 type="radio"
@@ -62,13 +80,13 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
                   onToggleAddEmbroidery(true);
                   onOpenModal();
                 }}
-                className="mt-1 w-4 h-4 accent-[#462D8C] cursor-pointer flex-shrink-0"
+                style={{ marginTop: '3px', width: '18px', height: '18px', accentColor: '#462D8C', cursor: 'pointer', flexShrink: 0 }}
               />
               <label htmlFor="showEmb" style={{ cursor: 'pointer', flex: 1, display: 'block' }}>
                 <strong style={{ display: 'block', color: '#462D8C', fontSize: '15px', fontWeight: 700, lineHeight: '1.3' }}>
                   Add Embroidery
                 </strong>
-                <span style={{ display: 'block', fontSize: '12px', color: '#554e65', marginTop: '4px', lineHeight: '1.4' }}>
+                <span style={{ display: 'block', fontSize: '12px', color: '#554e65', marginTop: '3px', lineHeight: '1.4' }}>
                   Make it yours - name, hospital logo, or icon
                 </span>
               </label>
@@ -77,8 +95,16 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
             {/* Option 2: Skip for Now */}
             <div
               onClick={() => onToggleAddEmbroidery(false)}
-              className="flex items-start gap-3 p-3 rounded-lg border border-transparent hover:bg-gray-100 cursor-pointer transition"
-              style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px' }}
+              style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '12px',
+                padding: '10px 12px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                backgroundColor: !isEmbroiderySelected ? '#F3F4F6' : 'transparent',
+                transition: 'background 0.2s',
+              }}
             >
               <input
                 type="radio"
@@ -86,14 +112,13 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
                 name="embroidery"
                 checked={!isEmbroiderySelected}
                 onChange={() => onToggleAddEmbroidery(false)}
-                className="mt-1 w-4 h-4 accent-[#462D8C] cursor-pointer flex-shrink-0"
-                style={{ marginTop: '3px' }}
+                style={{ marginTop: '3px', width: '18px', height: '18px', accentColor: '#462D8C', cursor: 'pointer', flexShrink: 0 }}
               />
               <label htmlFor="dontShowEmbroidery" style={{ cursor: 'pointer', flex: 1, display: 'block' }}>
                 <strong style={{ display: 'block', color: '#462D8C', fontSize: '15px', fontWeight: 700, lineHeight: '1.3' }}>
                   Skip for Now
                 </strong>
-                <span style={{ display: 'block', fontSize: '12px', color: '#554e65', marginTop: '4px', lineHeight: '1.4' }}>
+                <span style={{ display: 'block', fontSize: '12px', color: '#554e65', marginTop: '3px', lineHeight: '1.4' }}>
                   and risk misplacing your scrubs
                 </span>
               </label>
