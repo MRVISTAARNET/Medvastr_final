@@ -8,6 +8,7 @@ interface EmbroideryScrubPreviewProps {
   baseScrubImage?: string;
   embroideryPreviewImage?: string;
   selectedColorName?: string;
+  onClose?: () => void;
 }
 
 // Dedicated high-resolution close-up scrub top chest images by color
@@ -41,15 +42,11 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
   baseScrubImage,
   embroideryPreviewImage,
   selectedColorName = 'Navy Blue',
+  onClose,
 }) => {
   const normalizedColor = selectedColorName.toLowerCase().trim();
   const colorCloseUp = closeUpScrubImageMap[normalizedColor];
 
-  // Priority: 
-  // 1. Color-Specific / Master Embroidery Preview Image uploaded in Tab 6
-  // 2. baseScrubImage (Main product image for selected color variant)
-  // 3. colorCloseUp (Dedicated chest close-up photo for standard colors)
-  // 4. Default high-res scrub image fallback
   const scrubImage =
     embroideryPreviewImage ||
     baseScrubImage ||
@@ -67,14 +64,21 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
         alt={`Scrub top chest embroidery preview - ${selectedColorName}`}
         className="w-full h-full object-cover object-center filter brightness-[0.98] transition-all duration-300"
         onError={(e) => {
-          // Fallback image if custom image fails to load
           (e.target as HTMLImageElement).src =
             'https://cdn.shopify.com/s/files/1/0562/9247/5063/products/1_3a8c17b8-8e65-4fef-b5bb-413158f333fb.jpg?v=1700000000';
         }}
       />
 
-      {/* Top Left Close Indicator / Placement Overlay */}
-      {/* Dynamic Chest Embroidery Preview Overlay */}
+      {/* Top Left Close Button Overlay */}
+      {onClose && (
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-4 left-4 z-30 bg-white hover:bg-gray-100 text-gray-900 font-bold px-3 py-1.5 rounded-md shadow-md text-xs tracking-wider uppercase border border-gray-200 cursor-pointer flex items-center gap-1.5 transition"
+        >
+          <span>✕</span> CLOSE
+        </button>
+      )}
       <div className="absolute inset-0 z-20 pointer-events-none">
         {/* Right Chest Medical Icon / Logo Overlay (Viewer's Left side) */}
         <div className="absolute top-[34%] left-[16%] sm:left-[18%] w-[60px] sm:w-[80px] h-[60px] sm:h-[80px] flex items-center justify-center">

@@ -43,15 +43,15 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
         </div>
 
         {/* Content Area: Not Configured Yet vs Configured */}
-        {!isEmbroiderySelected || !customization || customization.selectedOption === 'none' ? (
-          <div className="bg-[#F7F7F7] p-3 sm:p-4 space-y-3">
+        {!isEmbroiderySelected || !customization || (!customization.line1 && !customization.selectedIconId && !customization.customLogoUrl) ? (
+          <div className="bg-[#F9F9FB] p-3.5 sm:p-4 space-y-2.5">
             {/* Option 1: Add Embroidery */}
             <div
               onClick={() => {
                 onToggleAddEmbroidery(true);
                 onOpenModal();
               }}
-              className="flex items-start gap-3 p-2.5 rounded-lg border border-transparent hover:bg-[#f7f1ff] cursor-pointer transition"
+              className="flex items-start gap-3 p-3 rounded-lg border border-transparent hover:bg-[#F0EBFA] cursor-pointer transition"
             >
               <input
                 type="radio"
@@ -62,13 +62,13 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
                   onToggleAddEmbroidery(true);
                   onOpenModal();
                 }}
-                className="mt-1 w-4 h-4 accent-[#462D8C] cursor-pointer"
+                className="mt-1 w-4 h-4 accent-[#462D8C] cursor-pointer flex-shrink-0"
               />
-              <label htmlFor="showEmb" className="cursor-pointer">
-                <span className="block font-semibold text-[#462D8C] text-sm sm:text-base">
+              <label htmlFor="showEmb" className="cursor-pointer flex-1">
+                <span className="block font-bold text-[#462D8C] text-sm sm:text-base leading-tight">
                   Add Embroidery
                 </span>
-                <span className="block text-xs text-[#4a4458] mt-0.5">
+                <span className="block text-xs text-[#554e65] mt-1 leading-normal">
                   Make it yours - name, hospital logo, or icon
                 </span>
               </label>
@@ -77,7 +77,7 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
             {/* Option 2: Skip for Now */}
             <div
               onClick={() => onToggleAddEmbroidery(false)}
-              className="flex items-start gap-3 p-2.5 rounded-lg border border-transparent hover:bg-gray-100 cursor-pointer transition"
+              className="flex items-start gap-3 p-3 rounded-lg border border-transparent hover:bg-gray-100 cursor-pointer transition"
             >
               <input
                 type="radio"
@@ -85,13 +85,13 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
                 name="embroidery"
                 checked={!isEmbroiderySelected}
                 onChange={() => onToggleAddEmbroidery(false)}
-                className="mt-1 w-4 h-4 accent-[#462D8C] cursor-pointer"
+                className="mt-1 w-4 h-4 accent-[#462D8C] cursor-pointer flex-shrink-0"
               />
-              <label htmlFor="dontShowEmbroidery" className="cursor-pointer">
-                <span className="block font-semibold text-[#462D8C] text-sm sm:text-base">
+              <label htmlFor="dontShowEmbroidery" className="cursor-pointer flex-1">
+                <span className="block font-bold text-[#462D8C] text-sm sm:text-base leading-tight">
                   Skip for Now
                 </span>
-                <span className="block text-xs text-[#4a4458] mt-0.5">
+                <span className="block text-xs text-[#554e65] mt-1 leading-normal">
                   and risk misplacing your scrubs
                 </span>
               </label>
@@ -102,32 +102,27 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
           <div className="bg-[#F7F1FF] p-4 border-t border-[#E0D8F3]">
             <div className="flex items-center justify-between border-b border-[#D4C6EF] pb-3 mb-3">
               <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={true}
-                  readOnly
-                  className="w-4 h-4 accent-[#462D8C]"
-                />
+                <span className="text-base">✨</span>
                 <span className="font-bold text-[#462D8C] text-sm sm:text-base">
                   Custom Embroidery Configured
                 </span>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2.5">
                 <span className="font-bold text-gray-900 text-base">
                   ₹{customization.totalEmbroideryPrice}
                 </span>
 
                 <button
                   onClick={onOpenModal}
-                  className="text-xs font-bold text-[#462D8C] hover:underline px-2 py-1 rounded bg-white/80 border border-[#462D8C]/20"
+                  className="text-xs font-bold text-[#462D8C] hover:underline px-2.5 py-1 rounded bg-white border border-[#462D8C]/30 shadow-xs"
                 >
                   EDIT
                 </button>
 
                 <button
                   onClick={onDeleteEmbroidery}
-                  className="text-gray-500 hover:text-rose-600 transition"
+                  className="text-gray-400 hover:text-rose-600 transition p-1 text-sm"
                   title="Remove Embroidery"
                 >
                   🗑️

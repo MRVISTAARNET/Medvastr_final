@@ -52,7 +52,7 @@ export const EmbroideryModal: React.FC<EmbroideryModalProps> = ({
   selectedColorName,
   customPrices,
 }) => {
-  const [currentStep, setCurrentStep] = useState<'selection' | 'config'>('selection');
+  const [currentStep, setCurrentStep] = useState<'selection' | 'config'>('config');
   const [customization, setCustomization] = useState<EmbroideryCustomizationState>(
     initialCustomizationState
   );
@@ -64,7 +64,6 @@ export const EmbroideryModal: React.FC<EmbroideryModalProps> = ({
     ...customPrices,
   };
 
-  // Select option in Screen 2 -> Transition to Screen 3
   const handleSelectOption = (option: EmbroideryOptionType) => {
     let price = prices.bundlePrice;
     if (option === 'top') price = prices.topPrice;
@@ -81,7 +80,6 @@ export const EmbroideryModal: React.FC<EmbroideryModalProps> = ({
   const handleUpdateCustomization = (updated: Partial<EmbroideryCustomizationState>) => {
     setCustomization((prev) => {
       const next = { ...prev, ...updated };
-      // Recalculate price if custom logo added
       let price =
         next.selectedOption === 'bundle'
           ? prices.bundlePrice
@@ -125,6 +123,7 @@ export const EmbroideryModal: React.FC<EmbroideryModalProps> = ({
             baseScrubImage={baseScrubImage}
             embroideryPreviewImage={embroideryPreviewImage}
             selectedColorName={selectedColorName}
+            onClose={onClose}
           />
         </div>
 
@@ -141,7 +140,7 @@ export const EmbroideryModal: React.FC<EmbroideryModalProps> = ({
               customization={customization}
               prices={prices}
               onChangeCustomization={handleUpdateCustomization}
-              onBack={() => setCurrentStep('selection')}
+              onBack={onClose}
               onReset={handleReset}
               onProceed={handleProceed}
             />
