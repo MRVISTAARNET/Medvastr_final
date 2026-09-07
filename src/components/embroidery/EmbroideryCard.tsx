@@ -22,11 +22,11 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
     <div style={{ width: '100%', margin: '16px 0', fontFamily: 'sans-serif', userSelect: 'none' }}>
       {/* Embroidery Card Wrapper */}
       <div style={{ borderRadius: '12px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid #e2e8f0', backgroundColor: '#ffffff' }}>
-        {/* Purple Branding Header */}
+        {/* Dark Navy Branding Header */}
         <div
           onClick={onOpenModal}
           style={{
-            backgroundColor: '#462D8C',
+            backgroundColor: '#1e1b4b',
             color: '#ffffff',
             padding: '14px 16px',
             cursor: 'pointer',
@@ -37,7 +37,7 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
           }}
         >
           {/* Pencil / Embroidery Icon */}
-          <div style={{ width: '38px', height: '38px', borderRadius: '50%', backgroundColor: 'rgba(255, 255, 255, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '20px' }}>
+          <div style={{ width: '38px', height: '38px', borderRadius: '50%', backgroundColor: 'rgba(255, 255, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '20px' }}>
             ✏️
           </div>
 
@@ -45,7 +45,7 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
             <h3 style={{ fontWeight: 700, fontSize: '17px', color: '#ffffff', margin: 0, lineHeight: '1.2' }}>
               Custom Embroidery
             </h3>
-            <p style={{ fontSize: '13px', color: '#E0D8F3', fontWeight: 500, margin: '2px 0 0 0', lineHeight: '1.2' }}>
+            <p style={{ fontSize: '13px', color: '#CBD5E1', fontWeight: 500, margin: '2px 0 0 0', lineHeight: '1.2' }}>
               Starting at ₹99 personalise your scrubs
             </p>
           </div>
@@ -67,7 +67,7 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
                 padding: '10px 12px',
                 borderRadius: '8px',
                 cursor: 'pointer',
-                backgroundColor: isEmbroiderySelected ? '#F0EBFA' : 'transparent',
+                backgroundColor: isEmbroiderySelected ? '#F0F4F8' : 'transparent',
                 transition: 'background 0.2s',
               }}
             >
@@ -80,10 +80,10 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
                   onToggleAddEmbroidery(true);
                   onOpenModal();
                 }}
-                style={{ marginTop: '3px', width: '18px', height: '18px', accentColor: '#462D8C', cursor: 'pointer', flexShrink: 0 }}
+                style={{ marginTop: '3px', width: '18px', height: '18px', accentColor: '#1e1b4b', cursor: 'pointer', flexShrink: 0 }}
               />
               <label htmlFor="showEmb" style={{ cursor: 'pointer', flex: 1, display: 'block' }}>
-                <strong style={{ display: 'block', color: '#462D8C', fontSize: '15px', fontWeight: 700, lineHeight: '1.3' }}>
+                <strong style={{ display: 'block', color: '#1e1b4b', fontSize: '15px', fontWeight: 700, lineHeight: '1.3' }}>
                   Add Embroidery
                 </strong>
                 <span style={{ display: 'block', fontSize: '12px', color: '#554e65', marginTop: '3px', lineHeight: '1.4' }}>
@@ -112,10 +112,10 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
                 name="embroidery"
                 checked={!isEmbroiderySelected}
                 onChange={() => onToggleAddEmbroidery(false)}
-                style={{ marginTop: '3px', width: '18px', height: '18px', accentColor: '#462D8C', cursor: 'pointer', flexShrink: 0 }}
+                style={{ marginTop: '3px', width: '18px', height: '18px', accentColor: '#1e1b4b', cursor: 'pointer', flexShrink: 0 }}
               />
               <label htmlFor="dontShowEmbroidery" style={{ cursor: 'pointer', flex: 1, display: 'block' }}>
-                <strong style={{ display: 'block', color: '#462D8C', fontSize: '15px', fontWeight: 700, lineHeight: '1.3' }}>
+                <strong style={{ display: 'block', color: '#1e1b4b', fontSize: '15px', fontWeight: 700, lineHeight: '1.3' }}>
                   Skip for Now
                 </strong>
                 <span style={{ display: 'block', fontSize: '12px', color: '#554e65', marginTop: '3px', lineHeight: '1.4' }}>
@@ -126,30 +126,30 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
           </div>
         ) : (
           /* Configured Summary View */
-          <div className="bg-[#F7F1FF] p-4 border-t border-[#E0D8F3]">
-            <div className="flex items-center justify-between border-b border-[#D4C6EF] pb-3 mb-3">
-              <div className="flex items-center gap-2">
-                <span className="text-base">✨</span>
-                <span className="font-bold text-[#462D8C] text-sm sm:text-base">
+          <div style={{ backgroundColor: '#F0F4F8', padding: '16px', borderTop: '1px solid #E2E8F0' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #CBD5E1', paddingBottom: '12px', marginBottom: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '16px' }}>✨</span>
+                <span style={{ fontWeight: 700, color: '#1e1b4b', fontSize: '15px' }}>
                   Custom Embroidery Configured
                 </span>
               </div>
 
-              <div className="flex items-center gap-2.5">
-                <span className="font-bold text-gray-900 text-base">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '16px' }}>
                   ₹{customization.totalEmbroideryPrice}
                 </span>
 
                 <button
                   onClick={onOpenModal}
-                  className="text-xs font-bold text-[#462D8C] hover:underline px-2.5 py-1 rounded bg-white border border-[#462D8C]/30 shadow-xs"
+                  style={{ fontSize: '12px', fontWeight: 700, color: '#1e1b4b', backgroundColor: '#ffffff', border: '1px solid #CBD5E1', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer' }}
                 >
                   EDIT
                 </button>
 
                 <button
                   onClick={onDeleteEmbroidery}
-                  className="text-gray-400 hover:text-rose-600 transition p-1 text-sm"
+                  style={{ color: '#94a3b8', background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', padding: '4px' }}
                   title="Remove Embroidery"
                 >
                   🗑️

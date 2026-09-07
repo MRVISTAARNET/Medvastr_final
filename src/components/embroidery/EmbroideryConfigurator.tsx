@@ -84,27 +84,27 @@ export const EmbroideryConfigurator: React.FC<EmbroideryConfiguratorProps> = ({
   };
 
   return (
-    <div className="w-full h-full flex flex-col justify-between bg-white font-sans overflow-y-auto p-5 sm:p-6 text-gray-800">
+    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', backgroundColor: '#ffffff', fontFamily: 'sans-serif', padding: '20px', color: '#0f172a', boxSizing: 'border-box' }}>
       {/* Top Header */}
-      <div className="flex items-center justify-between border-b border-gray-200 pb-3 mb-4">
-        <div className="flex items-center gap-3">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '12px', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <button
             onClick={onBack}
-            className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-700 transition"
+            style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#f1f5f9', border: '1px solid #cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#334155', fontSize: '16px' }}
             title="Back"
           >
             ←
           </button>
-          <h2 className="text-lg sm:text-xl font-bold text-gray-900">{optionTitle}</h2>
+          <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#0f172a', margin: 0 }}>{optionTitle}</h2>
         </div>
 
-        <div className="text-right">
+        <div style={{ textAlign: 'right' }}>
           {customization.selectedOption === 'bundle' && (
-            <span className="line-through text-gray-400 text-xs sm:text-sm mr-1.5 font-medium">
+            <span style={{ textDecoration: 'line-through', color: '#94a3b8', fontSize: '13px', marginRight: '6px', fontWeight: 500 }}>
               ₹{prices.bundleOriginalPrice}
             </span>
           )}
-          <span className="font-bold text-gray-900 text-base sm:text-lg">
+          <span style={{ fontWeight: 700, color: '#0f172a', fontSize: '18px' }}>
             ₹
             {customization.selectedOption === 'bundle'
               ? prices.bundlePrice
@@ -115,99 +115,112 @@ export const EmbroideryConfigurator: React.FC<EmbroideryConfiguratorProps> = ({
         </div>
       </div>
 
-      <div className="space-y-5 flex-1 pr-1">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, overflowY: 'auto', paddingRight: '4px' }}>
         {/* Selected Embroidery Summary Bar */}
-        <div className="text-xs sm:text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded-md flex justify-between items-center">
-          <span>
-            <strong>Embroidery Selected:</strong>{' '}
-            {customization.selectedOption === 'bundle'
-              ? 'Both Text + Icon'
-              : customization.selectedOption === 'top'
-              ? 'Top Text / Icon'
-              : 'Bottom Text'}
-          </span>
+        <div style={{ fontSize: '13px', color: '#475569', backgroundColor: '#f8fafc', padding: '10px 14px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+          <strong>Embroidery Selected:</strong>{' '}
+          {customization.selectedOption === 'bundle'
+            ? 'Both Text + Icon'
+            : customization.selectedOption === 'top'
+            ? 'Top Text / Icon'
+            : 'Bottom Text'}
         </div>
 
         {/* SECTION: Add Text */}
-        <div className="bg-[#F8F9FA] p-4 rounded-xl space-y-4">
-          <h3 className="font-semibold text-gray-900 text-sm sm:text-base">Add Text</h3>
+        <div style={{ backgroundColor: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <h3 style={{ fontWeight: 700, color: '#0f172a', fontSize: '15px', margin: 0 }}>Add Text</h3>
 
           {/* Line 1 (Name) */}
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Text</label>
-            <div className="relative">
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#334155', marginBottom: '6px' }}>Text</label>
+            <div style={{ position: 'relative', width: '100%' }}>
               <input
                 type="text"
                 maxLength={22}
                 value={customization.line1}
                 onChange={(e) => onChangeCustomization({ line1: e.target.value })}
                 placeholder="Line 1 (Name)"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 pr-16 text-sm focus:outline-none focus:border-[#462D8C] bg-white text-gray-900"
+                style={{ width: '100%', border: '1.5px solid #cbd5e1', borderRadius: '8px', padding: '8px 45px 8px 12px', fontSize: '14px', outline: 'none', backgroundColor: '#ffffff', color: '#0f172a', boxSizing: 'border-box' }}
               />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                <span className="bg-gray-100 text-gray-600 text-[10px] font-bold px-1.5 py-0.5 rounded border border-gray-300">
+              <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
+                <span style={{ backgroundColor: '#f1f5f9', color: '#475569', fontSize: '10px', fontWeight: 700, padding: '2px 6px', borderRadius: '4px', border: '1px solid #cbd5e1' }}>
                   Aa
                 </span>
               </div>
             </div>
-            <div className="flex justify-between items-center mt-1 text-[11px]">
-              <span className="text-emerald-600 font-medium">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px', fontSize: '11px' }}>
+              <span style={{ color: '#059669', fontWeight: 600 }}>
                 {customization.selectedOption === 'bundle'
                   ? '*on both top and bottom'
                   : '*on scrub top'}
               </span>
-              <span className="text-gray-400">{customization.line1.length}/22</span>
+              <span style={{ color: '#94a3b8' }}>{customization.line1.length}/22</span>
             </div>
           </div>
 
-          {/* Line 2 (Designation) - Not needed for bottom-only */}
+          {/* Line 2 (Designation) */}
           {customization.selectedOption !== 'bottom' && (
             <div>
-              <div className="relative">
+              <div style={{ position: 'relative', width: '100%' }}>
                 <input
                   type="text"
                   maxLength={22}
                   value={customization.line2}
                   onChange={(e) => onChangeCustomization({ line2: e.target.value })}
                   placeholder="Line 2 (Designation)"
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 pr-16 text-sm focus:outline-none focus:border-[#462D8C] bg-white text-gray-900"
+                  style={{ width: '100%', border: '1.5px solid #cbd5e1', borderRadius: '8px', padding: '8px 45px 8px 12px', fontSize: '14px', outline: 'none', backgroundColor: '#ffffff', color: '#0f172a', boxSizing: 'border-box' }}
                 />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                  <span className="bg-gray-100 text-gray-600 text-[10px] font-bold px-1.5 py-0.5 rounded border border-gray-300">
+                <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
+                  <span style={{ backgroundColor: '#f1f5f9', color: '#475569', fontSize: '10px', fontWeight: 700, padding: '2px 6px', borderRadius: '4px', border: '1px solid #cbd5e1' }}>
                     Aa
                   </span>
                 </div>
               </div>
-              <div className="flex justify-between items-center mt-1 text-[11px]">
-                <span className="text-gray-500">*on top only</span>
-                <span className="text-gray-400">{customization.line2.length}/22</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px', fontSize: '11px' }}>
+                <span style={{ color: '#64748b' }}>*on top only</span>
+                <span style={{ color: '#94a3b8' }}>{customization.line2.length}/22</span>
               </div>
             </div>
           )}
 
           {/* Text Color Selector */}
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-2">
-              Text Color: <span className="capitalize font-normal text-gray-600">{customization.textColor}</span>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#334155', marginBottom: '6px' }}>
+              Text Color: <span style={{ textTransform: 'capitalize', fontWeight: 400, color: '#64748b' }}>{customization.textColor}</span>
             </label>
-            <div className="flex items-center gap-3">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               {(['white', 'black', 'yellow', 'green', 'pink'] as TextColorChoice[]).map((col) => {
-                const bgClassMap: Record<TextColorChoice, string> = {
-                  white: 'bg-white border-gray-400',
-                  black: 'bg-black border-black',
-                  yellow: 'bg-yellow-400 border-yellow-400',
-                  green: 'bg-green-300 border-green-300',
-                  pink: 'bg-pink-400 border-pink-400',
+                const bgMap: Record<TextColorChoice, string> = {
+                  white: '#FFFFFF',
+                  black: '#111827',
+                  yellow: '#FACC15',
+                  green: '#86EFAC',
+                  pink: '#F472B6',
                 };
+                const borderMap: Record<TextColorChoice, string> = {
+                  white: '#94a3b8',
+                  black: '#111827',
+                  yellow: '#EAB308',
+                  green: '#4ADE80',
+                  pink: '#EC4899',
+                };
+                const isSel = customization.textColor === col;
                 return (
                   <button
                     key={col}
+                    type="button"
                     onClick={() => onChangeCustomization({ textColor: col })}
-                    className={`w-7 h-7 rounded-full border-2 transition-all ${bgClassMap[col]} ${
-                      customization.textColor === col
-                        ? 'ring-2 ring-offset-2 ring-[#462D8C] scale-110'
-                        : 'opacity-80 hover:opacity-100'
-                    }`}
+                    style={{
+                      width: '28px',
+                      height: '28px',
+                      borderRadius: '50%',
+                      backgroundColor: bgMap[col],
+                      border: `2px solid ${borderMap[col]}`,
+                      cursor: 'pointer',
+                      boxShadow: isSel ? '0 0 0 2px #1e1b4b' : 'none',
+                      transform: isSel ? 'scale(1.1)' : 'scale(1)',
+                      transition: 'all 0.15s ease',
+                    }}
                     title={col}
                   />
                 );
@@ -217,83 +230,65 @@ export const EmbroideryConfigurator: React.FC<EmbroideryConfiguratorProps> = ({
 
           {/* Font Type Toggle */}
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-2">Font Type:</label>
-            <div className="flex items-center gap-3">
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#334155', marginBottom: '6px' }}>Font Type:</label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <button
+                type="button"
                 onClick={() => onChangeCustomization({ fontStyle: 'block' })}
-                className={`px-4 py-2 rounded-lg text-xs font-bold transition ${
-                  customization.fontStyle === 'block'
-                    ? 'bg-[#262626] text-white shadow'
-                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                }`}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  backgroundColor: customization.fontStyle === 'block' ? '#1e1b4b' : '#ffffff',
+                  color: customization.fontStyle === 'block' ? '#ffffff' : '#334155',
+                  border: '1.5px solid #cbd5e1',
+                }}
               >
                 AA Block
               </button>
               <button
+                type="button"
                 onClick={() => onChangeCustomization({ fontStyle: 'script' })}
-                className={`px-4 py-2 rounded-lg text-xs font-bold transition font-serif italic ${
-                  customization.fontStyle === 'script'
-                    ? 'bg-[#262626] text-white shadow'
-                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                }`}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  fontFamily: 'serif',
+                  fontStyle: 'italic',
+                  backgroundColor: customization.fontStyle === 'script' ? '#1e1b4b' : '#ffffff',
+                  color: customization.fontStyle === 'script' ? '#ffffff' : '#334155',
+                  border: '1.5px solid #cbd5e1',
+                }}
               >
                 Aa Script
               </button>
             </div>
           </div>
 
-          {/* Purple info notice box */}
-          <div className="bg-[#F0EBFA] border border-[#DCD0F5] text-[#462D8C] text-xs px-3 py-2 rounded-lg font-medium">
+          {/* Info notice box */}
+          <div style={{ backgroundColor: '#F0F4F8', border: '1px solid #CBD5E1', color: '#1e1b4b', fontSize: '12px', padding: '8px 12px', borderRadius: '8px', fontWeight: 500 }}>
             Name (First Line) added on bottom scrub
           </div>
         </div>
-
-        {/* Commented out Logo / Icon Section for now per user request */}
-        {/*
-        {customization.selectedOption !== 'bottom' && (
-          <div className="bg-[#F8F9FA] p-4 rounded-xl space-y-4">
-            <h3 className="font-semibold text-gray-900 text-sm sm:text-base">Add Logo / Icon</h3>
-
-            <div>
-              <p className="text-xs font-semibold text-gray-600 mb-2">Classic Icons:</p>
-              <div className="grid grid-cols-5 gap-2">
-                {classicIcons.map((ic) => (
-                  <button
-                    key={ic.id}
-                    onClick={() =>
-                      onChangeCustomization({
-                        selectedIconId: ic.id,
-                        customLogoUrl: null,
-                      })
-                    }
-                    className={`h-12 rounded-lg border flex flex-col items-center justify-center transition bg-white text-xl ${
-                      customization.selectedIconId === ic.id && !customization.customLogoUrl
-                        ? 'border-2 border-[#462D8C] bg-[#F7F1FF] shadow-sm scale-105'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                    title={ic.name}
-                  >
-                    <span>{ic.symbol}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-        */}
       </div>
 
       {/* Bottom Action Bar */}
-      <div className="flex items-center justify-between gap-4 pt-4 mt-2 border-t border-gray-200">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', paddingTop: '16px', marginTop: '16px', borderTop: '1px solid #e2e8f0' }}>
         <button
+          type="button"
           onClick={onReset}
-          className="px-5 py-2.5 rounded-lg border border-gray-300 text-gray-700 font-bold text-xs sm:text-sm hover:bg-gray-50 transition"
+          style={{ padding: '10px 20px', borderRadius: '8px', border: '1.5px solid #cbd5e1', backgroundColor: '#ffffff', color: '#334155', fontWeight: 700, fontSize: '13px', cursor: 'pointer' }}
         >
           RESET
         </button>
         <button
+          type="button"
           onClick={onProceed}
-          className="flex-1 py-2.5 rounded-lg bg-[#462D8C] text-white font-bold text-xs sm:text-sm shadow hover:bg-[#392375] transition"
+          style={{ flex: 1, padding: '10px 20px', borderRadius: '8px', border: 'none', backgroundColor: '#1e1b4b', color: '#ffffff', fontWeight: 700, fontSize: '13px', cursor: 'pointer', textAlign: 'center' }}
         >
           PROCEED
         </button>
