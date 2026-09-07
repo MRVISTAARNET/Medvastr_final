@@ -12,6 +12,9 @@ import ProductImageZoom from "@/components/ProductImageZoom";
 import ExpandableDescription from "@/components/ExpandableDescription";
 import JsonLd from "@/components/JsonLd";
 import { trackViewContent } from "@/lib/metaPixel";
+import { EmbroideryCard } from "@/components/embroidery/EmbroideryCard";
+import { EmbroideryModal } from "@/components/embroidery/EmbroideryModal";
+import { EmbroideryCustomizationState } from "@/types/embroidery";
 
 function DetailAccordion({ title, children, defaultOpen = false }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -250,6 +253,11 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   const [reviewForm, setReviewForm] = useState({ rating: 5, comment: "" });
   const [submittingReview, setSubmittingReview] = useState(false);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
+
+  // Custom Embroidery State
+  const [isEmbroiderySelected, setIsEmbroiderySelected] = useState(false);
+  const [isEmbroideryModalOpen, setIsEmbroideryModalOpen] = useState(false);
+  const [embroideryState, setEmbroideryState] = useState<EmbroideryCustomizationState | null>(null);
 
   const handleShare = () => {
     if (typeof window !== "undefined") {
@@ -787,6 +795,43 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               </div>
             )}
 
+            {/* EMBROIDERY CUSTOMIZATION CARD & MODAL (For scrubs / when enabled) */}
+            {(p.embroideryEnabled || p.type?.toLowerCase().includes('scrub')) && (
+              <>
+                <EmbroideryCard
+                  isEmbroiderySelected={isEmbroiderySelected}
+                  onToggleAddEmbroidery={(add) => {
+                    setIsEmbroiderySelected(add);
+                    if (!add) setEmbroideryState(null);
+                  }}
+                  customization={embroideryState}
+                  onOpenModal={() => setIsEmbroideryModalOpen(true)}
+                  onDeleteEmbroidery={() => {
+                    setIsEmbroiderySelected(false);
+                    setEmbroideryState(null);
+                  }}
+                />
+
+                <EmbroideryModal
+                  isOpen={isEmbroideryModalOpen}
+                  onClose={() => setIsEmbroideryModalOpen(false)}
+                  onSaveCustomization={(customization) => {
+                    setEmbroideryState(customization);
+                    setIsEmbroiderySelected(true);
+                  }}
+                  baseScrubImage={colorImages[0] || (p.imgs?.[0] || '')}
+                  selectedColorName={ci !== null ? (p.clrNms?.[ci] || p.clrs?.[ci]) : 'Navy Blue'}
+                  customPrices={(() => {
+                    try {
+                      return JSON.parse((p as any).embroideryConfig || '{}')?.prices;
+                    } catch {
+                      return undefined;
+                    }
+                  })()}
+                />
+              </>
+            )}
+
             {/* ACTIONS */}
             <div className="pdp-main-actions">
               <div className="pdp-qty-wish-row" style={{ display: 'flex', gap: '10px', alignItems: 'center', width: '100%' }}>
@@ -851,7 +896,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
                     setTimeout(() => {
                       const finalSize = isSet ? `Top: ${sz} / Bot: ${btmSz}` : sz;
-                      addToCart(p, ci ?? 0, finalSize || 'M', qty);
+                      addToCart(p, ci ?? 0, finalSize || 'M', qty, isEmbroiderySelected ? embroideryState : undefined);
                       setIsAdding(false);
                       setAddedSuccess(true);
                       setIsCartOpen(true);

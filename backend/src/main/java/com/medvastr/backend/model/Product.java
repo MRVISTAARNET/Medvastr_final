@@ -119,6 +119,12 @@ public class Product {
     @Builder.Default
     private boolean codDisabled = false;
 
+    @Builder.Default
+    private boolean embroideryEnabled = false;
+
+    @Column(columnDefinition = "LONGTEXT")
+    private String embroideryConfig;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;

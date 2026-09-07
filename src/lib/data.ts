@@ -79,6 +79,8 @@ export interface Product {
   material?: string;
   tags?: string;
   codDisabled?: boolean;
+  embroideryEnabled?: boolean;
+  embroideryConfig?: string;
 }
 
 

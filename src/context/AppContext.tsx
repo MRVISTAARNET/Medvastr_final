@@ -22,6 +22,7 @@ interface CartItem extends Product {
   size: string;
   qty: number;
   variantId?: number;
+  embroidery?: any;
 }
 
 interface User {
@@ -70,7 +71,7 @@ interface AppContextType {
   isCartOpen: boolean;
   setIsCartOpen: (open: boolean) => void;
   isHydrated: boolean;
-  addToCart: (p: Product, ci?: number, sz?: string, qty?: number) => void;
+  addToCart: (p: Product, ci?: number, sz?: string, qty?: number, embroidery?: any) => void;
   updateCartQty: (index: number, delta: number) => void;
   removeFromCart: (index: number) => void;
   clearCart: () => void;
@@ -96,23 +97,26 @@ function cartReducer(state: CartItem[], action: any): CartItem[] {
     case "SET":
       return action.data;
     case "ADD": {
-      const { p, ci, sz, qty = 1 } = action;
-      const k = `${p.id}-${ci}-${sz}`;
-      const existing = state.find((i) => i.k === k);
+      const { p, ci, sz, qty = 1, embroidery } = action;
+      const k = embroidery ? `${p.id}-${ci}-${sz}-emb-${Date.now()}` : `${p.id}-${ci}-${sz}`;
+      const existing = !embroidery ? state.find((i) => i.k === k) : null;
       if (existing) {
         return state.map((i) => (i.k === k ? { ...i, qty: i.qty + qty } : i));
       }
       const col = p.clrs?.[ci] || p.clrs?.[0] || "#000";
+      const extraPrice = embroidery?.totalEmbroideryPrice || 0;
       return [
         ...state,
         {
           ...p,
+          price: p.price + extraPrice,
           k,
           col,
           colNm: p.clrNms?.[ci] || cn(col),
           size: sz,
           qty,
           variantId: resolveVariantId(p, sz, col),
+          embroidery,
         },
       ];
     }
@@ -489,8 +493,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setUser(updatedUser);
   }, []);
 
-  const addToCart = useCallback(async (p: Product, ci = 0, sz = "M", qty = 1) => {
-    dispatch({ type: "ADD", p, ci, sz, qty });
+  const addToCart = useCallback(async (p: Product, ci = 0, sz = "M", qty = 1, embroidery?: any) => {
+    dispatch({ type: "ADD", p, ci, sz, qty, embroidery });
     setIsCartOpen(true);
     toast("Added to bag!", "ok");
     try {

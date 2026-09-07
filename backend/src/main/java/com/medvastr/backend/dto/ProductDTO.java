@@ -48,6 +48,8 @@ public class ProductDTO {
     private boolean active;
     private boolean featured;
     private boolean codDisabled;
+    private boolean embroideryEnabled;
+    private String embroideryConfig;
     private String categoryName;
     private Long categoryId;
     private Long subcategoryId;

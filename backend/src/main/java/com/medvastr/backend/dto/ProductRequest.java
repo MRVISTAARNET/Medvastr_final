@@ -99,4 +99,6 @@ public class ProductRequest {
 
     private String categoryIds;
     private Boolean codDisabled;
+    private Boolean embroideryEnabled;
+    private String embroideryConfig;
 }

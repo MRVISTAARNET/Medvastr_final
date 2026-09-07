@@ -162,6 +162,18 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                             {item.colNm}
                           </span>
                         </div>
+
+                        {item.embroidery && (
+                          <div className="mt-1.5 p-2 bg-[#F7F1FF] border border-[#E0D8F3] rounded-lg text-[11px] text-purple-900 leading-tight">
+                            <div className="font-bold text-[#462D8C] flex justify-between items-center mb-0.5">
+                              <span>✨ Custom Embroidery ({item.embroidery.selectedOption})</span>
+                              <span>+₹{item.embroidery.totalEmbroideryPrice}</span>
+                            </div>
+                            {item.embroidery.line1 && <div><strong>Line 1:</strong> {item.embroidery.line1}</div>}
+                            {item.embroidery.line2 && <div><strong>Line 2:</strong> {item.embroidery.line2}</div>}
+                            <div><strong>Style:</strong> {item.embroidery.fontStyle} | {item.embroidery.textColor}</div>
+                          </div>
+                        )}
                       </div>
 
                       <div className="cart-item-bottom">

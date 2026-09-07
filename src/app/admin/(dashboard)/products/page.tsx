@@ -37,7 +37,7 @@ function BarcodeImage({ value }: { value: string }) {
 const GENDER_PREFIX = { 'Men': 'M', 'Women': 'W', 'Unisex': 'U' };
 const BRAND_PREFIX = { 'Medvarn': 'MED', 'Fabscrubs': 'FAB', 'Others': 'OTH' };
 
-export function generateVariantSku(gender: string, style: string, name: string, color: string, size: string): string {
+function generateVariantSku(gender: string, style: string, name: string, color: string, size: string): string {
   const gPrefix = gender === 'Men' ? 'M' : (gender === 'Women' ? 'W' : 'U');
   const stylePrefix = style || 'Standard';
 
@@ -156,7 +156,7 @@ export default function AdminProducts() {
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'basic' | 'pricing' | 'inventory' | 'media' | 'seo'>('basic');
+  const [activeTab, setActiveTab] = useState<'basic' | 'pricing' | 'inventory' | 'media' | 'seo' | 'embroidery'>('basic');
   const [uploadingState, setUploadingState] = useState<{ active: boolean; current: number; total: number; filename: string }>({ active: false, current: 0, total: 0, filename: '' });
   const [isSaving, setIsSaving] = useState(false);
 
@@ -242,6 +242,22 @@ export default function AdminProducts() {
         weightValue: wv,
         weightUnit: wu,
         codDisabled: editingProduct.codDisabled ?? false,
+        embroideryEnabled: editingProduct.embroideryEnabled ?? false,
+        embroideryBundlePrice: (() => {
+          try { return JSON.parse(editingProduct.embroideryConfig || '{}')?.prices?.bundlePrice || 99; } catch { return 99; }
+        })(),
+        embroideryBundleOrigPrice: (() => {
+          try { return JSON.parse(editingProduct.embroideryConfig || '{}')?.prices?.bundleOriginalPrice || 199; } catch { return 199; }
+        })(),
+        embroideryTopPrice: (() => {
+          try { return JSON.parse(editingProduct.embroideryConfig || '{}')?.prices?.topPrice || 99; } catch { return 99; }
+        })(),
+        embroideryBottomPrice: (() => {
+          try { return JSON.parse(editingProduct.embroideryConfig || '{}')?.prices?.bottomPrice || 99; } catch { return 99; }
+        })(),
+        embroideryLogoPrice: (() => {
+          try { return JSON.parse(editingProduct.embroideryConfig || '{}')?.prices?.customLogoExtraPrice || 100; } catch { return 100; }
+        })(),
       });
     } else {
       setForm({
@@ -249,7 +265,8 @@ export default function AdminProducts() {
         price: 0, origPrice: 0, tax: 0, type: 'scrubs', description: '', fabric: '',
         sizes: 'S, M, L, XL', clrs: '', imgs: [], videoUrl: '', active: true, imgsByColor: {},
         badge: 'None', fit: 'Classic Fit', pocketCount: 0, weightValue: '0.5', weightUnit: 'kg', careInstructions: 'Machine Wash Cold', shortDescription: '',
-        material: '', sku: '', stock: 100, seoTitle: '', seoDescription: '', seoKeywords: '', codDisabled: false
+        material: '', sku: '', stock: 100, seoTitle: '', seoDescription: '', seoKeywords: '', codDisabled: false,
+        embroideryEnabled: false, embroideryBundlePrice: 99, embroideryBundleOrigPrice: 199, embroideryTopPrice: 99, embroideryBottomPrice: 99, embroideryLogoPrice: 100
       });
     }
   }, [editingProduct, isModalOpen]);
@@ -409,7 +426,17 @@ export default function AdminProducts() {
       seoTitle,
       seoDescription,
       seoKeywords,
-      weight: `${form.weightValue}${form.weightUnit}`
+      weight: `${form.weightValue}${form.weightUnit}`,
+      embroideryEnabled: Boolean(form.embroideryEnabled),
+      embroideryConfig: JSON.stringify({
+        prices: {
+          bundlePrice: Number(form.embroideryBundlePrice) || 598,
+          bundleOriginalPrice: Number(form.embroideryBundleOrigPrice) || 748,
+          topPrice: Number(form.embroideryTopPrice) || 299,
+          bottomPrice: Number(form.embroideryBottomPrice) || 199,
+          customLogoExtraPrice: Number(form.embroideryLogoPrice) || 250,
+        }
+      })
     };
 
     const url = editingProduct ? `${API_BASE}/products/${editingProduct.id}` : `${API_BASE}/products`;
@@ -624,6 +651,7 @@ export default function AdminProducts() {
                 { id: 'inventory', label: '3. Inventory' },
                 { id: 'media', label: '4. Media' },
                 { id: 'seo', label: '5. SEO Settings' },
+                { id: 'embroidery', label: '6. Custom Embroidery' },
               ].map((t) => {
                 const active = activeTab === t.id;
                 return (
@@ -918,6 +946,53 @@ export default function AdminProducts() {
                   <div className="fg">
                     <label>SEO Meta Keywords (Comma separated)</label>
                     <input id="p-seoKeywords" value={form.seoKeywords} onChange={handleInputChange} placeholder="scrubs, medical, doctor wear, etc." />
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'embroidery' && (
+                <div style={{ display: 'grid', gap: '20px' }}>
+                  <div style={{ background: '#f8fafc', padding: '16px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                      <label style={{ fontSize: '15px', fontWeight: 700, color: '#1e293b' }}>
+                        Enable Custom Embroidery Widget (Scrub Suits)
+                      </label>
+                      <select
+                        id="p-embroideryEnabled"
+                        value={String(form.embroideryEnabled)}
+                        onChange={(e) => setForm((prev: any) => ({ ...prev, embroideryEnabled: e.target.value === 'true' }))}
+                        style={{ width: '140px', fontWeight: 700, color: form.embroideryEnabled ? '#166534' : '#991b1b' }}
+                      >
+                        <option value="true">✅ Enabled</option>
+                        <option value="false">❌ Disabled</option>
+                      </select>
+                    </div>
+                    <small style={{ color: '#64748b', fontSize: '12px', display: 'block' }}>
+                      When enabled, the purple "Custom Embroidery" card & interactive modal will appear on the customer product detail page (PDP) for this scrub suit.
+                    </small>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                    <div className="fg">
+                      <label>Embroidery Bundle Discounted Price (₹)</label>
+                      <input type="number" id="p-embroideryBundlePrice" value={form.embroideryBundlePrice} onChange={handleInputChange} placeholder="e.g. 598" />
+                    </div>
+                    <div className="fg">
+                      <label>Embroidery Bundle Original Price (₹)</label>
+                      <input type="number" id="p-embroideryBundleOrigPrice" value={form.embroideryBundleOrigPrice} onChange={handleInputChange} placeholder="e.g. 748" />
+                    </div>
+                    <div className="fg">
+                      <label>Top Embroidery Price (₹)</label>
+                      <input type="number" id="p-embroideryTopPrice" value={form.embroideryTopPrice} onChange={handleInputChange} placeholder="e.g. 299" />
+                    </div>
+                    <div className="fg">
+                      <label>Bottom Embroidery Price (₹)</label>
+                      <input type="number" id="p-embroideryBottomPrice" value={form.embroideryBottomPrice} onChange={handleInputChange} placeholder="e.g. 199" />
+                    </div>
+                    <div className="fg" style={{ gridColumn: 'span 2' }}>
+                      <label>Custom Logo Upload Extra Fee (₹)</label>
+                      <input type="number" id="p-embroideryLogoPrice" value={form.embroideryLogoPrice} onChange={handleInputChange} placeholder="e.g. 250" />
+                    </div>
                   </div>
                 </div>
               )}
