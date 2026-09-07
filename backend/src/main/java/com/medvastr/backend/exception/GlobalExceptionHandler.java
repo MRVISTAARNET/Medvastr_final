@@ -17,7 +17,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(org.springframework.transaction.UnexpectedRollbackException.class)
     public ResponseEntity<ApiResponse<Object>> unexpectedRollback(org.springframework.transaction.UnexpectedRollbackException e) {
         log.error("Unexpected Rollback Exception: ", e);
-        return ResponseEntity.badRequest().body(ApiResponse.err("Order processing encountered a transaction issue. Please check your order details or try Cash on Delivery."));
+        Throwable cause = e.getMostSpecificCause() != null ? e.getMostSpecificCause() : e.getCause();
+        String message = (cause != null && cause.getMessage() != null && !cause.getMessage().isBlank())
+                ? cause.getMessage()
+                : e.getMessage();
+        if (message == null || message.isBlank() || message.contains("marked as rollback-only")) {
+            message = "Order processing encountered a transaction issue. Please check your order details or try Cash on Delivery.";
+        }
+        return ResponseEntity.badRequest().body(ApiResponse.err(message));
     }
 
     @ExceptionHandler(RuntimeException.class)
