@@ -792,7 +792,7 @@ public class OrderService {
         return null;
     }
 
-    private void decrementStock(Order order) {
+    public void decrementStock(Order order) {
         if (order.getItems() == null)
             return;
         for (OrderItem item : order.getItems()) {

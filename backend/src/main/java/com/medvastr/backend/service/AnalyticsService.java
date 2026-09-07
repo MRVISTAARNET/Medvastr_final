@@ -62,9 +62,12 @@ public class AnalyticsService {
                 .filter(Objects::nonNull)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        long totalOrders = allOrders.size();
+        long totalOrders = allOrders.stream()
+                .filter(o -> o.getPaymentStatus() == Order.PaymentStatus.PAID || (o.getPaymentMethod() == Order.PaymentMethod.COD && o.getStatus() != Order.OrderStatus.CANCELLED))
+                .count();
         long ordersToday = allOrders.stream()
                 .filter(o -> o.getCreatedAt() != null && o.getCreatedAt().isAfter(startOfToday))
+                .filter(o -> o.getPaymentStatus() == Order.PaymentStatus.PAID || (o.getPaymentMethod() == Order.PaymentMethod.COD && o.getStatus() != Order.OrderStatus.CANCELLED))
                 .count();
 
         long totalCustomers = userRepo.count();

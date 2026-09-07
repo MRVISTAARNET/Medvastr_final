@@ -27,6 +27,7 @@ public class PaymentService {
     private final EmailService emailService;
     private final ShiprocketService shiprocketService;
     private final WhatsAppService whatsAppService;
+    private final org.springframework.beans.factory.ObjectProvider<OrderService> orderServiceProvider;
 
     public Map<String, Object> createOrder(Map<String, Object> r) {
         try {
@@ -85,6 +86,13 @@ public class PaymentService {
                 order.setStatus(Order.OrderStatus.CONFIRMED);
                 order.setPaymentId(paymentId);
                 Order saved = orderRepository.save(order);
+                orderServiceProvider.ifAvailable(os -> {
+                    try {
+                        os.decrementStock(saved);
+                    } catch (Exception e) {
+                        log.error("Failed to decrement stock on webhook payment.captured", e);
+                    }
+                });
                 preloadOrderRelations(saved);
                 triggerAsyncPostCommitActions(saved);
             });

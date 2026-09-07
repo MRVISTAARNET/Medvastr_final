@@ -184,6 +184,11 @@ public class ShiprocketService {
         log.info("[Shiprocket] Starting async push for order id={}", orderId);
         try {
             Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
+            if (order.getPaymentMethod() == Order.PaymentMethod.ONLINE && order.getPaymentStatus() != Order.PaymentStatus.PAID) {
+                log.warn("[Shiprocket] Cannot push order {} - Payment is ONLINE and status is {}. Payment must be confirmed (PAID) before pushing to Shiprocket.", order.getOrderNumber(), order.getPaymentStatus());
+                return;
+            }
+
             if (order.getShiprocketOrderId() != null) {
                 log.info("[Shiprocket] Order {} already synced (ID: {}). Skipping.", order.getOrderNumber(), order.getShiprocketOrderId());
                 return;
@@ -215,6 +220,10 @@ public class ShiprocketService {
         }
         try {
             Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
+            if (order.getPaymentMethod() == Order.PaymentMethod.ONLINE && order.getPaymentStatus() != Order.PaymentStatus.PAID) {
+                return "Cannot push to Shiprocket: Order " + order.getOrderNumber() + " is an ONLINE order but payment status is " + order.getPaymentStatus() + ". Payment must be confirmed (PAID) first.";
+            }
+
             preloadOrderRelations(order);
 
             String token = getValidToken();
