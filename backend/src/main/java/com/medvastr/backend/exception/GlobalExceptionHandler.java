@@ -19,19 +19,26 @@ public class GlobalExceptionHandler {
         log.error("Unexpected Rollback Exception: ", e);
         String message = null;
         
-        Throwable current = e;
-        while (current != null) {
-            String m = current.getMessage();
-            if (m != null && !m.isBlank() && !m.contains("marked as rollback-only") && !m.contains("Transaction silently rolled back")) {
-                message = m;
-                break;
-            }
-            if (current == current.getCause()) break;
-            current = current.getCause();
+        Throwable mostSpecific = e.getMostSpecificCause();
+        if (mostSpecific != null && mostSpecific.getMessage() != null && !mostSpecific.getMessage().contains("marked as rollback-only")) {
+            message = mostSpecific.getMessage();
         }
 
         if (message == null || message.isBlank()) {
-            message = "Order placement could not be completed. Please check item availability, shipping address, or try Cash on Delivery.";
+            Throwable current = e;
+            while (current != null) {
+                String m = current.getMessage();
+                if (m != null && !m.isBlank() && !m.contains("marked as rollback-only") && !m.contains("Transaction silently rolled back")) {
+                    message = m;
+                    break;
+                }
+                if (current == current.getCause()) break;
+                current = current.getCause();
+            }
+        }
+
+        if (message == null || message.isBlank()) {
+            message = "Order placement encountered a database or payment issue. Please check item availability or try Cash on Delivery.";
         }
         return ResponseEntity.badRequest().body(ApiResponse.err(message));
     }

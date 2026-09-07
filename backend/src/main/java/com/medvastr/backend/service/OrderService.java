@@ -271,24 +271,31 @@ public class OrderService {
         String orderNum = "MVS-" + LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd")) + "-" + String.format("%06d", saved.getId());
         saved.setOrderNumber(orderNum);
 
-        if (saved.getPaymentMethod() == Order.PaymentMethod.ONLINE) {
-            try {
-                String razorpayId = razorpayService.createOrder(total, orderNum);
-                saved.setRazorpayOrderId(razorpayId);
-            } catch (Exception e) {
-                log.error("Razorpay order creation failed for order {}: {}", orderNum, e.getMessage());
-                String errMsg = e.getMessage() != null && !e.getMessage().isBlank() ? e.getMessage() : "Failed to connect to Razorpay API";
-                throw new RuntimeException("Online Payment Gateway Error: " + errMsg + ". Please check Razorpay Key & Secret in Admin Settings.");
-            }
-        }
-
-        saved = orderRepo.save(saved);
         for (var item : orderItems) {
             item.setOrder(saved);
         }
         saved.setItems(orderItems);
 
         Order finalSaved = orderRepo.save(saved);
+
+        if (finalSaved.getPaymentMethod() == Order.PaymentMethod.ONLINE) {
+            if (total.compareTo(BigDecimal.ONE) < 0) {
+                finalSaved.setPaymentStatus(Order.PaymentStatus.PAID);
+                finalSaved.setStatus(Order.OrderStatus.CONFIRMED);
+                finalSaved.setRazorpayOrderId("FREE_ORDER_" + orderNum);
+                finalSaved = orderRepo.save(finalSaved);
+            } else {
+                try {
+                    String razorpayId = razorpayService.createOrder(total, orderNum);
+                    finalSaved.setRazorpayOrderId(razorpayId);
+                    finalSaved = orderRepo.save(finalSaved);
+                } catch (Exception e) {
+                    log.error("Razorpay order creation failed for order {}: {}", orderNum, e.getMessage());
+                    String errMsg = e.getMessage() != null && !e.getMessage().isBlank() ? e.getMessage() : "Failed to connect to Razorpay API";
+                    throw new RuntimeException("Online Payment Gateway Error: " + errMsg);
+                }
+            }
+        }
 
         try {
             userActivityEventRepo.save(UserActivityEvent.builder()
