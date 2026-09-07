@@ -74,10 +74,6 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
       />
 
       {/* Top Left Close Indicator / Placement Overlay */}
-      <div className="absolute top-4 left-4 z-10 bg-white/95 backdrop-blur-sm px-3 py-1 rounded shadow text-xs font-semibold tracking-wider text-gray-800 uppercase border border-gray-200">
-        ✕ CLOSE
-      </div>
-
       {/* Dynamic Chest Embroidery Preview Overlay */}
       <div className="absolute inset-0 z-20 pointer-events-none">
         {/* Right Chest Medical Icon / Logo Overlay (Viewer's Left side) */}

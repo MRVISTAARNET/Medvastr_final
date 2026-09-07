@@ -348,11 +348,16 @@ public class EmailService {
                 } else if (item.getProduct() != null && item.getProduct().getImages() != null && !item.getProduct().getImages().isEmpty()) {
                     imgUrl = item.getProduct().getImages().iterator().next().getImageUrl();
                 }
-                if (imgUrl != null) {
+                if (imgUrl != null && !imgUrl.isBlank()) {
+                    imgUrl = imgUrl.trim();
                     if (imgUrl.contains("api.medvastr.com")) {
-                        imgUrl = imgUrl.replace("http://api.medvastr.com", "https://api.medvarn.com").replace("https://api.medvastr.com", "https://api.medvarn.com");
-                    } else if (imgUrl.startsWith("/api/media/")) {
+                        imgUrl = imgUrl.replace("http://api.medvastr.com", "https://api.medvarn.com")
+                                       .replace("https://api.medvastr.com", "https://api.medvarn.com");
+                    }
+                    if (imgUrl.startsWith("/")) {
                         imgUrl = "https://api.medvarn.com" + imgUrl;
+                    } else if (!imgUrl.startsWith("http://") && !imgUrl.startsWith("https://")) {
+                        imgUrl = "https://api.medvarn.com/" + imgUrl;
                     }
                 }
                 String imgTag = (imgUrl != null && !imgUrl.isBlank()) 
