@@ -17,24 +17,21 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(org.springframework.transaction.UnexpectedRollbackException.class)
     public ResponseEntity<ApiResponse<Object>> unexpectedRollback(org.springframework.transaction.UnexpectedRollbackException e) {
         log.error("Unexpected Rollback Exception: ", e);
-        Throwable cause = e.getMostSpecificCause();
-        if (cause == null) cause = e.getCause();
-        if (cause == null) cause = e;
-
-        String message = cause.getMessage();
-        if (message == null || message.isBlank() || message.contains("marked as rollback-only")) {
-            // Find root cause message if nested
-            Throwable root = cause;
-            while (root.getCause() != null && root != root.getCause()) {
-                root = root.getCause();
-                if (root.getMessage() != null && !root.getMessage().contains("marked as rollback-only")) {
-                    message = root.getMessage();
-                    break;
-                }
+        String message = null;
+        
+        Throwable current = e;
+        while (current != null) {
+            String m = current.getMessage();
+            if (m != null && !m.isBlank() && !m.contains("marked as rollback-only") && !m.contains("Transaction silently rolled back")) {
+                message = m;
+                break;
             }
+            if (current == current.getCause()) break;
+            current = current.getCause();
         }
-        if (message == null || message.isBlank() || message.contains("marked as rollback-only")) {
-            message = "Order could not be processed due to a payment gateway or database issue. Please check payment settings or try Cash on Delivery.";
+
+        if (message == null || message.isBlank()) {
+            message = "Order placement could not be completed. Please check item availability, shipping address, or try Cash on Delivery.";
         }
         return ResponseEntity.badRequest().body(ApiResponse.err(message));
     }

@@ -143,34 +143,29 @@ public class OrderService {
                 throw new RuntimeException("Email is required for guest checkout");
             }
             String guestEmail = r.getEmail().trim().toLowerCase();
-            Optional<User> existingUser = userRepo.findByEmail(guestEmail);
-            if (existingUser.isEmpty() && r.getPhone() != null && !r.getPhone().isBlank()) {
-                String cleanPhone = r.getPhone().replaceAll("[^0-9]", "");
+            User found = userRepo.findByEmail(guestEmail).orElse(null);
+
+            String userPhone = r.getPhone() != null && !r.getPhone().isBlank() ? r.getPhone().trim() : null;
+            if (found == null && userPhone != null) {
+                String cleanPhone = userPhone.replaceAll("[^0-9]", "");
                 if (!cleanPhone.isEmpty()) {
                     String suffix = cleanPhone.length() > 10 ? cleanPhone.substring(cleanPhone.length() - 10) : cleanPhone;
-                    existingUser = userRepo.findByPhoneSuffix(suffix);
+                    found = userRepo.findByPhoneSuffix(suffix).orElse(null);
                 }
             }
-            if (existingUser.isPresent()) {
-                u = existingUser.get();
+
+            if (found != null) {
+                u = found;
             } else {
-                try {
-                    User newUser = User.builder()
-                            .email(guestEmail)
-                            .firstName(r.getFirstName() != null && !r.getFirstName().isBlank() ? r.getFirstName().trim() : "Customer")
-                            .lastName(r.getLastName() != null ? r.getLastName().trim() : "")
-                            .phone(r.getPhone())
-                            .role(User.Role.CUSTOMER)
-                            .password(passwordEncoder.encode(java.util.UUID.randomUUID().toString()))
-                            .build();
-                    u = userRepo.save(newUser);
-                } catch (Exception e) {
-                    log.warn("Failed to create guest user {}, attempting fallback lookup: {}", guestEmail, e.getMessage());
-                    u = userRepo.findByEmail(guestEmail).orElse(null);
-                    if (u == null) {
-                        throw new RuntimeException("Could not create or associate user for checkout. Please try logging in.");
-                    }
-                }
+                User newUser = User.builder()
+                        .email(guestEmail)
+                        .firstName(r.getFirstName() != null && !r.getFirstName().isBlank() ? r.getFirstName().trim() : "Customer")
+                        .lastName(r.getLastName() != null ? r.getLastName().trim() : "")
+                        .phone(userPhone)
+                        .role(User.Role.CUSTOMER)
+                        .password(passwordEncoder.encode(java.util.UUID.randomUUID().toString()))
+                        .build();
+                u = userRepo.save(newUser);
             }
             generatedPassword = null;
         }
