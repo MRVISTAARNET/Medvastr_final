@@ -46,9 +46,11 @@ public class PageView {
     private String pageTitle;
 
     @Builder.Default
+    @Column(name = "is_entry")
     private boolean entry = false;
 
     @Builder.Default
+    @Column(name = "is_exit")
     private boolean exit = false;
 
     @CreationTimestamp
