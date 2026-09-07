@@ -65,16 +65,32 @@ public class OrderService {
     private final SmsService smsService;
     private final UserActivityEventRepository userActivityEventRepo;
 
-    private User me() {
-        String principal = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (principal != null && principal.contains("@")) {
-            return userRepo.findByEmail(principal).orElseThrow(() -> new RuntimeException("User not found: " + principal));
-        } else if (principal != null && !principal.isBlank()) {
-            String cleanPhone = principal.replaceAll("[^0-9]", "");
-            String suffix = cleanPhone.length() > 10 ? cleanPhone.substring(cleanPhone.length() - 10) : cleanPhone;
-            return userRepo.findByPhoneSuffix(suffix).orElseThrow(() -> new RuntimeException("User not found for phone: " + principal));
+    private User findCurrentUserOrNull() {
+        try {
+            var auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null || !auth.isAuthenticated() || "anonymousUser".equalsIgnoreCase(auth.getName())) {
+                return null;
+            }
+            String principal = auth.getName();
+            if (principal != null && principal.contains("@")) {
+                return userRepo.findByEmail(principal).orElse(null);
+            } else if (principal != null && !principal.isBlank()) {
+                String cleanPhone = principal.replaceAll("[^0-9]", "");
+                String suffix = cleanPhone.length() > 10 ? cleanPhone.substring(cleanPhone.length() - 10) : cleanPhone;
+                return userRepo.findByPhoneSuffix(suffix).orElse(null);
+            }
+        } catch (Exception e) {
+            log.debug("No authenticated user in context: {}", e.getMessage());
         }
-        throw new RuntimeException("Unauthenticated user context");
+        return null;
+    }
+
+    private User me() {
+        User u = findCurrentUserOrNull();
+        if (u == null) {
+            throw new RuntimeException("Unauthenticated user context");
+        }
+        return u;
     }
 
     private void assertOrderOwner(Order order) {
@@ -119,13 +135,10 @@ public class OrderService {
     }
 
     public OrderDTO createOrder(CreateOrderRequest r) {
-        User u = null;
-        boolean isGuest = false;
+        User u = findCurrentUserOrNull();
+        boolean isGuest = (u == null);
         String generatedPassword = null;
-        try {
-            u = me();
-        } catch (Exception e) {
-            isGuest = true;
+        if (isGuest) {
             if (r.getEmail() == null || r.getEmail().isBlank()) {
                 throw new RuntimeException("Email is required for guest checkout");
             }

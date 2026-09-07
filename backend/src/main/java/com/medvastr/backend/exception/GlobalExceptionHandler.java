@@ -14,6 +14,12 @@ import java.util.*;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(org.springframework.transaction.UnexpectedRollbackException.class)
+    public ResponseEntity<ApiResponse<Object>> unexpectedRollback(org.springframework.transaction.UnexpectedRollbackException e) {
+        log.error("Unexpected Rollback Exception: ", e);
+        return ResponseEntity.badRequest().body(ApiResponse.err("Order processing encountered a transaction issue. Please check your order details or try Cash on Delivery."));
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<Object>> runtime(RuntimeException e) {
         log.error("Runtime Exception: ", e);

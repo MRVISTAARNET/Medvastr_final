@@ -95,9 +95,21 @@ public class CartService {
     }
 
     public void clearCart() {
-        Cart c = getOrCreate();
-        c.getItems().clear();
-        cartRepo.save(c);
+        try {
+            var auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth == null || !auth.isAuthenticated() || "anonymousUser".equalsIgnoreCase(auth.getName())) {
+                return;
+            }
+            User u = userRepo.findByEmail(auth.getName()).orElse(null);
+            if (u != null) {
+                cartRepo.findByUser(u).ifPresent(c -> {
+                    c.getItems().clear();
+                    cartRepo.save(c);
+                });
+            }
+        } catch (Exception e) {
+            log.warn("Could not clear cart for current user session: {}", e.getMessage());
+        }
     }
 
     public PromoResponse validatePromo(String code, Double total) {
