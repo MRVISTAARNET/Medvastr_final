@@ -978,46 +978,40 @@ export default function AdminProducts() {
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                     <div className="fg">
-                      <label>Embroidery Bundle Discounted Price (₹)</label>
-                      <input type="number" id="p-embroideryBundlePrice" value={form.embroideryBundlePrice} onChange={handleInputChange} placeholder="e.g. 598" />
+                      <label>Embroidery Promotional Discounted Price (₹)</label>
+                      <input type="number" id="p-embroideryBundlePrice" value={form.embroideryBundlePrice} onChange={handleInputChange} placeholder="e.g. 99" />
                     </div>
                     <div className="fg">
-                      <label>Embroidery Bundle Original Price (₹)</label>
-                      <input type="number" id="p-embroideryBundleOrigPrice" value={form.embroideryBundleOrigPrice} onChange={handleInputChange} placeholder="e.g. 748" />
+                      <label>Embroidery Original MRP Price (₹)</label>
+                      <input type="number" id="p-embroideryBundleOrigPrice" value={form.embroideryBundleOrigPrice} onChange={handleInputChange} placeholder="e.g. 199" />
                     </div>
-                    <div className="fg">
-                      <label>Top Embroidery Price (₹)</label>
-                      <input type="number" id="p-embroideryTopPrice" value={form.embroideryTopPrice} onChange={handleInputChange} placeholder="e.g. 299" />
-                    </div>
-                    <div className="fg">
-                      <label>Bottom Embroidery Price (₹)</label>
-                      <input type="number" id="p-embroideryBottomPrice" value={form.embroideryBottomPrice} onChange={handleInputChange} placeholder="e.g. 199" />
-                    </div>
+
                     <div className="fg" style={{ gridColumn: 'span 2' }}>
-                      <label>Dedicated Embroidery Close-Up Scrub Top Image (S3 Upload / URL)</label>
-                      <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                        <input
-                          type="text"
-                          id="p-embroideryPreviewImage"
-                          value={form.embroideryPreviewImage || ''}
-                          onChange={handleInputChange}
-                          placeholder="https://.../navy_close_up_scrub_top.jpg"
-                          style={{ flex: 1 }}
-                        />
+                      <label style={{ fontSize: '14px', fontWeight: 700, color: '#1e293b', marginBottom: '6px', display: 'block' }}>
+                        Dedicated Close-Up Scrub Top Photo (For Modal Live Preview)
+                      </label>
+
+                      {!form.embroideryPreviewImage ? (
                         <label style={{
-                          background: '#462D8C',
-                          color: 'white',
-                          padding: '8px 14px',
-                          borderRadius: '6px',
-                          cursor: 'pointer',
-                          fontSize: '13px',
-                          fontWeight: 600,
-                          whiteSpace: 'nowrap',
-                          display: 'inline-flex',
+                          display: 'flex',
+                          flexDirection: 'column',
                           alignItems: 'center',
-                          gap: '6px'
+                          justifyContent: 'center',
+                          padding: '24px 16px',
+                          border: '2px dashed #93c5fd',
+                          borderRadius: '12px',
+                          background: '#eff6ff',
+                          cursor: 'pointer',
+                          textAlign: 'center',
+                          transition: 'all 0.2s ease'
                         }}>
-                          📁 Upload to S3
+                          <span style={{ fontSize: '32px', marginBottom: '8px' }}>📸</span>
+                          <span style={{ fontSize: '14px', fontWeight: 700, color: '#1d4ed8' }}>
+                            Click to Choose & Upload Close-Up Scrub Photo
+                          </span>
+                          <span style={{ fontSize: '12px', color: '#64748b', marginTop: '4px' }}>
+                            Uploads directly to S3. Upload a zoomed-in, high-res photo of the scrub top chest area.
+                          </span>
                           <input
                             type="file"
                             accept="image/*"
@@ -1037,32 +1031,58 @@ export default function AdminProducts() {
                                 const d = await res.json();
                                 if (d.success && d.data) {
                                   setForm((prev: any) => ({ ...prev, embroideryPreviewImage: d.data }));
-                                  alert("Embroidery close-up image uploaded to S3 successfully!");
+                                  alert("Scrub close-up photo uploaded successfully!");
                                 } else {
-                                  alert(`Upload failed: ${d.message || "Invalid image file"}`);
+                                  alert(`Upload failed: ${d.message || "Invalid file"}`);
                                 }
                               } catch (err) {
-                                alert("Upload failed: Connection error");
+                                alert("Upload failed: Network or connection error");
                               }
                               e.target.value = '';
                             }}
                           />
                         </label>
-                      </div>
-                      {form.embroideryPreviewImage && (
-                        <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '10px', background: '#f0fdf4', padding: '8px 12px', borderRadius: '6px', border: '1px solid #bbf7d0' }}>
-                          <img src={form.embroideryPreviewImage} alt="Embroidery Preview" style={{ width: '45px', height: '45px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
-                          <span style={{ fontSize: '12px', color: '#166534', fontWeight: 600, flex: 1 }}>✓ Dedicated close-up image ready for preview overlay</span>
-                          <button type="button" onClick={() => setForm((prev: any) => ({ ...prev, embroideryPreviewImage: '' }))} style={{ color: '#ef4444', fontSize: '12px', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>✕ Remove</button>
+                      ) : (
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '16px',
+                          padding: '12px 16px',
+                          background: '#f0fdf4',
+                          border: '1.5px solid #86efac',
+                          borderRadius: '12px'
+                        }}>
+                          <img
+                            src={form.embroideryPreviewImage}
+                            alt="Embroidery Close-Up Scrub Top"
+                            style={{ width: '80px', height: '90px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                          />
+                          <div style={{ flex: 1 }}>
+                            <strong style={{ fontSize: '13px', color: '#15803d', display: 'block' }}>
+                              ✓ Close-Up Scrub Photo Active
+                            </strong>
+                            <span style={{ fontSize: '11px', color: '#166534', wordBreak: 'break-all', display: 'block', marginTop: '2px' }}>
+                              {form.embroideryPreviewImage}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setForm((prev: any) => ({ ...prev, embroideryPreviewImage: '' }))}
+                            style={{
+                              padding: '6px 12px',
+                              background: '#fef2f2',
+                              color: '#991b1b',
+                              border: '1px solid #fecaca',
+                              borderRadius: '6px',
+                              fontSize: '12px',
+                              fontWeight: 700,
+                              cursor: 'pointer'
+                            }}
+                          >
+                            🗑️ Remove Photo
+                          </button>
                         </div>
                       )}
-                      <small style={{ color: '#64748b', fontSize: '12px', marginTop: '4px', display: 'block' }}>
-                        Upload a local photo or paste a URL. If set, this dedicated high-resolution close-up scrub top image will be used in the embroidery preview modal instead of full-body product photos.
-                      </small>
-                    </div>
-                    <div className="fg" style={{ gridColumn: 'span 2' }}>
-                      <label>Custom Logo Upload Extra Fee (₹)</label>
-                      <input type="number" id="p-embroideryLogoPrice" value={form.embroideryLogoPrice} onChange={handleInputChange} placeholder="e.g. 100" />
                     </div>
                   </div>
                 </div>
