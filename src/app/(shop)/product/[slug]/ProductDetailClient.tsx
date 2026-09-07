@@ -795,8 +795,8 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               </div>
             )}
 
-            {/* EMBROIDERY CUSTOMIZATION CARD & MODAL (For scrubs / when enabled) */}
-            {(p.embroideryEnabled || p.type?.toLowerCase().includes('scrub')) && (
+            {/* EMBROIDERY CUSTOMIZATION CARD & MODAL (Strictly respects Admin Enable/Disable toggle) */}
+            {Boolean(p.embroideryEnabled) && (
               <>
                 <EmbroideryCard
                   isEmbroiderySelected={isEmbroiderySelected}
@@ -820,6 +820,13 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                     setIsEmbroiderySelected(true);
                   }}
                   baseScrubImage={colorImages[0] || (p.imgs?.[0] || '')}
+                  embroideryPreviewImage={(() => {
+                    try {
+                      return JSON.parse((p as any).embroideryConfig || '{}')?.previewImage;
+                    } catch {
+                      return undefined;
+                    }
+                  })()}
                   selectedColorName={ci !== null ? (p.clrNms?.[ci] || p.clrs?.[ci]) : 'Navy Blue'}
                   customPrices={(() => {
                     try {

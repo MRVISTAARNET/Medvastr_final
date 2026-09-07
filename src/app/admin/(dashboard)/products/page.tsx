@@ -243,6 +243,9 @@ export default function AdminProducts() {
         weightUnit: wu,
         codDisabled: editingProduct.codDisabled ?? false,
         embroideryEnabled: editingProduct.embroideryEnabled ?? false,
+        embroideryPreviewImage: (() => {
+          try { return JSON.parse(editingProduct.embroideryConfig || '{}')?.previewImage || ''; } catch { return ''; }
+        })(),
         embroideryBundlePrice: (() => {
           try { return JSON.parse(editingProduct.embroideryConfig || '{}')?.prices?.bundlePrice || 99; } catch { return 99; }
         })(),
@@ -266,7 +269,7 @@ export default function AdminProducts() {
         sizes: 'S, M, L, XL', clrs: '', imgs: [], videoUrl: '', active: true, imgsByColor: {},
         badge: 'None', fit: 'Classic Fit', pocketCount: 0, weightValue: '0.5', weightUnit: 'kg', careInstructions: 'Machine Wash Cold', shortDescription: '',
         material: '', sku: '', stock: 100, seoTitle: '', seoDescription: '', seoKeywords: '', codDisabled: false,
-        embroideryEnabled: false, embroideryBundlePrice: 99, embroideryBundleOrigPrice: 199, embroideryTopPrice: 99, embroideryBottomPrice: 99, embroideryLogoPrice: 100
+        embroideryEnabled: false, embroideryPreviewImage: '', embroideryBundlePrice: 99, embroideryBundleOrigPrice: 199, embroideryTopPrice: 99, embroideryBottomPrice: 99, embroideryLogoPrice: 100
       });
     }
   }, [editingProduct, isModalOpen]);
@@ -429,12 +432,13 @@ export default function AdminProducts() {
       weight: `${form.weightValue}${form.weightUnit}`,
       embroideryEnabled: Boolean(form.embroideryEnabled),
       embroideryConfig: JSON.stringify({
+        previewImage: form.embroideryPreviewImage || '',
         prices: {
-          bundlePrice: Number(form.embroideryBundlePrice) || 598,
-          bundleOriginalPrice: Number(form.embroideryBundleOrigPrice) || 748,
-          topPrice: Number(form.embroideryTopPrice) || 299,
-          bottomPrice: Number(form.embroideryBottomPrice) || 199,
-          customLogoExtraPrice: Number(form.embroideryLogoPrice) || 250,
+          bundlePrice: Number(form.embroideryBundlePrice) || 99,
+          bundleOriginalPrice: Number(form.embroideryBundleOrigPrice) || 199,
+          topPrice: Number(form.embroideryTopPrice) || 99,
+          bottomPrice: Number(form.embroideryBottomPrice) || 99,
+          customLogoExtraPrice: Number(form.embroideryLogoPrice) || 100,
         }
       })
     };
@@ -990,8 +994,15 @@ export default function AdminProducts() {
                       <input type="number" id="p-embroideryBottomPrice" value={form.embroideryBottomPrice} onChange={handleInputChange} placeholder="e.g. 199" />
                     </div>
                     <div className="fg" style={{ gridColumn: 'span 2' }}>
+                      <label>Dedicated Embroidery Close-Up Scrub Top Image URL (Optional)</label>
+                      <input type="text" id="p-embroideryPreviewImage" value={form.embroideryPreviewImage || ''} onChange={handleInputChange} placeholder="e.g. https://.../navy_close_up_scrub_top.jpg" />
+                      <small style={{ color: '#64748b', fontSize: '12px', marginTop: '4px', display: 'block' }}>
+                        Optional: If provided, this dedicated high-resolution close-up scrub top image will be used in the embroidery preview modal instead of the default product photo.
+                      </small>
+                    </div>
+                    <div className="fg" style={{ gridColumn: 'span 2' }}>
                       <label>Custom Logo Upload Extra Fee (₹)</label>
-                      <input type="number" id="p-embroideryLogoPrice" value={form.embroideryLogoPrice} onChange={handleInputChange} placeholder="e.g. 250" />
+                      <input type="number" id="p-embroideryLogoPrice" value={form.embroideryLogoPrice} onChange={handleInputChange} placeholder="e.g. 100" />
                     </div>
                   </div>
                 </div>
