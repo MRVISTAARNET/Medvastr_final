@@ -320,12 +320,11 @@ public class OrderService {
             finalSaved.setStatus(Order.OrderStatus.CONFIRMED);
             orderRepo.save(finalSaved);
             decrementStock(finalSaved);
+            preloadOrderRelations(finalSaved);
+            triggerAsyncPostCommitActions(finalSaved);
         }
 
-        preloadOrderRelations(finalSaved);
-        triggerAsyncPostCommitActions(finalSaved);
-
-        log.info("Order {} created", finalSaved.getOrderNumber());
+        log.info("Order {} created ({})", finalSaved.getOrderNumber(), finalSaved.getPaymentMethod());
         return toDTO(finalSaved);
     }
 
