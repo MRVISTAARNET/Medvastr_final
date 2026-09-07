@@ -994,10 +994,70 @@ export default function AdminProducts() {
                       <input type="number" id="p-embroideryBottomPrice" value={form.embroideryBottomPrice} onChange={handleInputChange} placeholder="e.g. 199" />
                     </div>
                     <div className="fg" style={{ gridColumn: 'span 2' }}>
-                      <label>Dedicated Embroidery Close-Up Scrub Top Image URL (Optional)</label>
-                      <input type="text" id="p-embroideryPreviewImage" value={form.embroideryPreviewImage || ''} onChange={handleInputChange} placeholder="e.g. https://.../navy_close_up_scrub_top.jpg" />
+                      <label>Dedicated Embroidery Close-Up Scrub Top Image (S3 Upload / URL)</label>
+                      <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                        <input
+                          type="text"
+                          id="p-embroideryPreviewImage"
+                          value={form.embroideryPreviewImage || ''}
+                          onChange={handleInputChange}
+                          placeholder="https://.../navy_close_up_scrub_top.jpg"
+                          style={{ flex: 1 }}
+                        />
+                        <label style={{
+                          background: '#462D8C',
+                          color: 'white',
+                          padding: '8px 14px',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          fontSize: '13px',
+                          fontWeight: 600,
+                          whiteSpace: 'nowrap',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px'
+                        }}>
+                          📁 Upload to S3
+                          <input
+                            type="file"
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                            onChange={async (e) => {
+                              const files = e.target.files;
+                              if (!files || files.length === 0) return;
+                              const token = getToken() || "";
+                              const formData = new FormData();
+                              formData.append("file", files[0]);
+                              try {
+                                const res = await fetch(`${API_BASE}/upload`, {
+                                  method: "POST",
+                                  headers: { "Authorization": `Bearer ${token}` },
+                                  body: formData
+                                });
+                                const d = await res.json();
+                                if (d.success && d.data) {
+                                  setForm((prev: any) => ({ ...prev, embroideryPreviewImage: d.data }));
+                                  alert("Embroidery close-up image uploaded to S3 successfully!");
+                                } else {
+                                  alert(`Upload failed: ${d.message || "Invalid image file"}`);
+                                }
+                              } catch (err) {
+                                alert("Upload failed: Connection error");
+                              }
+                              e.target.value = '';
+                            }}
+                          />
+                        </label>
+                      </div>
+                      {form.embroideryPreviewImage && (
+                        <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '10px', background: '#f0fdf4', padding: '8px 12px', borderRadius: '6px', border: '1px solid #bbf7d0' }}>
+                          <img src={form.embroideryPreviewImage} alt="Embroidery Preview" style={{ width: '45px', height: '45px', objectFit: 'cover', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+                          <span style={{ fontSize: '12px', color: '#166534', fontWeight: 600, flex: 1 }}>✓ Dedicated close-up image ready for preview overlay</span>
+                          <button type="button" onClick={() => setForm((prev: any) => ({ ...prev, embroideryPreviewImage: '' }))} style={{ color: '#ef4444', fontSize: '12px', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>✕ Remove</button>
+                        </div>
+                      )}
                       <small style={{ color: '#64748b', fontSize: '12px', marginTop: '4px', display: 'block' }}>
-                        Optional: If provided, this dedicated high-resolution close-up scrub top image will be used in the embroidery preview modal instead of the default product photo.
+                        Upload a local photo or paste a URL. If set, this dedicated high-resolution close-up scrub top image will be used in the embroidery preview modal instead of full-body product photos.
                       </small>
                     </div>
                     <div className="fg" style={{ gridColumn: 'span 2' }}>
