@@ -6,6 +6,25 @@ import { API_BASE, authHeaders } from "@/lib/api";
 
 type DatePreset = "today" | "yesterday" | "last7" | "last30" | "thisMonth" | "prevMonth" | "custom";
 
+const formatISTTime = (ts: any) => {
+  if (!ts) return "";
+  let str = String(ts).trim();
+  if (!str.endsWith("Z") && !str.includes("+") && !str.includes("Z")) {
+    str += "Z";
+  }
+  try {
+    return new Date(str).toLocaleTimeString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true
+    });
+  } catch {
+    return String(ts);
+  }
+};
+
 export default function AdminAnalyticsPage() {
   const [preset, setPreset] = useState<DatePreset>("last30");
   const [startDate, setStartDate] = useState<string>("");
@@ -524,7 +543,7 @@ export default function AdminAnalyticsPage() {
                   {activities.map((a, i) => (
                     <tr key={i} style={{ borderBottom: "1px solid #f1f5f9" }}>
                       <td style={{ padding: "12px 16px", fontSize: 12, color: "#64748b" }}>
-                        {a.timestamp ? new Date(a.timestamp).toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true }) : ''}
+                        {formatISTTime(a.timestamp)}
                       </td>
                       <td style={{ padding: "12px 16px", fontWeight: 700 }}>{a.userEmail || a.visitorId}</td>
                       <td style={{ padding: "12px 16px" }}>

@@ -106,4 +106,8 @@ public class VisitorSession {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    public LocalDateTime getCreatedAt() {
+        return startTime;
+    }
 }
