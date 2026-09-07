@@ -142,17 +142,36 @@ public class OrderService {
             if (r.getEmail() == null || r.getEmail().isBlank()) {
                 throw new RuntimeException("Email is required for guest checkout");
             }
-            u = userRepo.findByEmail(r.getEmail()).orElseGet(() -> {
-                User newUser = User.builder()
-                        .email(r.getEmail())
-                        .firstName(r.getFirstName())
-                        .lastName(r.getLastName())
-                        .phone(r.getPhone())
-                        .role(User.Role.CUSTOMER)
-                        .password(java.util.UUID.randomUUID().toString())
-                        .build();
-                return userRepo.save(newUser);
-            });
+            String guestEmail = r.getEmail().trim().toLowerCase();
+            Optional<User> existingUser = userRepo.findByEmail(guestEmail);
+            if (existingUser.isEmpty() && r.getPhone() != null && !r.getPhone().isBlank()) {
+                String cleanPhone = r.getPhone().replaceAll("[^0-9]", "");
+                if (!cleanPhone.isEmpty()) {
+                    String suffix = cleanPhone.length() > 10 ? cleanPhone.substring(cleanPhone.length() - 10) : cleanPhone;
+                    existingUser = userRepo.findByPhoneSuffix(suffix);
+                }
+            }
+            if (existingUser.isPresent()) {
+                u = existingUser.get();
+            } else {
+                try {
+                    User newUser = User.builder()
+                            .email(guestEmail)
+                            .firstName(r.getFirstName() != null && !r.getFirstName().isBlank() ? r.getFirstName().trim() : "Customer")
+                            .lastName(r.getLastName() != null ? r.getLastName().trim() : "")
+                            .phone(r.getPhone())
+                            .role(User.Role.CUSTOMER)
+                            .password(passwordEncoder.encode(java.util.UUID.randomUUID().toString()))
+                            .build();
+                    u = userRepo.save(newUser);
+                } catch (Exception e) {
+                    log.warn("Failed to create guest user {}, attempting fallback lookup: {}", guestEmail, e.getMessage());
+                    u = userRepo.findByEmail(guestEmail).orElse(null);
+                    if (u == null) {
+                        throw new RuntimeException("Could not create or associate user for checkout. Please try logging in.");
+                    }
+                }
+            }
             generatedPassword = null;
         }
 
@@ -193,14 +212,25 @@ public class OrderService {
         BigDecimal disc = BigDecimal.ZERO;
 
         if (r.getPromoCode() != null && !r.getPromoCode().isBlank()) {
-            var promoResult = promoCodeService.validate(r.getPromoCode(), subtotal);
-            if (promoResult.isValid() && promoResult.getDiscountAmount() != null) {
-                disc = promoResult.getDiscountAmount();
-                promoCodeService.incrementUsage(r.getPromoCode());
+            try {
+                var promoResult = promoCodeService.validate(r.getPromoCode(), subtotal);
+                if (promoResult != null && promoResult.isValid() && promoResult.getDiscountAmount() != null) {
+                    disc = promoResult.getDiscountAmount();
+                    try {
+                        promoCodeService.incrementUsage(r.getPromoCode());
+                    } catch (Exception e) {
+                        log.warn("Could not increment promo code usage for {}: {}", r.getPromoCode(), e.getMessage());
+                    }
+                }
+            } catch (Exception e) {
+                log.warn("Promo code validation failed safely: {}", e.getMessage());
             }
         }
 
         BigDecimal total = subtotal.add(ship).subtract(disc);
+        if (total.compareTo(BigDecimal.ZERO) < 0) {
+            total = BigDecimal.ZERO;
+        }
         String tempNum = "TEMP-" + java.util.UUID.randomUUID().toString();
 
         BigDecimal taxVal = BigDecimal.ZERO;
@@ -690,12 +720,13 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("Product not found: " + itemReq.getProductId()));
         ProductVariant variant = resolveVariant(product, itemReq);
         if (variant != null) {
-            if (!variant.getActive()) {
+            if (variant.getActive() != null && !variant.getActive()) {
                 throw new RuntimeException("Variant unavailable for " + product.getName());
             }
-            if (variant.getStockQuantity() < itemReq.getQuantity()) {
+            int availableStock = variant.getStockQuantity() != null ? variant.getStockQuantity() : 0;
+            if (availableStock < itemReq.getQuantity()) {
                 throw new RuntimeException(
-                        "Insufficient stock for " + product.getName() + " (" + variant.getSize() + ")");
+                        "Insufficient stock for " + product.getName() + " (" + (variant.getSize() != null ? variant.getSize() : "") + ")");
             }
         }
         BigDecimal unitPrice = variant != null && variant.getVariantPrice() != null
@@ -741,7 +772,7 @@ public class OrderService {
             if (item.getVariant() != null) {
                 ProductVariant v = variantRepo.findById(item.getVariant().getId()).orElse(null);
                 if (v != null) {
-                    int prevStock = v.getStockQuantity();
+                    int prevStock = v.getStockQuantity() != null ? v.getStockQuantity() : 0;
                     int qty = item.getQuantity();
                     int newStock = Math.max(0, prevStock - qty);
                     v.setStockQuantity(newStock);
@@ -768,7 +799,7 @@ public class OrderService {
             if (item.getVariant() != null) {
                 ProductVariant v = variantRepo.findById(item.getVariant().getId()).orElse(null);
                 if (v != null) {
-                    int prevStock = v.getStockQuantity();
+                    int prevStock = v.getStockQuantity() != null ? v.getStockQuantity() : 0;
                     int qty = item.getQuantity();
                     int newStock = prevStock + qty;
                     v.setStockQuantity(newStock);

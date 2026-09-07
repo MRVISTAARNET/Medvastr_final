@@ -6,6 +6,7 @@ import com.medvastr.backend.dto.PromoResponse;
 import com.medvastr.backend.model.PromoCode;
 import com.medvastr.backend.repository.PromoCodeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,16 +18,19 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class PromoCodeService {
 
     private final PromoCodeRepository promoRepo;
 
+    @Transactional(readOnly = true)
     public List<PromoCodeDTO> getAll() {
         return promoRepo.findAllByOrderByCreatedAtDesc().stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public PromoCodeDTO getById(Long id) {
         return toDTO(promoRepo.findById(id).orElseThrow(() -> new RuntimeException("Promo not found")));
     }
@@ -83,14 +87,18 @@ public class PromoCodeService {
             return PromoResponse.builder().valid(false).message("Enter a promo code").build();
         }
         String searchCode = code.trim();
-        java.util.Optional<PromoCode> opt = promoRepo.findByCodeIgnoreCaseAndActiveTrue(searchCode);
-        
-        if (opt.isEmpty()) {
-            if ("MEDVARN10".equalsIgnoreCase(searchCode)) {
-                opt = promoRepo.findByCodeIgnoreCaseAndActiveTrue("MEDVASTR10");
-            } else if ("MEDVASTR10".equalsIgnoreCase(searchCode)) {
-                opt = promoRepo.findByCodeIgnoreCaseAndActiveTrue("MEDVARN10");
+        java.util.Optional<PromoCode> opt = java.util.Optional.empty();
+        try {
+            opt = promoRepo.findByCodeIgnoreCaseAndActiveTrue(searchCode);
+            if (opt.isEmpty()) {
+                if ("MEDVARN10".equalsIgnoreCase(searchCode)) {
+                    opt = promoRepo.findByCodeIgnoreCaseAndActiveTrue("MEDVASTR10");
+                } else if ("MEDVASTR10".equalsIgnoreCase(searchCode)) {
+                    opt = promoRepo.findByCodeIgnoreCaseAndActiveTrue("MEDVARN10");
+                }
             }
+        } catch (Exception e) {
+            log.warn("Error looking up promo code {}: {}", searchCode, e.getMessage());
         }
 
         if (opt.isEmpty() && ("MEDVARN10".equalsIgnoreCase(searchCode) || "MEDVASTR10".equalsIgnoreCase(searchCode))) {
@@ -103,14 +111,20 @@ public class PromoCodeService {
                     .usedCount(0)
                     .active(true)
                     .build();
-            opt = java.util.Optional.of(promoRepo.save(autoCode));
+            try {
+                autoCode = promoRepo.save(autoCode);
+            } catch (Exception e) {
+                log.warn("Could not save auto-created promo code to DB: {}", e.getMessage());
+            }
+            opt = java.util.Optional.of(autoCode);
         }
 
         return opt.map(pc -> {
             if (pc.getExpiresAt() != null && pc.getExpiresAt().isBefore(LocalDate.now())) {
                 return PromoResponse.builder().valid(false).message("Promo code has expired").build();
             }
-            if (pc.getUsageLimit() != null && pc.getUsedCount() >= pc.getUsageLimit()) {
+            int used = pc.getUsedCount() != null ? pc.getUsedCount() : 0;
+            if (pc.getUsageLimit() != null && used >= pc.getUsageLimit()) {
                 return PromoResponse.builder().valid(false).message("Promo code usage limit reached").build();
             }
             if (pc.getMinimumOrderAmount() != null && subtotal.compareTo(pc.getMinimumOrderAmount()) < 0) {
@@ -122,18 +136,20 @@ public class PromoCodeService {
             BigDecimal discount = calcDiscount(pc, subtotal);
             return PromoResponse.builder()
                     .valid(true)
-                    .message(pc.getCode() + " applied!")
+                    .message((pc.getCode() != null ? pc.getCode() : searchCode) + " applied!")
                     .discountAmount(discount)
-                    .discountType(pc.getDiscountType().name())
-                    .discountValue(pc.getDiscountValue())
+                    .discountType(pc.getDiscountType() != null ? pc.getDiscountType().name() : "PERCENTAGE")
+                    .discountValue(pc.getDiscountValue() != null ? pc.getDiscountValue() : BigDecimal.TEN)
                     .build();
         }).orElse(PromoResponse.builder().valid(false).message("Invalid or expired promo code").build());
     }
 
     public BigDecimal calcDiscount(PromoCode pc, BigDecimal subtotal) {
-        BigDecimal d = pc.getDiscountType() == PromoCode.DiscountType.PERCENTAGE
-                ? subtotal.multiply(pc.getDiscountValue()).divide(BigDecimal.valueOf(100))
-                : pc.getDiscountValue();
+        if (pc == null || subtotal == null) return BigDecimal.ZERO;
+        BigDecimal val = pc.getDiscountValue() != null ? pc.getDiscountValue() : BigDecimal.ZERO;
+        BigDecimal d = (pc.getDiscountType() == PromoCode.DiscountType.PERCENTAGE)
+                ? subtotal.multiply(val).divide(BigDecimal.valueOf(100), 2, java.math.RoundingMode.HALF_UP)
+                : val;
         if (pc.getMaximumDiscountAmount() != null
                 && pc.getMaximumDiscountAmount().compareTo(BigDecimal.ZERO) > 0
                 && d.compareTo(pc.getMaximumDiscountAmount()) > 0) {
@@ -143,10 +159,16 @@ public class PromoCodeService {
     }
 
     public void incrementUsage(String code) {
-        promoRepo.findByCodeIgnoreCaseAndActiveTrue(code).ifPresent(pc -> {
-            pc.setUsedCount(pc.getUsedCount() + 1);
-            promoRepo.save(pc);
-        });
+        if (code == null || code.isBlank()) return;
+        try {
+            promoRepo.findByCodeIgnoreCaseAndActiveTrue(code.trim()).ifPresent(pc -> {
+                int current = pc.getUsedCount() != null ? pc.getUsedCount() : 0;
+                pc.setUsedCount(current + 1);
+                promoRepo.save(pc);
+            });
+        } catch (Exception e) {
+            log.warn("Failed to increment usage for promo code {}: {}", code, e.getMessage());
+        }
     }
 
     private PromoCodeDTO toDTO(PromoCode pc) {
@@ -159,10 +181,11 @@ public class PromoCodeService {
                 .minimumOrderAmount(pc.getMinimumOrderAmount())
                 .maximumDiscountAmount(pc.getMaximumDiscountAmount())
                 .usageLimit(pc.getUsageLimit())
-                .usedCount(pc.getUsedCount())
+                .usedCount(pc.getUsedCount() != null ? pc.getUsedCount() : 0)
                 .active(pc.isActive())
                 .expiresAt(pc.getExpiresAt())
                 .createdAt(pc.getCreatedAt())
                 .build();
     }
 }
+
