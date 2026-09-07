@@ -15,8 +15,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(String email);
 
-    @Query("SELECT u FROM User u WHERE u.phone LIKE %:phoneSuffix")
-    Optional<User> findByPhoneSuffix(@Param("phoneSuffix") String phoneSuffix);
+    @Query("SELECT u FROM User u WHERE u.phone LIKE %:phoneSuffix ORDER BY u.id DESC")
+    List<User> findAllByPhoneSuffix(@Param("phoneSuffix") String phoneSuffix);
+
+    default Optional<User> findByPhoneSuffix(String phoneSuffix) {
+        List<User> list = findAllByPhoneSuffix(phoneSuffix);
+        return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
+    }
 
     boolean existsByPhone(String phone);
 

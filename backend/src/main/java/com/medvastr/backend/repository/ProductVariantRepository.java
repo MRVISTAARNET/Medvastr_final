@@ -21,5 +21,10 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
 
     boolean existsByBarcodeAndIdNot(String barcode, Long id);
 
-    Optional<ProductVariant> findByProductIdAndSizeAndColorHex(Long productId, String size, String colorHex);
+    List<ProductVariant> findAllByProductIdAndSizeAndColorHex(Long productId, String size, String colorHex);
+
+    default Optional<ProductVariant> findByProductIdAndSizeAndColorHex(Long productId, String size, String colorHex) {
+        List<ProductVariant> list = findAllByProductIdAndSizeAndColorHex(productId, size, colorHex);
+        return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
+    }
 }
