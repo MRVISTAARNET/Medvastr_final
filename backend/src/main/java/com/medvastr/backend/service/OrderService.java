@@ -308,17 +308,6 @@ public class OrderService {
             }
         }
 
-        try {
-            userActivityEventRepo.save(UserActivityEvent.builder()
-                    .user(u)
-                    .eventType("ORDER_CREATED")
-                    .pageUrl("/checkout")
-                    .eventData("Order #" + finalSaved.getOrderNumber() + " created (" + finalSaved.getPaymentMethod() + ") for ₹" + finalSaved.getTotalAmount())
-                    .createdAt(LocalDateTime.now())
-                    .build());
-        } catch (Exception e) {
-            log.warn("Failed to save ORDER_CREATED activity event", e);
-        }
         if (!isGuest) {
             try {
                 cartService.clearCart();
@@ -331,9 +320,10 @@ public class OrderService {
             finalSaved.setStatus(Order.OrderStatus.CONFIRMED);
             orderRepo.save(finalSaved);
             decrementStock(finalSaved);
-            preloadOrderRelations(finalSaved);
-            triggerAsyncPostCommitActions(finalSaved);
         }
+
+        preloadOrderRelations(finalSaved);
+        triggerAsyncPostCommitActions(finalSaved);
 
         log.info("Order {} created", finalSaved.getOrderNumber());
         return toDTO(finalSaved);
@@ -657,6 +647,17 @@ public class OrderService {
                 new org.springframework.transaction.support.TransactionSynchronization() {
                     @Override
                     public void afterCommit() {
+                        try {
+                            userActivityEventRepo.save(UserActivityEvent.builder()
+                                    .user(order.getUser())
+                                    .eventType("ORDER_CREATED")
+                                    .pageUrl("/checkout")
+                                    .eventData("Order #" + order.getOrderNumber() + " created (" + order.getPaymentMethod() + ") for ₹" + order.getTotalAmount())
+                                    .createdAt(LocalDateTime.now())
+                                    .build());
+                        } catch (Exception e) {
+                            log.warn("Failed to save ORDER_CREATED activity event", e);
+                        }
                         try {
                             emailService.sendOrderConfirmationEmail(order);
                         } catch (Exception e) {

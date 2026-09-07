@@ -32,53 +32,96 @@ public class RazorpayService {
         this.storeSettingRepo = storeSettingRepo;
     }
 
+    private String clean(String val) {
+        if (val == null) return "";
+        String cleaned = val.trim();
+        if ((cleaned.startsWith("\"") && cleaned.endsWith("\"")) || (cleaned.startsWith("'") && cleaned.endsWith("'"))) {
+            cleaned = cleaned.substring(1, cleaned.length() - 1).trim();
+        }
+        return cleaned;
+    }
+
     public String getKeyId() {
+        // Priority 1: Elastic Beanstalk Environment Variable directly
+        String envVal = System.getenv("RAZORPAY_KEY_ID");
+        if (envVal == null || envVal.isBlank()) {
+            envVal = System.getenv("RAZORPAY_KEY");
+        }
+        if (envVal != null && !envVal.trim().isBlank()) {
+            return clean(envVal);
+        }
+
+        // Priority 2: Spring Property @Value("${razorpay.key.id}")
+        if (keyId != null && !keyId.trim().isBlank()) {
+            return clean(keyId);
+        }
+
+        // Priority 3: Database store_setting table
         String dbVal = storeSettingRepo.findById("razorpay_key")
                 .map(StoreSetting::getSettingValue)
                 .orElse(null);
-        if (dbVal != null && !dbVal.isBlank()) {
-            return dbVal.trim();
+        if (dbVal != null && !dbVal.trim().isBlank()) {
+            return clean(dbVal);
         }
-        if (keyId != null && !keyId.isBlank()) {
-            return keyId.trim();
-        }
-        String envVal = System.getenv("RAZORPAY_KEY_ID");
-        return envVal != null ? envVal.trim() : "";
+        return "";
     }
 
     private String getDbKeySecret() {
+        // Priority 1: Elastic Beanstalk Environment Variable directly
+        String envVal = System.getenv("RAZORPAY_KEY_SECRET");
+        if (envVal == null || envVal.isBlank()) {
+            envVal = System.getenv("RAZORPAY_SECRET");
+        }
+        if (envVal != null && !envVal.trim().isBlank()) {
+            return clean(envVal);
+        }
+
+        // Priority 2: Spring Property @Value("${razorpay.key.secret}")
+        if (keySecret != null && !keySecret.trim().isBlank()) {
+            return clean(keySecret);
+        }
+
+        // Priority 3: Database store_setting table
         String dbVal = storeSettingRepo.findById("razorpay_secret")
                 .map(StoreSetting::getSettingValue)
                 .orElse(null);
-        if (dbVal != null && !dbVal.isBlank()) {
-            return dbVal.trim();
+        if (dbVal != null && !dbVal.trim().isBlank()) {
+            return clean(dbVal);
         }
-        if (keySecret != null && !keySecret.isBlank()) {
-            return keySecret.trim();
-        }
-        String envVal = System.getenv("RAZORPAY_KEY_SECRET");
-        return envVal != null ? envVal.trim() : "";
+        return "";
     }
 
     public RazorpayClient getClient() throws RazorpayException {
         String k = getKeyId();
         String s = getDbKeySecret();
+        log.info("Resolving Razorpay Client credentials -> KeyId present: {}, Secret present: {}", !k.isBlank(), !s.isBlank());
         if (k.isBlank() || s.isBlank()) {
-            throw new RazorpayException("Razorpay Key ID or Secret is not configured in Admin Store Settings");
+            throw new RazorpayException("Razorpay Key ID or Secret is not configured in Elastic Beanstalk Environment Variables (RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET)");
         }
         return new RazorpayClient(k, s);
     }
 
     public String createOrder(BigDecimal amount, String receipt) throws RazorpayException {
-        JSONObject orderRequest = new JSONObject();
-        orderRequest.put("amount", amount.multiply(new BigDecimal(100)).intValue());
-        orderRequest.put("currency", "INR");
-        orderRequest.put("receipt", receipt);
-        orderRequest.put("payment_capture", 1);
+        String k = getKeyId();
+        String s = getDbKeySecret();
+        if (k.isBlank() || s.isBlank()) {
+            throw new RazorpayException("Razorpay Key ID or Secret missing in Elastic Beanstalk Environment Variables (RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET)");
+        }
+        try {
+            JSONObject orderRequest = new JSONObject();
+            orderRequest.put("amount", amount.multiply(new BigDecimal(100)).intValue());
+            orderRequest.put("currency", "INR");
+            orderRequest.put("receipt", receipt);
+            orderRequest.put("payment_capture", 1);
 
-        Order order = getClient().orders.create(orderRequest);
-        log.info("Razorpay order created for receipt {}", receipt);
-        return order.get("id").toString();
+            RazorpayClient client = new RazorpayClient(k, s);
+            Order order = client.orders.create(orderRequest);
+            log.info("Razorpay order created successfully for receipt {}", receipt);
+            return order.get("id").toString();
+        } catch (RazorpayException e) {
+            log.error("Razorpay API Exception for receipt {}: {}", receipt, e.getMessage(), e);
+            throw new RazorpayException("Razorpay API Error: " + e.getMessage());
+        }
     }
 
     public boolean verifySignature(String orderId, String paymentId, String signature) {

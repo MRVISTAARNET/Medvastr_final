@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
         }
 
         if (message == null || message.isBlank() || message.contains("marked as rollback-only") || message.contains("Transaction silently rolled back")) {
-            message = "Payment or order processing failed. Please check Payment Settings / Razorpay API keys or item availability.";
+            message = "Payment API or order processing failed. Please verify RAZORPAY_KEY_ID & RAZORPAY_KEY_SECRET in Elastic Beanstalk Environment Variables.";
         }
 
         return ResponseEntity.badRequest().body(ApiResponse.err(message));
@@ -53,8 +53,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<Object>> runtime(RuntimeException e) {
         log.error("[CHECKOUT_ERROR] Runtime Exception: ", e);
+        String ctxErr = CheckoutErrorContext.getLastError();
         CheckoutErrorContext.clear();
-        return ResponseEntity.badRequest().body(ApiResponse.err(e.getMessage()));
+        String msg = (ctxErr != null && !ctxErr.isBlank()) ? ctxErr : e.getMessage();
+        if (msg == null || msg.isBlank() || msg.contains("marked as rollback-only") || msg.contains("Transaction silently rolled back")) {
+            msg = "Payment or order processing failed: " + (e.getCause() != null ? e.getCause().getMessage() : e.getMessage());
+        }
+        return ResponseEntity.badRequest().body(ApiResponse.err(msg));
     }
 
     @ExceptionHandler(BadCredentialsException.class)

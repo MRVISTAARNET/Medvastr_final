@@ -158,6 +158,7 @@ public class PromoCodeService {
         return d;
     }
 
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
     public void incrementUsage(String code) {
         if (code == null || code.isBlank()) return;
         try {
