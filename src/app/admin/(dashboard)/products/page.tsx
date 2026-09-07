@@ -242,7 +242,7 @@ export default function AdminProducts() {
         weightValue: wv,
         weightUnit: wu,
         codDisabled: editingProduct.codDisabled ?? false,
-        embroideryEnabled: editingProduct.embroideryEnabled ?? false,
+        embroideryEnabled: editingProduct.embroideryEnabled === true || (editingProduct.embroideryEnabled as any) === 'true' || (editingProduct.embroideryEnabled as any) === 1,
         embroideryPreviewImage: (() => {
           try { return JSON.parse(editingProduct.embroideryConfig || '{}')?.previewImage || ''; } catch { return ''; }
         })(),
@@ -433,7 +433,7 @@ export default function AdminProducts() {
       seoDescription,
       seoKeywords,
       weight: `${form.weightValue}${form.weightUnit}`,
-      embroideryEnabled: Boolean(form.embroideryEnabled),
+      embroideryEnabled: form.embroideryEnabled === true || (form.embroideryEnabled as any) === 'true',
       embroideryConfig: JSON.stringify({
         previewImage: form.embroideryPreviewImage || '',
         colorPreviewImages: form.embroideryColorPreviewImages || {},

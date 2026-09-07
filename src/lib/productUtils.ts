@@ -221,6 +221,8 @@ export function mapApiProduct(p: any): Product {
     material: p.material,
     tags: p.tags,
     codDisabled: p.codDisabled !== undefined ? p.codDisabled : false,
+    embroideryEnabled: p.embroideryEnabled !== undefined ? Boolean(p.embroideryEnabled) : false,
+    embroideryConfig: p.embroideryConfig || "",
   };
 }
 
@@ -303,5 +305,7 @@ export function toApiProductRequest(p: any) {
     seoDescription: p.seoDescription,
     seoKeywords: p.seoKeywords,
     tax: p.tax ? Number(p.tax) : undefined,
+    embroideryEnabled: p.embroideryEnabled !== undefined ? Boolean(p.embroideryEnabled) : false,
+    embroideryConfig: p.embroideryConfig,
   };
 }
