@@ -45,11 +45,15 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
   const normalizedColor = selectedColorName.toLowerCase().trim();
   const colorCloseUp = closeUpScrubImageMap[normalizedColor];
 
-  // Priority: 1. Custom embroidery close-up image, 2. Base scrub image, 3. Color close-up map, 4. High-res default
+  // Priority: 
+  // 1. baseScrubImage (Selected color variant photo uploaded by Admin)
+  // 2. colorCloseUp (Dedicated chest close-up photo for standard colors)
+  // 3. embroideryPreviewImage (Custom preview image uploaded in Tab 6)
+  // 4. Default high-res scrub image fallback
   const scrubImage =
-    embroideryPreviewImage ||
     baseScrubImage ||
     colorCloseUp ||
+    embroideryPreviewImage ||
     'https://cdn.shopify.com/s/files/1/0562/9247/5063/products/1_3a8c17b8-8e65-4fef-b5bb-413158f333fb.jpg?v=1700000000';
 
   const textColorHex = textColorHexMap[customization.textColor] || '#FFFFFF';
