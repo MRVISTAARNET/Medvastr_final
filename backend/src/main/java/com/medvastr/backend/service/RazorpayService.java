@@ -33,15 +33,22 @@ public class RazorpayService {
     }
 
     public String getKeyId() {
-        return storeSettingRepo.findById("razorpay_key").map(StoreSetting::getSettingValue).orElse(keyId);
+        String k = storeSettingRepo.findById("razorpay_key").map(StoreSetting::getSettingValue).orElse(keyId);
+        return k != null ? k.trim() : "";
     }
 
     private String getDbKeySecret() {
-        return storeSettingRepo.findById("razorpay_secret").map(StoreSetting::getSettingValue).orElse(keySecret);
+        String s = storeSettingRepo.findById("razorpay_secret").map(StoreSetting::getSettingValue).orElse(keySecret);
+        return s != null ? s.trim() : "";
     }
 
     public RazorpayClient getClient() throws RazorpayException {
-        return new RazorpayClient(getKeyId(), getDbKeySecret());
+        String k = getKeyId();
+        String s = getDbKeySecret();
+        if (k.isBlank() || s.isBlank()) {
+            throw new RazorpayException("Razorpay Key ID or Secret is not configured in Admin Store Settings");
+        }
+        return new RazorpayClient(k, s);
     }
 
     public String createOrder(BigDecimal amount, String receipt) throws RazorpayException {

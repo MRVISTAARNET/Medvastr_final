@@ -17,12 +17,24 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(org.springframework.transaction.UnexpectedRollbackException.class)
     public ResponseEntity<ApiResponse<Object>> unexpectedRollback(org.springframework.transaction.UnexpectedRollbackException e) {
         log.error("Unexpected Rollback Exception: ", e);
-        Throwable cause = e.getMostSpecificCause() != null ? e.getMostSpecificCause() : e.getCause();
-        String message = (cause != null && cause.getMessage() != null && !cause.getMessage().isBlank())
-                ? cause.getMessage()
-                : e.getMessage();
+        Throwable cause = e.getMostSpecificCause();
+        if (cause == null) cause = e.getCause();
+        if (cause == null) cause = e;
+
+        String message = cause.getMessage();
         if (message == null || message.isBlank() || message.contains("marked as rollback-only")) {
-            message = "Order processing encountered a transaction issue. Please check your order details or try Cash on Delivery.";
+            // Find root cause message if nested
+            Throwable root = cause;
+            while (root.getCause() != null && root != root.getCause()) {
+                root = root.getCause();
+                if (root.getMessage() != null && !root.getMessage().contains("marked as rollback-only")) {
+                    message = root.getMessage();
+                    break;
+                }
+            }
+        }
+        if (message == null || message.isBlank() || message.contains("marked as rollback-only")) {
+            message = "Order could not be processed due to a payment gateway or database issue. Please check payment settings or try Cash on Delivery.";
         }
         return ResponseEntity.badRequest().body(ApiResponse.err(message));
     }

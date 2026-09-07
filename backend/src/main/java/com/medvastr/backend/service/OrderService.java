@@ -281,8 +281,9 @@ public class OrderService {
                 String razorpayId = razorpayService.createOrder(total, orderNum);
                 saved.setRazorpayOrderId(razorpayId);
             } catch (Exception e) {
-                log.error("Razorpay order creation failed", e);
-                throw new RuntimeException("Payment service unavailable. Try COD.");
+                log.error("Razorpay order creation failed for order {}: {}", orderNum, e.getMessage());
+                String errMsg = e.getMessage() != null && !e.getMessage().isBlank() ? e.getMessage() : "Failed to connect to Razorpay API";
+                throw new RuntimeException("Online Payment Gateway Error: " + errMsg + ". Please check Razorpay Key & Secret in Admin Settings.");
             }
         }
 
