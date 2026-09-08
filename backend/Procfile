@@ -1,1 +1,1 @@
-web: java -Dserver.port=${PORT:8080} -Dserver.address=0.0.0.0 -jar application.jar --spring.profiles.active=prod
+web: java -jar target/backend-0.0.1-SNAPSHOT.jar --server.port=5000
