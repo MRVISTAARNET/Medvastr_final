@@ -6155,28 +6155,30 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
-  font-weight: 600;
-  color: #334155;
-  background: #fff;
-  border: 1.5px solid #cbd5e1;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+  background: #ffffff;
+  border: 1.5px solid #94a3b8;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.18s;
   letter-spacing: 0.02em;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
 .pdp-size-pill:hover:not(.on) {
-  border-color: #1e293b;
-  color: #1e293b;
-  background: #f8fafc;
+  border-color: #1e1b4b;
+  color: #1e1b4b;
+  background: #f1f5f9;
 }
 
 .pdp-size-pill.on {
-  background: #1e293b;
-  border-color: #1e293b;
-  color: #fff;
-  font-weight: 700;
+  background: #1e1b4b;
+  border-color: #1e1b4b;
+  color: #ffffff;
+  font-weight: 800;
+  box-shadow: 0 2px 6px rgba(30,27,75,0.25);
 }
 
 /* Fly-to-Cart particle */
@@ -6207,11 +6209,12 @@ html {
 .pdp-qty-stepper {
   display: flex;
   align-items: center;
-  background: #f8fafc;
-  border: 1.5px solid #cbd5e1;
+  background: #ffffff;
+  border: 1.5px solid #94a3b8;
   border-radius: 8px;
   height: 52px;
   padding: 0 4px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
 .pdp-step-btn {
@@ -6220,21 +6223,22 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  color: var(--ink);
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
   transition: opacity 0.2s;
 }
 
 .pdp-step-btn:hover {
-  opacity: 0.5;
+  opacity: 0.7;
 }
 
 .pdp-qty-display {
   width: 36px;
   text-align: center;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ink);
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f172a;
 }
 
 .pdp-heart-btn {
@@ -6298,21 +6302,22 @@ html {
 
 .pdp-acc-trigger {
   width: 100%;
-  padding: 20px 0;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  font-family: var(--sans);
   font-size: 15px;
   font-weight: 700;
-  text-transform: none;
-  letter-spacing: normal;
   color: var(--ink);
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .pdp-acc-trigger span {
-  font-size: 22px;
-  font-weight: 200;
-  transition: transform 0.35s ease;
+  font-size: 18px;
+  color: var(--lt);
 }
 
 .pdp-acc-item.on .pdp-acc-trigger span {
@@ -8080,8 +8085,8 @@ h1, h2, h3, h4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   background: #82a4cf !important; /* Authentic Knyamed blue background */
-  padding: 36px 20px;
-  margin: 40px 0;
+  padding: 28px 20px;
+  margin: 28px 0 16px 0;
   border-radius: 12px;
   align-items: center;
   justify-items: center;

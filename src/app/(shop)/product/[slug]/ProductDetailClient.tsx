@@ -945,8 +945,8 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               )}
             </div>
 
-            <div style={{ marginTop: '20px', padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-              <div style={{ fontSize: '15px', fontWeight: 700, color: '#1e293b', marginBottom: '10px' }}>Delivery Details</div>
+            <div style={{ marginTop: '20px', padding: '16px', background: '#ffffff', borderRadius: '12px', border: '1.5px solid #cbd5e1', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
+              <div style={{ fontSize: '15px', fontWeight: 800, color: '#0f172a', marginBottom: '10px' }}>Delivery Details</div>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <input 
                   type="text" 
@@ -954,13 +954,13 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                   placeholder="Enter Pincode" 
                   value={pincode}
                   onChange={(e) => setPincode(e.target.value.replace(/\D/g, ''))}
-                  style={{ flex: 1, padding: '8px 12px', border: '1.5px solid #cbd5e1', borderRadius: '8px', fontSize: '14px', outline: 'none', background: 'white', color: '#1e293b' }}
+                  style={{ flex: 1, padding: '8px 12px', border: '1.5px solid #94a3b8', borderRadius: '8px', fontSize: '14px', outline: 'none', background: '#ffffff', color: '#0f172a', fontWeight: 600 }}
                 />
                 <button 
                   type="button"
                   onClick={checkPincodeServiceability}
                   disabled={pincode.length !== 6 || checkingPincode}
-                  style={{ padding: '8px 16px', background: 'var(--ink, #1e1b4b)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '14px', cursor: pincode.length === 6 && !checkingPincode ? 'pointer' : 'default', opacity: pincode.length === 6 ? 1 : 0.6 }}
+                  style={{ padding: '8px 18px', background: '#1e1b4b', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 700, fontSize: '14px', cursor: pincode.length === 6 && !checkingPincode ? 'pointer' : 'default', opacity: pincode.length === 6 ? 1 : 0.75, boxShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
                 >
                   {checkingPincode ? 'Checking...' : 'Check'}
                 </button>
