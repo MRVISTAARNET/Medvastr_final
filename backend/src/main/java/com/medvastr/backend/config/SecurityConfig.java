@@ -47,7 +47,8 @@ public class SecurityConfig {
                                 .policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
                         .permissionsPolicy(p -> p.policy("geolocation=(), microphone=(), camera=()")))
                 .authorizeHttpRequests(a -> {
-                    a.requestMatchers("/api/auth/**", "/auth/**").permitAll()
+                    a.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                            .requestMatchers("/api/auth/**", "/auth/**").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/health", "/health", "/").permitAll()
                             .requestMatchers(HttpMethod.GET, "/api/products/**", "/products/**",
                                     "/api/categories/**", "/categories/**",

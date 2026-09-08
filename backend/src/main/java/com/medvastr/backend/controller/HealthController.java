@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping({ "/api/health", "/health", "/" })
-@CrossOrigin(origins = "*")
 public class HealthController {
     @GetMapping
     public ResponseEntity<ApiResponse<String>> health() {

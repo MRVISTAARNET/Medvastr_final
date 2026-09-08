@@ -13,7 +13,6 @@ import java.util.Map;
 @RequestMapping("/api/newsletter")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "*")
 public class NewsletterController {
 
     private final EmailService emailService;

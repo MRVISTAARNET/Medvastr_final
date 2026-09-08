@@ -13,7 +13,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/bulk-orders")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class BulkOrderController {
     private final BulkOrderService bulkOrderService;
 

@@ -14,7 +14,6 @@ import java.util.Map;
 @RestController
 @RequestMapping({ "/api/settings", "/settings" })
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class SettingsController {
 
     private final StoreSettingRepository repo;

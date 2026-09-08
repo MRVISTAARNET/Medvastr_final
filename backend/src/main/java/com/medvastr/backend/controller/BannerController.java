@@ -11,7 +11,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/banners")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class BannerController {
     private final BannerService bannerService;
 
