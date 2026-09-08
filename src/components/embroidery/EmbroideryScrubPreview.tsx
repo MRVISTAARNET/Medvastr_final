@@ -110,49 +110,97 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
         </button>
       )}
 
-      <div className="absolute inset-0 z-20 pointer-events-none">
-        {/* Chest Pocket Text Overlay (Positioned directly ABOVE Chest Pocket Seam & Tag) */}
-        <div className="absolute top-[41%] sm:top-[43%] left-[54%] sm:left-[56%] w-[130px] sm:w-[150px]">
-          {/* Dashed Guideline Box */}
-          <div className="border border-dashed border-white/80 rounded-md p-1.5 bg-black/45 backdrop-blur-[2px] min-h-[46px] flex flex-col justify-center shadow-lg">
-            <div className="text-[8.5px] uppercase tracking-widest text-gray-200 font-sans mb-0.5 text-center font-medium opacity-90">
-              Your Text Goes Here
-            </div>
-
-            {customization.line1 || customization.line2 ? (
-              <div className="leading-tight text-center overflow-hidden">
-                {customization.line1 && (
-                  <p
-                    className="text-[12px] sm:text-[14px] font-bold truncate tracking-wide"
-                    style={{
-                      color: textColorHex,
-                      fontFamily: fontStyleFamily,
-                      textShadow: '0 1px 3px rgba(0,0,0,0.9)',
-                    }}
-                  >
-                    {customization.line1}
-                  </p>
-                )}
-                {customization.line2 && (
-                  <p
-                    className="text-[10px] sm:text-[12px] opacity-95 truncate tracking-wide mt-0.5 font-medium"
-                    style={{
-                      color: textColorHex,
-                      fontFamily: fontStyleFamily,
-                      textShadow: '0 1px 3px rgba(0,0,0,0.9)',
-                    }}
-                  >
-                    {customization.line2}
-                  </p>
-                )}
-              </div>
-            ) : (
-              <div className="text-gray-300 text-[10px] font-sans leading-tight text-center opacity-90">
-                <p className="font-medium">Line 1 (Name)</p>
-                <p className="font-medium">Line 2 (Designation)</p>
-              </div>
-            )}
+      {/* Embroidery Text Overlay - Positioned Directly Above Chest Pocket Seam & Tag */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '38%',
+          left: '58%',
+          width: '150px',
+          zIndex: 20,
+          pointerEvents: 'none',
+        }}
+      >
+        <div
+          style={{
+            border: '1px dashed rgba(255, 255, 255, 0.85)',
+            borderRadius: '6px',
+            padding: '6px 8px',
+            backgroundColor: 'rgba(0, 0, 0, 0.45)',
+            backdropFilter: 'blur(2px)',
+            minHeight: '48px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+          }}
+        >
+          <div
+            style={{
+              fontSize: '9px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.08em',
+              color: 'rgba(255, 255, 255, 0.85)',
+              fontFamily: 'sans-serif',
+              marginBottom: '2px',
+              textAlign: 'center',
+              fontWeight: 500,
+            }}
+          >
+            Your Text Goes Here
           </div>
+
+          {customization.line1 || customization.line2 ? (
+            <div style={{ textAlign: 'center', overflow: 'hidden', lineHeight: 1.25 }}>
+              {customization.line1 && (
+                <div
+                  style={{
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    color: textColorHex,
+                    fontFamily: fontStyleFamily,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    textShadow: '0 1px 3px rgba(0, 0, 0, 0.9)',
+                  }}
+                >
+                  {customization.line1}
+                </div>
+              )}
+              {customization.line2 && (
+                <div
+                  style={{
+                    fontSize: '11px',
+                    fontWeight: 500,
+                    color: textColorHex,
+                    fontFamily: fontStyleFamily,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    marginTop: '2px',
+                    opacity: 0.95,
+                    textShadow: '0 1px 3px rgba(0, 0, 0, 0.9)',
+                  }}
+                >
+                  {customization.line2}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div
+              style={{
+                color: 'rgba(255, 255, 255, 0.75)',
+                fontSize: '10px',
+                fontFamily: 'sans-serif',
+                lineHeight: 1.3,
+                textAlign: 'center',
+              }}
+            >
+              <div style={{ fontWeight: 500 }}>Line 1 (Name)</div>
+              <div style={{ fontWeight: 500 }}>Line 2 (Designation)</div>
+            </div>
+          )}
         </div>
       </div>
     </div>
