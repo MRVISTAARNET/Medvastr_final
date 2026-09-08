@@ -131,11 +131,11 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
           ) : null}
         </div>
 
-        {/* Left Pocket / Chest Text Overlay (Viewer's Right side - Positioned directly above Chest Pocket) */}
-        <div className="absolute top-[32%] sm:top-[34%] right-[22%] sm:right-[24%] w-[135px] sm:w-[155px]">
+        {/* Left Pocket / Chest Text Overlay (Viewer's Right side - Positioned directly over Chest Pocket) */}
+        <div className="absolute top-[37%] sm:top-[39%] right-[28%] sm:right-[31%] w-[125px] sm:w-[145px]">
           {/* Dashed Guideline Box */}
-          <div className="border border-dashed border-white/60 rounded-md p-2 bg-black/35 backdrop-blur-[2px] min-h-[48px] flex flex-col justify-center shadow-md">
-            <div className="text-[9px] uppercase tracking-widest text-gray-200 font-sans mb-0.5 text-center font-medium opacity-90">
+          <div className="border border-dashed border-white/70 rounded-md p-1.5 bg-black/30 backdrop-blur-[2px] min-h-[46px] flex flex-col justify-center shadow-md">
+            <div className="text-[8.5px] uppercase tracking-widest text-gray-200 font-sans mb-0.5 text-center font-medium opacity-90">
               Your Text Goes Here
             </div>
 
@@ -143,11 +143,11 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
               <div className="leading-tight text-center overflow-hidden">
                 {customization.line1 && (
                   <p
-                    className="text-[13px] sm:text-[15px] font-bold truncate tracking-wide"
+                    className="text-[12px] sm:text-[14px] font-bold truncate tracking-wide"
                     style={{
                       color: textColorHex,
                       fontFamily: fontStyleFamily,
-                      textShadow: '0 1px 3px rgba(0,0,0,0.7)',
+                      textShadow: '0 1px 3px rgba(0,0,0,0.8)',
                     }}
                   >
                     {customization.line1}
@@ -155,11 +155,11 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
                 )}
                 {customization.line2 && (
                   <p
-                    className="text-[11px] sm:text-[13px] opacity-95 truncate tracking-wide mt-0.5 font-medium"
+                    className="text-[10px] sm:text-[12px] opacity-95 truncate tracking-wide mt-0.5 font-medium"
                     style={{
                       color: textColorHex,
                       fontFamily: fontStyleFamily,
-                      textShadow: '0 1px 3px rgba(0,0,0,0.7)',
+                      textShadow: '0 1px 3px rgba(0,0,0,0.8)',
                     }}
                   >
                     {customization.line2}
@@ -167,9 +167,9 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
                 )}
               </div>
             ) : (
-              <div className="text-gray-300 text-[11px] font-sans leading-tight text-center opacity-90">
-                <p className="font-medium">Line 1</p>
-                <p className="font-medium">Line 2</p>
+              <div className="text-gray-300 text-[10px] font-sans leading-tight text-center opacity-90">
+                <p className="font-medium">Line 1 (Name)</p>
+                <p className="font-medium">Line 2 (Designation)</p>
               </div>
             )}
           </div>
