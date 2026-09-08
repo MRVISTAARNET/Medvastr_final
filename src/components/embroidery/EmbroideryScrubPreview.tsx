@@ -49,19 +49,20 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
   const normalizedColor = selectedColorName.toLowerCase().trim();
   const colorCloseUp = closeUpScrubImageMap[normalizedColor];
 
+  // Prioritize admin-configured preview image or product main image
   const scrubImage =
-    colorCloseUp ||
     embroideryPreviewImage ||
     baseScrubImage ||
-    'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_navy_close_up_scrub_top.jpg';
+    colorCloseUp ||
+    'https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=800&auto=format&fit=crop';
 
   const textColorHex = textColorHexMap[customization.textColor] || '#FFFFFF';
   const fontStyleFamily = fontStyleFamilyMap[customization.fontStyle] || 'sans-serif';
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '320px', backgroundColor: '#f8fafc', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', userSelect: 'none' }}>
-      {/* Background Scrub Close-Up Image with Dynamic Chest Zoom */}
-      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 1 }}>
+    <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '320px', backgroundColor: '#ffffff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', userSelect: 'none' }}>
+      {/* Background Scrub Image */}
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 1, backgroundColor: '#ffffff' }}>
         <img
           src={scrubImage}
           alt={`Scrub top chest embroidery preview - ${selectedColorName}`}
@@ -70,14 +71,13 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
             height: '100%',
             objectFit: 'cover',
             objectPosition: 'center top',
-            transform: colorCloseUp ? 'scale(1)' : 'scale(1.45)',
-            transformOrigin: '50% 35%',
             display: 'block',
-            transition: 'transform 0.3s ease',
           }}
           onError={(e) => {
-            (e.target as HTMLImageElement).src =
-              'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_navy_close_up_scrub_top.jpg';
+            const target = e.target as HTMLImageElement;
+            if (baseScrubImage && target.src !== baseScrubImage) {
+              target.src = baseScrubImage;
+            }
           }}
         />
       </div>
@@ -111,8 +111,8 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
       )}
 
       <div className="absolute inset-0 z-20 pointer-events-none">
-        {/* Chest Pocket Text Overlay (Positioned 100% directly above Chest Pocket Top Seam) */}
-        <div className="absolute top-[43%] sm:top-[45%] left-[44%] sm:left-[46%] w-[135px] sm:w-[150px]">
+        {/* Chest Pocket Text Overlay (Positioned directly ABOVE Chest Pocket Seam & Tag) */}
+        <div className="absolute top-[32%] sm:top-[34%] left-[54%] sm:left-[56%] w-[130px] sm:w-[150px]">
           {/* Dashed Guideline Box */}
           <div className="border border-dashed border-white/80 rounded-md p-1.5 bg-black/45 backdrop-blur-[2px] min-h-[46px] flex flex-col justify-center shadow-lg">
             <div className="text-[8.5px] uppercase tracking-widest text-gray-200 font-sans mb-0.5 text-center font-medium opacity-90">
