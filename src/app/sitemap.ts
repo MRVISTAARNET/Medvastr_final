@@ -64,38 +64,73 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Failed to build category sitemap entries", e);
   }
 
-  // 3. Dynamic Products and Blog Posts
+  // 3. Dynamic Products and Blog Posts (Safely fetched with timeout & content-type validation)
   try {
-    const [productsRes, blogRes] = await Promise.all([
-      fetch(`${API_BASE}/products?size=500`, { next: { revalidate: 3600 } }),
-      fetch(`${API_BASE}/blog/posts?size=100`, { next: { revalidate: 3600 } }),
-    ]);
+    const controller1 = new AbortController();
+    const timeoutId1 = setTimeout(() => controller1.abort(), 4000);
 
-    const productsJson = await productsRes.json();
-    const products = productsJson?.data?.content || productsJson?.content || [];
-    const productEntries: MetadataRoute.Sitemap = products
-      .filter((p: any) => p.slug && p.active !== false)
-      .map((p: any) => ({
-        url: `${SITE_URL}/product/${p.slug}`,
-        lastModified: p.createdAt ? new Date(p.createdAt) : now,
-        changeFrequency: "weekly" as const,
-        priority: 0.8,
-      }));
-    dynamicEntries = dynamicEntries.concat(productEntries);
+    const productsRes = await fetch(`${API_BASE}/products?size=500`, {
+      next: { revalidate: 3600 },
+      signal: controller1.signal,
+      headers: { Accept: "application/json" },
+    }).catch(() => null);
 
-    const blogJson = await blogRes.json();
-    const posts = blogJson?.content || [];
-    const postEntries: MetadataRoute.Sitemap = posts
-      .filter((p: any) => p.slug)
-      .map((p: any) => ({
-        url: `${SITE_URL}/blog/${p.slug}`,
-        lastModified: p.publishedAt ? new Date(p.publishedAt) : now,
-        changeFrequency: "monthly" as const,
-        priority: 0.6,
-      }));
-    dynamicEntries = dynamicEntries.concat(postEntries);
+    clearTimeout(timeoutId1);
+
+    if (productsRes && productsRes.ok) {
+      const contentType = productsRes.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        const productsJson = await productsRes.json().catch(() => null);
+        const products = productsJson?.data?.content || productsJson?.content || [];
+        if (Array.isArray(products)) {
+          const productEntries: MetadataRoute.Sitemap = products
+            .filter((p: any) => p && p.slug && p.active !== false)
+            .map((p: any) => ({
+              url: `${SITE_URL}/product/${p.slug}`,
+              lastModified: p.createdAt ? new Date(p.createdAt) : now,
+              changeFrequency: "weekly" as const,
+              priority: 0.8,
+            }));
+          dynamicEntries = dynamicEntries.concat(productEntries);
+        }
+      }
+    }
   } catch (err) {
-    console.error("Failed to fetch sitemap dynamic entries", err);
+    console.warn("Skipping product sitemap dynamic entries during build", err);
+  }
+
+  try {
+    const controller2 = new AbortController();
+    const timeoutId2 = setTimeout(() => controller2.abort(), 4000);
+
+    const blogRes = await fetch(`${API_BASE}/blog/posts?size=100`, {
+      next: { revalidate: 3600 },
+      signal: controller2.signal,
+      headers: { Accept: "application/json" },
+    }).catch(() => null);
+
+    clearTimeout(timeoutId2);
+
+    if (blogRes && blogRes.ok) {
+      const contentType = blogRes.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) {
+        const blogJson = await blogRes.json().catch(() => null);
+        const posts = blogJson?.content || [];
+        if (Array.isArray(posts)) {
+          const postEntries: MetadataRoute.Sitemap = posts
+            .filter((p: any) => p && p.slug)
+            .map((p: any) => ({
+              url: `${SITE_URL}/blog/${p.slug}`,
+              lastModified: p.publishedAt ? new Date(p.publishedAt) : now,
+              changeFrequency: "monthly" as const,
+              priority: 0.6,
+            }));
+          dynamicEntries = dynamicEntries.concat(postEntries);
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("Skipping blog sitemap dynamic entries during build", err);
   }
 
   return [...staticEntries, ...dynamicEntries];
