@@ -824,21 +824,36 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                     embroideryPreviewImage={(() => {
                       try {
                         const config = JSON.parse((p as any).embroideryConfig || '{}');
-                        const colorName = ci !== null ? (p.clrNms?.[ci] || p.clrs?.[ci]) : 'Navy Blue';
-                        if (colorName && config?.colorPreviewImages?.[colorName]) {
-                          return config.colorPreviewImages[colorName];
-                        }
-                        if (colorName && config?.colorPreviewImages) {
-                          const foundKey = Object.keys(config.colorPreviewImages).find(
-                            k => k.trim().toLowerCase() === colorName.trim().toLowerCase()
-                          );
+                        const colorName = ci !== null ? (p.clrNms?.[ci] || '') : '';
+                        const colorHex = ci !== null ? (p.clrs?.[ci] || '') : '';
+                        const colorImagesFirst = colorImages && colorImages[0] ? colorImages[0] : '';
+                        
+                        if (config?.colorPreviewImages) {
+                          // 1. Direct match by color name (e.g. 'Dark Navy', 'Grey', 'Black', 'Maroon')
+                          if (colorName && config.colorPreviewImages[colorName]) {
+                            return config.colorPreviewImages[colorName];
+                          }
+                          // 2. Direct match by hex (e.g. '#1b2a4a')
+                          if (colorHex && config.colorPreviewImages[colorHex]) {
+                            return config.colorPreviewImages[colorHex];
+                          }
+                          // 3. Case-insensitive name or hex match
+                          const foundKey = Object.keys(config.colorPreviewImages).find(k => {
+                            const lk = k.trim().toLowerCase();
+                            return (colorName && lk === colorName.trim().toLowerCase()) ||
+                                   (colorHex && lk === colorHex.trim().toLowerCase());
+                          });
                           if (foundKey && config.colorPreviewImages[foundKey]) {
                             return config.colorPreviewImages[foundKey];
                           }
                         }
-                        return config?.previewImage || undefined;
+                        // 4. Admin general preview image
+                        if (config?.previewImage) return config.previewImage;
+
+                        // 5. Fallback to product color specific image
+                        return colorImagesFirst || p.imgs?.[0] || undefined;
                       } catch {
-                        return undefined;
+                        return colorImages[0] || p.imgs?.[0] || undefined;
                       }
                     })()}
                     selectedColorName={ci !== null ? (p.clrNms?.[ci] || p.clrs?.[ci]) : 'Navy Blue'}

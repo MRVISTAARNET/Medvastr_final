@@ -5,7 +5,7 @@ import AdminTopbar from '@/components/admin/AdminTopbar';
 import { fmt, B } from '@/lib/data';
 import { getColorHex } from '@/lib/productUtils';
 import { useApp } from '@/context/AppContext';
-import { API_BASE, authHeaders, getToken } from '@/lib/api';
+import { API_BASE, authHeaders, getToken, normalizeMediaUrl } from '@/lib/api';
 import { logError } from '@/lib/logger';
 import { toJpeg } from 'html-to-image';
 import JsBarcode from 'jsbarcode';
@@ -1151,19 +1151,20 @@ export default function AdminProducts() {
                                           });
                                           const d = await res.json();
                                           if (d.success && d.data) {
+                                            const finalUrl = normalizeMediaUrl(d.data);
                                             setForm((prev: any) => ({
                                               ...prev,
                                               embroideryColorPreviewImages: {
                                                 ...(prev.embroideryColorPreviewImages || {}),
-                                                [colorName]: d.data
+                                                [colorName]: finalUrl
                                               }
                                             }));
                                             alert(`Close-up photo uploaded for ${colorName}!`);
                                           } else {
                                             alert(`Upload failed: ${d.message || "Invalid file"}`);
                                           }
-                                        } catch (err) {
-                                          alert("Upload failed: Connection error");
+                                        } catch (err: any) {
+                                          alert(`Upload failed: ${err?.message || "Connection error"}`);
                                         }
                                         e.target.value = '';
                                       }}

@@ -15,10 +15,12 @@ interface EmbroideryScrubPreviewProps {
 const closeUpScrubImageMap: Record<string, string> = {
   'navy blue': 'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_navy_close_up_scrub_top.jpg',
   navy: 'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_navy_close_up_scrub_top.jpg',
+  'dark navy': 'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_navy_close_up_scrub_top.jpg',
   black: 'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_black_close_up_scrub_top.jpg',
   'royal blue': 'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_royal_blue_close_up_scrub_top.jpg',
   wine: 'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_wine_close_up_scrub_top.jpg',
   burgundy: 'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_wine_close_up_scrub_top.jpg',
+  maroon: 'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_wine_close_up_scrub_top.jpg',
   'ceil blue': 'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_ceil_blue_close_up_scrub_top.jpg',
   grey: 'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_navy_close_up_scrub_top.jpg',
   gray: 'https://cdn.shopify.com/s/files/1/0562/9247/5063/files/knya_navy_close_up_scrub_top.jpg',
@@ -49,38 +51,71 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
   const normalizedColor = selectedColorName.toLowerCase().trim();
   const colorCloseUp = closeUpScrubImageMap[normalizedColor];
 
-  // Prioritize admin-configured preview image or product main image
-  const scrubImage =
-    embroideryPreviewImage ||
-    baseScrubImage ||
-    colorCloseUp ||
-    'https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=800&auto=format&fit=crop';
+  // Candidates list in priority fallback order
+  const imageCandidates = React.useMemo(() => {
+    const list: string[] = [];
+    if (embroideryPreviewImage) list.push(embroideryPreviewImage);
+    if (baseScrubImage) list.push(baseScrubImage);
+    if (colorCloseUp) list.push(colorCloseUp);
+    // Reliable high-resolution scrub top chest fallback
+    list.push('https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=800&auto=format&fit=crop');
+    return Array.from(new Set(list.filter(Boolean)));
+  }, [embroideryPreviewImage, baseScrubImage, colorCloseUp]);
+
+  const [currentImgIndex, setCurrentImgIndex] = React.useState(0);
+  const [isImgLoading, setIsImgLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    setCurrentImgIndex(0);
+    setIsImgLoading(true);
+  }, [embroideryPreviewImage, baseScrubImage, selectedColorName]);
+
+  const activeSrc = imageCandidates[currentImgIndex] || imageCandidates[0];
+
+  const handleImageError = () => {
+    if (currentImgIndex < imageCandidates.length - 1) {
+      setCurrentImgIndex((prev) => prev + 1);
+    } else {
+      setIsImgLoading(false);
+    }
+  };
 
   const textColorHex = textColorHexMap[customization.textColor] || '#FFFFFF';
   const fontStyleFamily = fontStyleFamilyMap[customization.fontStyle] || 'sans-serif';
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '320px', backgroundColor: '#ffffff', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', userSelect: 'none' }}>
+    <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '320px', backgroundColor: '#0f172a', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', userSelect: 'none' }}>
       {/* Background Scrub Image */}
-      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 1, backgroundColor: '#ffffff' }}>
+      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 1, backgroundColor: '#0f172a' }}>
+        {isImgLoading && (
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f172a', color: '#ffffff', zIndex: 2, gap: '12px' }}>
+            <div style={{ width: '32px', height: '32px', border: '3px solid rgba(255,255,255,0.2)', borderTopColor: '#ffffff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+            <span style={{ fontSize: '12px', fontWeight: 600, color: '#94a3b8', letterSpacing: '0.05em' }}>Loading Scrub Preview...</span>
+          </div>
+        )}
         <img
-          src={scrubImage}
+          key={activeSrc}
+          src={activeSrc}
           alt={`Scrub top chest embroidery preview - ${selectedColorName}`}
+          onLoad={() => setIsImgLoading(false)}
+          onError={handleImageError}
           style={{
             width: '100%',
             height: '100%',
             objectFit: 'cover',
             objectPosition: 'center top',
             display: 'block',
-          }}
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            if (baseScrubImage && target.src !== baseScrubImage) {
-              target.src = baseScrubImage;
-            }
+            opacity: isImgLoading ? 0 : 1,
+            transition: 'opacity 0.25s ease-in-out',
           }}
         />
       </div>
+
+      <style jsx>{`
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
 
       {/* Top Left Close Button Overlay */}
       {onClose && (
