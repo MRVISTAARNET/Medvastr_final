@@ -112,7 +112,7 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
 
       <div className="absolute inset-0 z-20 pointer-events-none">
         {/* Chest Pocket Text Overlay (Positioned directly ABOVE Chest Pocket Seam & Tag) */}
-        <div className="absolute top-[32%] sm:top-[34%] left-[54%] sm:left-[56%] w-[130px] sm:w-[150px]">
+        <div className="absolute top-[41%] sm:top-[43%] left-[54%] sm:left-[56%] w-[130px] sm:w-[150px]">
           {/* Dashed Guideline Box */}
           <div className="border border-dashed border-white/80 rounded-md p-1.5 bg-black/45 backdrop-blur-[2px] min-h-[46px] flex flex-col justify-center shadow-lg">
             <div className="text-[8.5px] uppercase tracking-widest text-gray-200 font-sans mb-0.5 text-center font-medium opacity-90">
