@@ -57,12 +57,12 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
   const fontStyleFamily = fontStyleFamilyMap[customization.fontStyle] || 'sans-serif';
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '320px', backgroundColor: '#0A1128', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', userSelect: 'none' }}>
+    <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '320px', backgroundColor: '#f8fafc', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', userSelect: 'none' }}>
       {/* Background Scrub Close-Up Image */}
       <img
         src={scrubImage}
         alt={`Scrub top chest embroidery preview - ${selectedColorName}`}
-        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+        style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block' }}
         onError={(e) => {
           (e.target as HTMLImageElement).src =
             'https://cdn.shopify.com/s/files/1/0562/9247/5063/products/1_3a8c17b8-8e65-4fef-b5bb-413158f333fb.jpg?v=1700000000';
@@ -96,43 +96,10 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
           <span>✕</span> CLOSE
         </button>
       )}
-      <div className="absolute inset-0 z-20 pointer-events-none">
-        {/* Right Chest Medical Icon / Logo Overlay (Viewer's Left side) */}
-        <div className="absolute top-[32%] sm:top-[34%] left-[22%] sm:left-[24%] w-[60px] sm:w-[75px] h-[60px] sm:h-[75px] flex items-center justify-center">
-          {customization.customLogoUrl ? (
-            <img
-              src={customization.customLogoUrl}
-              alt="Custom uploaded logo"
-              className="max-w-full max-h-full object-contain filter drop-shadow"
-            />
-          ) : customization.selectedIconId === 'caduceus' ? (
-            <svg
-              viewBox="0 0 100 100"
-              className="w-full h-full filter drop-shadow-md"
-              fill={textColorHex}
-            >
-              {/* Caduceus SVG Emblem */}
-              <path d="M50 5v90M50 15c-15 0-25 10-25 20s15 15 25 25c10-10 25-15 25-25s-10-20-25-20z" stroke={textColorHex} strokeWidth="3" fill="none" />
-              <circle cx="50" cy="10" r="5" fill={textColorHex} />
-              <path d="M30 25c10-5 25 0 35 0M25 45c15-5 30 0 40 0" stroke={textColorHex} strokeWidth="2.5" fill="none" />
-            </svg>
-          ) : customization.selectedIconId === 'heart' ? (
-            <svg viewBox="0 0 24 24" className="w-10 h-10 filter drop-shadow" fill={textColorHex}>
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-            </svg>
-          ) : customization.selectedIconId === 'stethoscope' ? (
-            <svg viewBox="0 0 24 24" className="w-10 h-10 filter drop-shadow" fill={textColorHex}>
-              <path d="M19 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm-7 14a8 8 0 0 1-8-8V4h2v10a6 6 0 0 0 12 0V4h2v10a8 8 0 0 1-8 8z" />
-            </svg>
-          ) : customization.selectedIconId === 'emergency' ? (
-            <svg viewBox="0 0 24 24" className="w-10 h-10 filter drop-shadow" fill={textColorHex}>
-              <path d="M10.5 2h3v6.3l5.5-3.2 1.5 2.6-5.5 3.2 5.5 3.2-1.5 2.6-5.5-3.2V22h-3v-6.3l-5.5 3.2-1.5-2.6 5.5-3.2-5.5-3.2 1.5-2.6 5.5 3.2V2z" />
-            </svg>
-          ) : null}
-        </div>
 
-        {/* Left Pocket / Chest Text Overlay (Viewer's Right side - Positioned directly over Chest Pocket) */}
-        <div className="absolute top-[37%] sm:top-[39%] right-[28%] sm:right-[31%] w-[125px] sm:w-[145px]">
+      <div className="absolute inset-0 z-20 pointer-events-none">
+        {/* Chest Pocket Text Overlay (Viewer's Right side - Positioned 100% directly over Chest Pocket) */}
+        <div className="absolute top-[37%] sm:top-[39%] right-[35%] sm:right-[38%] w-[125px] sm:w-[145px]">
           {/* Dashed Guideline Box */}
           <div className="border border-dashed border-white/70 rounded-md p-1.5 bg-black/30 backdrop-blur-[2px] min-h-[46px] flex flex-col justify-center shadow-md">
             <div className="text-[8.5px] uppercase tracking-widest text-gray-200 font-sans mb-0.5 text-center font-medium opacity-90">

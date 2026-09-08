@@ -120,10 +120,10 @@ export const EmbroideryConfigurator: React.FC<EmbroideryConfiguratorProps> = ({
         <div style={{ fontSize: '13px', color: '#475569', backgroundColor: '#f8fafc', padding: '10px 14px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
           <strong>Embroidery Selected:</strong>{' '}
           {customization.selectedOption === 'bundle'
-            ? 'Both Text + Icon'
+            ? 'Text Embroidery (Top & Bottom)'
             : customization.selectedOption === 'top'
-            ? 'Top Text / Icon'
-            : 'Bottom Text'}
+            ? 'Text Embroidery (Top Only)'
+            : 'Text Embroidery (Bottom Only)'}
         </div>
 
         {/* SECTION: Add Text */}
