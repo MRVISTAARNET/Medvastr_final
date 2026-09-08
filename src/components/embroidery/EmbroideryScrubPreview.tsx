@@ -99,9 +99,9 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
 
       <div className="absolute inset-0 z-20 pointer-events-none">
         {/* Chest Pocket Text Overlay (Viewer's Right side - Positioned 100% directly over Chest Pocket) */}
-        <div className="absolute top-[37%] sm:top-[39%] right-[35%] sm:right-[38%] w-[125px] sm:w-[145px]">
+        <div className="absolute top-[38%] sm:top-[40%] left-[55%] sm:left-[57%] w-[130px] sm:w-[145px]">
           {/* Dashed Guideline Box */}
-          <div className="border border-dashed border-white/70 rounded-md p-1.5 bg-black/30 backdrop-blur-[2px] min-h-[46px] flex flex-col justify-center shadow-md">
+          <div className="border border-dashed border-white/80 rounded-md p-1.5 bg-black/45 backdrop-blur-[2px] min-h-[46px] flex flex-col justify-center shadow-lg">
             <div className="text-[8.5px] uppercase tracking-widest text-gray-200 font-sans mb-0.5 text-center font-medium opacity-90">
               Your Text Goes Here
             </div>
@@ -114,7 +114,7 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
                     style={{
                       color: textColorHex,
                       fontFamily: fontStyleFamily,
-                      textShadow: '0 1px 3px rgba(0,0,0,0.8)',
+                      textShadow: '0 1px 3px rgba(0,0,0,0.9)',
                     }}
                   >
                     {customization.line1}
@@ -126,7 +126,7 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
                     style={{
                       color: textColorHex,
                       fontFamily: fontStyleFamily,
-                      textShadow: '0 1px 3px rgba(0,0,0,0.8)',
+                      textShadow: '0 1px 3px rgba(0,0,0,0.9)',
                     }}
                   >
                     {customization.line2}
