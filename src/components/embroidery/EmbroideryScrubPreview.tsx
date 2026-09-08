@@ -98,7 +98,7 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
       )}
       <div className="absolute inset-0 z-20 pointer-events-none">
         {/* Right Chest Medical Icon / Logo Overlay (Viewer's Left side) */}
-        <div className="absolute top-[34%] left-[16%] sm:left-[18%] w-[60px] sm:w-[80px] h-[60px] sm:h-[80px] flex items-center justify-center">
+        <div className="absolute top-[32%] sm:top-[34%] left-[22%] sm:left-[24%] w-[60px] sm:w-[75px] h-[60px] sm:h-[75px] flex items-center justify-center">
           {customization.customLogoUrl ? (
             <img
               src={customization.customLogoUrl}
@@ -131,22 +131,23 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
           ) : null}
         </div>
 
-        {/* Left Pocket / Chest Text Overlay (Viewer's Right side) */}
-        <div className="absolute top-[35%] right-[16%] sm:right-[18%] w-[130px] sm:w-[160px]">
+        {/* Left Pocket / Chest Text Overlay (Viewer's Right side - Positioned directly above Chest Pocket) */}
+        <div className="absolute top-[32%] sm:top-[34%] right-[22%] sm:right-[24%] w-[135px] sm:w-[155px]">
           {/* Dashed Guideline Box */}
-          <div className="border border-dashed border-white/40 rounded p-2 bg-black/20 backdrop-blur-[1px] min-h-[50px] flex flex-col justify-center">
-            <div className="text-[9px] uppercase tracking-widest text-gray-300 font-sans mb-0.5 text-left opacity-75">
+          <div className="border border-dashed border-white/60 rounded-md p-2 bg-black/35 backdrop-blur-[2px] min-h-[48px] flex flex-col justify-center shadow-md">
+            <div className="text-[9px] uppercase tracking-widest text-gray-200 font-sans mb-0.5 text-center font-medium opacity-90">
               Your Text Goes Here
             </div>
 
             {customization.line1 || customization.line2 ? (
-              <div className="leading-tight text-left overflow-hidden">
+              <div className="leading-tight text-center overflow-hidden">
                 {customization.line1 && (
                   <p
-                    className="text-[13px] sm:text-[15px] font-semibold truncate tracking-wide"
+                    className="text-[13px] sm:text-[15px] font-bold truncate tracking-wide"
                     style={{
                       color: textColorHex,
                       fontFamily: fontStyleFamily,
+                      textShadow: '0 1px 3px rgba(0,0,0,0.7)',
                     }}
                   >
                     {customization.line1}
@@ -154,10 +155,11 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
                 )}
                 {customization.line2 && (
                   <p
-                    className="text-[11px] sm:text-[13px] opacity-90 truncate tracking-wide mt-0.5"
+                    className="text-[11px] sm:text-[13px] opacity-95 truncate tracking-wide mt-0.5 font-medium"
                     style={{
                       color: textColorHex,
                       fontFamily: fontStyleFamily,
+                      textShadow: '0 1px 3px rgba(0,0,0,0.7)',
                     }}
                   >
                     {customization.line2}
@@ -165,9 +167,9 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
                 )}
               </div>
             ) : (
-              <div className="text-gray-400 text-[11px] font-sans leading-tight">
-                <p>Line 1</p>
-                <p>Line 2</p>
+              <div className="text-gray-300 text-[11px] font-sans leading-tight text-center opacity-90">
+                <p className="font-medium">Line 1</p>
+                <p className="font-medium">Line 2</p>
               </div>
             )}
           </div>
