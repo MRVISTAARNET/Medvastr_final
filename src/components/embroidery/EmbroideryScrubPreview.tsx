@@ -261,15 +261,15 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
 
         @media (max-width: 767px) {
           .preview-container {
-            min-height: 210px;
+            min-height: 245px;
           }
           .preview-scrub-img {
-            object-position: center 35%;
+            object-position: center 25%;
           }
           .preview-text-overlay {
-            top: 40%;
-            left: 55%;
-            width: 135px;
+            top: 36%;
+            left: 56%;
+            width: 145px;
           }
         }
       `}</style>

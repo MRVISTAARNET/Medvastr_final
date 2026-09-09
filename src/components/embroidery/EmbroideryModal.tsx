@@ -195,19 +195,21 @@ export const EmbroideryModal: React.FC<EmbroideryModalProps> = ({
 
         @media (max-width: 767px) {
           .embroidery-modal-backdrop {
-            padding: 12px 8px;
-            align-items: flex-end;
+            padding: 12px 10px;
+            align-items: center;
           }
           .embroidery-modal-panel {
-            max-width: 100%;
+            width: 100%;
+            max-width: 440px;
             height: auto;
-            max-height: 88vh;
+            max-height: 90vh;
             flex-direction: column;
-            border-radius: 20px 20px 16px 16px;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
           }
           .embroidery-modal-preview {
             width: 100%;
-            height: 210px;
+            height: 245px;
             flex-shrink: 0;
           }
           .embroidery-modal-config {
