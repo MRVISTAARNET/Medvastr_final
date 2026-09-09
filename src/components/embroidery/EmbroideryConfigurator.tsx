@@ -118,12 +118,7 @@ export const EmbroideryConfigurator: React.FC<EmbroideryConfiguratorProps> = ({
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', flex: 1, overflowY: 'auto', paddingRight: '4px' }}>
         {/* Selected Embroidery Summary Bar */}
         <div style={{ fontSize: '13px', color: '#475569', backgroundColor: '#f8fafc', padding: '10px 14px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-          <strong>Embroidery Selected:</strong>{' '}
-          {customization.selectedOption === 'bundle'
-            ? 'Text Embroidery (Top & Bottom)'
-            : customization.selectedOption === 'top'
-            ? 'Text Embroidery (Top Only)'
-            : 'Text Embroidery (Bottom Only)'}
+          <strong>Embroidery Selected:</strong> Text Embroidery (Scrub Top)
         </div>
 
         {/* SECTION: Add Text */}
@@ -150,9 +145,7 @@ export const EmbroideryConfigurator: React.FC<EmbroideryConfiguratorProps> = ({
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px', fontSize: '11px' }}>
               <span style={{ color: '#059669', fontWeight: 600 }}>
-                {customization.selectedOption === 'bundle'
-                  ? '*on both top and bottom'
-                  : '*on scrub top'}
+                *on scrub top
               </span>
               <span style={{ color: '#94a3b8' }}>{customization.line1.length}/22</span>
             </div>
@@ -177,7 +170,7 @@ export const EmbroideryConfigurator: React.FC<EmbroideryConfiguratorProps> = ({
                 </div>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px', fontSize: '11px' }}>
-                <span style={{ color: '#64748b' }}>*on top only</span>
+                <span style={{ color: '#059669', fontWeight: 600 }}>*on scrub top</span>
                 <span style={{ color: '#94a3b8' }}>{customization.line2.length}/22</span>
               </div>
             </div>
@@ -267,11 +260,6 @@ export const EmbroideryConfigurator: React.FC<EmbroideryConfiguratorProps> = ({
                 Aa Script
               </button>
             </div>
-          </div>
-
-          {/* Info notice box */}
-          <div style={{ backgroundColor: '#F0F4F8', border: '1px solid #CBD5E1', color: '#1e1b4b', fontSize: '12px', padding: '8px 12px', borderRadius: '8px', fontWeight: 500 }}>
-            Name (First Line) added on bottom scrub
           </div>
         </div>
       </div>
