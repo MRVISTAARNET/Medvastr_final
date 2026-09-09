@@ -55,6 +55,12 @@ public class CartItem {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal unitPrice;
 
+    @Column(precision = 10, scale = 2)
+    private BigDecimal embroideryPrice;
+
+    @Column(columnDefinition = "TEXT")
+    private String embroideryDetails;
+
     @CreationTimestamp
     private LocalDateTime addedAt;
 }

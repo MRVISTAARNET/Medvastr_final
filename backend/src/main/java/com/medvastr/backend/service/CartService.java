@@ -56,10 +56,15 @@ public class CartService {
         String color = r.getColorHex() != null ? r.getColorHex() : "";
         int qty = r.getQuantity() != null ? r.getQuantity() : 1;
 
+        BigDecimal basePrice = prod.getPrice() != null ? prod.getPrice() : BigDecimal.ZERO;
+        BigDecimal extraEmbroidery = (r.getEmbroideryPrice() != null && r.getEmbroideryPrice().compareTo(BigDecimal.ZERO) > 0) ? r.getEmbroideryPrice() : BigDecimal.ZERO;
+        final BigDecimal calculatedUnitPrice = basePrice.add(extraEmbroidery);
+
         cart.getItems().stream()
                 .filter(i -> i.getProduct().getId().equals(r.getProductId()) &&
                         Objects.equals(i.getSize(), size) &&
-                        Objects.equals(i.getColorHex(), color))
+                        Objects.equals(i.getColorHex(), color) &&
+                        Objects.equals(i.getEmbroideryDetails(), r.getEmbroideryDetails()))
                 .findFirst()
                 .ifPresentOrElse(
                         i -> i.setQuantity(i.getQuantity() + qty),
@@ -71,7 +76,9 @@ public class CartService {
                                         .colorHex(r.getColorHex())
                                         .colorName(r.getColorName())
                                         .quantity(qty)
-                                        .unitPrice(prod.getPrice())
+                                        .unitPrice(calculatedUnitPrice)
+                                        .embroideryPrice(r.getEmbroideryPrice())
+                                        .embroideryDetails(r.getEmbroideryDetails())
                                         .build()));
 
         return toDTO(cartRepo.save(cart), BigDecimal.ZERO);
@@ -137,6 +144,8 @@ public class CartService {
                                 .quantity(i.getQuantity())
                                 .unitPrice(i.getUnitPrice())
                                 .totalPrice(i.getUnitPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
+                                .embroideryPrice(i.getEmbroideryPrice())
+                                .embroideryDetails(i.getEmbroideryDetails())
                                 .build())
                         .collect(Collectors.toList()))
                 .subtotal(sub)

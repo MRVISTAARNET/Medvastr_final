@@ -204,6 +204,8 @@ public class OrderService {
                         .size(ci.getSize())
                         .colorName(ci.getColorName())
                         .colorHex(ci.getColorHex())
+                        .embroideryPrice(ci.getEmbroideryPrice())
+                        .embroideryDetails(ci.getEmbroideryDetails())
                         .quantity(ci.getQuantity())
                         .unitPrice(ci.getUnitPrice())
                         .totalPrice(ci.getUnitPrice().multiply(BigDecimal.valueOf(ci.getQuantity())))

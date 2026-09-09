@@ -23,5 +23,7 @@ public class CartItemDTO {
     private Integer quantity;
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
+    private BigDecimal embroideryPrice;
+    private String embroideryDetails;
 }
 
