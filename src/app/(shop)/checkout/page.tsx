@@ -77,7 +77,7 @@ export default function CheckoutPage() {
     }
   }, [user]);
 
-  const sub = cart.reduce((s, i) => s + (i.price + (i.embroideryCustomization?.totalEmbroideryPrice || i.embroideryPrice || 0)) * i.qty, 0);
+  const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const totalQty = cart.reduce((a, b) => a + b.qty, 0);
   const volumeRate = totalQty === 2 ? 0.05 : (totalQty === 3 || totalQty === 4) ? 0.10 : totalQty >= 5 ? 0.15 : 0;
   const volumeDiscount = Math.round(sub * volumeRate);
@@ -312,16 +312,21 @@ export default function CheckoutPage() {
     const orderRequest = {
       ...form,
       shippingAmount: shippingCost,
-      items: cart.map((i) => ({
-        productId: i.id,
-        variantId: i.variantId,
-        size: i.size,
-        colorHex: i.col,
-        colorName: i.colNm,
-        quantity: i.qty,
-        embroideryPrice: i.embroideryCustomization?.totalEmbroideryPrice || i.embroideryPrice || undefined,
-        embroideryDetails: i.embroideryCustomization ? JSON.stringify(i.embroideryCustomization) : i.embroideryDetails || undefined,
-      })),
+      items: cart.map((i) => {
+        const embObj = i.embroidery || i.embroideryCustomization;
+        const embPrice = embObj?.totalEmbroideryPrice || i.embroideryPrice || undefined;
+        const embDetails = embObj ? (typeof embObj === "string" ? embObj : JSON.stringify(embObj)) : (i.embroideryDetails || undefined);
+        return {
+          productId: i.id,
+          variantId: i.variantId,
+          size: i.size,
+          colorHex: i.col,
+          colorName: i.colNm,
+          quantity: i.qty,
+          embroideryPrice: embPrice,
+          embroideryDetails: embDetails,
+        };
+      }),
     };
     try {
       const data = await apiJson<any>("/orders", {
