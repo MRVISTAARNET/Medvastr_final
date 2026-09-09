@@ -252,7 +252,7 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
         }
         .preview-text-overlay {
           position: absolute;
-          top: 38%;
+          top: 41%;
           left: 58%;
           width: 150px;
           z-index: 20;
@@ -267,7 +267,7 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
             object-position: center 25%;
           }
           .preview-text-overlay {
-            top: 36%;
+            top: 42%;
             left: 56%;
             width: 145px;
           }
