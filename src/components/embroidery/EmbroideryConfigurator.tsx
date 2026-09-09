@@ -84,7 +84,7 @@ export const EmbroideryConfigurator: React.FC<EmbroideryConfiguratorProps> = ({
   };
 
   return (
-    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', backgroundColor: '#ffffff', fontFamily: 'sans-serif', padding: '20px', color: '#0f172a', boxSizing: 'border-box' }}>
+    <div className="embroidery-configurator-container">
       {/* Top Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '12px', marginBottom: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -293,6 +293,29 @@ export const EmbroideryConfigurator: React.FC<EmbroideryConfiguratorProps> = ({
           PROCEED
         </button>
       </div>
+
+      <style jsx>{`
+        .embroidery-configurator-container {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          background-color: #ffffff;
+          font-family: sans-serif;
+          padding: 20px;
+          color: #0f172a;
+          box-sizing: border-box;
+        }
+
+        @media (max-width: 767px) {
+          .embroidery-configurator-container {
+            padding: 14px 16px;
+            justify-content: flex-start;
+            gap: 12px;
+          }
+        }
+      `}</style>
     </div>
   );
 };
