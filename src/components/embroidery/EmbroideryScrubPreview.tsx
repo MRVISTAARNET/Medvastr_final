@@ -84,9 +84,9 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
   const fontStyleFamily = fontStyleFamilyMap[customization.fontStyle] || 'sans-serif';
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '320px', backgroundColor: '#0f172a', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', userSelect: 'none' }}>
+    <div className="preview-container">
       {/* Background Scrub Image */}
-      <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 1, backgroundColor: '#0f172a' }}>
+      <div className="preview-img-wrapper">
         {isImgLoading && (
           <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0f172a', color: '#ffffff', zIndex: 2, gap: '12px' }}>
             <div style={{ width: '32px', height: '32px', border: '3px solid rgba(255,255,255,0.2)', borderTopColor: '#ffffff', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
@@ -99,19 +99,14 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
           alt={`Scrub top chest embroidery preview - ${selectedColorName}`}
           onLoad={() => setIsImgLoading(false)}
           onError={handleImageError}
-          className="w-full h-full object-cover object-[center_28%] md:object-[center_top] transition-opacity duration-250 ease-in-out"
+          className="preview-scrub-img"
           style={{
             display: 'block',
             opacity: isImgLoading ? 0 : 1,
+            transition: 'opacity 0.25s ease-in-out',
           }}
         />
       </div>
-
-      <style jsx>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
 
       {/* Top Left Close Button Overlay */}
       {onClose && (
@@ -142,9 +137,7 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
       )}
 
       {/* Embroidery Text Overlay - Positioned Directly Above Chest Pocket Seam & Tag */}
-      <div
-        className="absolute top-[42%] left-[54%] sm:left-[56%] md:top-[38%] md:left-[58%] w-[135px] sm:w-[145px] md:w-[150px] z-20 pointer-events-none"
-      >
+      <div className="preview-text-overlay">
         <div
           style={{
             border: '1px dashed rgba(255, 255, 255, 0.85)',
@@ -227,6 +220,59 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
           )}
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+        .preview-container {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          min-height: 320px;
+          background-color: #0f172a;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          user-select: none;
+        }
+        .preview-img-wrapper {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          z-index: 1;
+          background-color: #0f172a;
+        }
+        .preview-scrub-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center top;
+        }
+        .preview-text-overlay {
+          position: absolute;
+          top: 38%;
+          left: 58%;
+          width: 150px;
+          z-index: 20;
+          pointer-events: none;
+        }
+
+        @media (max-width: 767px) {
+          .preview-container {
+            min-height: 190px;
+          }
+          .preview-scrub-img {
+            object-position: center 25%;
+          }
+          .preview-text-overlay {
+            top: 38%;
+            left: 54%;
+            width: 130px;
+          }
+        }
+      `}</style>
     </div>
   );
 };

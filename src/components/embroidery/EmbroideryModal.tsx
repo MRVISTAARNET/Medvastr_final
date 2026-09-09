@@ -113,30 +113,10 @@ export const EmbroideryModal: React.FC<EmbroideryModalProps> = ({
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 99999,
-        backgroundColor: 'rgba(0, 0, 0, 0.75)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '16px',
-      }}
-      className="animate-fadeIn"
-      onClick={onClose}
-    >
-      {/* Responsive Panel Container (side-by-side on desktop, vertical stack on mobile) */}
-      <div
-        className="relative w-full max-w-[960px] h-[92vh] md:h-[85vh] max-h-[92vh] md:max-h-[540px] bg-white rounded-2xl overflow-hidden flex flex-col md:flex-row shadow-2xl border border-gray-200"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Top/Left Panel: Scrub Live Preview */}
-        <div className="w-full md:w-[52%] h-[230px] sm:h-[260px] md:h-full relative bg-[#0A1128] overflow-hidden flex-shrink-0">
+    <div className="embroidery-modal-backdrop animate-fadeIn" onClick={onClose}>
+      <div className="embroidery-modal-panel" onClick={(e) => e.stopPropagation()}>
+        {/* Left/Top Panel: Scrub Live Preview */}
+        <div className="embroidery-modal-preview">
           <EmbroideryScrubPreview
             customization={customization}
             baseScrubImage={baseScrubImage}
@@ -146,8 +126,8 @@ export const EmbroideryModal: React.FC<EmbroideryModalProps> = ({
           />
         </div>
 
-        {/* Bottom/Right Panel: Configurator */}
-        <div className="w-full md:w-[48%] flex-1 md:h-full bg-white flex flex-col overflow-y-auto flex-shrink-0 min-h-0">
+        {/* Right/Bottom Panel: Configurator */}
+        <div className="embroidery-modal-config">
           {currentStep === 'selection' ? (
             <EmbroiderySelection
               selectedOption={customization.selectedOption}
@@ -166,6 +146,75 @@ export const EmbroideryModal: React.FC<EmbroideryModalProps> = ({
           )}
         </div>
       </div>
+
+      <style jsx>{`
+        .embroidery-modal-backdrop {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          z-index: 99999;
+          background-color: rgba(0, 0, 0, 0.75);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 16px;
+        }
+        .embroidery-modal-panel {
+          position: relative;
+          width: 100%;
+          max-width: 960px;
+          height: 85vh;
+          max-height: 540px;
+          background-color: #ffffff;
+          border-radius: 16px;
+          overflow: hidden;
+          display: flex;
+          flex-direction: row;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+          border: 1px solid #e5e7eb;
+        }
+        .embroidery-modal-preview {
+          width: 52%;
+          height: 100%;
+          position: relative;
+          background-color: #0A1128;
+          overflow: hidden;
+          flex-shrink: 0;
+        }
+        .embroidery-modal-config {
+          width: 48%;
+          height: 100%;
+          background-color: #ffffff;
+          display: flex;
+          flex-direction: column;
+          overflow-y: auto;
+          flex-shrink: 0;
+        }
+
+        @media (max-width: 767px) {
+          .embroidery-modal-backdrop {
+            padding: 8px;
+          }
+          .embroidery-modal-panel {
+            max-width: 100%;
+            height: 92vh;
+            max-height: 92vh;
+            flex-direction: column;
+          }
+          .embroidery-modal-preview {
+            width: 100%;
+            height: 190px;
+          }
+          .embroidery-modal-config {
+            width: 100%;
+            flex: 1;
+            height: auto;
+            min-height: 0;
+          }
+        }
+      `}</style>
     </div>
   );
 };
