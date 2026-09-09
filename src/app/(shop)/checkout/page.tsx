@@ -77,7 +77,7 @@ export default function CheckoutPage() {
     }
   }, [user]);
 
-  const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const sub = cart.reduce((s, i) => s + (i.price + (i.embroideryCustomization?.totalEmbroideryPrice || i.embroideryPrice || 0)) * i.qty, 0);
   const totalQty = cart.reduce((a, b) => a + b.qty, 0);
   const volumeRate = totalQty === 2 ? 0.05 : (totalQty === 3 || totalQty === 4) ? 0.10 : totalQty >= 5 ? 0.15 : 0;
   const volumeDiscount = Math.round(sub * volumeRate);
@@ -319,6 +319,8 @@ export default function CheckoutPage() {
         colorHex: i.col,
         colorName: i.colNm,
         quantity: i.qty,
+        embroideryPrice: i.embroideryCustomization?.totalEmbroideryPrice || i.embroideryPrice || undefined,
+        embroideryDetails: i.embroideryCustomization ? JSON.stringify(i.embroideryCustomization) : i.embroideryDetails || undefined,
       })),
     };
     try {

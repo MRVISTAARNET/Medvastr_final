@@ -130,26 +130,13 @@ export const EmbroideryModal: React.FC<EmbroideryModalProps> = ({
       className="animate-fadeIn"
       onClick={onClose}
     >
-      {/* Centered Desktop Panel */}
+      {/* Responsive Panel Container (side-by-side on desktop, vertical stack on mobile) */}
       <div
-        style={{
-          position: 'relative',
-          width: '100%',
-          maxWidth: '960px',
-          height: '85vh',
-          maxHeight: '540px',
-          backgroundColor: '#ffffff',
-          borderRadius: '16px',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'row',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35)',
-          border: '1px solid #e5e7eb',
-        }}
+        className="relative w-full max-w-[960px] h-[92vh] md:h-[85vh] max-h-[92vh] md:max-h-[540px] bg-white rounded-2xl overflow-hidden flex flex-col md:flex-row shadow-2xl border border-gray-200"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Left Panel (52% width): Scrub Live Preview */}
-        <div style={{ width: '52%', height: '100%', position: 'relative', backgroundColor: '#0A1128', overflow: 'hidden', flexShrink: 0 }}>
+        {/* Top/Left Panel: Scrub Live Preview */}
+        <div className="w-full md:w-[52%] h-[230px] sm:h-[260px] md:h-full relative bg-[#0A1128] overflow-hidden flex-shrink-0">
           <EmbroideryScrubPreview
             customization={customization}
             baseScrubImage={baseScrubImage}
@@ -159,8 +146,8 @@ export const EmbroideryModal: React.FC<EmbroideryModalProps> = ({
           />
         </div>
 
-        {/* Right Panel (48% width): Configurator */}
-        <div style={{ width: '48%', height: '100%', backgroundColor: '#ffffff', display: 'flex', flexDirection: 'column', overflowY: 'auto', flexShrink: 0 }}>
+        {/* Bottom/Right Panel: Configurator */}
+        <div className="w-full md:w-[48%] flex-1 md:h-full bg-white flex flex-col overflow-y-auto flex-shrink-0 min-h-0">
           {currentStep === 'selection' ? (
             <EmbroiderySelection
               selectedOption={customization.selectedOption}

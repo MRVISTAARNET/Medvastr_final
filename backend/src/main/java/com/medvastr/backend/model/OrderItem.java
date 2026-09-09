@@ -56,5 +56,11 @@ public class OrderItem {
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
+
+    @Column(precision = 10, scale = 2)
+    private BigDecimal embroideryPrice;
+
+    @Column(columnDefinition = "TEXT")
+    private String embroideryDetails;
 }
 

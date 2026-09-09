@@ -630,7 +630,22 @@ export default function AdminOrders() {
                           <td style={{ padding: '8px 0', fontWeight: 500 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                               <img src={item.imageUrl || 'https://via.placeholder.com/40'} alt={item.productName} style={{ width: '40px', height: '40px', objectFit: 'cover', borderRadius: '4px' }} />
-                              {item.productName}
+                              <div>
+                                <div>{item.productName}</div>
+                                {(item.embroideryDetails || item.embroideryPrice) && (
+                                  <div style={{ fontSize: '11px', color: '#0d9488', marginTop: '2px', fontWeight: 600 }}>
+                                    ✨ Custom Embroidery (+₹{item.embroideryPrice || 99}): {(() => {
+                                      try {
+                                        const parsed = JSON.parse(item.embroideryDetails);
+                                        const lines = [parsed.line1, parsed.line2].filter(Boolean).join(' / ');
+                                        return lines ? `${lines} (${parsed.textColor || 'white'}, ${parsed.fontStyle || 'block'})` : item.embroideryDetails;
+                                      } catch {
+                                        return item.embroideryDetails || 'Custom Embroidery Added';
+                                      }
+                                    })()}
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </td>
                           <td style={{ padding: '8px 0', color: 'var(--txt2)' }}>{item.sku || '—'}</td>

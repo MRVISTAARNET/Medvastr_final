@@ -23,4 +23,6 @@ public class OrderItemDTO {
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
     private String sku;
+    private BigDecimal embroideryPrice;
+    private String embroideryDetails;
 }

@@ -23,6 +23,9 @@ interface CartItem extends Product {
   qty: number;
   variantId?: number;
   embroidery?: any;
+  embroideryCustomization?: any;
+  embroideryPrice?: number;
+  embroideryDetails?: string;
 }
 
 interface User {

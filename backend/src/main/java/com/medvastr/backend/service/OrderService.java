@@ -759,6 +759,9 @@ public class OrderService {
         BigDecimal unitPrice = (variant != null && variant.getVariantPrice() != null)
                 ? variant.getVariantPrice()
                 : (product.getPrice() != null ? product.getPrice() : BigDecimal.ZERO);
+        if (itemReq.getEmbroideryPrice() != null && itemReq.getEmbroideryPrice().compareTo(BigDecimal.ZERO) > 0) {
+            unitPrice = unitPrice.add(itemReq.getEmbroideryPrice());
+        }
         BigDecimal itemTotal = unitPrice.multiply(BigDecimal.valueOf(qty));
         return OrderItem.builder()
                 .product(product)
@@ -767,6 +770,8 @@ public class OrderService {
                 .size(itemReq.getSize())
                 .colorName(itemReq.getColorName())
                 .colorHex(itemReq.getColorHex())
+                .embroideryPrice(itemReq.getEmbroideryPrice())
+                .embroideryDetails(itemReq.getEmbroideryDetails())
                 .quantity(qty)
                 .unitPrice(unitPrice)
                 .totalPrice(itemTotal)
@@ -893,6 +898,8 @@ public class OrderService {
                         .quantity(i.getQuantity())
                         .unitPrice(i.getUnitPrice())
                         .totalPrice(i.getTotalPrice())
+                        .embroideryPrice(i.getEmbroideryPrice())
+                        .embroideryDetails(i.getEmbroideryDetails())
                         .build()).collect(Collectors.toList()) : new ArrayList<>())
                 .build();
     }

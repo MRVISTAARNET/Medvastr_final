@@ -99,14 +99,10 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
           alt={`Scrub top chest embroidery preview - ${selectedColorName}`}
           onLoad={() => setIsImgLoading(false)}
           onError={handleImageError}
+          className="w-full h-full object-cover object-[center_28%] md:object-[center_top] transition-opacity duration-250 ease-in-out"
           style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            objectPosition: 'center top',
             display: 'block',
             opacity: isImgLoading ? 0 : 1,
-            transition: 'opacity 0.25s ease-in-out',
           }}
         />
       </div>
@@ -124,21 +120,21 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
           onClick={onClose}
           style={{
             position: 'absolute',
-            top: '16px',
-            left: '16px',
+            top: '12px',
+            left: '12px',
             zIndex: 30,
             backgroundColor: '#ffffff',
             color: '#111827',
             fontWeight: 700,
-            padding: '6px 12px',
+            padding: '5px 10px',
             borderRadius: '6px',
-            fontSize: '12px',
+            fontSize: '11px',
             border: '1px solid #e5e7eb',
             cursor: 'pointer',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
             display: 'flex',
             alignItems: 'center',
-            gap: '6px',
+            gap: '4px',
           }}
         >
           <span>✕</span> CLOSE
@@ -147,14 +143,7 @@ export const EmbroideryScrubPreview: React.FC<EmbroideryScrubPreviewProps> = ({
 
       {/* Embroidery Text Overlay - Positioned Directly Above Chest Pocket Seam & Tag */}
       <div
-        style={{
-          position: 'absolute',
-          top: '38%',
-          left: '58%',
-          width: '150px',
-          zIndex: 20,
-          pointerEvents: 'none',
-        }}
+        className="absolute top-[42%] left-[54%] sm:left-[56%] md:top-[38%] md:left-[58%] w-[135px] sm:w-[145px] md:w-[150px] z-20 pointer-events-none"
       >
         <div
           style={{

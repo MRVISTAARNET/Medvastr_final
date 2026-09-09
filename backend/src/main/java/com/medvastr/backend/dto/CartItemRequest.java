@@ -23,5 +23,8 @@ public class CartItemRequest {
 
     @Min(1)
     private Integer quantity;
+
+    private java.math.BigDecimal embroideryPrice;
+    private String embroideryDetails;
 }
 
