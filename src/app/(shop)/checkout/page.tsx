@@ -312,6 +312,7 @@ export default function CheckoutPage() {
     setSubmitting(true);
     const orderRequest = {
       ...form,
+      promoCode: appliedPromo?.code || form.promoCode || undefined,
       shippingAmount: shippingCost,
       items: cart.map((i) => {
         const embObj = i.embroidery || i.embroideryCustomization;

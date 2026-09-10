@@ -215,13 +215,22 @@ public class OrderService {
 
         BigDecimal ship = calculateShippingFee(subtotal);
         
-        BigDecimal disc = BigDecimal.ZERO;
+        // Multi-item volume discount calculation (1 item: 0%, 2: 5%, 3-4: 10%, 5+: 15%)
+        int totalQty = orderItems.stream().mapToInt(OrderItem::getQuantity).sum();
+        BigDecimal volumeRate = (totalQty == 2) ? new BigDecimal("0.05") 
+            : (totalQty == 3 || totalQty == 4) ? new BigDecimal("0.10") 
+            : (totalQty >= 5) ? new BigDecimal("0.15") 
+            : BigDecimal.ZERO;
+        BigDecimal volumeDiscount = subtotal.multiply(volumeRate).setScale(0, java.math.RoundingMode.HALF_UP);
+        BigDecimal netSubtotalAfterVolume = subtotal.subtract(volumeDiscount);
+
+        BigDecimal promoDiscount = BigDecimal.ZERO;
 
         if (r.getPromoCode() != null && !r.getPromoCode().isBlank()) {
             try {
-                var promoResult = promoCodeService.validate(r.getPromoCode(), subtotal);
+                var promoResult = promoCodeService.validate(r.getPromoCode(), netSubtotalAfterVolume);
                 if (promoResult != null && promoResult.isValid() && promoResult.getDiscountAmount() != null) {
-                    disc = promoResult.getDiscountAmount();
+                    promoDiscount = promoResult.getDiscountAmount();
                     try {
                         promoCodeService.incrementUsage(r.getPromoCode());
                     } catch (Exception e) {
@@ -232,6 +241,8 @@ public class OrderService {
                 log.warn("Promo code validation failed safely: {}", e.getMessage());
             }
         }
+
+        BigDecimal disc = volumeDiscount.add(promoDiscount);
 
         BigDecimal total = subtotal.add(ship).subtract(disc);
         if (total.compareTo(BigDecimal.ZERO) < 0) {
