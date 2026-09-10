@@ -93,7 +93,7 @@ export default function AdminOrders() {
     } else if (filter === 'RETURNED') {
       matchesFilter = o.status === 'RETURNED' || o.status === 'RETURN_REQUESTED';
     } else if (filter === 'PENDING') {
-      matchesFilter = o.status === 'PENDING' && (o.payment !== 'ONLINE' || o.paymentStatus === 'PAID');
+      matchesFilter = (o.status === 'PENDING' || o.status === 'CONFIRMED' || o.status === 'NEW' || o.shiprocketStatus === 'NEW') && (o.payment !== 'ONLINE' || o.paymentStatus === 'PAID');
     } else {
       matchesFilter = o.status === filter;
     }
@@ -256,7 +256,7 @@ export default function AdminOrders() {
               };
               const count = s === 'ALL' ? orders.length :
                             s === 'UNPAID' ? orders.filter(o => o.payment === 'ONLINE' && o.paymentStatus !== 'PAID').length :
-                            s === 'PENDING' ? orders.filter(o => o.status === 'PENDING' && (o.payment !== 'ONLINE' || o.paymentStatus === 'PAID')).length :
+                            s === 'PENDING' ? orders.filter(o => (o.status === 'PENDING' || o.status === 'CONFIRMED' || o.status === 'NEW' || o.shiprocketStatus === 'NEW') && (o.payment !== 'ONLINE' || o.paymentStatus === 'PAID')).length :
                             s === 'PROCESSING' ? orders.filter(o => o.status === 'PROCESSING' || o.status === 'PACKED').length :
                             s === 'SHIPPED' ? orders.filter(o => o.status === 'SHIPPED' || o.status === 'OUT_FOR_DELIVERY').length :
                             orders.filter(o => o.status === 'DELIVERED').length;
