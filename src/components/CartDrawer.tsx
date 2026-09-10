@@ -692,12 +692,11 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         .cart-status-bar {
           background: #f8fafc;
           border-bottom: 1px solid #e2e8f0;
-          padding: 10px 16px;
+          padding: 6px 14px;
           display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 10px;
-          font-size: 12px;
+          flex-direction: column;
+          gap: 4px;
+          font-size: 11.5px;
           font-weight: 700;
         }
         .status-msg {
@@ -710,7 +709,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
           white-space: nowrap;
         }
         .status-icon {
-          font-size: 14px;
+          font-size: 13px;
         }
         .status-text {
           color: #334155;
@@ -726,7 +725,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
           color: #15803d;
           padding: 2px 8px;
           border-radius: 10px;
-          font-size: 11px;
+          font-size: 10.5px;
           font-weight: 800;
         }
         .badge-free {
@@ -742,7 +741,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         .drw-body {
           flex: 1;
           overflow-y: auto;
-          padding: 16px 20px;
+          padding: 10px 16px;
         }
         .empty-cart-state {
           text-align: center;
@@ -775,15 +774,15 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
 
         .cart-item-row {
           display: flex;
-          gap: 14px;
-          padding: 16px 0;
+          gap: 12px;
+          padding: 10px 0;
           border-bottom: 1px solid #f1f5f9;
         }
         .cart-item-thumb {
-          width: 76px;
-          height: 96px;
+          width: 68px;
+          height: 86px;
           position: relative;
-          border-radius: 10px;
+          border-radius: 8px;
           overflow: hidden;
           background: #f8fafc;
           flex-shrink: 0;

@@ -4732,7 +4732,7 @@ footer {
 }
 
 .drw-hd {
-  padding: 24px 27px;
+  padding: 14px 20px;
   border-bottom: 1px solid var(--bdr);
   display: flex;
   justify-content: space-between;
@@ -4877,7 +4877,7 @@ footer {
 }
 
 .drw-ft {
-  padding: 20px 27px;
+  padding: 12px 18px;
   border-top: 1px solid var(--bdr);
 }
 

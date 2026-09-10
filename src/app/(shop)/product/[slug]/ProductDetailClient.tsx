@@ -584,10 +584,8 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
     : addedSuccess
     ? '✓ Added to Bag!'
     : isEmbroiderySelected
-    ? (pdpVolRate > 0 ? `Add to Bag + Embroidery • ${fmt(pdpFinalTotal)}` : `Add to Bag + Embroidery • ${fmt(pdpOrigTotal)}`)
-    : pdpVolRate > 0
-    ? `Add to Bag • ${fmt(pdpFinalTotal)}`
-    : `Add to Bag • ${fmt(pdpOrigTotal)}`;
+    ? 'Add to Bag + Embroidery'
+    : 'Add to Bag';
 
   return (
     <div className="pdp-container">
