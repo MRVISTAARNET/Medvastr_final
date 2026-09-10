@@ -23,6 +23,21 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   // Promo Code State
   const [promoCodeInput, setPromoCodeInput] = useState("");
   const [promoLoading, setPromoLoading] = useState(false);
+  const [activePromos, setActivePromos] = useState<any[]>([]);
+
+  // Fetch active promo codes created in admin
+  useEffect(() => {
+    if (open) {
+      fetch(`${API_BASE}/promos/public/active`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (Array.isArray(data)) {
+            setActivePromos(data.filter((p: any) => p.active !== false));
+          }
+        })
+        .catch(() => {});
+    }
+  }, [open]);
 
   // Essential Embroidery Modal State
   const [essentialEmbroideryModal, setEssentialEmbroideryModal] = useState<{ prod: any; colorIdx: number; size: string } | null>(null);
@@ -361,34 +376,18 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                             </div>
 
                             {Boolean(prod.embroideryEnabled) ? (
-                              <div style={{ display: "flex", gap: "6px", width: "100%", marginTop: "8px" }}>
+                              <div className="upsell-btn-duo">
                                 <button
                                   type="button"
                                   onClick={() => addToCart(prod, activeColorIdx, activeSize, 1)}
-                                  className="upsell-add-btn"
-                                  style={{ flex: 1, padding: "8px 4px", fontSize: "12px" }}
+                                  className="upsell-add-btn std-btn"
                                 >
                                   + Add Standard
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => setEssentialEmbroideryModal({ prod, colorIdx: activeColorIdx, size: activeSize })}
-                                  style={{
-                                    flex: 1.3,
-                                    backgroundColor: "#1e1b4b",
-                                    color: "#ffffff",
-                                    fontSize: "11px",
-                                    fontWeight: 700,
-                                    padding: "8px 6px",
-                                    borderRadius: "6px",
-                                    border: "none",
-                                    cursor: "pointer",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    gap: "3px",
-                                    whiteSpace: "nowrap",
-                                  }}
+                                  className="upsell-emb-btn"
                                 >
                                   ✨ Add + Embroidery (+₹99)
                                 </button>
@@ -397,7 +396,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                               <button
                                 type="button"
                                 onClick={() => addToCart(prod, activeColorIdx, activeSize, 1)}
-                                className="upsell-add-btn"
+                                className="upsell-add-btn full-btn"
                               >
                                 + Add to Bag
                               </button>
@@ -416,18 +415,18 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         {/* Drawer Footer */}
         {cart.length > 0 && (
           <div className="drw-ft">
-            {/* 1-Tap Coupon Codes & Offers Section */}
-            <div style={{ margin: "4px 0 12px 0", padding: "10px 12px", backgroundColor: "#f8fafc", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
-              <div style={{ fontSize: "12px", fontWeight: 700, color: "#1e1b4b", marginBottom: "8px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            {/* 1-Tap Coupon Codes & Offers Section (Only Admin Created Active Coupons) */}
+            <div style={{ margin: "2px 0 8px 0", padding: "8px 10px", backgroundColor: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+              <div style={{ fontSize: "11.5px", fontWeight: 700, color: "#1e1b4b", marginBottom: "6px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <span>🎟️ Coupon & Offers</span>
                 {appliedPromo && (
-                  <span style={{ fontSize: "11px", color: "#047857", fontWeight: 700 }}>✓ Applied</span>
+                  <span style={{ fontSize: "10.5px", color: "#047857", fontWeight: 700 }}>✓ Applied</span>
                 )}
               </div>
 
               {appliedPromo ? (
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", backgroundColor: "#ecfdf5", border: "1px solid #a7f3d0", borderRadius: "8px" }}>
-                  <div style={{ fontSize: "12px", fontWeight: 700, color: "#047857" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "6px 10px", backgroundColor: "#ecfdf5", border: "1px solid #a7f3d0", borderRadius: "6px" }}>
+                  <div style={{ fontSize: "11.5px", fontWeight: 700, color: "#047857" }}>
                     🎉 {appliedPromo.code} Applied (-{fmt(promoDiscountAmount)})
                   </div>
                   <button
@@ -436,52 +435,50 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                       setAppliedPromo(null);
                       toast("Coupon removed", "");
                     }}
-                    style={{ fontSize: "11px", color: "#ef4444", fontWeight: 700, background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}
+                    style={{ fontSize: "10.5px", color: "#ef4444", fontWeight: 700, background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}
                   >
                     Remove
                   </button>
                 </div>
               ) : (
                 <>
-                  {/* 1-Tap Coupon Chips */}
-                  <div style={{ display: "flex", gap: "6px", overflowX: "auto", paddingBottom: "6px", marginBottom: "8px" }}>
-                    <button
-                      type="button"
-                      onClick={() => handleApplyPromoCode("MEDVASTR10")}
-                      style={{ flexShrink: 0, padding: "5px 8px", background: "#ffffff", border: "1px dashed #6366f1", borderRadius: "6px", fontSize: "11px", fontWeight: 700, color: "#4338ca", cursor: "pointer" }}
-                    >
-                      🏷️ MEDVASTR10 (10% OFF)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleApplyPromoCode("WELCOME100")}
-                      style={{ flexShrink: 0, padding: "5px 8px", background: "#ffffff", border: "1px dashed #10b981", borderRadius: "6px", fontSize: "11px", fontWeight: 700, color: "#047857", cursor: "pointer" }}
-                    >
-                      🏷️ WELCOME100 (₹100 OFF)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleApplyPromoCode("FREESHIP")}
-                      style={{ flexShrink: 0, padding: "5px 8px", background: "#ffffff", border: "1px dashed #f59e0b", borderRadius: "6px", fontSize: "11px", fontWeight: 700, color: "#b45309", cursor: "pointer" }}
-                    >
-                      🏷️ FREESHIP (Free Delivery)
-                    </button>
-                  </div>
+                  {/* Dynamic 1-Tap Coupon Chips (Admin Promos Only) */}
+                  {activePromos.length > 0 ? (
+                    <div style={{ display: "flex", gap: "5px", overflowX: "auto", paddingBottom: "4px", marginBottom: "6px" }}>
+                      {activePromos.map((p) => {
+                        const label = p.discountType === "PERCENTAGE"
+                          ? `${p.code} (${p.discountValue}% OFF)`
+                          : p.discountType === "FLAT"
+                          ? `${p.code} (₹${p.discountValue} OFF)`
+                          : p.code;
+                        return (
+                          <button
+                            key={p.id || p.code}
+                            type="button"
+                            onClick={() => handleApplyPromoCode(p.code)}
+                            style={{ flexShrink: 0, padding: "4px 8px", background: "#ffffff", border: "1px dashed #6366f1", borderRadius: "5px", fontSize: "10.5px", fontWeight: 700, color: "#4338ca", cursor: "pointer" }}
+                          >
+                            🏷️ {label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  ) : null}
 
                   {/* Manual Input */}
                   <div style={{ display: "flex", gap: "6px" }}>
                     <input
                       type="text"
-                      placeholder="Enter Promo Code"
+                      placeholder="ENTER PROMO CODE"
                       value={promoCodeInput}
                       onChange={(e) => setPromoCodeInput(e.target.value.toUpperCase())}
-                      style={{ flex: 1, padding: "7px 10px", fontSize: "12px", border: "1px solid #cbd5e1", borderRadius: "6px", textTransform: "uppercase", outline: "none" }}
+                      style={{ flex: 1, padding: "6px 8px", fontSize: "11.5px", border: "1px solid #cbd5e1", borderRadius: "5px", textTransform: "uppercase", outline: "none" }}
                     />
                     <button
                       type="button"
                       onClick={() => handleApplyPromoCode(promoCodeInput)}
                       disabled={promoLoading || !promoCodeInput.trim()}
-                      style={{ padding: "7px 14px", backgroundColor: "#1e1b4b", color: "#ffffff", fontSize: "12px", fontWeight: 700, borderRadius: "6px", border: "none", cursor: "pointer", opacity: promoCodeInput.trim() ? 1 : 0.6 }}
+                      style={{ padding: "6px 12px", backgroundColor: "#1e1b4b", color: "#ffffff", fontSize: "11.5px", fontWeight: 700, borderRadius: "5px", border: "none", cursor: "pointer", opacity: promoCodeInput.trim() ? 1 : 0.6 }}
                     >
                       {promoLoading ? "..." : "APPLY"}
                     </button>
@@ -954,8 +951,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         }
         .upsell-action-row {
           display: flex;
-          align-items: center;
-          justify-content: space-between;
+          flex-direction: column;
           gap: 8px;
           padding-top: 10px;
           border-top: 1px solid #f1f5f9;
@@ -964,8 +960,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
           display: flex;
           align-items: center;
           gap: 6px;
-          flex: 1;
-          min-width: 0;
+          width: 100%;
         }
         .upsell-select {
           padding: 6px 8px;
@@ -985,22 +980,53 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         .size-select {
           flex: 0 0 auto;
         }
+        .upsell-btn-duo {
+          display: flex;
+          gap: 6px;
+          width: 100%;
+        }
         .upsell-add-btn {
-          padding: 8px 16px;
+          padding: 8px 12px;
           background: #008080;
           color: #ffffff;
           border: none;
-          border-radius: 8px;
-          font-size: 12.5px;
+          border-radius: 6px;
+          font-size: 11.5px;
           font-weight: 700;
           cursor: pointer;
           white-space: nowrap;
           transition: all 0.2s;
           box-shadow: 0 2px 6px rgba(0, 128, 128, 0.2);
+          text-align: center;
         }
         .upsell-add-btn:hover {
           background: #0d9488;
-          transform: translateY(-1px);
+        }
+        .std-btn {
+          flex: 1;
+        }
+        .full-btn {
+          width: 100%;
+        }
+        .upsell-emb-btn {
+          flex: 1.2;
+          background-color: #1e1b4b;
+          color: #ffffff;
+          font-size: 11px;
+          font-weight: 700;
+          padding: 8px 6px;
+          border-radius: 6px;
+          border: none;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 3px;
+          white-space: nowrap;
+          transition: opacity 0.2s;
+        }
+        .upsell-emb-btn:hover {
+          opacity: 0.9;
         }
 
         /* Footer */
