@@ -51,6 +51,8 @@ export interface StoreSettings {
 export interface AppliedPromo {
   code: string;
   discountAmount: number;
+  discountValue?: number;
+  discountType?: string;
   message?: string;
 }
 
