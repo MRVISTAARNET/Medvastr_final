@@ -1,12 +1,12 @@
-"use client";
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useApp } from "@/context/AppContext";
 import { fmt } from "@/lib/data";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { getImagesForColor } from "@/lib/productUtils";
+import { EmbroideryModal } from "@/components/embroidery/EmbroideryModal";
+import { API_BASE } from "@/lib/api";
 
 interface CartDrawerProps {
   open: boolean;
@@ -14,11 +14,18 @@ interface CartDrawerProps {
 }
 
 export default function CartDrawer({ open, onClose }: CartDrawerProps) {
-  const { cart, updateCartQty, removeFromCart, storeSettings, products, addToCart } = useApp();
+  const { cart, updateCartQty, removeFromCart, storeSettings, products, addToCart, appliedPromo, setAppliedPromo, toast } = useApp();
   const router = useRouter();
   const [upsellSizes, setUpsellSizes] = useState<Record<number, string>>({});
   const [upsellColorIdxs, setUpsellColorIdxs] = useState<Record<number, number>>({});
   const [lightboxGallery, setLightboxGallery] = useState<{ imgs: string[]; activeIdx: number } | null>(null);
+  
+  // Promo Code State
+  const [promoCodeInput, setPromoCodeInput] = useState("");
+  const [promoLoading, setPromoLoading] = useState(false);
+
+  // Essential Embroidery Modal State
+  const [essentialEmbroideryModal, setEssentialEmbroideryModal] = useState<{ prod: any; colorIdx: number; size: string } | null>(null);
 
   const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const totalQty = cart.reduce((a, b) => a + b.qty, 0);
@@ -33,12 +40,44 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const freeThreshold = Number(storeSettings?.SHIPPING_FREE_THRESHOLD) || 999;
   const remForFreeShip = isGlobalFreeShip ? 0 : Math.max(0, freeThreshold - sub);
   const isFreeShipUnlocked = isGlobalFreeShip || remForFreeShip === 0;
+  const freeShipPercent = Math.min(100, Math.round((sub / freeThreshold) * 100));
 
   // Multi-Item Volume Discount Calculation (1 item: 0%, 2: 5%, 3-4: 10%, 5+: 15%)
   const volumeDiscountRate = totalQty === 2 ? 0.05 : (totalQty === 3 || totalQty === 4) ? 0.10 : totalQty >= 5 ? 0.15 : 0;
   const volumeDiscountPercent = Math.round(volumeDiscountRate * 100);
   const volumeDiscountAmount = Math.round(sub * volumeDiscountRate);
-  const grandTotalAfterDiscount = Math.max(0, sub - volumeDiscountAmount);
+
+  // Applied Promo Discount
+  const promoDiscountAmount = appliedPromo ? Math.min(sub, appliedPromo.discountAmount) : 0;
+  const grandTotalAfterDiscount = Math.max(0, sub - volumeDiscountAmount - promoDiscountAmount);
+
+  // Validate Promo Code
+  const handleApplyPromoCode = async (codeToApply: string) => {
+    const cleanCode = codeToApply.trim().toUpperCase();
+    if (!cleanCode) return;
+    setPromoLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/promos/validate?code=${encodeURIComponent(cleanCode)}&total=${sub}`);
+      const data = await res.json();
+      if (data.valid && Number(data.discountAmount) > 0) {
+        setAppliedPromo({
+          code: cleanCode,
+          discountAmount: Number(data.discountAmount),
+          message: data.message || `Coupon ${cleanCode} applied!`,
+        });
+        toast(`🎉 Coupon ${cleanCode} applied! Saved ${fmt(data.discountAmount)}`, "ok");
+        setPromoCodeInput("");
+      } else if (data.valid && Number(data.discountAmount) === 0) {
+        toast(`Coupon ${cleanCode} is valid but subtotal is under minimum requirement.`, "bad");
+      } else {
+        toast(data.message || "Invalid promo code", "bad");
+      }
+    } catch {
+      toast("Could not validate promo code", "bad");
+    } finally {
+      setPromoLoading(false);
+    }
+  };
 
   const handleCheckout = () => {
     onClose();
@@ -103,6 +142,17 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
               <span className="badge-free">
                 FREE SHIP
               </span>
+            </div>
+
+            {/* Dynamic Free Shipping Progress Bar */}
+            <div style={{ marginTop: "10px", width: "100%" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", fontWeight: 700, color: "#1e1b4b", marginBottom: "4px" }}>
+                <span>{isFreeShipUnlocked ? "🎉 FREE Express Shipping Unlocked!" : `Add ${fmt(remForFreeShip)} more for FREE Shipping! 🚚`}</span>
+                <span>{freeShipPercent}%</span>
+              </div>
+              <div style={{ height: "6px", width: "100%", background: "rgba(30, 27, 75, 0.1)", borderRadius: "10px", overflow: "hidden" }}>
+                <div style={{ height: "100%", width: `${freeShipPercent}%`, background: "linear-gradient(90deg, #1e1b4b, #3b82f6)", transition: "width 0.4s ease" }} />
+              </div>
             </div>
           </div>
         )}
@@ -310,13 +360,48 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                               </select>
                             </div>
 
-                            <button
-                              type="button"
-                              onClick={() => addToCart(prod, activeColorIdx, activeSize, 1)}
-                              className="upsell-add-btn"
-                            >
-                              + Add to Bag
-                            </button>
+                            {Boolean(prod.embroideryEnabled) ? (
+                              <div style={{ display: "flex", gap: "6px", width: "100%", marginTop: "8px" }}>
+                                <button
+                                  type="button"
+                                  onClick={() => addToCart(prod, activeColorIdx, activeSize, 1)}
+                                  className="upsell-add-btn"
+                                  style={{ flex: 1, padding: "8px 4px", fontSize: "12px" }}
+                                >
+                                  + Add Standard
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setEssentialEmbroideryModal({ prod, colorIdx: activeColorIdx, size: activeSize })}
+                                  style={{
+                                    flex: 1.3,
+                                    backgroundColor: "#1e1b4b",
+                                    color: "#ffffff",
+                                    fontSize: "11px",
+                                    fontWeight: 700,
+                                    padding: "8px 6px",
+                                    borderRadius: "6px",
+                                    border: "none",
+                                    cursor: "pointer",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    gap: "3px",
+                                    whiteSpace: "nowrap",
+                                  }}
+                                >
+                                  ✨ Add + Embroidery (+₹99)
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => addToCart(prod, activeColorIdx, activeSize, 1)}
+                                className="upsell-add-btn"
+                              >
+                                + Add to Bag
+                              </button>
+                            )}
                           </div>
                         </div>
                       );
@@ -331,6 +416,80 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         {/* Drawer Footer */}
         {cart.length > 0 && (
           <div className="drw-ft">
+            {/* 1-Tap Coupon Codes & Offers Section */}
+            <div style={{ margin: "4px 0 12px 0", padding: "10px 12px", backgroundColor: "#f8fafc", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
+              <div style={{ fontSize: "12px", fontWeight: 700, color: "#1e1b4b", marginBottom: "8px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span>🎟️ Coupon & Offers</span>
+                {appliedPromo && (
+                  <span style={{ fontSize: "11px", color: "#047857", fontWeight: 700 }}>✓ Applied</span>
+                )}
+              </div>
+
+              {appliedPromo ? (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", backgroundColor: "#ecfdf5", border: "1px solid #a7f3d0", borderRadius: "8px" }}>
+                  <div style={{ fontSize: "12px", fontWeight: 700, color: "#047857" }}>
+                    🎉 {appliedPromo.code} Applied (-{fmt(promoDiscountAmount)})
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAppliedPromo(null);
+                      toast("Coupon removed", "");
+                    }}
+                    style={{ fontSize: "11px", color: "#ef4444", fontWeight: 700, background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <>
+                  {/* 1-Tap Coupon Chips */}
+                  <div style={{ display: "flex", gap: "6px", overflowX: "auto", paddingBottom: "6px", marginBottom: "8px" }}>
+                    <button
+                      type="button"
+                      onClick={() => handleApplyPromoCode("MEDVASTR10")}
+                      style={{ flexShrink: 0, padding: "5px 8px", background: "#ffffff", border: "1px dashed #6366f1", borderRadius: "6px", fontSize: "11px", fontWeight: 700, color: "#4338ca", cursor: "pointer" }}
+                    >
+                      🏷️ MEDVASTR10 (10% OFF)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleApplyPromoCode("WELCOME100")}
+                      style={{ flexShrink: 0, padding: "5px 8px", background: "#ffffff", border: "1px dashed #10b981", borderRadius: "6px", fontSize: "11px", fontWeight: 700, color: "#047857", cursor: "pointer" }}
+                    >
+                      🏷️ WELCOME100 (₹100 OFF)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleApplyPromoCode("FREESHIP")}
+                      style={{ flexShrink: 0, padding: "5px 8px", background: "#ffffff", border: "1px dashed #f59e0b", borderRadius: "6px", fontSize: "11px", fontWeight: 700, color: "#b45309", cursor: "pointer" }}
+                    >
+                      🏷️ FREESHIP (Free Delivery)
+                    </button>
+                  </div>
+
+                  {/* Manual Input */}
+                  <div style={{ display: "flex", gap: "6px" }}>
+                    <input
+                      type="text"
+                      placeholder="Enter Promo Code"
+                      value={promoCodeInput}
+                      onChange={(e) => setPromoCodeInput(e.target.value.toUpperCase())}
+                      style={{ flex: 1, padding: "7px 10px", fontSize: "12px", border: "1px solid #cbd5e1", borderRadius: "6px", textTransform: "uppercase", outline: "none" }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleApplyPromoCode(promoCodeInput)}
+                      disabled={promoLoading || !promoCodeInput.trim()}
+                      style={{ padding: "7px 14px", backgroundColor: "#1e1b4b", color: "#ffffff", fontSize: "12px", fontWeight: 700, borderRadius: "6px", border: "none", cursor: "pointer", opacity: promoCodeInput.trim() ? 1 : 0.6 }}
+                    >
+                      {promoLoading ? "..." : "APPLY"}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+
             <div className="sum-r">
               <span>Subtotal</span>
               <span style={{ fontWeight: 700 }}>{fmt(sub)}</span>
@@ -339,6 +498,12 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
               <div className="sum-r savings-row">
                 <span>Multi-Item Savings ({volumeDiscountPercent}%)</span>
                 <span style={{ fontWeight: 800 }}>-{fmt(volumeDiscountAmount)}</span>
+              </div>
+            )}
+            {promoDiscountAmount > 0 && (
+              <div className="sum-r savings-row" style={{ color: "#047857" }}>
+                <span>Coupon Discount ({appliedPromo?.code})</span>
+                <span style={{ fontWeight: 800 }}>-{fmt(promoDiscountAmount)}</span>
               </div>
             )}
             <div className="sum-r">
@@ -366,6 +531,35 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
           </div>
         )}
       </div>
+
+      {/* ESSENTIAL ITEM EMBROIDERY MODAL */}
+      {essentialEmbroideryModal && typeof document !== "undefined" && createPortal(
+        <EmbroideryModal
+          isOpen={true}
+          onClose={() => setEssentialEmbroideryModal(null)}
+          onSaveCustomization={(customization) => {
+            addToCart(
+              essentialEmbroideryModal.prod,
+              essentialEmbroideryModal.colorIdx,
+              essentialEmbroideryModal.size,
+              1,
+              customization
+            );
+            setEssentialEmbroideryModal(null);
+            toast(`Added ${essentialEmbroideryModal.prod.name} with Custom Embroidery!`, "ok");
+          }}
+          baseScrubImage={
+            getImagesForColor(essentialEmbroideryModal.prod, essentialEmbroideryModal.colorIdx)[0] ||
+            essentialEmbroideryModal.prod.imgs?.[0]
+          }
+          selectedColorName={
+            essentialEmbroideryModal.prod.clrNms?.[essentialEmbroideryModal.colorIdx] ||
+            essentialEmbroideryModal.prod.clrs?.[essentialEmbroideryModal.colorIdx] ||
+            "Navy Blue"
+          }
+        />,
+        document.body
+      )}
 
       {/* LIGHTBOX GALLERY MODAL */}
       {lightboxGallery &&

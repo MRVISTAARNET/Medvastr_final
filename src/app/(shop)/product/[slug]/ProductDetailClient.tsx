@@ -242,22 +242,26 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   useEffect(() => {
     if (btmSz) setBottomSizeError(false);
   }, [btmSz]);
+
   const [qty, setQty] = useState(1);
   const [mainImg, setMainImg] = useState(0);
   const [brokenImages, setBrokenImages] = useState<Record<number, boolean>>({});
   const [reviews, setReviews] = useState<any[]>([]);
-  const [reviewCount, setReviewCount] = useState(0); // tracks live count
-
-  // Review Form State
+  const [reviewCount, setReviewCount] = useState(0);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [reviewForm, setReviewForm] = useState({ rating: 5, comment: "" });
   const [submittingReview, setSubmittingReview] = useState(false);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
 
   // Custom Embroidery State
-  const [isEmbroiderySelected, setIsEmbroiderySelected] = useState(false);
+  const [isEmbroiderySelected, setIsEmbroiderySelected] = useState<boolean | null>(null);
+  const [embroideryError, setEmbroideryError] = useState(false);
   const [isEmbroideryModalOpen, setIsEmbroideryModalOpen] = useState(false);
   const [embroideryState, setEmbroideryState] = useState<EmbroideryCustomizationState | null>(null);
+
+  useEffect(() => {
+    if (isEmbroiderySelected !== null) setEmbroideryError(false);
+  }, [isEmbroiderySelected]);
 
   const handleShare = () => {
     if (typeof window !== "undefined") {
@@ -800,6 +804,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               <>
                 <EmbroideryCard
                   isEmbroiderySelected={isEmbroiderySelected}
+                  hasError={embroideryError}
                   onToggleAddEmbroidery={(add) => {
                     setIsEmbroiderySelected(add);
                     if (!add) setEmbroideryState(null);
@@ -807,7 +812,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                   customization={embroideryState}
                   onOpenModal={() => setIsEmbroideryModalOpen(true)}
                   onDeleteEmbroidery={() => {
-                    setIsEmbroiderySelected(false);
+                    setIsEmbroiderySelected(null);
                     setEmbroideryState(null);
                   }}
                 />
@@ -893,6 +898,10 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                     if (isSet && productSizes.length > 0 && !btmSz) {
                       setBottomSizeError(true);
                       if (!firstErrorElementId) firstErrorElementId = "pdp-bottom-size-select";
+                    }
+                    if (Boolean(p.embroideryEnabled) && isEmbroiderySelected === null) {
+                      setEmbroideryError(true);
+                      if (!firstErrorElementId) firstErrorElementId = "pdp-embroidery-section";
                     }
                     if (firstErrorElementId) {
                       const element = document.getElementById(firstErrorElementId);

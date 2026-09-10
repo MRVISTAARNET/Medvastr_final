@@ -16,7 +16,7 @@ declare global {
 }
 
 export default function CheckoutPage() {
-  const { cart, clearCart, toast, user, isHydrated, setIsAuthOpen, storeSettings } = useApp();
+  const { cart, clearCart, toast, user, isHydrated, setIsAuthOpen, storeSettings, appliedPromo } = useApp();
   useEffect(() => {
     document.title = "Checkout | Medvarn";
     if (cart.length > 0) {
@@ -81,7 +81,8 @@ export default function CheckoutPage() {
   const totalQty = cart.reduce((a, b) => a + b.qty, 0);
   const volumeRate = totalQty === 2 ? 0.05 : (totalQty === 3 || totalQty === 4) ? 0.10 : totalQty >= 5 ? 0.15 : 0;
   const volumeDiscount = Math.round(sub * volumeRate);
-  const tot = Math.max(0, sub - volumeDiscount + shippingCost - promoDiscount);
+  const activePromoDiscount = appliedPromo ? Math.min(sub, appliedPromo.discountAmount) : promoDiscount;
+  const tot = Math.max(0, sub - volumeDiscount + shippingCost - activePromoDiscount);
   const hasCodDisabled = cart.some(i => i.codDisabled === true);
 
   // Shiprocket Serviceability Call
@@ -511,19 +512,9 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {/* PROMO */}
-          <div className="co-form-group">
-            <h3 className="co-section-title"><span className="step-n">2</span> Reward Codes</h3>
-            <div className="flex gap-4">
-              <input className="co-input-field" placeholder="Enter Promo Code" value={promoInput} onChange={e => setPromoInput(e.target.value.toUpperCase())} />
-              <button onClick={applyPromo} className="pdp-buy-btn" style={{ width: '140px', height: '60px' }}>APPLY</button>
-            </div>
-            {promoMsg && <p className={`mt-3 text-xs font-bold ${promoDiscount > 0 ? 'text-emerald-600' : 'text-red-500'}`}>{promoMsg}</p>}
-          </div>
-
           {/* STEP 2: PAYMENT */}
           <div className="co-form-group">
-            <h3 className="co-section-title"><span className="step-n">3</span> Payment Selection</h3>
+            <h3 className="co-section-title"><span className="step-n">2</span> Payment Selection</h3>
             <div onClick={() => setForm(f => ({ ...f, paymentMethod: 'ONLINE' }))} className={`co-pay-method ${form.paymentMethod === 'ONLINE' ? 'active' : ''}`}>
               <div className="co-radio-circle" />
               <div className="co-pay-info">
@@ -625,10 +616,10 @@ export default function CheckoutPage() {
               <span>Shipping Cost {shippingLoading ? '(Calculating...)' : ''}</span>
               <span className={shippingCost === 0 ? 'co-val-free' : 'co-val-ink'}>{shippingCost === 0 ? 'COMPLIMENTARY' : fmt(shippingCost)}</span>
             </div>
-            {promoDiscount > 0 && (
+            {activePromoDiscount > 0 && (
               <div className="co-total-row">
-                <span>Promotional Saving</span>
-                <span style={{ color: '#16a34a' }}>-{fmt(promoDiscount)}</span>
+                <span>Coupon Discount ({appliedPromo?.code || 'PROMO'})</span>
+                <span style={{ color: '#16a34a', fontWeight: 700 }}>-{fmt(activePromoDiscount)}</span>
               </div>
             )}
             <div className="co-total-row grand" style={{ marginBottom: '2px' }}>
@@ -637,7 +628,7 @@ export default function CheckoutPage() {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#64748b', fontWeight: 600, paddingBottom: '12px', marginBottom: '8px' }}>
               <span>Inclusive of 5% GST</span>
-              <span>{fmt((sub - promoDiscount) * 0.05 / 1.05)}</span>
+              <span>{fmt((sub - activePromoDiscount) * 0.05 / 1.05)}</span>
             </div>
           </div>
 

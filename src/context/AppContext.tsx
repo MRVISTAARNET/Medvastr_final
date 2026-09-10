@@ -48,6 +48,12 @@ export interface StoreSettings {
   razorpay_key?: string;
 }
 
+export interface AppliedPromo {
+  code: string;
+  discountAmount: number;
+  message?: string;
+}
+
 interface AppContextType {
   cart: CartItem[];
   wishlist: string[];
@@ -61,6 +67,8 @@ interface AppContextType {
   collections: any[];
   bulkOrderTiers: any[];
   storeSettings: StoreSettings;
+  appliedPromo: AppliedPromo | null;
+  setAppliedPromo: (promo: AppliedPromo | null) => void;
   refreshCategories: () => Promise<void>;
   refreshNav: () => Promise<void>;
   refreshProducts: () => Promise<boolean>;
@@ -155,6 +163,28 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [colors, setColors] = useState<any[]>([]);
   const [sizes, setSizes] = useState<any[]>([]);
   const [banners, setBanners] = useState<any[]>([]);
+  const [appliedPromo, setAppliedPromoState] = useState<AppliedPromo | null>(null);
+
+  const setAppliedPromo = useCallback((promo: AppliedPromo | null) => {
+    setAppliedPromoState(promo);
+    if (typeof window !== "undefined") {
+      if (promo) {
+        localStorage.setItem("medvastr_applied_promo", JSON.stringify(promo));
+      } else {
+        localStorage.removeItem("medvastr_applied_promo");
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("medvastr_applied_promo");
+        if (saved) setAppliedPromoState(JSON.parse(saved));
+      } catch {}
+    }
+  }, []);
+
   const [collections, setCollections] = useState<any[]>([]);
   const [bulkOrderTiers, setBulkOrderTiers] = useState<any[]>([]);
   const [storeSettings, setStoreSettings] = useState<StoreSettings>({
@@ -626,6 +656,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         collections,
         bulkOrderTiers,
         storeSettings,
+        appliedPromo,
+        setAppliedPromo,
         user,
         isAuthOpen,
         setIsAuthOpen,

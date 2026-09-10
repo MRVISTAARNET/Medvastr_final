@@ -4,11 +4,12 @@ import React from 'react';
 import { EmbroideryCustomizationState } from '@/types/embroidery';
 
 interface EmbroideryCardProps {
-  isEmbroiderySelected: boolean;
+  isEmbroiderySelected: boolean | null;
   onToggleAddEmbroidery: (add: boolean) => void;
   customization: EmbroideryCustomizationState | null;
   onOpenModal: () => void;
   onDeleteEmbroidery: () => void;
+  hasError?: boolean;
 }
 
 export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
@@ -17,11 +18,30 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
   customization,
   onOpenModal,
   onDeleteEmbroidery,
+  hasError = false,
 }) => {
+  const isCustomized = isEmbroiderySelected === true && customization && (customization.line1 || customization.selectedIconId || customization.customLogoUrl);
+
   return (
-    <div style={{ width: '100%', margin: '16px 0', fontFamily: 'sans-serif', userSelect: 'none' }}>
+    <div id="pdp-embroidery-section" style={{ width: '100%', margin: '16px 0', fontFamily: 'sans-serif', userSelect: 'none' }}>
+      {/* Validation Error Message */}
+      {hasError && (
+        <div style={{ color: '#e11d48', fontSize: '13px', fontWeight: 600, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          ⚠️ Please select an embroidery option (Add Embroidery or Skip for Now)
+        </div>
+      )}
+
       {/* Embroidery Card Wrapper */}
-      <div style={{ borderRadius: '12px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.08)', border: '1px solid #e2e8f0', backgroundColor: '#ffffff' }}>
+      <div
+        style={{
+          borderRadius: '12px',
+          overflow: 'hidden',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+          border: hasError ? '2px solid #e11d48' : '1px solid #e2e8f0',
+          backgroundColor: '#ffffff',
+          transition: 'border 0.2s',
+        }}
+      >
         {/* Dark Navy Branding Header */}
         <div
           onClick={onOpenModal}
@@ -52,7 +72,7 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
         </div>
 
         {/* Content Area: Not Configured Yet vs Configured */}
-        {!isEmbroiderySelected || !customization || (!customization.line1 && !customization.selectedIconId && !customization.customLogoUrl) ? (
+        {!isCustomized ? (
           <div style={{ backgroundColor: '#F9F9FB', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {/* Option 1: Add Embroidery */}
             <div
@@ -67,15 +87,16 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
                 padding: '10px 12px',
                 borderRadius: '8px',
                 cursor: 'pointer',
-                backgroundColor: isEmbroiderySelected ? '#F0F4F8' : 'transparent',
-                transition: 'background 0.2s',
+                backgroundColor: isEmbroiderySelected === true ? '#F0F4F8' : 'transparent',
+                border: isEmbroiderySelected === true ? '1px solid #1e1b4b' : '1px solid transparent',
+                transition: 'all 0.2s',
               }}
             >
               <input
                 type="radio"
                 id="showEmb"
                 name="embroidery"
-                checked={isEmbroiderySelected}
+                checked={isEmbroiderySelected === true}
                 onChange={() => {
                   onToggleAddEmbroidery(true);
                   onOpenModal();
@@ -102,15 +123,16 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
                 padding: '10px 12px',
                 borderRadius: '8px',
                 cursor: 'pointer',
-                backgroundColor: !isEmbroiderySelected ? '#F3F4F6' : 'transparent',
-                transition: 'background 0.2s',
+                backgroundColor: isEmbroiderySelected === false ? '#F3F4F6' : 'transparent',
+                border: isEmbroiderySelected === false ? '1px solid #94a3b8' : '1px solid transparent',
+                transition: 'all 0.2s',
               }}
             >
               <input
                 type="radio"
                 id="dontShowEmbroidery"
                 name="embroidery"
-                checked={!isEmbroiderySelected}
+                checked={isEmbroiderySelected === false}
                 onChange={() => onToggleAddEmbroidery(false)}
                 style={{ marginTop: '3px', width: '18px', height: '18px', accentColor: '#1e1b4b', cursor: 'pointer', flexShrink: 0 }}
               />
