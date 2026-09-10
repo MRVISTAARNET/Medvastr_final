@@ -48,6 +48,7 @@ export default function AdminOrders() {
           customer: o.shippingName || 'Unknown',
           phone: o.shippingPhone || '',
           items: o.items?.length || 0,
+          totalUnits: o.items?.reduce((sum: number, item: any) => sum + (item.quantity || 1), 0) || 0,
           itemsList: o.items || [],
           total: o.totalAmount,
           status: o.status,
@@ -417,7 +418,9 @@ export default function AdminOrders() {
                     </td>
                     <td>
                       <div className="td-bold">{fmt(o.total)}</div>
-                      <div className="td-meta">{o.items} item(s)</div>
+                      <div className="td-meta">
+                        {o.totalUnits} {o.totalUnits === 1 ? 'unit' : 'units'} {o.totalUnits !== o.items && `(${o.items} item${o.items === 1 ? '' : 's'})`}
+                      </div>
                     </td>
                     <td>
                       {o.payment === 'ONLINE' ? (
