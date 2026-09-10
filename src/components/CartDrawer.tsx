@@ -158,32 +158,31 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         {/* Status / Shipping Banner */}
         {cart.length > 0 && (
           <div className="cart-status-bar">
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", width: "100%" }}>
-              <div className="status-msg" style={{ fontSize: "11.5px", fontWeight: 700, color: "#1e1b4b" }}>
-                <span>{totalQty >= 2 ? "🔥" : "🎁"}</span>
-                <span>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px", width: "100%", fontSize: "11.5px", fontWeight: 700 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "5px", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <span style={{ fontSize: "13px" }}>{totalQty >= 2 ? "🔥" : "🎁"}</span>
+                <span style={{ color: "#1e1b4b" }}>
                   {totalQty === 1 && "Add 1 more item for 5% OFF!"}
-                  {totalQty === 2 && "5% Multi-Item Discount Applied! (Add 1 more for 10% OFF)"}
-                  {(totalQty === 3 || totalQty === 4) && `10% Discount Applied! (Add ${5 - totalQty} more for 15% OFF)`}
+                  {totalQty === 2 && "5% Multi-Item Savings Applied!"}
+                  {(totalQty === 3 || totalQty === 4) && "10% Multi-Item Savings Applied!"}
                   {totalQty >= 5 && "MAX 15% Savings Applied!"}
                 </span>
+                {volumeDiscountAmount > 0 && (
+                  <span style={{ background: "#dcfce7", color: "#15803d", padding: "1px 6px", borderRadius: "10px", fontSize: "10.5px", fontWeight: 800 }}>
+                    -{fmt(volumeDiscountAmount)}
+                  </span>
+                )}
               </div>
-              {volumeDiscountAmount > 0 && (
-                <span className="badge-disc" style={{ flexShrink: 0, padding: "2px 6px", fontSize: "10.5px" }}>
-                  -{fmt(volumeDiscountAmount)}
-                </span>
-              )}
+
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", flexShrink: 0, fontSize: "11px", color: "#047857" }}>
+                <span>{isFreeShipUnlocked ? "🎉 FREE Express Shipping!" : `Add ${fmt(remForFreeShip)} for FREE Ship 🚚`}</span>
+                <span style={{ fontSize: "10px", fontWeight: 800, color: "#475569" }}>{freeShipPercent}%</span>
+              </div>
             </div>
 
             {/* Dynamic Free Shipping Progress Bar */}
-            <div style={{ marginTop: "4px", width: "100%" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10.5px", fontWeight: 700, color: "#475569", marginBottom: "2px" }}>
-                <span>{isFreeShipUnlocked ? "🎉 FREE Express Shipping Unlocked!" : `Add ${fmt(remForFreeShip)} more for FREE Shipping! 🚚`}</span>
-                <span>{freeShipPercent}%</span>
-              </div>
-              <div style={{ height: "4px", width: "100%", background: "rgba(30, 27, 75, 0.08)", borderRadius: "10px", overflow: "hidden" }}>
-                <div style={{ height: "100%", width: `${freeShipPercent}%`, background: "linear-gradient(90deg, #1e1b4b, #3b82f6)", transition: "width 0.4s ease" }} />
-              </div>
+            <div style={{ height: "4px", width: "100%", background: "rgba(30, 27, 75, 0.08)", borderRadius: "10px", overflow: "hidden", marginTop: "4px" }}>
+              <div style={{ height: "100%", width: `${freeShipPercent}%`, background: "linear-gradient(90deg, #1e1b4b, #3b82f6)", transition: "width 0.4s ease" }} />
             </div>
           </div>
         )}
