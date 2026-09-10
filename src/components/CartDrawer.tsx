@@ -565,6 +565,46 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
             getImagesForColor(essentialEmbroideryModal.prod, essentialEmbroideryModal.colorIdx)[0] ||
             essentialEmbroideryModal.prod.imgs?.[0]
           }
+          embroideryPreviewImage={(() => {
+            try {
+              const prod = essentialEmbroideryModal.prod;
+              const colorIdx = essentialEmbroideryModal.colorIdx;
+              const config = JSON.parse(prod?.embroideryConfig || '{}');
+              const colorName = prod?.clrNms?.[colorIdx] || '';
+              const colorHex = prod?.clrs?.[colorIdx] || '';
+              const colorImages = getImagesForColor(prod, colorIdx);
+              const colorImagesFirst = colorImages && colorImages[0] ? colorImages[0] : '';
+
+              if (config?.colorPreviewImages) {
+                if (colorName && config.colorPreviewImages[colorName]) {
+                  return config.colorPreviewImages[colorName];
+                }
+                if (colorHex && config.colorPreviewImages[colorHex]) {
+                  return config.colorPreviewImages[colorHex];
+                }
+                const foundKey = Object.keys(config.colorPreviewImages).find(k => {
+                  const lk = k.trim().toLowerCase();
+                  return (colorName && lk === colorName.trim().toLowerCase()) ||
+                         (colorHex && lk === colorHex.trim().toLowerCase());
+                });
+                if (foundKey && config.colorPreviewImages[foundKey]) {
+                  return config.colorPreviewImages[foundKey];
+                }
+              }
+              if (config?.previewImage) return config.previewImage;
+              return colorImagesFirst || prod?.imgs?.[0] || undefined;
+            } catch {
+              return getImagesForColor(essentialEmbroideryModal.prod, essentialEmbroideryModal.colorIdx)[0] ||
+                     essentialEmbroideryModal.prod.imgs?.[0] || undefined;
+            }
+          })()}
+          customPrices={(() => {
+            try {
+              return JSON.parse(essentialEmbroideryModal.prod?.embroideryConfig || '{}')?.prices;
+            } catch {
+              return undefined;
+            }
+          })()}
           selectedColorName={
             essentialEmbroideryModal.prod.clrNms?.[essentialEmbroideryModal.colorIdx] ||
             essentialEmbroideryModal.prod.clrs?.[essentialEmbroideryModal.colorIdx] ||
