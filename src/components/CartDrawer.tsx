@@ -62,25 +62,45 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const volumeDiscountPercent = Math.round(volumeDiscountRate * 100);
   const volumeDiscountAmount = Math.round(sub * volumeDiscountRate);
 
-  // Applied Promo Discount
-  const promoDiscountAmount = appliedPromo ? Math.min(sub, appliedPromo.discountAmount) : 0;
-  const grandTotalAfterDiscount = Math.max(0, sub - volumeDiscountAmount - promoDiscountAmount);
+  // Net Subtotal after Volume Discount (prevents loss from double-discounting)
+  const netSubtotalAfterVolume = Math.max(0, sub - volumeDiscountAmount);
 
-  // Validate Promo Code
+  // Applied Promo Discount (calculated on Net Subtotal after Volume Discount)
+  const promoDiscountAmount = appliedPromo
+    ? Math.min(
+        netSubtotalAfterVolume,
+        Math.round(
+          appliedPromo.discountType === "PERCENTAGE" || (appliedPromo.discountValue && appliedPromo.discountValue <= 100 && (!appliedPromo.discountAmount || appliedPromo.discountAmount === 0))
+            ? (netSubtotalAfterVolume * (appliedPromo.discountValue || 10)) / 100
+            : (appliedPromo.discountAmount || 0)
+        )
+      )
+    : 0;
+
+  const grandTotalAfterDiscount = Math.max(0, netSubtotalAfterVolume - promoDiscountAmount);
+
+  // Validate Promo Code against Net Subtotal after Volume Discount
   const handleApplyPromoCode = async (codeToApply: string) => {
     const cleanCode = codeToApply.trim().toUpperCase();
     if (!cleanCode) return;
     setPromoLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/promos/validate?code=${encodeURIComponent(cleanCode)}&total=${sub}`);
+      const res = await fetch(`${API_BASE}/promos/validate?code=${encodeURIComponent(cleanCode)}&total=${netSubtotalAfterVolume}`);
       const data = await res.json();
       if (data.valid && Number(data.discountAmount) > 0) {
+        // Calculate promo discount against net subtotal after volume discount
+        const calculatedDiscount = data.discountType === "PERCENTAGE"
+          ? Math.round((netSubtotalAfterVolume * Number(data.discountValue || 10)) / 100)
+          : Math.min(netSubtotalAfterVolume, Number(data.discountAmount));
+
         setAppliedPromo({
           code: cleanCode,
-          discountAmount: Number(data.discountAmount),
+          discountAmount: calculatedDiscount,
+          discountValue: data.discountValue,
+          discountType: data.discountType,
           message: data.message || `Coupon ${cleanCode} applied!`,
         });
-        toast(`🎉 Coupon ${cleanCode} applied! Saved ${fmt(data.discountAmount)}`, "ok");
+        toast(`🎉 Coupon ${cleanCode} applied! Saved ${fmt(calculatedDiscount)}`, "ok");
         setPromoCodeInput("");
       } else if (data.valid && Number(data.discountAmount) === 0) {
         toast(`Coupon ${cleanCode} is valid but subtotal is under minimum requirement.`, "bad");
@@ -138,34 +158,30 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         {/* Status / Shipping Banner */}
         {cart.length > 0 && (
           <div className="cart-status-bar">
-            <div className="status-msg">
-              <span className="status-icon">{totalQty >= 2 ? "🎉" : "🎁"}</span>
-              <span className="status-text">
-                {totalQty === 1 && "Add 1 more item for 5% OFF!"}
-                {totalQty === 2 && "5% Multi-Item Discount Applied! (Add 1 more for 10% OFF)"}
-                {(totalQty === 3 || totalQty === 4) && `10% Discount Applied! (Add ${5 - totalQty} more for 15% OFF)`}
-                {totalQty >= 5 && "🔥 MAX 15% Multi-Item Savings Applied!"}
-              </span>
-            </div>
-
-            <div className="status-badges">
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "8px", width: "100%" }}>
+              <div className="status-msg" style={{ fontSize: "11.5px", fontWeight: 700, color: "#1e1b4b" }}>
+                <span>{totalQty >= 2 ? "🔥" : "🎁"}</span>
+                <span>
+                  {totalQty === 1 && "Add 1 more item for 5% OFF!"}
+                  {totalQty === 2 && "5% Multi-Item Discount Applied! (Add 1 more for 10% OFF)"}
+                  {(totalQty === 3 || totalQty === 4) && `10% Discount Applied! (Add ${5 - totalQty} more for 15% OFF)`}
+                  {totalQty >= 5 && "MAX 15% Savings Applied!"}
+                </span>
+              </div>
               {volumeDiscountAmount > 0 && (
-                <span className="badge-disc">
+                <span className="badge-disc" style={{ flexShrink: 0, padding: "2px 6px", fontSize: "10.5px" }}>
                   -{fmt(volumeDiscountAmount)}
                 </span>
               )}
-              <span className="badge-free">
-                FREE SHIP
-              </span>
             </div>
 
             {/* Dynamic Free Shipping Progress Bar */}
-            <div style={{ marginTop: "10px", width: "100%" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", fontWeight: 700, color: "#1e1b4b", marginBottom: "4px" }}>
+            <div style={{ marginTop: "4px", width: "100%" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", fontSize: "10.5px", fontWeight: 700, color: "#475569", marginBottom: "2px" }}>
                 <span>{isFreeShipUnlocked ? "🎉 FREE Express Shipping Unlocked!" : `Add ${fmt(remForFreeShip)} more for FREE Shipping! 🚚`}</span>
                 <span>{freeShipPercent}%</span>
               </div>
-              <div style={{ height: "6px", width: "100%", background: "rgba(30, 27, 75, 0.1)", borderRadius: "10px", overflow: "hidden" }}>
+              <div style={{ height: "4px", width: "100%", background: "rgba(30, 27, 75, 0.08)", borderRadius: "10px", overflow: "hidden" }}>
                 <div style={{ height: "100%", width: `${freeShipPercent}%`, background: "linear-gradient(90deg, #1e1b4b, #3b82f6)", transition: "width 0.4s ease" }} />
               </div>
             </div>

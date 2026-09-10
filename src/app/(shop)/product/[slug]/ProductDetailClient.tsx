@@ -570,7 +570,9 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
   };
 
   const pdpVolRate = qty === 2 ? 0.05 : (qty === 3 || qty === 4) ? 0.10 : qty >= 5 ? 0.15 : 0;
-  const pdpOrigTotal = p.price * qty;
+  const embroideryAddonPrice = isEmbroiderySelected ? (embroideryState?.totalEmbroideryPrice || 99) : 0;
+  const unitPriceWithAddons = p.price + embroideryAddonPrice;
+  const pdpOrigTotal = unitPriceWithAddons * qty;
   const pdpDiscount = Math.round(pdpOrigTotal * pdpVolRate);
   const pdpFinalTotal = pdpOrigTotal - pdpDiscount;
   const pdpVolPercent = Math.round(pdpVolRate * 100);
@@ -581,6 +583,8 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
     ? 'Adding...'
     : addedSuccess
     ? '✓ Added to Bag!'
+    : isEmbroiderySelected
+    ? (pdpVolRate > 0 ? `Add to Bag + Embroidery • ${fmt(pdpFinalTotal)}` : `Add to Bag + Embroidery • ${fmt(pdpOrigTotal)}`)
     : pdpVolRate > 0
     ? `Add to Bag • ${fmt(pdpFinalTotal)}`
     : `Add to Bag • ${fmt(pdpOrigTotal)}`;
