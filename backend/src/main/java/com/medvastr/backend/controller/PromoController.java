@@ -28,7 +28,7 @@ public class PromoController {
     @GetMapping("/public/active")
     public ResponseEntity<List<PromoCodeDTO>> getActivePromos() {
         return ResponseEntity.ok(promoCodeService.getAll().stream()
-                .filter(p -> Boolean.TRUE.equals(p.getActive()))
+                .filter(PromoCodeDTO::isActive)
                 .collect(Collectors.toList()));
     }
 }
