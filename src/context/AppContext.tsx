@@ -295,23 +295,32 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [fetchMe]);
 
-  // 12-second Welcome & Login Discount Popup auto-trigger for non-logged-in visitors
+  // Welcome & Login Discount Popup auto-trigger: 5s initial delay, 30s gap if dismissed
   useEffect(() => {
-    if (!isHydrated || user) return;
-    const hasSeenWelcome = localStorage.getItem("mv_welcome_popup_seen");
-    if (hasSeenWelcome) return;
+    if (!isHydrated || user || isAuthOpen) return;
+    if (localStorage.getItem("mv_user_completed_auth") === "true") return;
+
+    let delay = 5000; // 5 seconds initial
+    const lastDismissed = localStorage.getItem("mv_welcome_dismissed_at");
+    if (lastDismissed) {
+      const elapsed = Date.now() - Number(lastDismissed);
+      if (elapsed < 30000) {
+        delay = 30000 - elapsed;
+      } else {
+        delay = 1000;
+      }
+    }
 
     const timer = setTimeout(() => {
       const currentToken = getToken();
-      const alreadySeen = localStorage.getItem("mv_welcome_popup_seen");
-      if (!currentToken && !alreadySeen) {
+      const isAuthDone = localStorage.getItem("mv_user_completed_auth") === "true";
+      if (!currentToken && !isAuthDone) {
         setIsAuthOpen(true);
-        localStorage.setItem("mv_welcome_popup_seen", "true");
       }
-    }, 12000); // 12 seconds
+    }, delay);
 
     return () => clearTimeout(timer);
-  }, [isHydrated, user]);
+  }, [isHydrated, user, isAuthOpen]);
 
   const fetchCategories = useCallback(async () => {
     // Tree used for Admin/Filters is now hardcoded for absolute stability

@@ -22,6 +22,13 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const handleDismissModal = () => {
+    try {
+      localStorage.setItem("mv_welcome_dismissed_at", Date.now().toString());
+    } catch { /* ignore */ }
+    onClose();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -53,6 +60,9 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
         ok = await loginWithOtp(form.email, form.otp);
       }
       if (ok) {
+        try {
+          localStorage.setItem("mv_user_completed_auth", "true");
+        } catch { /* ignore */ }
         if (callConsent) {
           try {
             fetch(`${API_BASE}/inquiries`, {
@@ -62,7 +72,7 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
                 name: form.fullName || "Registered User",
                 email: form.email,
                 phone: form.phone || (form.email.match(/^\d{10}$/) ? form.email : ""),
-                message: "User logged in/registered with Call & WhatsApp Consent for 10% OFF Offer (WELCOM10)",
+                message: "User logged in/registered with Call & WhatsApp Consent for 10% OFF Offer (WELCOME10)",
                 type: "WELCOME_POPUP_LEAD"
               })
             }).catch(() => {});
@@ -111,11 +121,11 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="auth-overlay">
       {/* Backdrop */}
-      <div className="auth-backdrop" onClick={onClose} />
+      <div className="auth-backdrop" onClick={handleDismissModal} />
 
       <div className="auth-modal">
         {/* Close Button */}
-        <button onClick={onClose} className="auth-close-btn" aria-label="Close dialog">✕</button>
+        <button onClick={handleDismissModal} className="auth-close-btn" aria-label="Close dialog">✕</button>
 
         {/* Left Column - Welcome Brand Banner */}
         <div className="auth-left-banner">
