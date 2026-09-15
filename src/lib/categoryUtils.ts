@@ -200,3 +200,41 @@ export function buildNavFromCategories(tree: CategoryNode[]) {
       };
     });
 }
+
+export function isScrubSuitItem(item: any): boolean {
+  if (!item) return false;
+
+  // Custom embroidery line items are not scrub suits
+  if (item.embroidery || item.embroideryCustomization) {
+    return false;
+  }
+
+  const name = (item.name || "").toLowerCase();
+  const type = (item.type || "").toLowerCase();
+  const catStr = [
+    item.categoryName,
+    item.subcategoryName,
+    item.childCategoryName,
+    item.short,
+    item.desc
+  ].filter(Boolean).join(" ").toLowerCase();
+
+  const combined = `${name} ${type} ${catStr}`;
+
+  // Explicitly exclude non-scrub items like T-Shirts, Lab Coats, Caps, Gowns
+  if (
+    combined.includes("t-shirt") ||
+    combined.includes("tshirt") ||
+    combined.includes("lab coat") ||
+    combined.includes("doctor coat") ||
+    combined.includes("gown") ||
+    combined.includes("cap") ||
+    combined.includes("linen") ||
+    combined.includes("blanket")
+  ) {
+    return false;
+  }
+
+  return combined.includes("scrub") || combined.includes("suit");
+}
+

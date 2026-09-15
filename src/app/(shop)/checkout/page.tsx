@@ -8,6 +8,7 @@ import { apiJson, API_BASE, RAZORPAY_KEY, getToken, normalizeMediaUrl } from "@/
 import { getImagesForColor } from "@/lib/productUtils";
 import { trackInitiateCheckout, trackPurchase } from "@/lib/metaPixel";
 import { trackAnalyticsEvent } from "@/lib/analyticsTracker";
+import { isScrubSuitItem } from "@/lib/categoryUtils";
 
 declare global {
   interface Window {
@@ -81,7 +82,23 @@ export default function CheckoutPage() {
   const totalQty = cart.reduce((a, b) => a + b.qty, 0);
   const volumeRate = totalQty === 2 ? 0.05 : (totalQty === 3 || totalQty === 4) ? 0.10 : totalQty >= 5 ? 0.15 : 0;
   const volumeDiscount = Math.round(sub * volumeRate);
-  const activePromoDiscount = appliedPromo ? Math.min(sub, appliedPromo.discountAmount) : promoDiscount;
+
+  // Filter Scrub Suit items to restrict coupons strictly to Scrub Suits
+  const scrubSuitItems = cart.filter((i) => isScrubSuitItem(i));
+  const scrubSuitSubtotal = scrubSuitItems.reduce((s, i) => s + i.price * i.qty, 0);
+  const scrubSuitNetSubtotal = Math.max(0, scrubSuitSubtotal - Math.round(scrubSuitSubtotal * volumeRate));
+
+  const activePromoDiscount = appliedPromo && scrubSuitNetSubtotal > 0
+    ? Math.min(
+        scrubSuitNetSubtotal,
+        Math.round(
+          appliedPromo.discountType === "PERCENTAGE" || (appliedPromo.discountValue && appliedPromo.discountValue <= 100 && (!appliedPromo.discountAmount || appliedPromo.discountAmount === 0))
+            ? (scrubSuitNetSubtotal * (appliedPromo.discountValue || 10)) / 100
+            : (appliedPromo.discountAmount || 0)
+        )
+      )
+    : 0;
+
   const tot = Math.max(0, sub - volumeDiscount + shippingCost - activePromoDiscount);
   const hasCodDisabled = cart.some(i => i.codDisabled === true);
 

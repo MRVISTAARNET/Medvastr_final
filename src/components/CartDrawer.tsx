@@ -7,6 +7,7 @@ import Image from "next/image";
 import { getImagesForColor } from "@/lib/productUtils";
 import { EmbroideryModal } from "@/components/embroidery/EmbroideryModal";
 import { API_BASE } from "@/lib/api";
+import { isScrubSuitItem } from "@/lib/categoryUtils";
 
 interface CartDrawerProps {
   open: boolean;
@@ -42,8 +43,12 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   // Essential Embroidery Modal State
   const [essentialEmbroideryModal, setEssentialEmbroideryModal] = useState<{ prod: any; colorIdx: number; size: string } | null>(null);
 
-  const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const totalQty = cart.reduce((a, b) => a + b.qty, 0);
+  const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
+
+  // Filter Scrub Suit items to restrict coupons strictly to Scrub Suits
+  const scrubSuitItems = cart.filter((i) => isScrubSuitItem(i));
+  const scrubSuitSubtotal = scrubSuitItems.reduce((s, i) => s + i.price * i.qty, 0);
 
   // Dynamic Free Shipping Calculation
   const promoUntilStr = storeSettings?.SHIPPING_PROMO_FREE_UNTIL;
@@ -65,13 +70,16 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   // Net Subtotal after Volume Discount (prevents loss from double-discounting)
   const netSubtotalAfterVolume = Math.max(0, sub - volumeDiscountAmount);
 
-  // Applied Promo Discount (calculated on Net Subtotal after Volume Discount)
-  const promoDiscountAmount = appliedPromo
+  // Net Subtotal for Scrub Suits ONLY after Volume Discount
+  const scrubSuitNetSubtotal = Math.max(0, scrubSuitSubtotal - Math.round(scrubSuitSubtotal * volumeDiscountRate));
+
+  // Applied Promo Discount (calculated ONLY on Scrub Suits' Net Subtotal)
+  const promoDiscountAmount = appliedPromo && scrubSuitNetSubtotal > 0
     ? Math.min(
-        netSubtotalAfterVolume,
+        scrubSuitNetSubtotal,
         Math.round(
           appliedPromo.discountType === "PERCENTAGE" || (appliedPromo.discountValue && appliedPromo.discountValue <= 100 && (!appliedPromo.discountAmount || appliedPromo.discountAmount === 0))
-            ? (netSubtotalAfterVolume * (appliedPromo.discountValue || 10)) / 100
+            ? (scrubSuitNetSubtotal * (appliedPromo.discountValue || 10)) / 100
             : (appliedPromo.discountAmount || 0)
         )
       )
@@ -79,19 +87,25 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
 
   const grandTotalAfterDiscount = Math.max(0, netSubtotalAfterVolume - promoDiscountAmount);
 
-  // Validate Promo Code against Net Subtotal after Volume Discount
+  // Validate Promo Code against Scrub Suit Net Subtotal
   const handleApplyPromoCode = async (codeToApply: string) => {
     const cleanCode = codeToApply.trim().toUpperCase();
     if (!cleanCode) return;
+
+    if (scrubSuitSubtotal === 0) {
+      toast(`Coupon ${cleanCode} is only applicable on Scrub Suits. Please add a Scrub Suit to your bag!`, "bad");
+      return;
+    }
+
     setPromoLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/promos/validate?code=${encodeURIComponent(cleanCode)}&total=${netSubtotalAfterVolume}`);
+      const res = await fetch(`${API_BASE}/promos/validate?code=${encodeURIComponent(cleanCode)}&total=${scrubSuitNetSubtotal}`);
       const data = await res.json();
       if (data.valid && Number(data.discountAmount) > 0) {
-        // Calculate promo discount against net subtotal after volume discount
+        // Calculate promo discount against Scrub Suit Net Subtotal
         const calculatedDiscount = data.discountType === "PERCENTAGE"
-          ? Math.round((netSubtotalAfterVolume * Number(data.discountValue || 10)) / 100)
-          : Math.min(netSubtotalAfterVolume, Number(data.discountAmount));
+          ? Math.round((scrubSuitNetSubtotal * Number(data.discountValue || 10)) / 100)
+          : Math.min(scrubSuitNetSubtotal, Number(data.discountAmount));
 
         setAppliedPromo({
           code: cleanCode,
@@ -100,10 +114,10 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
           discountType: data.discountType,
           message: data.message || `Coupon ${cleanCode} applied!`,
         });
-        toast(`🎉 Coupon ${cleanCode} applied! Saved ${fmt(calculatedDiscount)}`, "ok");
+        toast(`🎉 Coupon ${cleanCode} applied on Scrub Suit! Saved ${fmt(calculatedDiscount)}`, "ok");
         setPromoCodeInput("");
       } else if (data.valid && Number(data.discountAmount) === 0) {
-        toast(`Coupon ${cleanCode} is valid but subtotal is under minimum requirement.`, "bad");
+        toast(`Coupon ${cleanCode} is valid but Scrub Suit subtotal is under minimum requirement.`, "bad");
       } else {
         toast(data.message || "Invalid promo code", "bad");
       }

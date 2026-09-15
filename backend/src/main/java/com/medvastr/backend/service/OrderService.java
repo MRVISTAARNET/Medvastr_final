@@ -224,11 +224,22 @@ public class OrderService {
         BigDecimal volumeDiscount = subtotal.multiply(volumeRate).setScale(0, java.math.RoundingMode.HALF_UP);
         BigDecimal netSubtotalAfterVolume = subtotal.subtract(volumeDiscount);
 
+        // Calculate subtotal for Scrub Suits ONLY
+        BigDecimal scrubSuitSubtotal = BigDecimal.ZERO;
+        for (var oi : orderItems) {
+            String name = oi.getProductName() != null ? oi.getProductName().toLowerCase() : "";
+            String type = (oi.getProduct() != null && oi.getProduct().getType() != null) ? oi.getProduct().getType().toLowerCase() : "";
+            if (!name.contains("t-shirt") && !name.contains("tshirt") && !name.contains("lab coat") && !name.contains("embroidery") && (name.contains("scrub") || name.contains("suit") || type.contains("scrub"))) {
+                scrubSuitSubtotal = scrubSuitSubtotal.add(oi.getTotalPrice());
+            }
+        }
+        BigDecimal scrubSuitNetSubtotal = scrubSuitSubtotal.subtract(scrubSuitSubtotal.multiply(volumeRate)).setScale(0, java.math.RoundingMode.HALF_UP);
+
         BigDecimal promoDiscount = BigDecimal.ZERO;
 
-        if (r.getPromoCode() != null && !r.getPromoCode().isBlank()) {
+        if (r.getPromoCode() != null && !r.getPromoCode().isBlank() && scrubSuitNetSubtotal.compareTo(BigDecimal.ZERO) > 0) {
             try {
-                var promoResult = promoCodeService.validate(r.getPromoCode(), netSubtotalAfterVolume);
+                var promoResult = promoCodeService.validate(r.getPromoCode(), scrubSuitNetSubtotal);
                 if (promoResult != null && promoResult.isValid() && promoResult.getDiscountAmount() != null) {
                     promoDiscount = promoResult.getDiscountAmount();
                     try {

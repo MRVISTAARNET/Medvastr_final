@@ -100,6 +100,7 @@ interface AppContextType {
   toastKind: "ok" | "bad" | "";
   requestOtp: (email: string) => Promise<boolean>;
   loginWithOtp: (email: string, otp: string) => Promise<boolean>;
+  loginWithGoogle: (idToken: string) => Promise<boolean>;
   updateAuth: (token: string, user: User) => void;
 }
 
@@ -524,6 +525,26 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return false;
   };
 
+  const loginWithGoogle = async (idToken: string) => {
+    try {
+      const data = await apiJson<{ token: string; user: User }>("/auth/google", {
+        method: "POST",
+        skipAuth: true,
+        body: JSON.stringify({ idToken }),
+      });
+      if (data.success && data.data) {
+        localStorage.setItem(TOKEN_KEY, data.data.token);
+        setUser(data.data.user);
+        toast("Google Login successful!", "ok");
+        return true;
+      }
+      toast(data.message || "Google sign-in failed", "bad");
+    } catch {
+      toast("Connection failed", "bad");
+    }
+    return false;
+  };
+
   const register = async (f: string, l: string, e: string, p: string, ph: string) => {
     try {
       const data = await apiJson<{ token: string; user: User }>("/auth/register", {
@@ -707,6 +728,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         logout,
         requestOtp,
         loginWithOtp,
+        loginWithGoogle,
         toast,
         toastMsg,
         toastKind,

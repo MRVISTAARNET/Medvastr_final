@@ -33,6 +33,12 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.ok("Login successful", s.login(r)));
     }
 
+    // ── Google Login ──────────────────────────────────────────────────────────
+    @PostMapping("/google")
+    public ResponseEntity<ApiResponse<AuthResponse>> googleLogin(@Valid @RequestBody GoogleLoginRequest r) {
+        return ResponseEntity.ok(ApiResponse.ok("Google login successful", s.loginViaGoogle(r.getIdToken())));
+    }
+
     // ── Forgot Password: send email with reset link ────────────────────────
     @PostMapping("/forgot-password")
     public ResponseEntity<ApiResponse<Void>> forgotPassword(@RequestParam String email) {

@@ -5,8 +5,16 @@ import Link from "next/link";
 import { useApp } from "@/context/AppContext";
 import { API_BASE } from "@/lib/api";
 
+declare global {
+  interface Window {
+    google?: any;
+  }
+}
+
+const GOOGLE_CLIENT_ID = "905321854749-uh59m0s01lrm0gqhlb6os1o3t5a6hssn.apps.googleusercontent.com";
+
 export default function AccountModal({ onClose }: { onClose: () => void }) {
-  const { user, login, register, logout, requestOtp, loginWithOtp } = useApp();
+  const { user, login, register, logout, requestOtp, loginWithOtp, loginWithGoogle } = useApp();
   const [mode, setMode] = useState<"login" | "register" | "login-otp" | "verify-otp">("login-otp");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -16,6 +24,58 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [callConsent, setCallConsent] = useState(true);
+
+  // Initialize Google Identity Services
+  React.useEffect(() => {
+    if (user) return;
+    const initGoogleBtn = () => {
+      if (window.google?.accounts?.id) {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: async (res: any) => {
+            if (res.credential) {
+              setLoading(true);
+              const ok = await loginWithGoogle(res.credential);
+              setLoading(false);
+              if (ok) {
+                try {
+                  localStorage.setItem("mv_user_completed_auth", "true");
+                } catch { /* ignore */ }
+                onClose();
+              } else {
+                setError("Google authentication failed. Please try again.");
+              }
+            }
+          }
+        });
+
+        const targetEl = document.getElementById("google-btn-container");
+        if (targetEl) {
+          targetEl.innerHTML = "";
+          window.google.accounts.id.renderButton(targetEl, {
+            theme: "outline",
+            size: "large",
+            width: "280",
+            text: "continue_with",
+            shape: "rectangular"
+          });
+        }
+      }
+    };
+
+    const scriptId = "google-gsi-client";
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement("script");
+      script.id = scriptId;
+      script.src = "https://accounts.google.com/gsi/client";
+      script.async = true;
+      script.defer = true;
+      script.onload = () => initGoogleBtn();
+      document.body.appendChild(script);
+    } else {
+      initGoogleBtn();
+    }
+  }, [user, mode, loginWithGoogle, onClose]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
@@ -345,6 +405,19 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
                   {loading ? 'PLEASE WAIT...' : (mode === 'login' ? 'LOGIN' : mode === 'register' ? 'CONTINUE' : mode === 'login-otp' ? 'CONTINUE' : 'VERIFY & LOGIN')}
                 </button>
               </form>
+
+              {/* Divider & Google Login Button */}
+              {mode !== 'verify-otp' && (
+                <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%' }}>
+                    <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
+                    <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600 }}>OR</span>
+                    <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
+                  </div>
+
+                  <div id="google-btn-container" style={{ minHeight: 40, display: 'flex', justifyContent: 'center', width: '100%' }}></div>
+                </div>
+              )}
 
               {/* Footer Switch Links */}
               <div className="auth-footer-switch">

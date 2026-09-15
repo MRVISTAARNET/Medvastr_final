@@ -178,6 +178,47 @@ public class AuthService {
                 .orElse(false);
     }
 
+    // ── Google Authentication ───────────────────────────────────────────────────
+    public AuthResponse loginViaGoogle(String idToken) {
+        try {
+            org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+            String url = "https://oauth2.googleapis.com/tokeninfo?id_token=" + idToken;
+            @SuppressWarnings("unchecked")
+            java.util.Map<String, Object> payload = restTemplate.getForObject(url, java.util.Map.class);
+
+            if (payload == null || !payload.containsKey("email")) {
+                throw new RuntimeException("Invalid or expired Google credential token.");
+            }
+
+            String email = (String) payload.get("email");
+            String firstName = (String) payload.getOrDefault("given_name", "Google");
+            String lastName = (String) payload.getOrDefault("family_name", "User");
+
+            User u = userRepo.findByEmail(email).orElseGet(() -> {
+                User newUser = User.builder()
+                        .firstName(firstName)
+                        .lastName(lastName)
+                        .email(email)
+                        .emailVerified(true)
+                        .active(true)
+                        .password(encoder.encode(java.util.UUID.randomUUID().toString()))
+                        .build();
+                return userRepo.save(newUser);
+            });
+
+            if (!u.isEmailVerified()) {
+                u.setEmailVerified(true);
+                userRepo.save(u);
+            }
+
+            log.info("[AuthService] Google login successful for user {}", email);
+            return buildResponse(u);
+        } catch (Exception ex) {
+            log.error("[AuthService] Google login verification failed", ex);
+            throw new RuntimeException("Google sign-in failed. Please try again.");
+        }
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
     private AuthResponse buildResponse(User u) {
         String subject = (u.getEmail() != null && !u.getEmail().isBlank()) ? u.getEmail() : u.getPhone();
