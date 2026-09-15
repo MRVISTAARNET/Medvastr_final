@@ -229,7 +229,8 @@ public class OrderService {
         for (var oi : orderItems) {
             String name = oi.getProductName() != null ? oi.getProductName().toLowerCase() : "";
             String type = (oi.getProduct() != null && oi.getProduct().getType() != null) ? oi.getProduct().getType().toLowerCase() : "";
-            if (!name.contains("t-shirt") && !name.contains("tshirt") && !name.contains("lab coat") && !name.contains("embroidery") && (name.contains("scrub") || name.contains("suit") || type.contains("scrub"))) {
+            boolean isExcluded = name.contains("t-shirt") || name.contains("tshirt") || name.contains("underscrub") || name.contains("under scrub") || name.contains("lab coat") || name.contains("embroidery") || type.contains("tshirt") || type.contains("under");
+            if (!isExcluded && (name.contains("scrub") || name.contains("suit") || type.contains("scrub"))) {
                 scrubSuitSubtotal = scrubSuitSubtotal.add(oi.getTotalPrice());
             }
         }

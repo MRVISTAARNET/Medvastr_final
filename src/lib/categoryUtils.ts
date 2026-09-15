@@ -221,10 +221,13 @@ export function isScrubSuitItem(item: any): boolean {
 
   const combined = `${name} ${type} ${catStr}`;
 
-  // Explicitly exclude non-scrub items like T-Shirts, Lab Coats, Caps, Gowns
+  // Explicitly exclude non-scrub suit items (T-Shirts, Underscrubs, Lab Coats, Caps, Gowns, etc.)
   if (
     combined.includes("t-shirt") ||
     combined.includes("tshirt") ||
+    combined.includes("underscrub") ||
+    combined.includes("under-scrub") ||
+    combined.includes("under scrub") ||
     combined.includes("lab coat") ||
     combined.includes("doctor coat") ||
     combined.includes("gown") ||
