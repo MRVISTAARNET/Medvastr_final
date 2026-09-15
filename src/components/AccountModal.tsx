@@ -15,6 +15,7 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
     fullName: "", email: "", password: "", phone: "", otp: ""
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [callConsent, setCallConsent] = useState(true);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
@@ -51,7 +52,24 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
       } else if (mode === "verify-otp") {
         ok = await loginWithOtp(form.email, form.otp);
       }
-      if (ok) { onClose(); }
+      if (ok) {
+        if (callConsent) {
+          try {
+            fetch(`${API_BASE}/inquiries`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name: form.fullName || "Registered User",
+                email: form.email,
+                phone: form.phone || (form.email.match(/^\d{10}$/) ? form.email : ""),
+                message: "User logged in/registered with Call & WhatsApp Consent for 10% OFF Offer (WELCOM10)",
+                type: "WELCOME_POPUP_LEAD"
+              })
+            }).catch(() => {});
+          } catch { /* ignore */ }
+        }
+        onClose();
+      }
       else { if (mode !== "login-otp") setError("Invalid credentials or code. Please try again."); }
     } catch { 
       setError("Something went wrong. Please check your connection."); 
@@ -177,11 +195,34 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
           ) : (
             /* Login & Sign Up Forms */
             <div style={{ width: "100%" }}>
+              {/* 🎁 10% OFF Welcome Promo Banner */}
+              <div style={{
+                background: 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)',
+                color: '#ffffff',
+                padding: '12px 16px',
+                borderRadius: '12px',
+                marginBottom: '18px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                boxShadow: '0 4px 14px rgba(13, 148, 136, 0.2)'
+              }}>
+                <span style={{ fontSize: '24px' }}>🎁</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '13px', fontWeight: 800, letterSpacing: '0.3px', textTransform: 'uppercase' }}>
+                    CLAIM 10% OFF YOUR FIRST ORDER!
+                  </div>
+                  <div style={{ fontSize: '12px', opacity: 0.9, marginTop: '2px' }}>
+                    Log in / Sign up now to use promo code <strong style={{ color: '#fef08a', letterSpacing: '0.5px', background: 'rgba(0,0,0,0.2)', padding: '1px 6px', borderRadius: '4px' }}>WELCOME10</strong>
+                  </div>
+                </div>
+              </div>
+
               {error && (
                 <div style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#dc2626', padding: '12px 16px', borderRadius: 8, fontSize: 13, marginBottom: 20 }}>⚠️ {error}</div>
               )}
 
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
                 {mode === 'register' && (
                   <div className="underline-input-group">
                     <label className="underline-input-label">Full Name</label>
@@ -241,6 +282,20 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
                     <SpamNote />
                   </div>
                 )}
+
+                {/* 📱 Call & WhatsApp Consent Checkbox */}
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', background: '#f8fafc', padding: '10px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                  <input
+                    type="checkbox"
+                    id="callConsent"
+                    checked={callConsent}
+                    onChange={(e) => setCallConsent(e.target.checked)}
+                    style={{ marginTop: '2px', cursor: 'pointer', width: '16px', height: '16px', accentColor: '#0d9488' }}
+                  />
+                  <label htmlFor="callConsent" style={{ fontSize: '12px', color: 'var(--secondary-text)', lineHeight: '1.4', cursor: 'pointer' }}>
+                    I agree to receive order updates, sizing guidance, and special offer alerts via <strong>Call & WhatsApp</strong>.
+                  </label>
+                </div>
 
                 {/* Terms Disclaimer */}
                 <p style={{ fontSize: "12px", color: "var(--secondary-text)", lineHeight: "1.5", margin: 0 }}>

@@ -295,6 +295,24 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [fetchMe]);
 
+  // 12-second Welcome & Login Discount Popup auto-trigger for non-logged-in visitors
+  useEffect(() => {
+    if (!isHydrated || user) return;
+    const hasSeenWelcome = localStorage.getItem("mv_welcome_popup_seen");
+    if (hasSeenWelcome) return;
+
+    const timer = setTimeout(() => {
+      const currentToken = getToken();
+      const alreadySeen = localStorage.getItem("mv_welcome_popup_seen");
+      if (!currentToken && !alreadySeen) {
+        setIsAuthOpen(true);
+        localStorage.setItem("mv_welcome_popup_seen", "true");
+      }
+    }, 12000); // 12 seconds
+
+    return () => clearTimeout(timer);
+  }, [isHydrated, user]);
+
   const fetchCategories = useCallback(async () => {
     // Tree used for Admin/Filters is now hardcoded for absolute stability
     setCategoryTree(HARDCODED_CATEGORIES);
