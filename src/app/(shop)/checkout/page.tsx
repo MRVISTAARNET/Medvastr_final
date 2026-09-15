@@ -604,6 +604,7 @@ export default function CheckoutPage() {
               const colorIdx = i.clrs?.indexOf(i.col) ?? 0;
               const images = getImagesForColor(i, colorIdx !== -1 ? colorIdx : 0);
               const thumb = normalizeMediaUrl(images[0] || i.imgs?.[0]);
+              const isEligibleForCoupon = isScrubSuitItem(i);
               return (
                 <div key={i.k} className="co-item-box">
                   <div className="co-item-thumb">
@@ -612,6 +613,16 @@ export default function CheckoutPage() {
                   <div className="co-item-details">
                     <span className="co-item-name">{i.short || i.name}</span>
                     <span className="co-item-variant">{i.qty} × {i.size} / {i.colNm}</span>
+                    {appliedPromo && isEligibleForCoupon && (
+                      <span style={{ fontSize: "10px", color: "#166534", background: "#dcfce7", padding: "1px 6px", borderRadius: "10px", fontWeight: 700, marginTop: "2px", display: "inline-block" }}>
+                        🏷️ {appliedPromo.code} Applied
+                      </span>
+                    )}
+                    {appliedPromo && !isEligibleForCoupon && (
+                      <span style={{ fontSize: "9.5px", color: "#64748b", background: "#f1f5f9", padding: "1px 5px", borderRadius: "10px", marginTop: "2px", display: "inline-block" }}>
+                        Coupon N/A
+                      </span>
+                    )}
                   </div>
                   <span className="co-item-price">{fmt(i.price * i.qty)}</span>
                 </div>

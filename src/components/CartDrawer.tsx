@@ -220,6 +220,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                 const colorIdx = item.clrs?.indexOf(item.col) ?? 0;
                 const images = getImagesForColor(item, colorIdx !== -1 ? colorIdx : 0);
                 const thumb = images[0] || item.imgs[0];
+                const isEligibleForCoupon = isScrubSuitItem(item);
 
                 return (
                   <div key={item.k} className="cart-item-row">
@@ -256,6 +257,43 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                             {item.colNm}
                           </span>
                         </div>
+
+                        {/* Item-Level Coupon Eligibility Badges */}
+                        {appliedPromo && isEligibleForCoupon && (
+                          <div style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "4px",
+                            background: "#dcfce7",
+                            color: "#15803d",
+                            fontSize: "10.5px",
+                            fontWeight: 700,
+                            padding: "2px 8px",
+                            borderRadius: "12px",
+                            border: "1px solid #86efac",
+                            marginTop: "6px"
+                          }}>
+                            <span style={{ fontSize: "11px" }}>🏷️</span>
+                            <span>Coupon {appliedPromo.code} Discount Applied</span>
+                          </div>
+                        )}
+
+                        {appliedPromo && !isEligibleForCoupon && (
+                          <div style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "4px",
+                            background: "#f1f5f9",
+                            color: "#64748b",
+                            fontSize: "10px",
+                            fontWeight: 500,
+                            padding: "2px 6px",
+                            borderRadius: "12px",
+                            marginTop: "6px"
+                          }}>
+                            <span>ℹ️ Coupon not applicable on this item</span>
+                          </div>
+                        )}
 
                         {item.embroidery && (
                           <div className="mt-1.5 p-2 bg-[#F7F1FF] border border-[#E0D8F3] rounded-lg text-[11px] text-purple-900 leading-tight">
