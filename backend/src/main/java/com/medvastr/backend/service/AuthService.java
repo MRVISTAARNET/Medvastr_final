@@ -191,13 +191,41 @@ public class AuthService {
             }
 
             String email = (String) payload.get("email");
-            String firstName = (String) payload.getOrDefault("given_name", "Google");
-            String lastName = (String) payload.getOrDefault("family_name", "User");
+            String gGivenName = (String) payload.get("given_name");
+            String gFamilyName = (String) payload.get("family_name");
+            String gFullName = (String) payload.get("name");
+
+            String firstName = gGivenName;
+            String lastName = gFamilyName != null ? gFamilyName : "";
+
+            if ((firstName == null || firstName.isBlank()) && gFullName != null && !gFullName.isBlank()) {
+                String[] parts = gFullName.trim().split("\\s+");
+                firstName = parts[0];
+                if (parts.length > 1) {
+                    lastName = String.join(" ", java.util.Arrays.copyOfRange(parts, 1, parts.length));
+                }
+            }
+
+            if (firstName == null || firstName.isBlank() || firstName.equalsIgnoreCase("Google")) {
+                if (email != null && email.contains("@")) {
+                    String prefix = email.substring(0, email.indexOf("@"));
+                    if (!prefix.isEmpty()) {
+                        firstName = prefix.substring(0, 1).toUpperCase() + prefix.substring(1);
+                    } else {
+                        firstName = "Customer";
+                    }
+                } else {
+                    firstName = "Customer";
+                }
+            }
+
+            final String resolvedFirstName = firstName;
+            final String resolvedLastName = lastName;
 
             User u = userRepo.findByEmail(email).orElseGet(() -> {
                 User newUser = User.builder()
-                        .firstName(firstName)
-                        .lastName(lastName)
+                        .firstName(resolvedFirstName)
+                        .lastName(resolvedLastName)
                         .email(email)
                         .emailVerified(true)
                         .active(true)
@@ -206,8 +234,17 @@ public class AuthService {
                 return userRepo.save(newUser);
             });
 
+            boolean updated = false;
+            if (u.getFirstName() == null || u.getFirstName().isBlank() || u.getFirstName().equalsIgnoreCase("Google") || (u.getFirstName() + " " + u.getLastName()).toLowerCase().contains("medvastr user")) {
+                u.setFirstName(resolvedFirstName);
+                u.setLastName(resolvedLastName);
+                updated = true;
+            }
             if (!u.isEmailVerified()) {
                 u.setEmailVerified(true);
+                updated = true;
+            }
+            if (updated) {
                 userRepo.save(u);
             }
 

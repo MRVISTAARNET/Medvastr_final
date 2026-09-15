@@ -55,9 +55,10 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
           window.google.accounts.id.renderButton(targetEl, {
             theme: "outline",
             size: "large",
-            width: "280",
+            width: 320,
             text: "continue_with",
-            shape: "rectangular"
+            shape: "rectangular",
+            logo_alignment: "left"
           });
         }
       }
@@ -779,6 +780,14 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
             width: 100%;
             padding: 24px 20px;
           }
+        }
+
+        #google-btn-container iframe {
+          border: none !important;
+          outline: none !important;
+          box-shadow: none !important;
+          display: block !important;
+          margin: 0 auto !important;
         }
 
         @keyframes modalSlideUp {

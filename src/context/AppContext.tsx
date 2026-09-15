@@ -296,20 +296,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [fetchMe]);
 
-  // Welcome & Login Discount Popup auto-trigger: 5s initial delay, 3 minutes (180s) gap if dismissed
+  // Welcome & Login Discount Popup auto-trigger: 5s initial delay, 3 minutes quiet window if dismissed
   useEffect(() => {
     if (!isHydrated || user || isAuthOpen) return;
+    if (typeof window === "undefined") return;
     if (localStorage.getItem("mv_user_completed_auth") === "true") return;
 
-    let delay = 5000; // 5 seconds initial delay
     const lastDismissed = localStorage.getItem("mv_welcome_dismissed_at");
     if (lastDismissed) {
       const elapsed = Date.now() - Number(lastDismissed);
-      const reShowGap = 180000; // 3 minutes gap
+      const reShowGap = 180000; // 3 minutes gap (180,000 ms)
       if (elapsed < reShowGap) {
-        delay = reShowGap - elapsed;
-      } else {
-        delay = 1000;
+        // User skipped within the last 3 minutes -> do not show
+        return;
       }
     }
 
@@ -319,7 +318,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (!currentToken && !isAuthDone) {
         setIsAuthOpen(true);
       }
-    }, delay);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [isHydrated, user, isAuthOpen]);

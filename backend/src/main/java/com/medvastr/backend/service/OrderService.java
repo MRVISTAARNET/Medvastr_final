@@ -215,12 +215,9 @@ public class OrderService {
 
         BigDecimal ship = calculateShippingFee(subtotal);
         
-        // Multi-item volume discount calculation (1 item: 0%, 2: 5%, 3-4: 10%, 5+: 15%)
+        // Multi-item volume discount calculation (1 item: 0%, 2+ items: flat 5% max)
         int totalQty = orderItems.stream().mapToInt(OrderItem::getQuantity).sum();
-        BigDecimal volumeRate = (totalQty == 2) ? new BigDecimal("0.05") 
-            : (totalQty == 3 || totalQty == 4) ? new BigDecimal("0.10") 
-            : (totalQty >= 5) ? new BigDecimal("0.15") 
-            : BigDecimal.ZERO;
+        BigDecimal volumeRate = (totalQty >= 2) ? new BigDecimal("0.05") : BigDecimal.ZERO;
         BigDecimal volumeDiscount = subtotal.multiply(volumeRate).setScale(0, java.math.RoundingMode.HALF_UP);
         BigDecimal netSubtotalAfterVolume = subtotal.subtract(volumeDiscount);
 

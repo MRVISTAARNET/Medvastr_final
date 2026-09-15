@@ -62,8 +62,8 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const isFreeShipUnlocked = isGlobalFreeShip || remForFreeShip === 0;
   const freeShipPercent = Math.min(100, Math.round((sub / freeThreshold) * 100));
 
-  // Multi-Item Volume Discount Calculation (1 item: 0%, 2: 5%, 3-4: 10%, 5+: 15%)
-  const volumeDiscountRate = totalQty === 2 ? 0.05 : (totalQty === 3 || totalQty === 4) ? 0.10 : totalQty >= 5 ? 0.15 : 0;
+  // Multi-Item Volume Discount Calculation (1 item: 0%, 2+ items: flat 5% max)
+  const volumeDiscountRate = totalQty >= 2 ? 0.05 : 0;
   const volumeDiscountPercent = Math.round(volumeDiscountRate * 100);
   const volumeDiscountAmount = Math.round(sub * volumeDiscountRate);
 
@@ -177,9 +177,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                 <span style={{ fontSize: "13px" }}>{totalQty >= 2 ? "🔥" : "🎁"}</span>
                 <span style={{ color: "#1e1b4b" }}>
                   {totalQty === 1 && "Add 1 more item for 5% OFF!"}
-                  {totalQty === 2 && "5% Multi-Item Savings Applied!"}
-                  {(totalQty === 3 || totalQty === 4) && "10% Multi-Item Savings Applied!"}
-                  {totalQty >= 5 && "MAX 15% Savings Applied!"}
+                  {totalQty >= 2 && "5% Multi-Item Savings Applied!"}
                 </span>
                 {volumeDiscountAmount > 0 && (
                   <span style={{ background: "#dcfce7", color: "#15803d", padding: "1px 6px", borderRadius: "10px", fontSize: "10.5px", fontWeight: 800 }}>

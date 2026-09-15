@@ -80,7 +80,7 @@ export default function CheckoutPage() {
 
   const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
   const totalQty = cart.reduce((a, b) => a + b.qty, 0);
-  const volumeRate = totalQty === 2 ? 0.05 : (totalQty === 3 || totalQty === 4) ? 0.10 : totalQty >= 5 ? 0.15 : 0;
+  const volumeRate = totalQty >= 2 ? 0.05 : 0;
   const volumeDiscount = Math.round(sub * volumeRate);
 
   // Filter Scrub Suit items to restrict coupons strictly to Scrub Suits
