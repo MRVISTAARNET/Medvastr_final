@@ -127,31 +127,22 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
         {/* Close Button */}
         <button onClick={handleDismissModal} className="auth-close-btn" aria-label="Close dialog">✕</button>
 
-        {/* Left Column - Welcome Brand Banner */}
+        {/* Left Column - Welcome Brand Banner (Flipkart Style) */}
         <div className="auth-left-banner">
           <div>
-            <h2 className="banner-title">Medvarn</h2>
-            <p className="banner-subtitle">Premium Medical Scrubs & Apparel</p>
-
-            {/* Benefit Highlights */}
-            <div className="banner-benefits">
-              <div className="benefit-item">
-                <span className="benefit-icon">🎁</span>
-                <span><strong>10% OFF</strong> on Your First Order</span>
-              </div>
-              <div className="benefit-item">
-                <span className="benefit-icon">🩺</span>
-                <span>High-Performance Medical Fabrics</span>
-              </div>
-              <div className="benefit-item">
-                <span className="benefit-icon">🚚</span>
-                <span>Express Shipping & Sizing Support</span>
-              </div>
-            </div>
+            <h2 className="banner-title">{mode === 'register' ? 'Looks like you\'re new here!' : 'Login'}</h2>
+            <p className="banner-subtitle">
+              {mode === 'register' 
+                ? 'Sign up with your details to get started' 
+                : 'Get access to your Orders, Wishlist and Recommendations'}
+            </p>
           </div>
           
-          <div className="banner-footer-note">
-            Medvarn • Healthcare Apparel
+          <div className="banner-graphic-area">
+            <div className="tilted-logo-card">
+              <span className="logo-card-text">medvarn</span>
+              <span className="logo-card-tag">scrubs & apparel</span>
+            </div>
           </div>
         </div>
 
@@ -159,205 +150,218 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
         <div className="auth-right-form">
           {user ? (
             /* Logged in Panel */
-            <div style={{ textAlign: "center", width: "100%" }}>
-              <div style={{ width: 64, height: 64, borderRadius: "50%", background: "#f0fdf4", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, margin: "0 auto 16px", color: '#008080', border: '2px solid #008080' }}>👤</div>
+            <div style={{ textAlign: "center", width: "100%", padding: "10px 0" }}>
+              <div style={{ width: 64, height: 64, borderRadius: "50%", background: "#eff6ff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, margin: "0 auto 16px", color: '#2874f0', border: '2px solid #2874f0' }}>👤</div>
               <h2 style={{ fontSize: 22, fontWeight: 700, color: '#0f172a', marginBottom: 6 }}>Hi, {user.firstName || 'Customer'}!</h2>
               <div style={{ fontSize: 13, color: "#64748b", marginBottom: 24 }}>{user.email}</div>
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                <Link href="/account" onClick={onClose} className="btn-primary" style={{ width: "100%", height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>My Account Dashboard</Link>
-                <button className="btn-secondary" style={{ width: "100%", height: 44 }} onClick={() => { logout(); onClose(); }}>Sign Out</button>
+                <Link href="/account" onClick={onClose} className="btn-primary" style={{ width: "100%", height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2874f0', borderRadius: 4, fontWeight: 700 }}>My Account Dashboard</Link>
+                <button className="btn-secondary" style={{ width: "100%", height: 44, borderRadius: 4, border: '1px solid #cbd5e1', cursor: 'pointer' }} onClick={() => { logout(); onClose(); }}>Sign Out</button>
               </div>
             </div>
           ) : fpMode ? (
             /* Forgot Password Panel */
             <div style={{ width: "100%" }}>
-              <h2 style={{ fontSize: 22, fontWeight: 700, color: '#0f172a', marginBottom: 6 }}>Forgot Password?</h2>
+              <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0f172a', marginBottom: 6 }}>Forgot Password?</h2>
               <p style={{ fontSize: 13, color: "#64748b", marginBottom: 20 }}>Enter your registered email address below to receive a reset link.</p>
 
               {fpMsg && (
-                <div style={{ background: fpMsg.startsWith('✅') ? '#f0fdf4' : '#fef2f2', color: fpMsg.startsWith('✅') ? '#166534' : '#991b1b', padding: '10px 14px', borderRadius: 8, fontSize: 13, marginBottom: 16, border: '1px solid transparent' }}>
+                <div style={{ background: fpMsg.startsWith('✅') ? '#f0fdf4' : '#fef2f2', color: fpMsg.startsWith('✅') ? '#166534' : '#991b1b', padding: '10px 14px', borderRadius: 6, fontSize: 13, marginBottom: 16, border: '1px solid transparent' }}>
                   {fpMsg}
                 </div>
               )}
 
               {!fpMsg.startsWith('✅') && (
                 <form onSubmit={handleForgotPassword} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                  <div className="underline-input-group">
-                    <label className="underline-input-label">Email Address</label>
-                    <input type="email" placeholder="Enter Email Address" required value={fpEmail} onChange={e => setFpEmail(e.target.value)} className="underline-input" />
+                  <div className="input-group">
+                    <label className="input-label">Email Address</label>
+                    <input type="email" placeholder="Enter Email Address" required value={fpEmail} onChange={e => setFpEmail(e.target.value)} className="styled-input" />
                   </div>
-                  <button type="submit" disabled={fpLoading} className="btn-primary" style={{ marginTop: 8 }}>
-                    {fpLoading ? 'Sending...' : 'Send Reset Link'}
+                  <button type="submit" disabled={fpLoading} className="auth-submit-btn" style={{ marginTop: 8 }}>
+                    {fpLoading ? 'Sending...' : 'SEND RESET LINK'}
                   </button>
                 </form>
               )}
 
               <div style={{ textAlign: "center", marginTop: 20, fontSize: 13 }}>
-                <span onClick={() => { setFpMode(false); setFpEmail(""); setFpMsg(""); }} style={{ color: "#008080", fontWeight: 700, cursor: "pointer" }}>← Back to Sign In</span>
+                <span onClick={() => { setFpMode(false); setFpEmail(""); setFpMsg(""); }} style={{ color: "#2874f0", fontWeight: 700, cursor: "pointer" }}>← Back to Sign In</span>
               </div>
             </div>
           ) : (
-            /* Login & Sign Up Forms */
-            <div style={{ width: "100%" }}>
-              {/* 🎁 10% OFF Welcome Promo Pill */}
-              <div style={{
-                background: '#f0fdf4',
-                border: '1px solid #bbf7d0',
-                color: '#166534',
-                padding: '10px 14px',
-                borderRadius: '10px',
-                marginBottom: '18px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '10px'
-              }}>
-                <div style={{ fontSize: '12px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span>🎁</span>
-                  <span>Get <strong>10% OFF</strong> your order</span>
+            /* Main Form Panel */
+            <div className="form-container">
+              {/* Header with Mode Switcher */}
+              <div className="form-header-row">
+                <div>
+                  <h3 className="form-title">
+                    {mode === 'register' ? 'Create Account' : 'Log in for the best experience'}
+                  </h3>
+                  <p className="form-subtitle">
+                    {mode === 'register' ? 'Enter your details to register' : 'Enter your phone number or email to continue'}
+                  </p>
                 </div>
-                <span style={{
-                  background: '#008080',
-                  color: '#ffffff',
-                  fontWeight: 800,
-                  fontSize: '11px',
-                  padding: '3px 8px',
-                  borderRadius: '5px',
-                  letterSpacing: '0.5px',
-                  whiteSpace: 'nowrap'
-                }}>
-                  WELCOME10
-                </span>
+              </div>
+
+              {/* Promo Pill */}
+              <div className="promo-banner">
+                <div style={{ fontSize: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>🎉</span>
+                  <span>Get <strong>10% OFF</strong> on your first order</span>
+                </div>
+                <span className="promo-code">WELCOME10</span>
               </div>
 
               {error && (
-                <div style={{ background: '#fef2f2', color: '#991b1b', padding: '10px 14px', borderRadius: 8, fontSize: 13, marginBottom: 16, border: '1px solid #fecaca' }}>⚠️ {error}</div>
+                <div className="error-alert">⚠️ {error}</div>
               )}
 
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {mode === 'register' && (
-                  <div className="underline-input-group">
-                    <label className="underline-input-label">Full Name</label>
-                    <input name="fullName" type="text" placeholder="Enter Full Name" required value={form.fullName} onChange={handleInputChange} className="underline-input" />
+                  <div className="input-group">
+                    <label className="input-label">Full Name</label>
+                    <input name="fullName" type="text" placeholder="Enter Full Name" required value={form.fullName} onChange={handleInputChange} className="styled-input" />
                   </div>
                 )}
 
-                {mode !== 'verify-otp' && (
-                  <div className="underline-input-group">
-                    <label className="underline-input-label">
-                      {mode === 'login' || mode === 'login-otp' ? 'Mobile Number or Email' : 'Email Address'}
-                    </label>
-                    <input
-                      name="email"
-                      type="text"
-                      placeholder={mode === 'login' || mode === 'login-otp' ? 'Enter 10-digit mobile or email' : 'Enter Email Address'}
-                      required
-                      value={form.email}
-                      onChange={handleInputChange}
-                      className="underline-input"
-                    />
-                  </div>
-                )}
-
-                {mode === 'register' && (
-                  <div className="underline-input-group">
-                    <label className="underline-input-label">Phone Number</label>
-                    <input name="phone" type="tel" placeholder="Enter Phone Number" required value={form.phone} onChange={handleInputChange} className="underline-input" />
-                  </div>
-                )}
-
-                {(mode === 'login' || mode === 'register') && (
-                  <div className="underline-input-group" style={{ position: 'relative' }}>
+                {mode === 'login-otp' && (
+                  <div className="input-group">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <label className="underline-input-label">Password</label>
-                      {mode === 'login' && (
-                        <span onClick={() => { setFpMode(true); setFpEmail(form.email); setFpMsg(""); }} style={{ fontSize: 11, color: '#008080', fontWeight: 600, cursor: 'pointer', zIndex: 10 }}>
+                      <label className="input-label">Mobile Number / Email</label>
+                      <span onClick={() => switchMode('login')} className="switch-link">
+                        Use Password
+                      </span>
+                    </div>
+                    <div className="phone-input-wrapper">
+                      <span className="country-code">+91 🇮🇳</span>
+                      <input
+                        name="email"
+                        type="text"
+                        placeholder="Enter 10-digit mobile number"
+                        required
+                        value={form.email}
+                        onChange={handleInputChange}
+                        className="phone-input"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {mode === 'login' && (
+                  <>
+                    <div className="input-group">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <label className="input-label">Email or Phone</label>
+                        <span onClick={() => switchMode('login-otp')} className="switch-link">
+                          Use OTP
+                        </span>
+                      </div>
+                      <input
+                        name="email"
+                        type="text"
+                        placeholder="Enter Email or Phone Number"
+                        required
+                        value={form.email}
+                        onChange={handleInputChange}
+                        className="styled-input"
+                      />
+                    </div>
+
+                    <div className="input-group" style={{ position: 'relative' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <label className="input-label">Password</label>
+                        <span onClick={() => { setFpMode(true); setFpEmail(form.email); setFpMsg(""); }} className="forgot-link">
                           Forgot Password?
                         </span>
-                      )}
+                      </div>
+                      <input name="password" type={showPassword ? "text" : "password"} placeholder="Enter Password" required value={form.password} onChange={handleInputChange} className="styled-input" style={{ paddingRight: '40px' }} />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        style={{ position: 'absolute', right: '10px', bottom: '10px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', opacity: 0.6 }}
+                      >
+                        {showPassword ? "🙈" : "👁️"}
+                      </button>
                     </div>
-                    <input name="password" type={showPassword ? "text" : "password"} placeholder="Enter Password" required minLength={mode === 'register' ? 8 : undefined} value={form.password} onChange={handleInputChange} className="underline-input" style={{ paddingRight: '36px' }} />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      style={{ position: 'absolute', right: '0', bottom: '8px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '15px', opacity: showPassword ? 1 : 0.4, transition: 'opacity 0.2s', zIndex: 10 }}
-                    >
-                      👁️
-                    </button>
-                  </div>
+                  </>
+                )}
+
+                {mode === 'register' && (
+                  <>
+                    <div className="input-group">
+                      <label className="input-label">Email Address</label>
+                      <input name="email" type="email" placeholder="Enter Email Address" required value={form.email} onChange={handleInputChange} className="styled-input" />
+                    </div>
+
+                    <div className="input-group">
+                      <label className="input-label">Mobile Number</label>
+                      <div className="phone-input-wrapper">
+                        <span className="country-code">+91 🇮🇳</span>
+                        <input name="phone" type="tel" placeholder="Enter Phone Number" required value={form.phone} onChange={handleInputChange} className="phone-input" />
+                      </div>
+                    </div>
+
+                    <div className="input-group" style={{ position: 'relative' }}>
+                      <label className="input-label">Create Password</label>
+                      <input name="password" type={showPassword ? "text" : "password"} placeholder="At least 8 characters" required minLength={8} value={form.password} onChange={handleInputChange} className="styled-input" style={{ paddingRight: '40px' }} />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        style={{ position: 'absolute', right: '10px', bottom: '10px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', opacity: 0.6 }}
+                      >
+                        {showPassword ? "🙈" : "👁️"}
+                      </button>
+                    </div>
+                  </>
                 )}
 
                 {mode === 'verify-otp' && (
-                  <div className="underline-input-group">
-                    <label className="underline-input-label">6-Digit Code</label>
-                    <input name="otp" type="text" inputMode="numeric" placeholder="000000" maxLength={6} required value={form.otp} onChange={handleInputChange} className="underline-input" style={{ textAlign: 'center', fontSize: 22, letterSpacing: '6px' }} />
+                  <div className="input-group">
+                    <label className="input-label">Enter 6-Digit OTP</label>
+                    <input name="otp" type="text" inputMode="numeric" placeholder="000000" maxLength={6} required value={form.otp} onChange={handleInputChange} className="styled-input" style={{ textAlign: 'center', fontSize: 22, letterSpacing: '8px', fontWeight: 700 }} />
                     <SpamNote />
                   </div>
                 )}
 
-                {/* 📱 Call & WhatsApp Consent Checkbox */}
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', background: '#f8fafc', padding: '10px 12px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                {/* Consent Checkbox */}
+                <div className="consent-box">
                   <input
                     type="checkbox"
                     id="callConsent"
                     checked={callConsent}
                     onChange={(e) => setCallConsent(e.target.checked)}
-                    style={{ marginTop: '2px', cursor: 'pointer', width: '15px', height: '15px', accentColor: '#008080' }}
+                    className="consent-checkbox"
                   />
-                  <label htmlFor="callConsent" style={{ fontSize: '11px', color: '#475569', lineHeight: '1.4', cursor: 'pointer' }}>
-                    I agree to receive order updates, sizing guidance, and special offer alerts via <strong>Call & WhatsApp</strong>.
+                  <label htmlFor="callConsent" className="consent-label">
+                    Get updates, sizing support & offer alerts on <strong>Call & WhatsApp</strong>.
                   </label>
                 </div>
 
                 {/* Terms Disclaimer */}
-                <p style={{ fontSize: "11px", color: "#64748b", lineHeight: "1.4", margin: 0 }}>
-                  By continuing, you agree to Medvarn's <Link href="/terms" onClick={onClose} style={{ color: "#008080", fontWeight: 600 }}>Terms</Link> & <Link href="/privacy" onClick={onClose} style={{ color: "#008080", fontWeight: 600 }}>Privacy Policy</Link>.
+                <p className="disclaimer-text">
+                  By continuing, you agree to Medvarn's <Link href="/terms" onClick={onClose} className="legal-link">Terms of Use</Link> & <Link href="/privacy" onClick={onClose} className="legal-link">Privacy Policy</Link>.
                 </p>
 
-                <button type="submit" disabled={loading} className="btn-primary" style={{ marginTop: 4, height: '44px', fontSize: '13px', fontWeight: 700, letterSpacing: '0.5px', background: '#008080', borderRadius: '8px', cursor: 'pointer' }}>
-                  {loading ? 'Please wait...' : (mode === 'login' ? 'LOGIN' : mode === 'register' ? 'CREATE ACCOUNT' : mode === 'login-otp' ? 'REQUEST OTP' : 'VERIFY & LOGIN')}
+                <button type="submit" disabled={loading} className="auth-submit-btn">
+                  {loading ? 'PLEASE WAIT...' : (mode === 'login' ? 'LOGIN' : mode === 'register' ? 'CONTINUE' : mode === 'login-otp' ? 'CONTINUE' : 'VERIFY & LOGIN')}
                 </button>
               </form>
 
-              {/* Divider */}
-              {(mode === 'login' || mode === 'login-otp') && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '16px 0 12px' }}>
-                  <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
-                  <span style={{ fontSize: 11, color: '#94a3b8', fontWeight: 700 }}>OR</span>
-                  <div style={{ flex: 1, height: 1, background: '#e2e8f0' }} />
-                </div>
-              )}
-
-              {/* Bottom Switch Links */}
-              <div className="auth-switch-links">
-                {mode === 'login-otp' && (
-                  <>
-                    <div>
-                      <span onClick={() => switchMode('login')} style={{ color: "#008080", fontWeight: 600, cursor: "pointer" }}>
-                        🔑 Sign In with Password
-                      </span>
-                    </div>
-                    <div>New to Medvarn? <span onClick={() => switchMode('register')} style={{ color: "#008080", fontWeight: 700, cursor: "pointer" }}>Create account</span></div>
-                  </>
-                )}
-                {mode === 'login' && (
-                  <>
-                    <div>
-                      <span onClick={() => switchMode('login-otp')} style={{ color: "#008080", fontWeight: 600, cursor: "pointer" }}>
-                        📱 Continue with Mobile OTP
-                      </span>
-                    </div>
-                    <div>New to Medvarn? <span onClick={() => switchMode('register')} style={{ color: "#008080", fontWeight: 700, cursor: "pointer" }}>Create account</span></div>
-                  </>
+              {/* Footer Switch Links */}
+              <div className="auth-footer-switch">
+                {(mode === 'login-otp' || mode === 'login') && (
+                  <div className="switch-account-text">
+                    New to Medvarn? <span onClick={() => switchMode('register')} className="accent-action">Create an account</span>
+                  </div>
                 )}
                 {mode === 'verify-otp' && (
-                  <>
-                    <div>Didn't receive code? <span onClick={() => switchMode('login-otp')} style={{ color: "#008080", fontWeight: 600, cursor: "pointer" }}>Try again</span></div>
-                    <div>Wrong number? <span onClick={() => setMode('login-otp')} style={{ color: "#008080", fontWeight: 600, cursor: "pointer" }}>Change number</span></div>
-                  </>
+                  <div className="switch-account-text">
+                    Didn't receive OTP? <span onClick={() => switchMode('login-otp')} className="accent-action">Resend</span> or <span onClick={() => setMode('login-otp')} className="accent-action">Change Number</span>
+                  </div>
                 )}
                 {mode === 'register' && (
-                  <div>Existing User? <span onClick={() => switchMode('login-otp')} style={{ color: "#008080", fontWeight: 700, cursor: "pointer" }}>Log in</span></div>
+                  <div className="switch-account-text">
+                    Existing User? <span onClick={() => switchMode('login-otp')} className="accent-action">Log in</span>
+                  </div>
                 )}
               </div>
             </div>
@@ -378,151 +382,322 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
         .auth-backdrop {
           position: absolute;
           inset: 0;
-          background: rgba(15, 23, 42, 0.5);
-          backdrop-filter: blur(6px);
+          background: rgba(0, 0, 0, 0.6);
+          backdrop-filter: blur(4px);
         }
         .auth-modal {
           position: relative;
           z-index: 10001;
           background: #ffffff;
           width: 100%;
-          max-width: 660px;
+          max-width: 680px;
+          height: auto;
           max-height: 90vh;
-          border-radius: 16px;
+          border-radius: 4px;
           display: flex;
           overflow: hidden;
-          box-shadow: 0 25px 80px rgba(15, 23, 42, 0.25);
-          animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+          animation: modalSlideUp 0.25s ease-out;
         }
         .auth-close-btn {
           position: absolute;
-          top: 14px;
-          right: 14px;
-          width: 30px;
-          height: 30px;
-          border-radius: 50%;
-          background: #f1f5f9;
+          top: 12px;
+          right: 12px;
+          width: 32px;
+          height: 32px;
+          background: transparent;
           border: none;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 14px;
-          color: #64748b;
+          font-size: 18px;
+          color: #878787;
           z-index: 50;
-          transition: all 0.2s;
+          transition: color 0.2s;
         }
         .auth-close-btn:hover {
-          background: #e2e8f0;
-          color: #0f172a;
+          color: #212121;
         }
         
-        /* Left Column Branding */
+        /* Left Column Banner - Flipkart Blue Design */
         .auth-left-banner {
-          width: 36%;
-          background: linear-gradient(135deg, #1d4ed8 0%, #0d9488 100%);
-          padding: 32px 22px;
+          width: 38%;
+          background: #2874f0;
+          padding: 36px 28px;
           color: #ffffff;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
           position: relative;
+          background-image: linear-gradient(180deg, #2874f0 0%, #1e5fc2 100%);
         }
         .banner-title {
-          font-size: 24px;
-          font-weight: 800;
-          line-height: 1.2;
+          font-size: 26px;
+          font-weight: 700;
           color: #ffffff;
-          margin-bottom: 4px;
-          letter-spacing: -0.5px;
+          margin-bottom: 10px;
+          letter-spacing: -0.3px;
         }
         .banner-subtitle {
-          font-size: 12px;
-          line-height: 1.4;
-          color: rgba(255, 255, 255, 0.88);
-          margin-bottom: 20px;
+          font-size: 14px;
+          line-height: 1.5;
+          color: #dbf4ff;
+          font-weight: 400;
         }
-        .banner-benefits {
+        .banner-graphic-area {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding-top: 20px;
+        }
+        .tilted-logo-card {
+          background: #ffffff;
+          color: #2874f0;
+          padding: 16px 24px;
+          border-radius: 8px;
+          transform: rotate(-3deg);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
           display: flex;
           flex-direction: column;
-          gap: 14px;
-        }
-        .benefit-item {
-          display: flex;
           align-items: center;
-          gap: 8px;
-          font-size: 12px;
-          color: rgba(255, 255, 255, 0.95);
-          line-height: 1.35;
+          border: 1px solid rgba(255, 255, 255, 0.4);
         }
-        .benefit-icon {
-          font-size: 16px;
-          flex-shrink: 0;
+        .logo-card-text {
+          font-size: 22px;
+          font-weight: 900;
+          letter-spacing: -0.5px;
+          text-transform: lowercase;
         }
-        .banner-footer-note {
-          font-size: 10px;
-          color: rgba(255, 255, 255, 0.65);
-          letter-spacing: 0.3px;
+        .logo-card-tag {
+          font-size: 9px;
+          font-weight: 700;
+          letter-spacing: 1px;
           text-transform: uppercase;
-          font-weight: 600;
-          margin-top: 20px;
+          color: #666;
         }
 
         /* Right Column Form */
         .auth-right-form {
-          width: 64%;
-          padding: 28px 28px;
+          width: 62%;
+          padding: 32px 32px 24px;
           display: flex;
           flex-direction: column;
-          justify-content: center;
+          justify-content: flex-start;
           overflow-y: auto;
           max-height: 90vh;
           background: #ffffff;
         }
-        .underline-input-group {
+
+        .form-container {
+          width: 100%;
           display: flex;
           flex-direction: column;
-          gap: 4px;
-          width: 100%;
         }
-        .underline-input-label {
-          font-size: 11px;
+
+        .form-header-row {
+          margin-bottom: 14px;
+        }
+        .form-title {
+          font-size: 16px;
           font-weight: 700;
-          color: #475569;
+          color: #212121;
+          margin-bottom: 4px;
         }
-        .underline-input {
-          height: auto !important;
-          border: none !important;
-          border-bottom: 1.5px solid #cbd5e1 !important;
-          border-radius: 0 !important;
-          padding: 6px 0 !important;
-          font-size: 14px !important;
-          color: #0f172a !important;
-          background: transparent !important;
-          outline: none !important;
-          transition: border-color 0.2s !important;
-          width: 100%;
+        .form-subtitle {
+          font-size: 12px;
+          color: #878787;
         }
-        .underline-input:focus {
-          border-bottom-color: #008080 !important;
+
+        .promo-banner {
+          background: #f0fdf4;
+          border: 1px dashed #86efac;
+          color: #166534;
+          padding: 8px 12px;
+          border-radius: 4px;
+          margin-bottom: 16px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
         }
-        .underline-input::placeholder {
-          color: #94a3b8;
+        .promo-code {
+          background: #15803d;
+          color: #ffffff;
+          font-weight: 700;
+          font-size: 10px;
+          padding: 2px 6px;
+          border-radius: 3px;
+          letter-spacing: 0.5px;
         }
-        
-        .auth-switch-links {
+
+        .error-alert {
+          background: #fef2f2;
+          color: #b91c1c;
+          padding: 8px 12px;
+          border-radius: 4px;
+          font-size: 12px;
+          margin-bottom: 14px;
+          border: 1px solid #fecaca;
+        }
+
+        .input-group {
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 6px;
+          width: 100%;
+        }
+        .input-label {
           font-size: 12px;
-          color: #64748b;
+          font-weight: 600;
+          color: #212121;
+        }
+        .styled-input {
+          height: 42px;
+          border: 1px solid #e0e0e0;
+          border-radius: 4px;
+          padding: 0 12px;
+          font-size: 14px;
+          color: #212121;
+          outline: none;
+          transition: border-color 0.2s;
+          width: 100%;
+        }
+        .styled-input:focus {
+          border-color: #2874f0;
+          box-shadow: 0 0 0 1px #2874f0;
+        }
+
+        .phone-input-wrapper {
+          display: flex;
+          align-items: center;
+          border: 1px solid #e0e0e0;
+          border-radius: 4px;
+          overflow: hidden;
+          height: 42px;
+          transition: border-color 0.2s;
+        }
+        .phone-input-wrapper:focus-within {
+          border-color: #2874f0;
+          box-shadow: 0 0 0 1px #2874f0;
+        }
+        .country-code {
+          background: #f8fafc;
+          border-right: 1px solid #e0e0e0;
+          padding: 0 10px;
+          font-size: 13px;
+          font-weight: 600;
+          color: #475569;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          white-space: nowrap;
+        }
+        .phone-input {
+          border: none;
+          outline: none;
+          padding: 0 12px;
+          font-size: 14px;
+          color: #212121;
+          width: 100%;
+          height: 100%;
+        }
+
+        .switch-link {
+          font-size: 12px;
+          color: #2874f0;
+          font-weight: 600;
+          cursor: pointer;
+        }
+        .switch-link:hover {
+          text-decoration: underline;
+        }
+        .forgot-link {
+          font-size: 11px;
+          color: #2874f0;
+          font-weight: 600;
+          cursor: pointer;
+        }
+
+        .consent-box {
+          display: flex;
+          align-items: flex-start;
+          gap: 8px;
+          background: #f8fafc;
+          padding: 8px 10px;
+          border-radius: 4px;
+          border: 1px solid #e2e8f0;
+          margin-top: 2px;
+        }
+        .consent-checkbox {
+          margin-top: 2px;
+          cursor: pointer;
+          accent-color: #2874f0;
+          width: 14px;
+          height: 14px;
+          flex-shrink: 0;
+        }
+        .consent-label {
+          font-size: 11px;
+          color: #475569;
+          line-height: 1.35;
+          cursor: pointer;
+        }
+
+        .disclaimer-text {
+          font-size: 11px;
+          color: #878787;
+          line-height: 1.4;
+          margin: 0;
+        }
+        .legal-link {
+          color: #2874f0;
+          font-weight: 500;
+        }
+
+        .auth-submit-btn {
+          height: 44px;
+          background: #fb641b;
+          color: #ffffff;
+          border: none;
+          border-radius: 2px;
+          font-size: 14px;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+          cursor: pointer;
+          transition: background 0.2s;
+          margin-top: 4px;
+          box-shadow: 0 1px 2px 0 rgba(0,0,0,.2);
+        }
+        .auth-submit-btn:hover {
+          background: #e65611;
+        }
+        .auth-submit-btn:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+        }
+
+        .auth-footer-switch {
+          margin-top: 24px;
           text-align: center;
+        }
+        .switch-account-text {
+          font-size: 13px;
+          color: #212121;
+          font-weight: 500;
+        }
+        .accent-action {
+          color: #2874f0;
+          font-weight: 700;
+          cursor: pointer;
+        }
+        .accent-action:hover {
+          text-decoration: underline;
         }
 
         @media (max-width: 768px) {
           .auth-modal {
             max-width: 440px;
-            min-height: auto;
+            border-radius: 8px;
           }
           .auth-left-banner {
             display: none;
@@ -534,10 +709,11 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
         }
 
         @keyframes modalSlideUp {
-          from { opacity: 0; transform: translateY(20px); }
+          from { opacity: 0; transform: translateY(15px); }
           to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </div>
   );
 }
+
