@@ -233,12 +233,12 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
                 {mode !== 'verify-otp' && (
                   <div className="underline-input-group">
                     <label className="underline-input-label">
-                      {mode === 'login-otp' ? 'Email Address or Mobile Number' : 'Email Address'}
+                      {mode === 'login' || mode === 'login-otp' ? 'Mobile Number or Email Address' : 'Email Address'}
                     </label>
                     <input
                       name="email"
-                      type={mode === 'login-otp' ? 'text' : 'email'}
-                      placeholder={mode === 'login-otp' ? 'Enter Email or 10-digit Mobile' : 'Enter Email Address'}
+                      type="text"
+                      placeholder={mode === 'login' || mode === 'login-otp' ? 'Enter 10-digit Mobile or Email' : 'Enter Email Address'}
                       required
                       value={form.email}
                       onChange={handleInputChange}
@@ -367,18 +367,19 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
           z-index: 10001;
           background: #ffffff;
           width: 100%;
-          max-width: 780px;
-          min-height: 540px;
+          max-width: 650px;
+          max-height: 90vh;
           border-radius: 20px;
           display: flex;
-          overflow: hidden;
-          box-shadow: 0 40px 120px rgba(15, 23, 42, 0.25);
+          overflow-y: auto;
+          overflow-x: hidden;
+          box-shadow: 0 30px 90px rgba(15, 23, 42, 0.25);
           animation: modalSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .auth-close-btn {
           position: absolute;
-          top: 24px;
-          right: 24px;
+          top: 16px;
+          right: 16px;
           width: 32px;
           height: 32px;
           border-radius: 50%;
@@ -399,9 +400,9 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
         
         /* Left Column Branding */
         .auth-left-banner {
-          width: 40%;
+          width: 36%;
           background: linear-gradient(135deg, var(--light-blue) 0%, var(--secondary-blue) 100%);
-          padding: 44px 32px;
+          padding: 36px 24px;
           color: #ffffff;
           display: flex;
           flex-direction: column;
@@ -409,26 +410,26 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
           position: relative;
         }
         .banner-title {
-          font-size: 30px;
+          font-size: 24px;
           font-weight: 700;
-          line-height: 1.2;
+          line-height: 1.25;
           color: #ffffff;
-          margin-bottom: 12px;
+          margin-bottom: 8px;
         }
         .banner-subtitle {
-          font-size: 14px;
-          line-height: 1.6;
-          color: rgba(255, 255, 255, 0.85);
+          font-size: 13px;
+          line-height: 1.5;
+          color: rgba(255, 255, 255, 0.88);
         }
         .banner-card-box {
           display: flex;
           justify-content: center;
           align-items: center;
-          margin-top: 40px;
+          margin-top: 24px;
         }
         .banner-tilted-card {
-          width: 140px;
-          height: 110px;
+          width: 120px;
+          height: 90px;
           background: #ffffff;
           border-radius: 12px;
           display: flex;
@@ -438,7 +439,7 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
           box-shadow: 0 10px 25px rgba(32, 58, 95, 0.15);
         }
         .card-brand-label {
-          font-size: 20px;
+          font-size: 18px;
           font-weight: 900;
           color: var(--primary-navy);
           letter-spacing: -0.5px;
@@ -446,8 +447,8 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
 
         /* Right Column Form */
         .auth-right-form {
-          width: 60%;
-          padding: 56px 44px;
+          width: 64%;
+          padding: 36px 30px;
           display: flex;
           align-items: center;
           background: #ffffff;
