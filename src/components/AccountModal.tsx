@@ -208,7 +208,7 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
                 marginBottom: '22px',
                 display: 'flex',
                 alignItems: 'center',
-                justify: 'space-between',
+                justifyContent: 'space-between',
                 gap: '12px',
                 boxShadow: '0 6px 18px rgba(15, 41, 66, 0.15)'
               }}>
