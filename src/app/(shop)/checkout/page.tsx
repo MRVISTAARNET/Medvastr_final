@@ -221,6 +221,11 @@ export default function CheckoutPage() {
         });
         if (data.success && data.data?.paymentStatus === 'PAID') {
           setOrderNum(orderData.orderNumber);
+          try {
+            if (typeof window !== "undefined") {
+              window.history.replaceState(null, "", `/checkout?status=success&order=${encodeURIComponent(orderData.orderNumber)}`);
+            }
+          } catch {}
           try { trackPurchase(orderData.orderNumber, orderData.totalAmount || tot, cart); } catch {}
           clearCart();
           toast("Payment Successful!", "ok");
@@ -357,6 +362,11 @@ export default function CheckoutPage() {
           handleOnlinePayment(data.data);
         } else {
           setOrderNum(data.data.orderNumber);
+          try {
+            if (typeof window !== "undefined") {
+              window.history.replaceState(null, "", `/checkout?status=success&order=${encodeURIComponent(data.data.orderNumber)}`);
+            }
+          } catch {}
           try { trackPurchase(data.data.orderNumber, data.data.totalAmount || tot, cart); } catch {}
           clearCart();
           setSubmitting(false);

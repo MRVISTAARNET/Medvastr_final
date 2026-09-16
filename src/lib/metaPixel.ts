@@ -88,6 +88,29 @@ export const trackPurchase = (
       console.warn("[GoogleAds] Purchase conversion tracking error:", e);
     }
   }
+
+  // Track Google Tag Manager (GTM) & GA4 Ecommerce Purchase Event via dataLayer
+  if (typeof window !== "undefined") {
+    try {
+      (window as any).dataLayer = (window as any).dataLayer || [];
+      (window as any).dataLayer.push({
+        event: "purchase",
+        ecommerce: {
+          transaction_id: String(orderId),
+          value: Number(totalValue),
+          currency: "INR",
+          items: (cart || []).map((i: any) => ({
+            item_id: String(i.id),
+            item_name: i.name || i.short || "Medical Apparel",
+            price: Number(i.price),
+            quantity: Number(i.qty || 1),
+          })),
+        },
+      });
+    } catch (e) {
+      console.warn("[GTM] Purchase dataLayer error:", e);
+    }
+  }
 };
 
 export const trackSearch = (searchQuery: string) => {
