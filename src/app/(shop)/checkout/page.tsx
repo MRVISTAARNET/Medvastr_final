@@ -28,6 +28,16 @@ export default function CheckoutPage() {
   }, []);
   const [submitting, setSubmitting] = useState(false);
   const [orderNum, setOrderNum] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const paramOrder = params.get("order") || params.get("id");
+      if (paramOrder) {
+        setOrderNum(paramOrder);
+      }
+    }
+  }, []);
   const [shippingCost, setShippingCost] = useState<number>(0);
   const [shippingLoading, setShippingLoading] = useState(false);
   const [shippingError, setShippingError] = useState("");
