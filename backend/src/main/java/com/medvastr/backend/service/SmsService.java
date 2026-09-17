@@ -142,13 +142,8 @@ public class SmsService {
     }
 
     private void triggerOneApiFlow(String flowId, String templateId, String cleanPhone, Map<String, String> variables) {
+        if (flowId == null || flowId.isBlank()) return;
         triggerOneApiFlowWithSlug(flowId, templateId, cleanPhone, variables);
-        // Also try underscore variant if flowId contains hyphen (e.g. medvarn-prepaid -> medvarn_prepaid)
-        if (flowId != null && flowId.contains("-")) {
-            String underscoreSlug = flowId.replace("-", "_");
-            log.info("[SMS] Also trying underscore variant slug: {}", underscoreSlug);
-            triggerOneApiFlowWithSlug(underscoreSlug, templateId, cleanPhone, variables);
-        }
     }
 
     private void triggerOneApiFlowWithSlug(String flowId, String templateId, String cleanPhone, Map<String, String> variables) {
@@ -213,14 +208,26 @@ public class SmsService {
     }
 
     private String formatPhoneNumber(String phone) {
-        if (phone == null)
-            return "";
+        if (phone == null) return "";
         String clean = phone.replaceAll("[^0-9]", "");
-        if (clean.isEmpty())
-            return "";
-        if (clean.length() == 10) {
+        if (clean.isEmpty()) return "";
+
+        // Standard 10-digit Indian mobile numbers starting with 6, 7, 8, or 9
+        if (clean.length() == 10 && clean.matches("^[6-9]\\d{9}$")) {
             return "91" + clean;
         }
-        return clean;
+        // 12-digit Indian mobile numbers starting with 91 followed by 6-9
+        if (clean.length() == 12 && clean.matches("^91[6-9]\\d{9}$")) {
+            return clean;
+        }
+        // 11-digit numbers starting with 0 (e.g. 09876543210)
+        if (clean.length() == 11 && clean.startsWith("0")) {
+            String last10 = clean.substring(1);
+            if (last10.matches("^[6-9]\\d{9}$")) {
+                return "91" + last10;
+            }
+        }
+        
+        return "";
     }
 }
