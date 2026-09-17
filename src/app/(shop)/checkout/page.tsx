@@ -341,6 +341,16 @@ export default function CheckoutPage() {
     ) {
       return toast("Please fill in all shipping details, including email *", "bad");
     }
+
+    const cleanPhone = (form.phone || "").replace(/\D/g, "");
+    const isValid10 = cleanPhone.length === 10 && /^[6-9]\d{9}$/.test(cleanPhone);
+    const isValid12 = cleanPhone.length === 12 && /^91[6-9]\d{9}$/.test(cleanPhone);
+    const isValid11 = cleanPhone.length === 11 && cleanPhone.startsWith("0") && /^[6-9]\d{9}$/.test(cleanPhone.substring(1));
+
+    if (!isValid10 && !isValid12 && !isValid11) {
+      return toast("Please enter a valid 10-digit Indian mobile number (e.g. 9876543210)", "bad");
+    }
+
     setSubmitting(true);
     const orderRequest = {
       ...form,
@@ -546,7 +556,18 @@ export default function CheckoutPage() {
               <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
                 Mobile Number <span style={{ color: '#e11d48' }}>*</span>
               </label>
-              <input name="phone" className="co-input-field" placeholder="Mobile Number" value={form.phone} onChange={handleInputChange} />
+              <input
+                name="phone"
+                type="tel"
+                className="co-input-field"
+                placeholder="10-digit Mobile Number (e.g. 9876543210)"
+                maxLength={12}
+                value={form.phone}
+                onChange={(e) => {
+                  const cleaned = e.target.value.replace(/[^0-9]/g, "");
+                  setForm({ ...form, phone: cleaned });
+                }}
+              />
             </div>
           </div>
 

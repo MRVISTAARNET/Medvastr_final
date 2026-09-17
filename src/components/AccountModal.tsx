@@ -108,6 +108,14 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
           setLoading(false);
           return;
         }
+        const cleanPhone = (form.phone || "").replace(/\D/g, "");
+        const isValid10 = cleanPhone.length === 10 && /^[6-9]\d{9}$/.test(cleanPhone);
+        const isValid12 = cleanPhone.length === 12 && /^91[6-9]\d{9}$/.test(cleanPhone);
+        if (!isValid10 && !isValid12) {
+          setError("Please enter a valid 10-digit Indian mobile number (e.g. 9876543210).");
+          setLoading(false);
+          return;
+        }
         if (form.password.length < 8) {
           setError("Password must be at least 8 characters.");
           setLoading(false);
@@ -115,6 +123,17 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
         }
         ok = await register(firstName, lastName, form.email, form.password, form.phone);
       } else if (mode === "login-otp") {
+        const inputVal = form.email.trim();
+        const isNumeric = /^\d+$/.test(inputVal);
+        if (isNumeric) {
+          const isValid10 = inputVal.length === 10 && /^[6-9]\d{9}$/.test(inputVal);
+          const isValid12 = inputVal.length === 12 && /^91[6-9]\d{9}$/.test(inputVal);
+          if (!isValid10 && !isValid12) {
+            setError("Please enter a valid 10-digit Indian mobile number starting with 6, 7, 8, or 9.");
+            setLoading(false);
+            return;
+          }
+        }
         ok = await requestOtp(form.email);
         if (ok) { setMode("verify-otp"); setLoading(false); return; }
       } else if (mode === "verify-otp") {
