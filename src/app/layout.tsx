@@ -30,26 +30,32 @@ const sans = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-const siteTitle = "Medvarn | Premium Medical Apparel & Professional Scrubs";
+const siteTitle = "Medvarn | Buy Scrub Suits, Solitaire Scrubs & Medical Uniforms Online India";
 const siteDescription =
-  "Medvarn offers world-class medical scrubs, surgical wear, and hospital linen for healthcare professionals. Superior comfort, performance fabrics, and modern fits designed in India.";
+  "Buy premium scrub suits, Solitaire scrubs, cotton t-shirts, full sleeve compression underscrubs, surgical caps, surgical gowns, and bulk medical apparel online at Medvarn. Superior comfort, 4-way stretch performance fabrics, designed for doctors and healthcare professionals in India.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: siteTitle,
-    template: "%s | Medvarn",
+    template: "%s | Medvarn Medical Scrubs",
   },
   description: siteDescription,
   keywords: [
-    "medical scrubs",
-    "scrubs India",
-    "doctors apparel",
+    "scrub suit",
+    "scrub suits online",
+    "scrub suit for men",
+    "scrub suit for women",
+    "solitaire scrub suit",
+    "medical scrubs India",
+    "doctor scrubs",
     "nurse uniform",
-    "premium scrubs",
+    "cotton t shirt doctors",
+    "full sleeve compression underscrub",
+    "surgical cap",
+    "surgical gown",
+    "bulk order scrubs",
     "Medvarn",
-    "surgical gowns",
-    "hospital linen",
   ],
   authors: [{ name: "Medvarn" }],
   creator: "Medvarn",
