@@ -126,9 +126,11 @@ public class EmailService {
         sendHtmlEmail("info@medvarn.com", "New Inquiry: " + i.getType(), html, "no-reply@medvarn.com",
                 "Medvarn Bot");
 
-        String replyHtml = "<p>Hi " + safeName
-                + ",</p><p>We received your inquiry and our team will get back to you within 24 hours.</p><p>Regards,<br>Medvarn Team</p>";
-        sendHtmlEmail(i.getEmail(), "Inquiry Received", replyHtml, "info@medvarn.com", "Medvarn Support");
+        if (i.getEmail() != null && i.getEmail().contains("@")) {
+            String replyHtml = "<p>Hi " + safeName
+                    + ",</p><p>We received your inquiry and our team will get back to you within 24 hours.</p><p>Regards,<br>Medvarn Team</p>";
+            sendHtmlEmail(i.getEmail(), "Inquiry Received", replyHtml, "info@medvarn.com", "Medvarn Support");
+        }
     }
 
     @Async

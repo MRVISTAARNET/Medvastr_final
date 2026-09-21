@@ -40,8 +40,15 @@ public class InquiryController {
 
         // Asynchronously send welcome WhatsApp message if phone is provided
         try {
-            if (saved.getPhone() != null && !saved.getPhone().isBlank()) {
-                whatsAppService.sendWelcomeLeadAlert(saved.getPhone(), saved.getName());
+            String targetPhone = saved.getPhone();
+            if ((targetPhone == null || targetPhone.isBlank()) && saved.getEmail() != null) {
+                String digits = saved.getEmail().replaceAll("[^0-9]", "");
+                if (digits.length() >= 10) {
+                    targetPhone = digits;
+                }
+            }
+            if (targetPhone != null && !targetPhone.isBlank()) {
+                whatsAppService.sendWelcomeLeadAlert(targetPhone, saved.getName());
             }
         } catch (Exception e) {
             log.error("Failed to send welcome WhatsApp message: {}", e.getMessage());
