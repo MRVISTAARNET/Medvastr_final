@@ -52,7 +52,7 @@ function LightboxZoomImage({ src, onError }: { src: string; onError?: () => void
         position: 'relative',
         width: '100%',
         height: '100%',
-        cursor: hovered ? 'crosshair' : 'zoom-in',
+        cursor: hovered ? 'zoom-out' : 'zoom-in',
         overflow: 'hidden',
         display: 'flex',
         alignItems: 'center',
@@ -70,12 +70,12 @@ function LightboxZoomImage({ src, onError }: { src: string; onError?: () => void
           objectFit: 'contain',
           display: 'block',
           userSelect: 'none',
-          transition: 'opacity 0.15s ease',
-          opacity: hovered ? 0.15 : 1,
+          transition: 'opacity 0.2s ease',
+          opacity: hovered ? 0.2 : 1,
         }}
       />
 
-      {/* Zoom overlay — follows cursor */}
+      {/* Zoom overlay — follows cursor with medium 165% scale */}
       {hovered && (
         <div
           style={{
@@ -83,9 +83,10 @@ function LightboxZoomImage({ src, onError }: { src: string; onError?: () => void
             inset: 0,
             backgroundImage: `url(${src})`,
             backgroundRepeat: 'no-repeat',
-            backgroundSize: '300%',
+            backgroundSize: '165%',
             backgroundPosition: `${pos.x}% ${pos.y}%`,
             pointerEvents: 'none',
+            borderRadius: '8px',
           }}
         />
       )}
@@ -97,7 +98,8 @@ function LightboxZoomImage({ src, onError }: { src: string; onError?: () => void
           bottom: 16,
           left: '50%',
           transform: 'translateX(-50%)',
-          background: 'rgba(0,0,0,0.5)',
+          background: 'rgba(15, 32, 68, 0.75)',
+          backdropFilter: 'blur(4px)',
           color: 'white',
           fontSize: 12,
           fontWeight: 600,
@@ -106,8 +108,9 @@ function LightboxZoomImage({ src, onError }: { src: string; onError?: () => void
           letterSpacing: '0.05em',
           pointerEvents: 'none',
           whiteSpace: 'nowrap',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
         }}>
-          🔍 Hover to zoom
+          🔍 Hover to examine detail
         </div>
       )}
     </div>
