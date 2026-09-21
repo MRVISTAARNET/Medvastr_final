@@ -204,7 +204,18 @@ public class WhatsAppService {
             headers.set("authkey", effectiveKey);
             headers.set("apikey", effectiveKey);
 
+            String senderNum = "918976488911";
+            if (adminNumbers != null && !adminNumbers.isBlank()) {
+                String cleanAdmin = adminNumbers.split(",")[0].trim().replaceAll("[^0-9]", "");
+                if (cleanAdmin.length() == 10) cleanAdmin = "91" + cleanAdmin;
+                if (!cleanAdmin.isEmpty()) senderNum = cleanAdmin;
+            }
+
             Map<String, Object> body = new HashMap<>();
+            body.put("integrated_number", senderNum);
+            body.put("integratedNumber", senderNum);
+            body.put("sender", senderNum);
+            body.put("from", senderNum);
             body.put("to", phone);
             body.put("message", text);
             body.put("text", text);
