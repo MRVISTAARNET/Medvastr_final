@@ -91,33 +91,6 @@ public class SmsService {
         String templateId = null;
         Map<String, String> variables = new HashMap<>();
 
-        String firstProductImg = "https://d2tnzshqdaedbc.cloudfront.net/home-hero-1.jpg";
-        if (order.getItems() != null && !order.getItems().isEmpty()) {
-            for (com.medvastr.backend.model.OrderItem item : order.getItems()) {
-                if (item != null) {
-                    String img = null;
-                    if (item.getVariant() != null && item.getVariant().getImageUrl() != null && !item.getVariant().getImageUrl().isBlank()) {
-                        img = item.getVariant().getImageUrl();
-                    } else if (item.getProduct() != null && item.getProduct().getImages() != null && !item.getProduct().getImages().isEmpty()) {
-                        img = item.getProduct().getImages().stream()
-                                .map(com.medvastr.backend.model.ProductImage::getImageUrl)
-                                .filter(i -> i != null && !i.isBlank())
-                                .findFirst().orElse(null);
-                    }
-                    if (img != null && !img.isBlank()) {
-                        if (img.startsWith("/")) img = "https://api.medvarn.com" + img;
-                        firstProductImg = img;
-                        break;
-                    }
-                }
-            }
-        }
-
-        variables.put("ImageURL", firstProductImg);
-        variables.put("ProductImage", firstProductImg);
-        variables.put("mediaUrl", firstProductImg);
-        variables.put("img", firstProductImg);
-
         if ("COD".equalsIgnoreCase(templateType)) {
             flowId = orderCodFlowId;
             templateId = orderCodTemplateId;
