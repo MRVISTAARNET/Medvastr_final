@@ -145,13 +145,22 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
         } catch { /* ignore */ }
         if (callConsent) {
           try {
+            const rawPhone = (form.phone || form.email || "").trim();
+            const digitsOnly = rawPhone.replace(/\D/g, "");
+            let resolvedPhone = "";
+            if (digitsOnly.length === 10) {
+              resolvedPhone = digitsOnly;
+            } else if (digitsOnly.length === 12 && digitsOnly.startsWith("91")) {
+              resolvedPhone = digitsOnly.substring(2);
+            }
+
             fetch(`${API_BASE}/inquiries`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 name: form.fullName || "Registered User",
                 email: form.email,
-                phone: form.phone || (form.email.match(/^\d{10}$/) ? form.email : ""),
+                phone: resolvedPhone || form.phone || form.email,
                 message: "User logged in/registered with Call & WhatsApp Consent for 10% OFF Offer (WELCOME10)",
                 type: "WELCOME_POPUP_LEAD"
               })

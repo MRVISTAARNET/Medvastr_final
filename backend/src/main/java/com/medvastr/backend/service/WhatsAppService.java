@@ -21,7 +21,7 @@ import java.util.Map;
 @Slf4j
 public class WhatsAppService {
 
-    @Value("${whatsapp.enabled:false}")
+    @Value("${whatsapp.enabled:true}")
     private boolean enabled;
 
     @Value("${whatsapp.api.url:}")
@@ -30,7 +30,10 @@ public class WhatsAppService {
     @Value("${whatsapp.api.key:}")
     private String apiKey;
 
-    @Value("${whatsapp.admin.numbers:}")
+    @Value("${msg91.authkey:}")
+    private String msg91AuthKey;
+
+    @Value("${whatsapp.admin.numbers:8976488911}")
     private String adminNumbers;
 
     private final RestTemplate restTemplate = new RestTemplate();
@@ -174,19 +177,32 @@ public class WhatsAppService {
     }
 
     private void sendWhatsAppMessageWithMedia(String phone, String text, String imageUrl) {
-        log.info("[WhatsApp] Media Message to: {}\nImage: {}\nContent:\n{}", phone, imageUrl, text);
+        log.info("[WhatsApp] Media Message request to: {}\nImage: {}\nContent:\n{}", phone, imageUrl, text);
 
-        if (!enabled || apiUrl == null || apiUrl.isBlank()) {
+        if (!enabled) {
+            log.info("[WhatsApp] Service disabled (whatsapp.enabled=false)");
+            return;
+        }
+
+        String effectiveKey = (apiKey != null && !apiKey.isBlank()) ? apiKey : msg91AuthKey;
+        String targetUrl = apiUrl;
+        if (targetUrl == null || targetUrl.isBlank()) {
+            if (effectiveKey != null && !effectiveKey.isBlank()) {
+                targetUrl = "https://control.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/";
+            }
+        }
+
+        if (targetUrl == null || targetUrl.isBlank() || effectiveKey == null || effectiveKey.isBlank()) {
+            log.warn("[WhatsApp] Cannot send WhatsApp message. Neither WHATSAPP_API_URL nor MSG91_AUTHKEY is configured.");
             return;
         }
 
         try {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            if (apiKey != null && !apiKey.isBlank()) {
-                headers.set("Authorization", "Bearer " + apiKey);
-                headers.set("apikey", apiKey);
-            }
+            headers.set("Authorization", "Bearer " + effectiveKey);
+            headers.set("authkey", effectiveKey);
+            headers.set("apikey", effectiveKey);
 
             Map<String, Object> body = new HashMap<>();
             body.put("to", phone);
@@ -209,7 +225,7 @@ public class WhatsAppService {
             }
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-            ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, entity, String.class);
+            ResponseEntity<String> response = restTemplate.postForEntity(targetUrl, entity, String.class);
 
             log.info("[WhatsApp] Sent Media Message to {}: Status code: {} | Response: {}", phone, response.getStatusCode(), response.getBody());
         } catch (Exception e) {
