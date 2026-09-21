@@ -243,6 +243,9 @@ public class WhatsAppService {
             body.put("integratedNumber", senderNum);
             body.put("sender", senderNum);
             body.put("from", senderNum);
+            body.put("content_type", "text");
+            body.put("contentType", "text");
+            body.put("content-type", "text");
             body.put("to", phone);
             body.put("message", text);
             body.put("text", text);
