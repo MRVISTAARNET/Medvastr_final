@@ -36,6 +36,7 @@ public class WhatsAppService {
     @Value("${whatsapp.admin.numbers:}")
     private String adminNumbers;
 
+    private final com.medvastr.backend.repository.ProductRepository productRepo;
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Async
@@ -131,6 +132,32 @@ public class WhatsAppService {
         sb.append("Need assistance with sizing or fabric choices? Reply to this message anytime! 🩺");
 
         String featuredProductImg = "https://d2tnzshqdaedbc.cloudfront.net/home-hero-1.jpg";
+        if (productRepo != null) {
+            try {
+                var products = productRepo.findAll();
+                for (var p : products) {
+                    if (p != null && p.getName() != null) {
+                        String pName = p.getName().toLowerCase();
+                        String pType = p.getType() != null ? p.getType().toLowerCase() : "";
+                        if (pName.contains("scrub") || pName.contains("suit") || pType.contains("scrub")) {
+                            if (p.getImages() != null && !p.getImages().isEmpty()) {
+                                String found = p.getImages().stream()
+                                        .map(com.medvastr.backend.model.ProductImage::getImageUrl)
+                                        .filter(i -> i != null && !i.isBlank())
+                                        .findFirst().orElse(null);
+                                if (found != null && !found.isBlank()) {
+                                    featuredProductImg = normalizeImageUrl(found);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                log.warn("Could not fetch scrub suit image: {}", e.getMessage());
+            }
+        }
+
         sendWhatsAppMessageWithMedia(cleanPhone, sb.toString(), featuredProductImg);
     }
 
