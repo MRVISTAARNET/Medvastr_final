@@ -247,6 +247,10 @@ public class WhatsAppService {
             body.put("contentType", "text");
             body.put("content-type", "text");
             body.put("to", phone);
+            body.put("recipient_number", phone);
+            body.put("recipient_numbers", phone);
+            body.put("recipientNumber", phone);
+            body.put("to_number", phone);
             body.put("message", text);
             body.put("text", text);
             body.put("caption", text);
