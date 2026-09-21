@@ -33,7 +33,7 @@ public class WhatsAppService {
     @Value("${msg91.authkey:}")
     private String msg91AuthKey;
 
-    @Value("${whatsapp.admin.numbers:8976488911}")
+    @Value("${whatsapp.admin.numbers:}")
     private String adminNumbers;
 
     private final RestTemplate restTemplate = new RestTemplate();
