@@ -20,6 +20,7 @@ public class InquiryController {
 
     private final InquiryRepository inquiryRepository;
     private final EmailService emailService;
+    private final com.medvastr.backend.service.WhatsAppService whatsAppService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<Inquiry>> submitInquiry(@RequestBody Inquiry cmd) {
@@ -35,6 +36,15 @@ public class InquiryController {
             emailService.sendInquiryNotification(saved);
         } catch (Exception e) {
             log.error("Failed to send inquiry notification via email: {}", e.getMessage());
+        }
+
+        // Asynchronously send welcome WhatsApp message if phone is provided
+        try {
+            if (saved.getPhone() != null && !saved.getPhone().isBlank()) {
+                whatsAppService.sendWelcomeLeadAlert(saved.getPhone(), saved.getName());
+            }
+        } catch (Exception e) {
+            log.error("Failed to send welcome WhatsApp message: {}", e.getMessage());
         }
 
         return ResponseEntity.ok(ApiResponse.ok("Inquiry sent successfully", saved));

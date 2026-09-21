@@ -64,6 +64,27 @@ public class WhatsAppService {
         }
     }
 
+    @Async
+    public void sendWelcomeLeadAlert(String phone, String name) {
+        if (phone == null || phone.isBlank()) return;
+        String cleanPhone = phone.replaceAll("[^0-9]", "");
+        if (cleanPhone.length() == 10) {
+            cleanPhone = "91" + cleanPhone;
+        }
+        if (!cleanPhone.startsWith("91") || cleanPhone.length() != 12) return;
+
+        String displayName = (name != null && !name.isBlank()) ? name : "Customer";
+        StringBuilder sb = new StringBuilder();
+        sb.append("*Welcome to Medvarn!* 🎉\n\n");
+        sb.append("Hi ").append(displayName).append(", thank you for joining us!\n\n");
+        sb.append("Here is your exclusive 10% OFF discount coupon code:\n");
+        sb.append("🏷️ *WELCOME10*\n\n");
+        sb.append("Use code *WELCOME10* at checkout on www.medvarn.com to save 10% on your Scrub Suits order!\n\n");
+        sb.append("Need assistance with sizing or fabric choices? Reply to this message anytime! 🩺");
+
+        sendWhatsAppMessage(cleanPhone, sb.toString());
+    }
+
     private String buildOrderMessage(Order order) {
         StringBuilder sb = new StringBuilder();
         sb.append("*Medvarn Order Confirmed!* 🎉\n\n");

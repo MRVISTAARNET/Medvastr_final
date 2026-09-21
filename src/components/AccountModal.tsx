@@ -315,7 +315,9 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
                       <span className="country-code">+91 🇮🇳</span>
                       <input
                         name="email"
-                        type="text"
+                        type="tel"
+                        inputMode="numeric"
+                        autoComplete="tel"
                         placeholder="Enter 10-digit mobile number"
                         required
                         value={form.email}
