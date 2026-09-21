@@ -40,13 +40,15 @@ public class WhatsAppService {
         // Build the message text
         String messageText = buildOrderMessage(order);
 
+        String firstProductImg = getFirstProductImageUrl(order);
+
         // 1. Send to Customer
         String customerPhone = order.getShippingPhone() != null ? order.getShippingPhone().replaceAll("[^0-9]", "") : "";
         if (!customerPhone.isEmpty()) {
             if (customerPhone.length() == 10) {
                 customerPhone = "91" + customerPhone;
             }
-            sendWhatsAppMessage(customerPhone, messageText);
+            sendWhatsAppMessageWithMedia(customerPhone, messageText, firstProductImg);
         }
 
         // 2. Send to Admins
@@ -58,10 +60,53 @@ public class WhatsAppService {
                     if (cleanNum.length() == 10) {
                         cleanNum = "91" + cleanNum;
                     }
-                    sendWhatsAppMessage(cleanNum, messageText);
+                    sendWhatsAppMessageWithMedia(cleanNum, messageText, firstProductImg);
                 }
             }
         }
+    }
+
+    private String getFirstProductImageUrl(Order order) {
+        String defaultImg = "https://d2tnzshqdaedbc.cloudfront.net/home-hero-1.jpg";
+        if (order == null || order.getItems() == null || order.getItems().isEmpty()) {
+            return defaultImg;
+        }
+        for (OrderItem item : order.getItems()) {
+            String resolved = resolveItemImageUrl(item);
+            if (resolved != null && !resolved.isBlank()) {
+                return resolved;
+            }
+        }
+        return defaultImg;
+    }
+
+    private String resolveItemImageUrl(OrderItem item) {
+        if (item == null) return null;
+        String img = null;
+        if (item.getVariant() != null && item.getVariant().getImageUrl() != null && !item.getVariant().getImageUrl().isBlank()) {
+            img = item.getVariant().getImageUrl();
+        } else if (item.getProduct() != null && item.getProduct().getImages() != null && !item.getProduct().getImages().isEmpty()) {
+            img = item.getProduct().getImages().stream()
+                    .map(com.medvastr.backend.model.ProductImage::getImageUrl)
+                    .filter(i -> i != null && !i.isBlank())
+                    .findFirst().orElse(null);
+        }
+        return normalizeImageUrl(img);
+    }
+
+    private String normalizeImageUrl(String url) {
+        if (url == null || url.isBlank()) return null;
+        String clean = url.trim();
+        if (clean.contains("api.medvastr.com")) {
+            clean = clean.replace("http://api.medvastr.com", "https://api.medvarn.com")
+                         .replace("https://api.medvastr.com", "https://api.medvarn.com");
+        }
+        if (clean.startsWith("/")) {
+            clean = "https://api.medvarn.com" + clean;
+        } else if (!clean.startsWith("http://") && !clean.startsWith("https://")) {
+            clean = "https://api.medvarn.com/" + clean;
+        }
+        return clean;
     }
 
     @Async
@@ -82,7 +127,8 @@ public class WhatsAppService {
         sb.append("Use code *WELCOME10* at checkout on www.medvarn.com to save 10% on your Scrub Suits order!\n\n");
         sb.append("Need assistance with sizing or fabric choices? Reply to this message anytime! 🩺");
 
-        sendWhatsAppMessage(cleanPhone, sb.toString());
+        String featuredProductImg = "https://d2tnzshqdaedbc.cloudfront.net/home-hero-1.jpg";
+        sendWhatsAppMessageWithMedia(cleanPhone, sb.toString(), featuredProductImg);
     }
 
     private String buildOrderMessage(Order order) {
@@ -96,9 +142,14 @@ public class WhatsAppService {
         sb.append("*Items Ordered:*\n");
         if (order.getItems() != null) {
             for (OrderItem item : order.getItems()) {
-                sb.append("- ")
-                  .append(item.getProductName())
-                  .append(" (Size: ").append(item.getSize()).append(", Qty: ").append(item.getQuantity()).append(")\n");
+                sb.append("• ").append(item.getProductName())
+                  .append(" (Size: ").append(item.getSize() != null ? item.getSize() : "Standard")
+                  .append(", Qty: ").append(item.getQuantity()).append(")\n");
+                
+                String itemImg = resolveItemImageUrl(item);
+                if (itemImg != null && !itemImg.isBlank()) {
+                    sb.append("  🖼️ Image: ").append(itemImg).append("\n");
+                }
             }
         }
 
@@ -119,7 +170,11 @@ public class WhatsAppService {
     }
 
     private void sendWhatsAppMessage(String phone, String text) {
-        log.info("[WhatsApp] Message to: {}\nMessage Content:\n{}", phone, text);
+        sendWhatsAppMessageWithMedia(phone, text, "https://d2tnzshqdaedbc.cloudfront.net/home-hero-1.jpg");
+    }
+
+    private void sendWhatsAppMessageWithMedia(String phone, String text, String imageUrl) {
+        log.info("[WhatsApp] Media Message to: {}\nImage: {}\nContent:\n{}", phone, imageUrl, text);
 
         if (!enabled || apiUrl == null || apiUrl.isBlank()) {
             return;
@@ -137,14 +192,28 @@ public class WhatsAppService {
             body.put("to", phone);
             body.put("message", text);
             body.put("text", text);
+            body.put("caption", text);
             body.put("recipient", phone);
+
+            if (imageUrl != null && !imageUrl.isBlank()) {
+                body.put("image", imageUrl);
+                body.put("imageUrl", imageUrl);
+                body.put("image_url", imageUrl);
+                body.put("mediaUrl", imageUrl);
+                body.put("media_url", imageUrl);
+
+                Map<String, String> mediaMap = new HashMap<>();
+                mediaMap.put("type", "image");
+                mediaMap.put("url", imageUrl);
+                body.put("media", mediaMap);
+            }
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
             ResponseEntity<String> response = restTemplate.postForEntity(apiUrl, entity, String.class);
 
-            log.info("[WhatsApp] Sent to {}: Status code: {} | Response: {}", phone, response.getStatusCode(), response.getBody());
+            log.info("[WhatsApp] Sent Media Message to {}: Status code: {} | Response: {}", phone, response.getStatusCode(), response.getBody());
         } catch (Exception e) {
-            log.error("[WhatsApp] Error sending message to {}: {}", phone, e.getMessage(), e);
+            log.error("[WhatsApp] Error sending media message to {}: {}", phone, e.getMessage(), e);
         }
     }
 }
