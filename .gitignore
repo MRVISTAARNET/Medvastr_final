@@ -29,7 +29,6 @@ backend/*.jar
 
 # root-level zip and jar artifacts
 /*.zip
-!medvastr-backend-eb.zip
 /*.jar
 deploy_ready/
 
