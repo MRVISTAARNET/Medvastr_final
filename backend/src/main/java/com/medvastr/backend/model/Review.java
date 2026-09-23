@@ -52,6 +52,9 @@ public class Review {
     @Column(columnDefinition = "TEXT")
     private String body;
 
+    @Column(name = "reviewer_name", length = 100)
+    private String reviewerName;
+
     @Builder.Default
     private boolean verified = false;
 

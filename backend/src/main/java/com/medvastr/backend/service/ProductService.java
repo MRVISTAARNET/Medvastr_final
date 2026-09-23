@@ -456,9 +456,12 @@ public class ProductService {
     @Transactional
     public ReviewDTO addReview(Long pid, ReviewRequest r, com.medvastr.backend.model.User user) {
         Product p = productRepo.findById(pid).orElseThrow(() -> new RuntimeException("Product not found"));
+        String customName = (r.getReviewerName() != null && !r.getReviewerName().isBlank()) ? r.getReviewerName().trim() : null;
+        
         com.medvastr.backend.model.Review rev = com.medvastr.backend.model.Review.builder()
                 .product(p)
                 .user(user)
+                .reviewerName(customName)
                 .rating(r.getRating())
                 .title(r.getTitle())
                 .body(r.getBody())
@@ -474,22 +477,7 @@ public class ProductService {
         p.setReviewCount((int) reviewRepo.countByProductIdAndApprovedTrue(p.getId()));
         productRepo.save(p);
 
-        String lastInitial = (user.getLastName() != null && !user.getLastName().isEmpty()) 
-                ? " " + user.getLastName().charAt(0) + "." 
-                : "";
-
-        return ReviewDTO.builder()
-                .id(rev.getId())
-                .productId(p.getId())
-                .productName(p.getName())
-                .userName(user.getFirstName() + lastInitial)
-                .rating(rev.getRating())
-                .title(rev.getTitle())
-                .body(rev.getBody())
-                .approved(true)
-                .verified(true)
-                .createdAt(rev.getCreatedAt())
-                .build();
+        return toReviewDTO(rev);
     }
 
     @Transactional
@@ -517,15 +505,7 @@ public class ProductService {
 
     public Page<ReviewDTO> getReviews(Long pid, Pageable p) {
         return reviewRepo.findByProductIdAndApprovedTrueOrderByCreatedAtDesc(pid, p)
-                .map(r -> ReviewDTO.builder()
-                        .id(r.getId())
-                        .userName(r.getUser().getFirstName() + " " + r.getUser().getLastName().charAt(0) + ".")
-                        .rating(r.getRating())
-                        .title(r.getTitle())
-                        .body(r.getBody())
-                        .verified(r.isVerified())
-                        .createdAt(r.getCreatedAt())
-                        .build());
+                .map(this::toReviewDTO);
     }
 
     public Page<ReviewDTO> getAllReviews(Pageable p) {
@@ -539,11 +519,24 @@ public class ProductService {
     }
 
     private ReviewDTO toReviewDTO(com.medvastr.backend.model.Review r) {
+        String displayName;
+        if (r.getReviewerName() != null && !r.getReviewerName().isBlank()) {
+            displayName = r.getReviewerName().trim();
+        } else if (r.getUser() != null) {
+            String lastInitial = (r.getUser().getLastName() != null && !r.getUser().getLastName().isEmpty()) 
+                    ? " " + r.getUser().getLastName().charAt(0) + "." 
+                    : "";
+            displayName = r.getUser().getFirstName() + lastInitial;
+        } else {
+            displayName = "Verified Customer";
+        }
+
         return ReviewDTO.builder()
                 .id(r.getId())
                 .productId(r.getProduct() != null ? r.getProduct().getId() : null)
                 .productName(r.getProduct() != null ? r.getProduct().getName() : "Unknown")
-                .userName(r.getUser().getFirstName() + " " + r.getUser().getLastName().charAt(0) + ".")
+                .userName(displayName)
+                .reviewerName(r.getReviewerName())
                 .rating(r.getRating())
                 .title(r.getTitle())
                 .body(r.getBody())

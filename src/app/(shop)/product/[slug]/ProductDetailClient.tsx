@@ -1196,9 +1196,9 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             {reviews.slice(0, 6).map((rv, i) => (
               <div key={i} className="pdp-review-card">
                 <div className="pdp-rv-top">
-                  <div className="pdp-rv-avatar">{(rv.userName || rv.userEmail || 'A').charAt(0).toUpperCase()}</div>
+                  <div className="pdp-rv-avatar">{(rv.reviewerName || rv.userName || rv.userEmail || 'A').charAt(0).toUpperCase()}</div>
                   <div>
-                    <div className="pdp-rv-name">{rv.userName || rv.userEmail?.split('@')[0] || 'Verified Customer'}</div>
+                    <div className="pdp-rv-name">{rv.reviewerName || rv.userName || rv.userEmail?.split('@')[0] || 'Verified Customer'}</div>
                     <div className="pdp-rv-stars">{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ color: s <= (rv.rating || 5) ? '#f59e0b' : '#e2e8f0' }}>★</span>)}</div>
                   </div>
                 </div>

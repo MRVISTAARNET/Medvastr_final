@@ -13,5 +13,6 @@ public class ReviewRequest {
     private Integer rating;
     private String title;
     private String body;
+    private String reviewerName;
 }
 

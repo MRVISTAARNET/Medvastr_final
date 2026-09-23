@@ -16,7 +16,7 @@ export default function AdminReviews() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'ALL' | 'PENDING' | 'APPROVED'>('ALL');
-  const [form, setForm] = useState({ productId: '', rating: '5', title: '', body: '' });
+  const [form, setForm] = useState({ productId: '', reviewerName: '', rating: '5', title: '', body: '' });
   const [saving, setSaving] = useState(false);
 
   const fetchProducts = async () => {
@@ -82,12 +82,12 @@ export default function AdminReviews() {
       const res = await fetch(`${API_BASE}/products/${form.productId}/reviews`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', ...authHeaders(token) },
-        body: JSON.stringify({ rating: parseInt(form.rating), title: form.title, body: form.body })
+        body: JSON.stringify({ rating: parseInt(form.rating), title: form.title, body: form.body, reviewerName: form.reviewerName })
       });
       const data = await res.json();
       if (data.success) {
         setIsModalOpen(false);
-        setForm({ productId: '', rating: '5', title: '', body: '' });
+        setForm({ productId: '', reviewerName: '', rating: '5', title: '', body: '' });
         fetchAllReviews();
       } else {
         alert(data.message || 'Failed to add review');
@@ -160,7 +160,7 @@ export default function AdminReviews() {
                       filtered.map((r) => (
                         <tr key={r.id}>
                           <td className="td-bold">{r.productName || 'Unknown Product'}</td>
-                          <td>{r.userName || r.customer || 'Customer'}</td>
+                          <td>{r.reviewerName || r.userName || r.customer || 'Customer'}</td>
                           <td>
                             <span style={{ color: '#f59e0b', letterSpacing: '-1px' }}>
                               {getStars(r.rating)}
@@ -239,6 +239,15 @@ export default function AdminReviews() {
                   <option value="">-- Choose Product --</option>
                   {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                 </select>
+              </div>
+              <div className="fg">
+                <label>Customer Name (Optional)</label>
+                <input
+                  type="text"
+                  value={form.reviewerName}
+                  onChange={e => setForm(p => ({ ...p, reviewerName: e.target.value }))}
+                  placeholder="e.g. Dr. Ananya Sharma (Leave blank for Admin)"
+                />
               </div>
               <div className="fg">
                 <label>Rating *</label>
