@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const archiver = require('archiver');
+const { ZipArchive } = require('archiver');
 
 const zipPath = path.join(__dirname, 'medvastr-backend-eb.zip');
 const backendDir = path.join(__dirname, 'backend');
@@ -11,10 +11,13 @@ if (fs.existsSync(zipPath)) {
 }
 
 const output = fs.createWriteStream(zipPath);
-const archive = archiver('zip', { zlib: { level: 9 } });
+const archive = new ZipArchive({ zlib: { level: 9 } });
 
 output.on('close', function () {
   console.log(`Successfully created ${zipPath} (${archive.pointer()} total bytes)`);
+  const backendZipPath = path.join(backendDir, 'medvastr-backend-eb.zip');
+  fs.copyFileSync(zipPath, backendZipPath);
+  console.log(`Copied to ${backendZipPath}`);
 });
 
 archive.on('error', function (err) {
