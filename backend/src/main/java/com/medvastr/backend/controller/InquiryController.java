@@ -26,6 +26,11 @@ public class InquiryController {
     public ResponseEntity<ApiResponse<Inquiry>> submitInquiry(@RequestBody Inquiry cmd) {
         log.info("Received new inquiry: {}", cmd.getType());
 
+        // Sanitize email: if email is null or does not contain @, set to empty string "" to satisfy MySQL NOT NULL constraint
+        if (cmd.getEmail() == null || !cmd.getEmail().contains("@")) {
+            cmd.setEmail("");
+        }
+
         cmd.setStatus("NEW");
         cmd.setCreatedAt(LocalDateTime.now());
 
@@ -41,12 +46,6 @@ public class InquiryController {
         // Asynchronously send welcome WhatsApp message if phone is provided
         try {
             String targetPhone = saved.getPhone();
-            if ((targetPhone == null || targetPhone.isBlank()) && saved.getEmail() != null) {
-                String digits = saved.getEmail().replaceAll("[^0-9]", "");
-                if (digits.length() >= 10) {
-                    targetPhone = digits;
-                }
-            }
             if (targetPhone != null && !targetPhone.isBlank()) {
                 whatsAppService.sendWelcomeLeadAlert(targetPhone, saved.getName());
             }

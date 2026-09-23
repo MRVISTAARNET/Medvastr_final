@@ -82,15 +82,24 @@ public class EmailService {
             }
             String customerEmail = order.getUser().getEmail();
             String subject = "Order Confirmed - " + order.getOrderNumber();
-            log.info("[EmailService] Sending order confirmation - Customer Email: {} | Subject: {}", customerEmail,
+            log.info("[EmailService] Sending order confirmation - Customer Email: {} | Subject: {}", maskEmail(customerEmail),
                     subject);
             String html = getOrderConfirmationHtml(order);
             sendHtmlEmailInner(customerEmail, subject, html, "orders@medvarn.com", "Medvarn Orders");
             log.info("[EmailService] Order Confirmation Status: SUCCESS | Customer Email: {} | Subject: {}",
-                    customerEmail, subject);
+                    maskEmail(customerEmail), subject);
         } catch (Exception ex) {
             log.error("[EmailService] Order Confirmation Status: FAILED | Order: {}", order.getOrderNumber(), ex);
         }
+    }
+
+    private String maskEmail(String email) {
+        if (email == null || !email.contains("@")) return "***";
+        String[] parts = email.split("@");
+        String userPart = parts[0];
+        String domain = parts[1];
+        if (userPart.length() <= 1) return "*@" + domain;
+        return userPart.charAt(0) + "***@" + domain;
     }
 
     @Async

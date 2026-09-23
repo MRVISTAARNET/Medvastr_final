@@ -131,34 +131,160 @@ public class WhatsAppService {
         sb.append("Use code *WELCOME10* at checkout on www.medvarn.com to save 10% on your Scrub Suits order!\n\n");
         sb.append("Need assistance with sizing or fabric choices? Reply to this message anytime! 🩺");
 
-        String featuredProductImg = "https://d2tnzshqdaedbc.cloudfront.net/home-hero-1.jpg";
+        String featuredProductImg = null;
         if (productRepo != null) {
             try {
-                var products = productRepo.findAll();
-                for (var p : products) {
-                    if (p != null && p.getName() != null) {
-                        String pName = p.getName().toLowerCase();
-                        String pType = p.getType() != null ? p.getType().toLowerCase() : "";
-                        if (pName.contains("scrub") || pName.contains("suit") || pType.contains("scrub")) {
-                            if (p.getImages() != null && !p.getImages().isEmpty()) {
-                                String found = p.getImages().stream()
-                                        .map(com.medvastr.backend.model.ProductImage::getImageUrl)
-                                        .filter(i -> i != null && !i.isBlank())
-                                        .findFirst().orElse(null);
-                                if (found != null && !found.isBlank()) {
-                                    featuredProductImg = normalizeImageUrl(found);
-                                    break;
+                var scrubProducts = productRepo.findActiveWithImagesByKeyword("scrub", org.springframework.data.domain.PageRequest.of(0, 10));
+                java.util.List<String> allImages = new java.util.ArrayList<>();
+                for (var p : scrubProducts) {
+                    if (p != null && p.getImages() != null && !p.getImages().isEmpty()) {
+                        for (var img : p.getImages()) {
+                            if (img != null && img.getImageUrl() != null && !img.getImageUrl().isBlank()) {
+                                String normalized = normalizeImageUrl(img.getImageUrl());
+                                if (normalized != null && !normalized.isBlank()) {
+                                    allImages.add(normalized);
                                 }
                             }
                         }
                     }
                 }
+                if (!allImages.isEmpty()) {
+                    int randomIndex = java.util.concurrent.ThreadLocalRandom.current().nextInt(allImages.size());
+                    featuredProductImg = allImages.get(randomIndex);
+                    log.info("[WhatsApp] Dynamically selected catalog product image ({}/{}): {}", randomIndex + 1, allImages.size(), featuredProductImg);
+                }
             } catch (Exception e) {
-                log.warn("Could not fetch scrub suit image: {}", e.getMessage());
+                log.warn("Could not fetch scrub suit image for WhatsApp alert: {}", e.getMessage());
             }
         }
 
-        sendWhatsAppMessageWithMedia(cleanPhone, sb.toString(), featuredProductImg);
+        sendWhatsAppWelcomeTemplate(cleanPhone, displayName, featuredProductImg);
+    }
+
+    public void sendWhatsAppWelcomeTemplate(String phone, String displayName, String imageUrl) {
+        if (!enabled) return;
+        String effectiveKey = (apiKey != null && !apiKey.isBlank()) ? apiKey : msg91AuthKey;
+        if (effectiveKey == null || effectiveKey.isBlank()) return;
+
+        log.info("[WhatsApp] Triggering welcome offer template for {}", maskPhone(phone));
+
+        // 1. Try Bulk Template API with "en"
+        boolean success = sendBulkTemplateApi(phone, displayName, imageUrl, effectiveKey, "en");
+        if (!success) {
+            log.info("[WhatsApp] Retrying Bulk API with language code en_US for {}", maskPhone(phone));
+            success = sendBulkTemplateApi(phone, displayName, imageUrl, effectiveKey, "en_US");
+        }
+
+        // 2. Fallback to Simple Template API with "en" then "en_US"
+        if (!success) {
+            log.info("[WhatsApp] Retrying via MSG91 Simple Template API (en) for {}", maskPhone(phone));
+            success = sendSimpleTemplateApi(phone, displayName, imageUrl, effectiveKey, "en");
+        }
+        if (!success) {
+            log.info("[WhatsApp] Retrying via MSG91 Simple Template API (en_US) for {}", maskPhone(phone));
+            sendSimpleTemplateApi(phone, displayName, imageUrl, effectiveKey, "en_US");
+        }
+    }
+
+    private boolean sendBulkTemplateApi(String phone, String displayName, String imageUrl, String effectiveKey, String langCode) {
+        String bulkUrl = "https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/";
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("authkey", effectiveKey);
+
+            String effectiveHeaderImg = (imageUrl != null && !imageUrl.isBlank())
+                    ? imageUrl
+                    : "https://d2tnzshqdaedbc.cloudfront.net/home-hero-1.jpg";
+
+            Map<String, Object> body = new HashMap<>();
+            body.put("integrated_number", "918976488911");
+            body.put("content_type", "template");
+
+            Map<String, Object> templateObj = new HashMap<>();
+            templateObj.put("name", "welcome_offer_10");
+            templateObj.put("language", Map.of("code", langCode, "policy", "deterministic"));
+            templateObj.put("namespace", "a5a9be9d_7395_44c6_9c08_9592d1afefdf");
+
+            Map<String, Object> header1 = Map.of("type", "image", "value", effectiveHeaderImg);
+            Map<String, Object> body1 = Map.of("type", "text", "value", displayName);
+
+            Map<String, Object> components = Map.of("header_1", header1, "body_1", body1);
+
+            Map<String, Object> toComp = new HashMap<>();
+            toComp.put("to", java.util.List.of(phone));
+            toComp.put("components", components);
+
+            templateObj.put("to_and_components", java.util.List.of(toComp));
+
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("messaging_product", "whatsapp");
+            payload.put("type", "template");
+            payload.put("template", templateObj);
+
+            body.put("payload", payload);
+
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+            ResponseEntity<String> response = restTemplate.postForEntity(bulkUrl, entity, String.class);
+            log.info("[WhatsApp Bulk API] Sent ({}) to {}: Status: {} | Response: {}", langCode, maskPhone(phone), response.getStatusCode(), response.getBody());
+
+            String resBody = response.getBody();
+            if (resBody != null && (resBody.contains("\"hasError\":true") || resBody.contains("does not exist") || resBody.contains("\"status\":\"error\""))) {
+                return false;
+            }
+            return response.getStatusCode().is2xxSuccessful();
+        } catch (Exception e) {
+            log.warn("[WhatsApp Bulk API] Error sending ({}) to {}: {}", langCode, maskPhone(phone), e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean sendSimpleTemplateApi(String phone, String displayName, String imageUrl, String effectiveKey, String langCode) {
+        String simpleUrl = "https://control.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/";
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("authkey", effectiveKey);
+
+            String effectiveHeaderImg = (imageUrl != null && !imageUrl.isBlank())
+                    ? imageUrl
+                    : "https://d2tnzshqdaedbc.cloudfront.net/home-hero-1.jpg";
+
+            Map<String, Object> body = new HashMap<>();
+            body.put("integrated_number", "918976488911");
+            body.put("content_type", "template");
+            body.put("template_name", "welcome_offer_10");
+            body.put("language", langCode);
+            body.put("to", phone);
+            body.put("recipient", phone);
+
+            Map<String, String> headerMap = new HashMap<>();
+            headerMap.put("type", "image");
+            headerMap.put("url", effectiveHeaderImg);
+            body.put("header", headerMap);
+
+            Map<String, String> bodyVars = new HashMap<>();
+            bodyVars.put("1", displayName);
+            body.put("body", bodyVars);
+
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+            ResponseEntity<String> response = restTemplate.postForEntity(simpleUrl, entity, String.class);
+            log.info("[WhatsApp Simple API] Sent ({}) to {}: Status: {} | Response: {}", langCode, maskPhone(phone), response.getStatusCode(), response.getBody());
+
+            String resBody = response.getBody();
+            if (resBody != null && (resBody.contains("\"hasError\":true") || resBody.contains("does not exist") || resBody.contains("\"status\":\"error\""))) {
+                return false;
+            }
+            return response.getStatusCode().is2xxSuccessful();
+        } catch (Exception e) {
+            log.error("[WhatsApp Simple API] Error sending ({}) to {}: {}", langCode, maskPhone(phone), e.getMessage());
+            return false;
+        }
+    }
+
+    private String maskPhone(String phone) {
+        if (phone == null || phone.length() < 4) return "****";
+        return "*".repeat(phone.length() - 4) + phone.substring(phone.length() - 4);
     }
 
     private String buildOrderMessage(Order order) {
@@ -200,11 +326,11 @@ public class WhatsAppService {
     }
 
     private void sendWhatsAppMessage(String phone, String text) {
-        sendWhatsAppMessageWithMedia(phone, text, "https://d2tnzshqdaedbc.cloudfront.net/home-hero-1.jpg");
+        sendWhatsAppMessageWithMedia(phone, text, null);
     }
 
     private void sendWhatsAppMessageWithMedia(String phone, String text, String imageUrl) {
-        log.info("[WhatsApp] Media Message request to: {}\nImage: {}\nContent:\n{}", phone, imageUrl, text);
+        log.info("[WhatsApp] Outbound message request to: {} | Media Image: {}", maskPhone(phone), imageUrl);
 
         if (!enabled) {
             log.info("[WhatsApp] Service disabled (whatsapp.enabled=false)");
@@ -272,9 +398,9 @@ public class WhatsAppService {
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
             ResponseEntity<String> response = restTemplate.postForEntity(targetUrl, entity, String.class);
 
-            log.info("[WhatsApp] Sent Media Message to {}: Status code: {} | Response: {}", phone, response.getStatusCode(), response.getBody());
+            log.info("[WhatsApp] Message sent to {}: Status: {}", maskPhone(phone), response.getStatusCode());
         } catch (Exception e) {
-            log.error("[WhatsApp] Error sending media message to {}: {}", phone, e.getMessage(), e);
+            log.error("[WhatsApp] Error sending message to {}: {}", maskPhone(phone), e.getMessage());
         }
     }
 }

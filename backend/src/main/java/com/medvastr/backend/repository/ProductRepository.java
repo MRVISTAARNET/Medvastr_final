@@ -95,4 +95,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                         "WHERE p.active=true " +
                         "AND (LOWER(p.name) LIKE LOWER(CONCAT('%',:q,'%')) OR LOWER(p.name) LIKE LOWER(CONCAT('%',:q2,'%')))")
         Page<Product> searchByNameOnly(@Param("q") String q, @Param("q2") String q2, Pageable p);
+
+        @org.springframework.data.jpa.repository.EntityGraph(attributePaths = { "images" })
+        @Query("SELECT p FROM Product p WHERE p.active = true AND (LOWER(p.name) LIKE LOWER(CONCAT('%',:keyword,'%')) OR LOWER(p.type) LIKE LOWER(CONCAT('%',:keyword,'%')))")
+        List<Product> findActiveWithImagesByKeyword(@Param("keyword") String keyword, Pageable pageable);
 }

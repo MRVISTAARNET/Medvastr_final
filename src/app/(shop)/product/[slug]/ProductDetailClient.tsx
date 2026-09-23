@@ -83,7 +83,7 @@ function LightboxZoomImage({ src, onError }: { src: string; onError?: () => void
             inset: 0,
             backgroundImage: `url(${src})`,
             backgroundRepeat: 'no-repeat',
-            backgroundSize: '165%',
+            backgroundSize: '110%',
             backgroundPosition: `${pos.x}% ${pos.y}%`,
             pointerEvents: 'none',
             borderRadius: '8px',
@@ -1247,6 +1247,11 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               setBottomSizeError(true);
               if (!firstErrorElementId) firstErrorElementId = "pdp-bottom-size-select";
             }
+            // Validate embroidery selection if enabled on product
+            if (Boolean(p.embroideryEnabled) && isEmbroiderySelected === null) {
+              setEmbroideryError(true);
+              if (!firstErrorElementId) firstErrorElementId = "pdp-embroidery-section";
+            }
             if (firstErrorElementId) {
               const element = document.getElementById(firstErrorElementId);
               if (element) {
@@ -1283,7 +1288,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
             setTimeout(() => {
               const finalSize = isSet ? `Top: ${sz} / Bot: ${btmSz}` : sz;
-              addToCart(p, ci ?? 0, finalSize || 'M', qty);
+              addToCart(p, ci ?? 0, finalSize || 'M', qty, isEmbroiderySelected ? embroideryState : undefined);
               setIsAdding(false);
               setAddedSuccess(true);
               setIsCartOpen(true);
@@ -1294,7 +1299,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
           className={`pdp-buy-btn ${addedSuccess ? 'success-state' : ''}`}
           style={{ flexShrink: 0, width: 'auto', height: '44px', background: addedSuccess ? '#16a34a' : 'var(--primary-navy)', border: 'none', color: '#fff', padding: '0 22px', borderRadius: '8px', fontWeight: 600, fontSize: '13px', textTransform: 'none', whiteSpace: 'nowrap', cursor: 'pointer' }}
         >
-          {isOutOfStock ? 'Out of Stock' : isAdding ? 'Adding...' : addedSuccess ? '✓ Added' : 'Add to Bag'}
+          {isOutOfStock ? 'Out of Stock' : isAdding ? 'Adding...' : addedSuccess ? '✓ Added' : isEmbroiderySelected ? 'Add to Bag + Embroidery' : 'Add to Bag'}
         </button>
       </div>
 
