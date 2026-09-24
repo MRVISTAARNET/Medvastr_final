@@ -388,20 +388,6 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
                   </div>
                 )}
 
-                {/* Consent Checkbox */}
-                <div className="consent-box">
-                  <input
-                    type="checkbox"
-                    id="callConsent"
-                    checked={callConsent}
-                    onChange={(e) => setCallConsent(e.target.checked)}
-                    className="consent-checkbox"
-                  />
-                  <label htmlFor="callConsent" className="consent-label">
-                    Get updates, sizing support & offer alerts on <strong>Call & WhatsApp</strong>.
-                  </label>
-                </div>
-
                 {/* Terms Disclaimer */}
                 <p className="disclaimer-text">
                   By continuing, you agree to Medvarn's <Link href="/terms" onClick={onClose} className="legal-link">Terms of Use</Link> & <Link href="/privacy" onClick={onClose} className="legal-link">Privacy Policy</Link>.
