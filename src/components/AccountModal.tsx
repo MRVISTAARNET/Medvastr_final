@@ -703,10 +703,11 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
           align-items: flex-start;
           gap: 8px;
           background: #f8fafc;
-          padding: 8px 10px;
+          padding: 10px 12px;
           border-radius: 4px;
           border: 1px solid #e2e8f0;
-          margin-top: 2px;
+          margin: 14px 0;
+          width: 100%;
         }
         .consent-checkbox {
           margin-top: 2px;
