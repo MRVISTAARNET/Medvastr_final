@@ -23,6 +23,7 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
     fullName: "", email: "", password: "", phone: "", otp: ""
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [callConsent, setCallConsent] = useState(true);
 
   // Initialize Google Identity Services
   React.useEffect(() => {
@@ -387,6 +388,20 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
                     <SpamNote />
                   </div>
                 )}
+
+                {/* Consent Checkbox */}
+                <div className="consent-box">
+                  <input
+                    type="checkbox"
+                    id="callConsent"
+                    checked={callConsent}
+                    onChange={(e) => setCallConsent(e.target.checked)}
+                    className="consent-checkbox"
+                  />
+                  <label htmlFor="callConsent" className="consent-label">
+                    Get updates, sizing support & offer alerts on <strong>Call & WhatsApp</strong>.
+                  </label>
+                </div>
 
                 {/* Terms Disclaimer */}
                 <p className="disclaimer-text">
