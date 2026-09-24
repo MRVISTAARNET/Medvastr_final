@@ -23,7 +23,6 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
     fullName: "", email: "", password: "", phone: "", otp: ""
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [callConsent, setCallConsent] = useState(true);
 
   // Initialize Google Identity Services
   React.useEffect(() => {
@@ -143,32 +142,6 @@ export default function AccountModal({ onClose }: { onClose: () => void }) {
         try {
           localStorage.setItem("mv_user_completed_auth", "true");
         } catch { /* ignore */ }
-        if (callConsent) {
-          try {
-            const isEmailFormat = form.email.includes("@");
-            const resolvedEmail = isEmailFormat ? form.email.trim() : (user?.email || "");
-            const rawPhoneCandidate = !isEmailFormat ? form.email.trim() : (form.phone || "").trim();
-            const digitsOnly = rawPhoneCandidate.replace(/\D/g, "");
-            let resolvedPhone = "";
-            if (digitsOnly.length === 10) {
-              resolvedPhone = digitsOnly;
-            } else if (digitsOnly.length === 12 && digitsOnly.startsWith("91")) {
-              resolvedPhone = digitsOnly.substring(2);
-            }
-
-            fetch(`${API_BASE}/inquiries`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                name: form.fullName || user?.firstName || "Registered User",
-                email: resolvedEmail,
-                phone: resolvedPhone || (form.phone || "").replace(/\D/g, ""),
-                message: "User logged in/registered with Call & WhatsApp Consent for 10% OFF Offer (WELCOME10)",
-                type: "WELCOME_POPUP_LEAD"
-              })
-            }).catch(() => {});
-          } catch { /* ignore */ }
-        }
         onClose();
       }
       else { if (mode !== "login-otp") setError("Invalid credentials or code. Please try again."); }
