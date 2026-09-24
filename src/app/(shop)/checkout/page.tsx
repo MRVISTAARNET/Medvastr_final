@@ -431,7 +431,7 @@ export default function CheckoutPage() {
               Share your feedback on Google to help fellow healthcare professionals discover premium medical wear.
             </p>
             <a
-              href={storeSettings?.google_review_url || "https://search.google.com/local/writereview?placeid=medvarn"}
+              href="https://g.page/r/CXy4nS7KTjN4EBM/review"
               target="_blank"
               rel="noopener noreferrer"
               style={{
