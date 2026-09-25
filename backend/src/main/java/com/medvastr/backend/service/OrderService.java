@@ -253,7 +253,16 @@ public class OrderService {
 
         BigDecimal disc = volumeDiscount.add(promoDiscount);
 
-        BigDecimal total = subtotal.add(ship).subtract(disc);
+        Order.PaymentMethod pm = r.getPaymentMethod() != null ? Order.PaymentMethod.valueOf(r.getPaymentMethod()) : Order.PaymentMethod.COD;
+        BigDecimal codFee = BigDecimal.ZERO;
+        if (pm == Order.PaymentMethod.COD) {
+            BigDecimal netAfterDisc = subtotal.subtract(disc);
+            if (netAfterDisc.compareTo(BigDecimal.ZERO) > 0) {
+                codFee = netAfterDisc.multiply(new BigDecimal("0.10")).setScale(0, java.math.RoundingMode.HALF_UP);
+            }
+        }
+
+        BigDecimal total = subtotal.add(ship).add(codFee).subtract(disc);
         if (total.compareTo(BigDecimal.ZERO) < 0) {
             total = BigDecimal.ZERO;
         }
@@ -281,11 +290,11 @@ public class OrderService {
                 .subtotal(subtotal)
                 .discountAmount(disc)
                 .shippingAmount(ship)
+                .codFee(codFee)
                 .taxAmount(taxVal)
                 .totalAmount(total)
                 .promoCode(r.getPromoCode())
-                .paymentMethod(r.getPaymentMethod() != null ? Order.PaymentMethod.valueOf(r.getPaymentMethod())
-                        : Order.PaymentMethod.COD)
+                .paymentMethod(pm)
                 .notes(r.getNotes())
                 .shippingName(r.getFirstName() + " " + r.getLastName())
                 .shippingPhone(r.getPhone())
@@ -887,6 +896,7 @@ public class OrderService {
                 .subtotal(o.getSubtotal())
                 .discountAmount(o.getDiscountAmount())
                 .shippingAmount(o.getShippingAmount())
+                .codFee(o.getCodFee())
                 .totalAmount(o.getTotalAmount())
                 .promoCode(o.getPromoCode())
                 .shippingName(o.getShippingName())

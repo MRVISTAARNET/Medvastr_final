@@ -70,6 +70,10 @@ public class Order {
     @Builder.Default
     private BigDecimal taxAmount = BigDecimal.ZERO;
 
+    @Column(name = "cod_fee", precision = 10, scale = 2)
+    @Builder.Default
+    private BigDecimal codFee = BigDecimal.ZERO;
+
     @Column(name = "final_price", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalAmount;
 

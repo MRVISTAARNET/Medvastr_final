@@ -109,7 +109,11 @@ export default function CheckoutPage() {
       )
     : 0;
 
-  const tot = Math.max(0, sub - volumeDiscount + shippingCost - activePromoDiscount);
+  const codSurcharge = form.paymentMethod === 'COD' 
+    ? Math.round(Math.max(0, sub - volumeDiscount - activePromoDiscount) * 0.10) 
+    : 0;
+
+  const tot = Math.max(0, sub - volumeDiscount + shippingCost - activePromoDiscount + codSurcharge);
   const hasCodDisabled = cart.some(i => i.codDisabled === true);
 
   // Shiprocket Serviceability Call
@@ -642,7 +646,7 @@ export default function CheckoutPage() {
                 <div className="co-radio-circle" />
                 <div className="co-pay-info">
                   <span className="co-pay-name">Cash on Delivery</span>
-                  <span className="co-pay-desc">Pay upon receiving your package at your doorstep</span>
+                  <span className="co-pay-desc">Pay upon delivery at your doorstep (+10% COD handling fee applies)</span>
                 </div>
                 <span className="text-2xl">🚚</span>
               </div>
@@ -726,6 +730,12 @@ export default function CheckoutPage() {
               <div className="co-total-row">
                 <span>Coupon Discount ({appliedPromo?.code || 'PROMO'})</span>
                 <span style={{ color: '#16a34a', fontWeight: 700 }}>-{fmt(activePromoDiscount)}</span>
+              </div>
+            )}
+            {codSurcharge > 0 && (
+              <div className="co-total-row">
+                <span>COD Handling Fee (+10%)</span>
+                <span style={{ color: '#d97706', fontWeight: 700 }}>+{fmt(codSurcharge)}</span>
               </div>
             )}
             <div className="co-total-row grand" style={{ marginBottom: '2px' }}>

@@ -23,6 +23,7 @@ public class OrderDTO {
     private BigDecimal subtotal;
     private BigDecimal discountAmount;
     private BigDecimal shippingAmount;
+    private BigDecimal codFee;
     private BigDecimal totalAmount;
     private String shippingName;
     private String shippingAddress;
