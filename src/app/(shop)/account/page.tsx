@@ -5,7 +5,6 @@ import { useApp } from "@/context/AppContext";
 import { fmt, fmtDate } from "@/lib/data";
 import Link from "next/link";
 import { apiJson, getToken } from "@/lib/api";
-import { logError } from "@/lib/logger";
 
 export default function AccountPage() {
   const { user, isHydrated, setIsAuthOpen, toast, updateAuth } = useApp();
@@ -43,7 +42,7 @@ export default function AccountPage() {
       const aRes = await apiJson<any[]>("/users/me/addresses");
       if (aRes.success && Array.isArray(aRes.data)) setAddresses(aRes.data);
     } catch (e) {
-      logError("account-fetch", e);
+      console.error("account-fetch error:", e);
     } finally {
       setLoading(false);
     }

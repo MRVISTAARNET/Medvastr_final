@@ -51,3 +51,18 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .vercel
+
+# personal / sensitive files — never track these
+*.pdf
+error.log
+rollback.txt
+*_Roadmap.md
+*_roadmap.md
+
+# playwright test output
+test-results/
+playwright-report/
+
+# leftover scratch folders
+Practice/
+.sixth/

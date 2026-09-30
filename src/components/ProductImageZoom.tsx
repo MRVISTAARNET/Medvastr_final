@@ -29,6 +29,7 @@ export default function ProductImageZoom({ src, alt, className, onError }: Produ
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
+                    objectPosition: 'top center',
                     display: 'block',
                 }}
             />

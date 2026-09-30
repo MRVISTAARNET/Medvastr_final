@@ -31,5 +31,23 @@ build/
 
 ### VS Code ###
 .vscode/
-*.txt
 *.log
+
+# Build error/audit logs
+compile_errors.txt
+compile_errors_audit.txt
+build.log
+sb.log
+startup.log
+
+# Local file uploads (use S3 in production)
+uploads/
+
+# Deployment artifacts — never track these
+*.jar
+*.zip
+*.war
+test_extract/
+deploy_ready/
+node_modules/
+META-INF/

@@ -31,7 +31,7 @@ function DetailAccordion({ title, children, defaultOpen = false }: { title: stri
 
 function LightboxZoomImage({ src, onError }: { src: string; onError?: () => void }) {
   const [hovered, setHovered] = useState(false);
-  const [pos, setPos] = useState({ x: 50, y: 50 });
+  const [pos, setPos] = useState({ x: 50, y: 15 });
   const ref = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -59,7 +59,7 @@ function LightboxZoomImage({ src, onError }: { src: string; onError?: () => void
         justifyContent: 'center',
       }}
     >
-      {/* Base image — always visible */}
+      {/* Base image — aligned top center so face/head is focused */}
       <img
         src={src}
         alt="Product Fullscreen"
@@ -68,6 +68,7 @@ function LightboxZoomImage({ src, onError }: { src: string; onError?: () => void
           maxWidth: '100%',
           maxHeight: '100%',
           objectFit: 'contain',
+          objectPosition: 'top center',
           display: 'block',
           userSelect: 'none',
           transition: 'opacity 0.2s ease',
@@ -75,7 +76,7 @@ function LightboxZoomImage({ src, onError }: { src: string; onError?: () => void
         }}
       />
 
-      {/* Zoom overlay — follows cursor with medium 165% scale */}
+      {/* Zoom overlay — 120% scale (20% zoom increase) */}
       {hovered && (
         <div
           style={{
@@ -83,7 +84,7 @@ function LightboxZoomImage({ src, onError }: { src: string; onError?: () => void
             inset: 0,
             backgroundImage: `url(${src})`,
             backgroundRepeat: 'no-repeat',
-            backgroundSize: '110%',
+            backgroundSize: '120%',
             backgroundPosition: `${pos.x}% ${pos.y}%`,
             pointerEvents: 'none',
             borderRadius: '8px',

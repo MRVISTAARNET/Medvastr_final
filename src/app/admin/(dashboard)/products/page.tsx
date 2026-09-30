@@ -6,7 +6,6 @@ import { fmt, B } from '@/lib/data';
 import { getColorHex } from '@/lib/productUtils';
 import { useApp } from '@/context/AppContext';
 import { API_BASE, authHeaders, getToken, normalizeMediaUrl } from '@/lib/api';
-import { logError } from '@/lib/logger';
 import { toJpeg } from 'html-to-image';
 import JsBarcode from 'jsbarcode';
 
