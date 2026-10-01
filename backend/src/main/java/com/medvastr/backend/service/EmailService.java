@@ -186,6 +186,10 @@ public class EmailService {
     }
 
     public void sendOtpEmail(String toEmail, String otpCode) {
+        log.info("=========================================================");
+        log.info("[OTP EMAIL] Attempting to send OTP email to recipient: {} | Sender: {} | SMTP Host: {}:{}", 
+                toEmail, fromEmail, smtpHost, smtpPort);
+        log.info("=========================================================");
         String html = """
                 <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 12px; overflow: hidden;">
                     <div style="background: #1a2b4a; padding: 30px; text-align: center; color: white;">
@@ -206,8 +210,9 @@ public class EmailService {
                 .formatted(otpCode);
         try {
             sendHtmlEmailInner(toEmail, "Your Medvarn Verification Code", html, "info@medvarn.com", "Medvarn");
+            log.info("[OTP EMAIL SUCCESS] Successfully delivered OTP email to SMTP server for recipient: {}", toEmail);
         } catch (Exception e) {
-            log.error("Failed to send OTP", e);
+            log.error("[OTP EMAIL FAILED] Failed to send OTP email to recipient: {} | Error: {}", toEmail, e.getMessage(), e);
             throw new RuntimeException("Failed to send OTP email: " + e.getMessage());
         }
     }

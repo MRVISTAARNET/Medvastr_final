@@ -494,25 +494,40 @@ public class OrderService {
 
     @Transactional
     public OrderDTO pushToShiprocket(Long id) {
-        Order o = orderRepo.findById(id).orElseThrow();
+        Order o = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found: " + id));
+        log.info("=========================================================");
+        log.info("[ADMIN ACTION] Triggered manual push to SHIPROCKET for Order ID: {} (Order Number: {})", id, o.getOrderNumber());
+        log.info("=========================================================");
         pushToShiprocketAfterCommit(o.getId());
         return toDTO(o);
     }
 
     @Transactional
     public String pushToShiprocketSync(Long id) {
+        Order o = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found: " + id));
+        log.info("=========================================================");
+        log.info("[ADMIN ACTION] Triggered manual SYNC push to SHIPROCKET for Order ID: {} (Order Number: {})", id, o.getOrderNumber());
+        log.info("=========================================================");
         return shiprocketService.createOrderSync(id);
     }
 
     @Transactional
     public Map<String, Object> pushToDelhivery(Long id) {
         Order o = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found: " + id));
-        return delhiveryService.createShipment(o);
+        log.info("=========================================================");
+        log.info("[ADMIN ACTION] Triggered manual push to DELHIVERY DIRECT for Order ID: {} (Order Number: {})", id, o.getOrderNumber());
+        log.info("=========================================================");
+        Map<String, Object> result = delhiveryService.createShipment(o);
+        log.info("[ADMIN ACTION] Delhivery Direct Push Result for Order {}: {}", o.getOrderNumber(), result);
+        return result;
     }
 
     @Transactional
     public Map<String, Object> syncOrderFromDelhivery(Long id) {
         Order o = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found: " + id));
+        log.info("=========================================================");
+        log.info("[ADMIN ACTION] Triggered status SYNC from DELHIVERY DIRECT for Order ID: {} (Order Number: {})", id, o.getOrderNumber());
+        log.info("=========================================================");
         if (o.getTrackingNumber() == null || o.getTrackingNumber().isBlank()) {
             Map<String, Object> err = new HashMap<>();
             err.put("success", false);
