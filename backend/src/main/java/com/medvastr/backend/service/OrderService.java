@@ -37,6 +37,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -60,6 +61,7 @@ public class OrderService {
     private final RazorpayService razorpayService;
     private final EmailService emailService;
     private final ShiprocketService shiprocketService;
+    private final DelhiveryService delhiveryService;
     private final InventoryLogRepository inventoryLogRepo;
     private final org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
     private final WhatsAppService whatsAppService;
@@ -502,6 +504,40 @@ public class OrderService {
         return shiprocketService.createOrderSync(id);
     }
 
+    @Transactional
+    public Map<String, Object> pushToDelhivery(Long id) {
+        Order o = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found: " + id));
+        return delhiveryService.createShipment(o);
+    }
+
+    @Transactional
+    public Map<String, Object> syncOrderFromDelhivery(Long id) {
+        Order o = orderRepo.findById(id).orElseThrow(() -> new RuntimeException("Order not found: " + id));
+        if (o.getTrackingNumber() == null || o.getTrackingNumber().isBlank()) {
+            Map<String, Object> err = new HashMap<>();
+            err.put("success", false);
+            err.put("message", "No waybill tracking number found for order " + o.getOrderNumber());
+            return err;
+        }
+        Map<String, Object> trackRes = delhiveryService.trackWaybill(o.getTrackingNumber());
+        if (Boolean.TRUE.equals(trackRes.get("success"))) {
+            String status = (String) trackRes.get("status");
+            if (status != null && !status.isBlank()) {
+                o.setShiprocketSyncStatus(status.toUpperCase());
+                if ("Delivered".equalsIgnoreCase(status)) {
+                    o.setStatus(Order.OrderStatus.DELIVERED);
+                    o.setDeliveredAt(LocalDateTime.now());
+                } else if ("In Transit".equalsIgnoreCase(status) || "Dispatched".equalsIgnoreCase(status)) {
+                    o.setStatus(Order.OrderStatus.SHIPPED);
+                } else if ("Out for Delivery".equalsIgnoreCase(status)) {
+                    o.setStatus(Order.OrderStatus.OUT_FOR_DELIVERY);
+                }
+                orderRepo.save(o);
+            }
+        }
+        return trackRes;
+    }
+
     /**
      * Pull the latest tracking status from Shiprocket for a single order and
      * persist it to the database. Returns the updated OrderDTO.
@@ -708,11 +744,6 @@ public class OrderService {
                         } catch (Exception e) {
                             log.error("Failed to send SMS order confirmation", e);
                         }
-                        try {
-                            shiprocketService.createOrder(order.getId());
-                        } catch (Exception e) {
-                            log.error("Failed to push order to Shiprocket", e);
-                        }
                     }
                 }
             );
@@ -736,11 +767,6 @@ public class OrderService {
                 smsService.sendOrderSms(order, order.getPaymentMethod().name());
             } catch (Exception e) {
                 log.error("Failed to send SMS order confirmation", e);
-            }
-            try {
-                shiprocketService.createOrder(order.getId());
-            } catch (Exception e) {
-                log.error("Failed to push order to Shiprocket", e);
             }
         }
     }

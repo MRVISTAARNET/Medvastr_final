@@ -87,6 +87,18 @@ public class OrderController {
         return ResponseEntity.ok(ApiResponse.ok("Sync push attempted", s.pushToShiprocketSync(id)));
     }
 
+    @PostMapping("/admin/{id}/delhivery")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<java.util.Map<String, Object>>> pushToDelhivery(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok("Pushed to Delhivery Direct", s.pushToDelhivery(id)));
+    }
+
+    @PostMapping("/admin/{id}/delhivery-sync")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<java.util.Map<String, Object>>> syncDelhiveryStatus(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok("Delhivery status synced", s.syncOrderFromDelhivery(id)));
+    }
+
     @PutMapping("/admin/{id}/rename")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<OrderDTO>> rename(@PathVariable Long id, @RequestParam String orderNumber) {

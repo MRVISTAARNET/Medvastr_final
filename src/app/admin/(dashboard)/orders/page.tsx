@@ -662,15 +662,15 @@ export default function AdminOrders() {
                 </div>
               </div>
 
-              {/* Shiprocket Integration */}
+              {/* Courier Fulfillment Integrations */}
               <div style={{ marginTop: '20px', padding: '16px', background: 'var(--bg2)', borderRadius: '8px', border: '1px solid var(--bdr)' }}>
                 <div style={{ fontWeight: 600, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span>🚀 Shiprocket Integration</span>
+                  <span>🚚 Courier Fulfillment Options</span>
                 </div>
 
                 <div className="fg-row" style={{ marginBottom: '12px' }}>
                   <div className="fg">
-                    <label>Order Number (Edit if duplicate error on Shiprocket)</label>
+                    <label>Order Number (Edit if duplicate error on courier)</label>
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <input type="text" id="o-num-edit" defaultValue={editingOrder.num} style={{ flex: 1 }} />
                       <button type="button" className="btn-primary" style={{ padding: '0 16px', background: '#008080', border: 'none', color: 'white', borderRadius: '8px', cursor: 'pointer' }} onClick={async () => {
@@ -697,11 +697,15 @@ export default function AdminOrders() {
                   </div>
                 </div>
 
-                <div className="fg-row">
-                  <div className="fg">
-                    <label>Push to Shiprocket</label>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <button type="button" className="btn-secondary" style={{ flex: 1 }} onClick={() => {
+                {/* DUAL COURIER ACTION BUTTONS */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginTop: '12px' }}>
+                  {/* SHIPROCKET PANEL */}
+                  <div style={{ background: '#ffffff', padding: '14px', borderRadius: '10px', border: '1.5px solid #cbd5e1' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 800, color: '#0f766e', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      🚀 Shiprocket Aggregator
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <button type="button" className="btn-secondary" style={{ width: '100%', background: '#f0fdf4', border: '1px solid #86efac', color: '#166534', fontWeight: 700 }} onClick={() => {
                         (async () => {
                           try {
                             const token = localStorage.getItem('token');
@@ -715,8 +719,9 @@ export default function AdminOrders() {
                             alert("Shiprocket push failed");
                           }
                         })();
-                      }}>Push Async</button>
-                      <button type="button" className="btn-secondary" style={{ flex: 1, backgroundColor: '#f1f5f9' }} onClick={() => {
+                      }}>🚀 Push to Shiprocket</button>
+                      
+                      <button type="button" className="btn-secondary" style={{ width: '100%', fontSize: '11px', backgroundColor: '#f1f5f9' }} onClick={() => {
                         (async () => {
                           try {
                             const token = localStorage.getItem('token');
@@ -734,7 +739,57 @@ export default function AdminOrders() {
                             alert("Sync push failed");
                           }
                         })();
-                      }}>Push Sync (Debug)</button>
+                      }}>Debug Shiprocket Raw API</button>
+                    </div>
+                  </div>
+
+                  {/* DELHIVERY DIRECT PANEL */}
+                  <div style={{ background: '#ffffff', padding: '14px', borderRadius: '10px', border: '1.5px solid #cbd5e1' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 800, color: '#b91c1c', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      📦 Delhivery Direct API
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <button type="button" className="btn-secondary" style={{ width: '100%', background: '#fef2f2', border: '1px solid #fca5a5', color: '#991b1b', fontWeight: 700 }} onClick={() => {
+                        (async () => {
+                          try {
+                            const token = localStorage.getItem('token');
+                            const res = await fetch(`${API_BASE}/orders/admin/${editingOrder.id}/delhivery`, {
+                              method: 'POST',
+                              headers: { 'Authorization': `Bearer ${token}` }
+                            });
+                            const data = await res.json();
+                            if (data.success) {
+                              alert(data.message || "Order pushed to Delhivery Direct!");
+                              await fetchOrders();
+                            } else {
+                              alert(`❌ ${data.message || 'Delhivery push failed'}`);
+                            }
+                          } catch (e) {
+                            alert("Delhivery push failed");
+                          }
+                        })();
+                      }}>📦 Push to Delhivery Direct</button>
+
+                      <button type="button" className="btn-secondary" style={{ width: '100%', fontSize: '11px', backgroundColor: '#f1f5f9' }} onClick={() => {
+                        (async () => {
+                          try {
+                            const token = localStorage.getItem('token');
+                            const res = await fetch(`${API_BASE}/orders/admin/${editingOrder.id}/delhivery-sync`, {
+                              method: 'POST',
+                              headers: { 'Authorization': `Bearer ${token}` }
+                            });
+                            const data = await res.json();
+                            if (data.success) {
+                              alert(`✅ Delhivery Status: ${data.data?.status || 'Synced'}`);
+                              await fetchOrders();
+                            } else {
+                              alert(`❌ ${data.message || 'Sync failed'}`);
+                            }
+                          } catch (e) {
+                            alert("Delhivery status sync failed");
+                          }
+                        })();
+                      }}>🔄 Sync Delhivery Status</button>
                     </div>
                   </div>
                 </div>
