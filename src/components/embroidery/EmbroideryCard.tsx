@@ -23,7 +23,7 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
   const isCustomized = isEmbroiderySelected === true && customization && (customization.line1 || customization.selectedIconId || customization.customLogoUrl);
 
   return (
-    <div id="pdp-embroidery-section" style={{ width: '100%', margin: '16px 0', fontFamily: 'sans-serif', userSelect: 'none' }}>
+    <div id="pdp-embroidery-section" style={{ width: '100%', margin: '16px 0', fontFamily: 'var(--sans), sans-serif', userSelect: 'none' }}>
       {/* Validation Error Message */}
       {hasError && (
         <div style={{ color: '#e11d48', fontSize: '13px', fontWeight: 600, marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -34,46 +34,56 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
       {/* Embroidery Card Wrapper */}
       <div
         style={{
-          borderRadius: '12px',
+          borderRadius: '16px',
           overflow: 'hidden',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
-          border: hasError ? '2px solid #e11d48' : '1px solid #e2e8f0',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.04)',
+          border: hasError ? '2px solid #e11d48' : '1.5px solid #cbd5e1',
           backgroundColor: '#ffffff',
           transition: 'border 0.2s',
         }}
       >
-        {/* Dark Navy Branding Header */}
+        {/* Dark Navy Branding Header (Exact Screenshot Style) */}
         <div
           onClick={onOpenModal}
           style={{
-            backgroundColor: '#1e1b4b',
+            backgroundColor: '#1b1b4d',
             color: '#ffffff',
-            padding: '14px 16px',
+            padding: '16px 20px',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
-            gap: '12px',
-            borderRadius: '12px 12px 0 0',
+            gap: '14px',
+            borderRadius: '14px 14px 0 0',
           }}
         >
-          {/* Pencil / Embroidery Icon */}
-          <div style={{ width: '38px', height: '38px', borderRadius: '50%', backgroundColor: 'rgba(255, 255, 255, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '20px' }}>
+          {/* Pencil Icon Circle */}
+          <div style={{
+            width: '42px',
+            height: '42px',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255, 255, 255, 0.18)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+            fontSize: '20px'
+          }}>
             ✏️
           </div>
 
           <div style={{ flex: 1 }}>
-            <h3 style={{ fontWeight: 700, fontSize: '17px', color: '#ffffff', margin: 0, lineHeight: '1.2' }}>
+            <h3 style={{ fontWeight: 800, fontSize: '18px', color: '#ffffff', margin: 0, lineHeight: '1.2' }}>
               Custom Embroidery
             </h3>
-            <p style={{ fontSize: '13px', color: '#CBD5E1', fontWeight: 500, margin: '2px 0 0 0', lineHeight: '1.2' }}>
+            <p style={{ fontSize: '13.5px', color: 'rgba(255, 255, 255, 0.8)', fontWeight: 500, margin: '3px 0 0 0', lineHeight: '1.2' }}>
               Starting at ₹99 personalise your scrubs
             </p>
           </div>
         </div>
 
-        {/* Content Area: Not Configured Yet vs Configured */}
+        {/* Content Area */}
         {!isCustomized ? (
-          <div style={{ backgroundColor: '#F9F9FB', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ backgroundColor: '#ffffff', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {/* Option 1: Add Embroidery */}
             <div
               onClick={() => {
@@ -84,11 +94,11 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: '12px',
-                padding: '10px 12px',
-                borderRadius: '8px',
+                padding: '12px 14px',
+                borderRadius: '10px',
                 cursor: 'pointer',
-                backgroundColor: isEmbroiderySelected === true ? '#F0F4F8' : 'transparent',
-                border: isEmbroiderySelected === true ? '1px solid #1e1b4b' : '1px solid transparent',
+                backgroundColor: isEmbroiderySelected === true ? '#f0fdf4' : 'transparent',
+                border: isEmbroiderySelected === true ? '1.5px solid #16a34a' : '1.5px solid transparent',
                 transition: 'all 0.2s',
               }}
             >
@@ -101,13 +111,13 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
                   onToggleAddEmbroidery(true);
                   onOpenModal();
                 }}
-                style={{ marginTop: '3px', width: '18px', height: '18px', accentColor: '#1e1b4b', cursor: 'pointer', flexShrink: 0 }}
+                style={{ marginTop: '3px', width: '18px', height: '18px', accentColor: '#1b1b4d', cursor: 'pointer', flexShrink: 0 }}
               />
               <label htmlFor="showEmb" style={{ cursor: 'pointer', flex: 1, display: 'block' }}>
-                <strong style={{ display: 'block', color: '#1e1b4b', fontSize: '15px', fontWeight: 700, lineHeight: '1.3' }}>
+                <strong style={{ display: 'block', color: '#1b1b4d', fontSize: '16px', fontWeight: 800, lineHeight: '1.3' }}>
                   Add Embroidery
                 </strong>
-                <span style={{ display: 'block', fontSize: '12px', color: '#554e65', marginTop: '3px', lineHeight: '1.4' }}>
+                <span style={{ display: 'block', fontSize: '13px', color: '#64748b', marginTop: '3px', fontWeight: 500, lineHeight: '1.4' }}>
                   Make it yours - name, hospital logo, or icon
                 </span>
               </label>
@@ -120,11 +130,11 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
                 display: 'flex',
                 alignItems: 'flex-start',
                 gap: '12px',
-                padding: '10px 12px',
-                borderRadius: '8px',
+                padding: '12px 14px',
+                borderRadius: '10px',
                 cursor: 'pointer',
-                backgroundColor: isEmbroiderySelected === false ? '#F3F4F6' : 'transparent',
-                border: isEmbroiderySelected === false ? '1px solid #94a3b8' : '1px solid transparent',
+                backgroundColor: isEmbroiderySelected === false ? '#f8fafc' : 'transparent',
+                border: isEmbroiderySelected === false ? '1.5px solid #cbd5e1' : '1.5px solid transparent',
                 transition: 'all 0.2s',
               }}
             >
@@ -134,13 +144,13 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
                 name="embroidery"
                 checked={isEmbroiderySelected === false}
                 onChange={() => onToggleAddEmbroidery(false)}
-                style={{ marginTop: '3px', width: '18px', height: '18px', accentColor: '#1e1b4b', cursor: 'pointer', flexShrink: 0 }}
+                style={{ marginTop: '3px', width: '18px', height: '18px', accentColor: '#1b1b4d', cursor: 'pointer', flexShrink: 0 }}
               />
               <label htmlFor="dontShowEmbroidery" style={{ cursor: 'pointer', flex: 1, display: 'block' }}>
-                <strong style={{ display: 'block', color: '#1e1b4b', fontSize: '15px', fontWeight: 700, lineHeight: '1.3' }}>
+                <strong style={{ display: 'block', color: '#1b1b4d', fontSize: '16px', fontWeight: 800, lineHeight: '1.3' }}>
                   Skip for Now
                 </strong>
-                <span style={{ display: 'block', fontSize: '12px', color: '#554e65', marginTop: '3px', lineHeight: '1.4' }}>
+                <span style={{ display: 'block', fontSize: '13px', color: '#64748b', marginTop: '3px', fontWeight: 500, lineHeight: '1.4' }}>
                   and risk misplacing your scrubs
                 </span>
               </label>
@@ -152,7 +162,7 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #CBD5E1', paddingBottom: '12px', marginBottom: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{ fontSize: '16px' }}>✨</span>
-                <span style={{ fontWeight: 700, color: '#1e1b4b', fontSize: '15px' }}>
+                <span style={{ fontWeight: 700, color: '#1b1b4d', fontSize: '15px' }}>
                   Custom Embroidery Configured
                 </span>
               </div>
@@ -164,7 +174,7 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
 
                 <button
                   onClick={onOpenModal}
-                  style={{ fontSize: '12px', fontWeight: 700, color: '#1e1b4b', backgroundColor: '#ffffff', border: '1px solid #CBD5E1', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer' }}
+                  style={{ fontSize: '12px', fontWeight: 700, color: '#1b1b4d', backgroundColor: '#ffffff', border: '1px solid #CBD5E1', padding: '4px 10px', borderRadius: '4px', cursor: 'pointer' }}
                 >
                   EDIT
                 </button>
@@ -180,46 +190,53 @@ export const EmbroideryCard: React.FC<EmbroideryCardProps> = ({
             </div>
 
             {/* Customization Details Breakdown */}
-            <div className="text-xs text-gray-700 space-y-1 bg-white/80 p-3 rounded-lg border border-[#E0D8F3]">
-              <div className="flex justify-between">
-                <span className="font-semibold text-gray-500">Option:</span>
-                <span className="font-bold capitalize text-gray-900">
-                  {customization.selectedOption} Embroidery
-                </span>
+            <div style={{ background: 'white', padding: '12px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '13px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#64748b' }}>Option:</span>
+                <strong style={{ textTransform: 'capitalize' }}>{customization.selectedOption} Embroidery</strong>
               </div>
 
               {customization.line1 && (
-                <div className="flex justify-between">
-                  <span className="font-semibold text-gray-500">Text Line 1:</span>
-                  <span className="font-medium text-gray-900">{customization.line1}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#64748b' }}>Text Line 1:</span>
+                  <strong>{customization.line1}</strong>
                 </div>
               )}
 
               {customization.line2 && (
-                <div className="flex justify-between">
-                  <span className="font-semibold text-gray-500">Text Line 2:</span>
-                  <span className="font-medium text-gray-900">{customization.line2}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#64748b' }}>Text Line 2:</span>
+                  <strong>{customization.line2}</strong>
                 </div>
               )}
 
-              <div className="flex justify-between">
-                <span className="font-semibold text-gray-500">Font & Color:</span>
-                <span className="font-medium capitalize text-gray-900">
-                  {customization.fontStyle} | {customization.textColor}
-                </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#64748b' }}>Font & Color:</span>
+                <span style={{ textTransform: 'capitalize' }}>{customization.fontStyle} | {customization.textColor}</span>
               </div>
-
-              {customization.selectedIconId && (
-                <div className="flex justify-between">
-                  <span className="font-semibold text-gray-500">Icon:</span>
-                  <span className="font-medium capitalize text-gray-900">
-                    {customization.selectedIconId}
-                  </span>
-                </div>
-              )}
             </div>
           </div>
         )}
+      </div>
+
+      {/* Support subtext below box */}
+      <div style={{ marginTop: '14px', fontSize: '13px', color: '#64748b', lineHeight: '1.5', textAlign: 'left', padding: '0 4px' }}>
+        For any other customizations please contact our customer support on{' '}
+        <a
+          href="https://wa.me/918976488911?text=Hi!%20I%20have%20a%20question%20about%20Medvarn%20customization."
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ fontWeight: 800, color: '#0f172a', textDecoration: 'none' }}
+        >
+          WhatsApp
+        </a>{' '}
+        or mail us at{' '}
+        <a
+          href="mailto:info@medvarn.com"
+          style={{ fontWeight: 800, color: '#0f172a', textDecoration: 'none' }}
+        >
+          info@medvarn.com
+        </a>.
       </div>
     </div>
   );

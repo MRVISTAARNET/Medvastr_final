@@ -203,6 +203,58 @@ export default function ContactPage() {
           </div>
         </div>
 
+        {/* TALK TO MEDVARN FEATURE CARDS (WE'RE HERE TO HELP) */}
+        <div className="ct-talk-section">
+          <div className="ct-talk-sub">WE'RE HERE TO HELP</div>
+          <h2 className="ct-talk-title">TALK TO MEDVARN</h2>
+          
+          <div className="ct-talk-grid">
+            {/* 1. WHATSAPP US */}
+            <a
+              href="https://wa.me/918976488911?text=Hi!%20I%20have%20a%20question%20about%20Medvarn%20scrubs."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ct-talk-card"
+            >
+              <div className="ct-talk-icon-circle">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor">
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.713-1.458L0 24zm6.59-4.846c1.666.988 3.311 1.485 5.352 1.486 5.517 0 10.005-4.487 10.008-10.007.001-2.673-1.042-5.186-2.935-7.078C17.128 1.663 14.62 1.62 12.012 1.62c-5.522 0-10.014 4.488-10.017 10.009-.001 2.095.547 4.14 1.595 5.922L2.553 21.6l4.094-1.446zm9.046-5.437c.297.148.512.22.682.502.17.283.17 1.626-.69 2.476-.86.85-2.227.637-3.999-.071-1.771-.709-3.93-2.585-5.15-4.707-1.219-2.122-1.14-3.472-.234-4.38.906-.908 1.67-.85 1.84-.709.17.14.368.397.48.623.114.227.227.51.142.68-.086.17-.425.51-.623.708-.198.198-.425.425-.198.822.227.396.906 1.485 1.955 2.418 1.05.933 2.126 1.416 2.522 1.586.397.17.623.142.85-.113.227-.255.963-1.132 1.218-1.53.255-.396.51-.31.85-.17z" />
+                </svg>
+              </div>
+              <h3 className="ct-talk-card-title">WHATSAPP US</h3>
+              <div className="ct-talk-card-desc">Fastest chat with a human</div>
+              <div className="ct-talk-card-note">Replies in ~10 min, 10am-7pm</div>
+            </a>
+
+            {/* 2. TRACK MY ORDER */}
+            <a href="/track" className="ct-talk-card">
+              <div className="ct-talk-icon-circle">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                  <line x1="12" y1="22.08" x2="12" y2="12" />
+                </svg>
+              </div>
+              <h3 className="ct-talk-card-title">TRACK MY ORDER</h3>
+              <div className="ct-talk-card-desc">Order ID or AWB Tracking Number</div>
+              <div className="ct-talk-card-note">Self-serve · no waiting</div>
+            </a>
+
+            {/* 3. EMAIL SUPPORT */}
+            <a href="mailto:info@medvarn.com" className="ct-talk-card">
+              <div className="ct-talk-icon-circle">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                  <polyline points="22,6 12,13 2,6" />
+                </svg>
+              </div>
+              <h3 className="ct-talk-card-title">EMAIL SUPPORT</h3>
+              <div className="ct-talk-card-desc">info@medvarn.com</div>
+              <div className="ct-talk-card-note">Replies within 24 hrs</div>
+            </a>
+          </div>
+        </div>
+
         {/* Map Section */}
         <div className="ct-map-card">
           <h3 className="ct-map-heading">📍 Find Us Here</h3>
@@ -619,9 +671,98 @@ export default function ContactPage() {
           cursor: pointer;
         }
 
+        /* TALK TO MEDVARN SECTION */
+        .ct-talk-section {
+          margin-top: 48px;
+          text-align: center;
+        }
+        .ct-talk-sub {
+          font-size: 12px;
+          font-weight: 800;
+          color: #64748b;
+          letter-spacing: 1.5px;
+          margin-bottom: 6px;
+          text-transform: uppercase;
+        }
+        .ct-talk-title {
+          font-size: 26px;
+          font-weight: 900;
+          color: #0f172a;
+          margin: 0 0 32px;
+          letter-spacing: -0.02em;
+        }
+        .ct-talk-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 24px;
+        }
+        .ct-talk-card {
+          background: #ffffff;
+          border: 1.5px solid #cbd5e1;
+          border-radius: 20px;
+          padding: 36px 24px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          text-decoration: none !important;
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+        }
+        .ct-talk-card:hover {
+          transform: translateY(-6px);
+          border-color: #0f172a;
+          box-shadow: 0 12px 28px rgba(15, 23, 42, 0.12);
+        }
+        .ct-talk-icon-circle {
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          background: #0f172a;
+          color: #ffffff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 20px;
+          transition: transform 0.3s ease;
+        }
+        .ct-talk-card:hover .ct-talk-icon-circle {
+          transform: scale(1.1);
+          background: #008080;
+        }
+        .ct-talk-card-title {
+          font-size: 16px;
+          font-weight: 900;
+          color: #0f172a;
+          margin: 0 0 8px;
+          letter-spacing: 0.02em;
+          text-transform: uppercase;
+        }
+        .ct-talk-card-desc {
+          font-size: 13.5px;
+          font-weight: 600;
+          color: #334155;
+          margin-bottom: 4px;
+        }
+        .ct-talk-card-note {
+          font-size: 12px;
+          color: #64748b;
+          font-weight: 500;
+        }
+
+        @media (max-width: 840px) {
+          .ct-talk-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+          }
+          .ct-talk-card {
+            padding: 24px 20px;
+          }
+        }
+
         /* Map */
         .ct-map-card {
-          margin-top: 28px;
+          margin-top: 48px;
           background: white;
           padding: 36px;
           border-radius: 24px;

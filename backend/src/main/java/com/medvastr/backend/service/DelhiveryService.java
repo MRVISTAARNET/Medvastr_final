@@ -36,16 +36,16 @@ public class DelhiveryService {
     @Value("${delhivery.enabled:true}")
     private boolean enabled;
 
-    @Value("${delhivery.token:03fdcd7479f360304f38679afdb5f61df133fde9}")
+    @Value("${delhivery.token:}")
     private String token;
 
-    @Value("${delhivery.client_name:NAMOKAAR MEDVARN B2C}")
+    @Value("${delhivery.client_name:}")
     private String clientName;
 
-    @Value("${delhivery.pickup_location:NAMOKAAR MEDVARN B2C}")
+    @Value("${delhivery.pickup_location:}")
     private String pickupLocation;
 
-    @Value("${delhivery.pickup_pincode:400063}")
+    @Value("${delhivery.pickup_pincode:}")
     private String pickupPincode;
 
     @Value("${delhivery.base_url:https://track.delhivery.com}")
@@ -150,12 +150,16 @@ public class DelhiveryService {
             shipmentsArr.put(sObj);
             rootObj.put("shipments", shipmentsArr);
 
+            // Clean and sanitize token
+            String cleanToken = (token != null) ? token.trim().replaceAll("^\"|\"$", "").replaceAll("^'|'$", "") : "";
+
             // Send URL Encoded Form Data
             String apiUrl = baseUrl.replaceAll("/+$", "") + "/api/cmu/create.json";
 
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            headers.set("Authorization", "Token " + token.trim());
+            headers.set("Authorization", "Token " + cleanToken);
+            headers.set("Accept", "application/json");
 
             MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
             map.add("format", "json");
@@ -163,7 +167,7 @@ public class DelhiveryService {
 
             HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(map, headers);
 
-            log.info("[Delhivery] POST Request to {}", apiUrl);
+            log.info("[Delhivery] POST Request to {} with Token prefix {}", apiUrl, (cleanToken.length() > 6 ? cleanToken.substring(0, 4) + "..." : "EMPTY"));
             ResponseEntity<String> res = restTemplate.postForEntity(apiUrl, requestEntity, String.class);
 
             log.info("[Delhivery] Response Status: {}, Body: {}", res.getStatusCode(), res.getBody());
@@ -228,6 +232,16 @@ public class DelhiveryService {
                 response.put("message", "HTTP " + res.getStatusCode() + " from Delhivery API");
                 return response;
             }
+        } catch (org.springframework.web.client.HttpStatusCodeException e) {
+            String errBody = e.getResponseBodyAsString();
+            log.error("[Delhivery HTTP Error] Status: {}, Body: {}", e.getStatusCode(), errBody);
+            order.setShiprocketSyncStatus("FAILED");
+            order.setShiprocketSyncMessage("[Delhivery " + e.getStatusCode() + "] " + (errBody.isBlank() ? e.getMessage() : errBody));
+            orderRepository.save(order);
+
+            response.put("success", false);
+            response.put("message", "Delhivery API Error (" + e.getStatusCode() + "): " + (errBody.isBlank() ? "Invalid API Token or Unauthorized IP. Check token in Delhivery One Panel." : errBody));
+            return response;
         } catch (Exception e) {
             log.error("[Delhivery] Error pushing order {}: {}", order.getOrderNumber(), e.getMessage(), e);
             order.setShiprocketSyncStatus("FAILED");

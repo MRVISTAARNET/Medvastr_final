@@ -112,8 +112,9 @@ function cartReducer(state: CartItem[], action: any): CartItem[] {
       return action.data;
     case "ADD": {
       const { p, ci, sz, qty = 1, embroidery } = action;
-      const k = embroidery ? `${p.id}-${ci}-${sz}-emb-${Date.now()}` : `${p.id}-${ci}-${sz}`;
-      const existing = !embroidery ? state.find((i) => i.k === k) : null;
+      const embKey = embroidery ? `-emb-${(embroidery.line1 || '').trim()}-${(embroidery.line2 || '').trim()}-${embroidery.selectedOption || ''}` : '';
+      const k = `${p.id}-${ci}-${sz}${embKey}`;
+      const existing = state.find((i) => i.k === k);
       if (existing) {
         return state.map((i) => (i.k === k ? { ...i, qty: i.qty + qty } : i));
       }
@@ -233,7 +234,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           if (cartRes.success && cartRes.data && Array.isArray(cartRes.data.items)) {
             const beCart = cartRes.data.items.map((i: any) => ({
               id: i.productId,
-              k: `${i.productId}-${0}-${i.size}`, // Simplification for key
+              k: i.id ? `be-item-${i.id}` : `${i.productId}-${i.colorName || i.colorHex || '0'}-${i.size}`,
               name: i.productName,
               short: i.productName,
               price: i.price,

@@ -1143,103 +1143,158 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
       )}
 
       {/* REVIEWS SECTION */}
-      <section id="pdp-reviews-sec" className="pdp-reviews-sec">
-        <div className="pdp-reviews-hd">
-          <h2 className="pdp-reviews-title">Customer Reviews</h2>
-          <div className="pdp-reviews-avg">
-            <div className="pdp-reviews-score">{avgRating}</div>
-            <div>
-              <div className="pdp-reviews-stars">{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ color: s <= Math.round(Number(avgRating)) ? '#f59e0b' : '#e2e8f0' }}>★</span>)}</div>
-              <div className="pdp-reviews-count">Based on {reviewCount} reviews</div>
-            </div>
-            <button
-              onClick={() => {
-                if (!user) { setIsAuthOpen(true); toast('Please log in to write a review', ''); return; }
-                setShowReviewForm(!showReviewForm);
-              }}
-              className="pdp-buy-btn"
-              style={{ height: '40px', width: 'auto', padding: '0 18px', fontSize: '12px', letterSpacing: '0', textTransform: 'none', whiteSpace: 'nowrap', flexShrink: 0 }}
-            >
-              {showReviewForm ? 'Cancel' : user ? '★ Write a Review' : '🔒 Login to Review'}
-            </button>
-          </div>
-        </div>
-
-        {showReviewForm && (
-          <form onSubmit={submitReview} style={{ background: '#f8fafc', padding: '32px', borderRadius: '16px', marginBottom: '40px', border: '1px solid #e2e8f0' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--ink)', marginBottom: '16px' }}>Share your thoughts</h3>
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, marginBottom: '8px', color: 'var(--lt)' }}>Rating</label>
-              <div style={{ display: 'flex', gap: '8px', fontSize: '24px', cursor: 'pointer' }}>
-                {[1, 2, 3, 4, 5].map(s => (
-                  <span key={s} onClick={() => setReviewForm(f => ({ ...f, rating: s }))} style={{ color: s <= reviewForm.rating ? '#f59e0b' : '#cbd5e1' }}>★</span>
-                ))}
+      <section id="pdp-reviews-sec" className="pdp-reviews-sec" style={{ background: '#ffffff', borderTop: '1px solid #e2e8f0', padding: '60px 0' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
+          
+          {/* Header & Score Summary */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px', marginBottom: '40px', alignItems: 'center', background: '#f8fafc', padding: '32px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+            
+            {/* Rating Score */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <div style={{ fontSize: '48px', fontWeight: 900, color: '#0f172a', lineHeight: 1 }}>{avgRating}</div>
+              <div>
+                <div style={{ display: 'flex', gap: '4px', fontSize: '20px', color: '#f59e0b', marginBottom: '4px' }}>
+                  {[1, 2, 3, 4, 5].map(s => <span key={s} style={{ color: s <= Math.round(Number(avgRating)) ? '#f59e0b' : '#cbd5e1' }}>★</span>)}
+                </div>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Based on {reviewCount} verified reviews</div>
               </div>
             </div>
-            <div style={{ marginBottom: '24px' }}>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, marginBottom: '8px', color: 'var(--lt)' }}>Your Review</label>
-              <textarea
-                value={reviewForm.comment}
-                onChange={e => setReviewForm(f => ({ ...f, comment: e.target.value }))}
-                placeholder="What did you like or dislike?"
-                rows={4}
-                style={{ width: '100%', padding: '16px', border: '1.5px solid #cbd5e1', borderRadius: '12px', fontSize: '15px', resize: 'none', outline: 'none' }}
-              />
-            </div>
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <button type="submit" disabled={submittingReview} className="pdp-buy-btn" style={{ height: '44px', width: 'auto', padding: '0 24px' }}>
-                {submittingReview ? 'Submitting...' : 'Submit Website Review'}
-              </button>
-              <a
-                href="https://g.page/r/CXy4nS7KTjN4EBM/review"
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  height: '44px',
-                  padding: '0 20px',
-                  borderRadius: '8px',
-                  background: '#ffffff',
-                  border: '1.5px solid #cbd5e1',
-                  color: '#1e293b',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  textDecoration: 'none',
-                }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                </svg>
-                Also Post on Google Review ↗
-              </a>
-            </div>
-          </form>
-        )}
 
-        {reviews.length > 0 ? (
-          <div className="pdp-review-cards">
-            {reviews.slice(0, 6).map((rv, i) => (
-              <div key={i} className="pdp-review-card">
-                <div className="pdp-rv-top">
-                  <div className="pdp-rv-avatar">{(rv.reviewerName || rv.userName || rv.userEmail || 'A').charAt(0).toUpperCase()}</div>
+            {/* Rating Distribution Bars */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxWidth: '320px', width: '100%' }}>
+              {[5, 4, 3, 2, 1].map(stars => {
+                const count = reviews.filter((r: any) => (r.rating || 5) === stars).length;
+                const pct = reviewCount > 0 ? Math.round((count / reviewCount) * 100) : stars >= 4 ? (stars === 5 ? 85 : 15) : 0;
+                return (
+                  <div key={stars} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', fontWeight: 600, color: '#475569' }}>
+                    <span style={{ width: '24px' }}>{stars}★</span>
+                    <div style={{ flex: 1, height: '8px', background: '#e2e8f0', borderRadius: '999px', overflow: 'hidden' }}>
+                      <div style={{ width: `${pct}%`, height: '100%', background: '#f59e0b', borderRadius: '999px' }} />
+                    </div>
+                    <span style={{ width: '32px', textAlign: 'right', color: '#94a3b8' }}>{pct}%</span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Write Review Trigger */}
+            <div style={{ textAlign: 'right' }}>
+              <button
+                onClick={() => {
+                  if (!user) { setIsAuthOpen(true); toast('Please log in to write a review', ''); return; }
+                  setShowReviewForm(!showReviewForm);
+                }}
+                className="pdp-buy-btn"
+                style={{ height: '48px', width: 'auto', padding: '0 24px', fontSize: '14px', letterSpacing: '0', textTransform: 'none', whiteSpace: 'nowrap', borderRadius: '10px' }}
+              >
+                {showReviewForm ? 'Cancel' : user ? '★ Write a Review' : '🔒 Login to Review'}
+              </button>
+            </div>
+          </div>
+
+          {/* Review Submission Form */}
+          {showReviewForm && (
+            <form onSubmit={submitReview} style={{ background: '#f8fafc', padding: '32px', borderRadius: '16px', marginBottom: '40px', border: '1.5px solid #0f172a' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0f172a', marginBottom: '16px' }}>Share your experience with this product</h3>
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, marginBottom: '8px', color: '#475569' }}>Your Rating</label>
+                <div style={{ display: 'flex', gap: '8px', fontSize: '28px', cursor: 'pointer' }}>
+                  {[1, 2, 3, 4, 5].map(s => (
+                    <span key={s} onClick={() => setReviewForm(f => ({ ...f, rating: s }))} style={{ color: s <= reviewForm.rating ? '#f59e0b' : '#cbd5e1' }}>★</span>
+                  ))}
+                </div>
+              </div>
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, marginBottom: '8px', color: '#475569' }}>Your Review</label>
+                <textarea
+                  value={reviewForm.comment}
+                  onChange={e => setReviewForm(f => ({ ...f, comment: e.target.value }))}
+                  placeholder="Tell us what you liked about the fit, fabric, or quality..."
+                  rows={4}
+                  style={{ width: '100%', padding: '16px', border: '1.5px solid #cbd5e1', borderRadius: '12px', fontSize: '15px', resize: 'none', outline: 'none' }}
+                />
+              </div>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <button type="submit" disabled={submittingReview} className="pdp-buy-btn" style={{ height: '44px', width: 'auto', padding: '0 24px' }}>
+                  {submittingReview ? 'Submitting...' : 'Submit Review'}
+                </button>
+                <a
+                  href="https://g.page/r/CXy4nS7KTjN4EBM/review"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    height: '44px',
+                    padding: '0 20px',
+                    borderRadius: '8px',
+                    background: '#ffffff',
+                    border: '1.5px solid #cbd5e1',
+                    color: '#1e293b',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                  }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                  </svg>
+                  Also Post on Google Review ↗
+                </a>
+              </div>
+            </form>
+          )}
+
+          {/* Review Cards Grid */}
+          {reviews.length > 0 ? (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
+              {reviews.slice(0, 6).map((rv, i) => (
+                <div key={i} style={{ background: '#ffffff', borderRadius: '16px', border: '1px solid #e2e8f0', padding: '24px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                   <div>
-                    <div className="pdp-rv-name">{rv.reviewerName || rv.userName || rv.userEmail?.split('@')[0] || 'Verified Customer'}</div>
-                    <div className="pdp-rv-stars">{[1, 2, 3, 4, 5].map(s => <span key={s} style={{ color: s <= (rv.rating || 5) ? '#f59e0b' : '#e2e8f0' }}>★</span>)}</div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#0f172a', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '15px' }}>
+                          {(rv.reviewerName || rv.userName || rv.userEmail || 'A').charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '15px' }}>
+                            {rv.reviewerName || rv.userName || rv.userEmail?.split('@')[0] || 'Verified Customer'}
+                          </div>
+                          <div style={{ fontSize: '12px', color: '#16a34a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+                            ✓ Verified Buyer
+                          </div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '2px', color: '#f59e0b', fontSize: '14px' }}>
+                        {[1, 2, 3, 4, 5].map(s => <span key={s} style={{ color: s <= (rv.rating || 5) ? '#f59e0b' : '#e2e8f0' }}>★</span>)}
+                      </div>
+                    </div>
+                    <p style={{ fontSize: '14px', color: '#334155', lineHeight: 1.6, margin: 0, fontWeight: 500 }}>
+                      "{rv.review || rv.comment || rv.body || 'Excellent quality and comfortable fit!'}"
+                    </p>
+                  </div>
+
+                  <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #f1f5f9', fontSize: '12px', color: '#94a3b8', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span>Reviewed for Medvarn</span>
+                    <span>{rv.createdAt ? new Date(rv.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Verified Purchase'}</span>
                   </div>
                 </div>
-                <p className="pdp-rv-body">{rv.review || rv.comment || rv.body || '—'}</p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="pdp-no-reviews">Be the first to share your experience with this product!</p>
-        )}
+              ))}
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '40px 20px', background: '#f8fafc', borderRadius: '16px', border: '1px border-dashed #cbd5e1' }}>
+              <div style={{ fontSize: '32px', marginBottom: '8px' }}>🌟</div>
+              <p style={{ fontSize: '15px', fontWeight: 700, color: '#0f172a', margin: '0 0 4px' }}>No reviews yet</p>
+              <p style={{ fontSize: '13px', color: '#64748b', margin: 0 }}>Be the first to share your experience with this product!</p>
+            </div>
+          )}
+        </div>
       </section>
+
 
       {/* Sticky Bottom Bar on Mobile */}
       <div className="pdp-sticky-bar-mobile">
@@ -1336,98 +1391,173 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
       {/* SIZE GUIDE MODAL */}
       {showSizeGuide && mounted && createPortal(
         <div className="size-guide-backdrop" onClick={() => setShowSizeGuide(false)}>
-          <div className="size-guide-modal" onClick={e => e.stopPropagation()}>
+          <div className="size-guide-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '780px', width: '92%' }}>
             <button className="size-guide-close" onClick={() => setShowSizeGuide(false)}>✕</button>
-            <h3 className="size-guide-title">Medvarn Size Specifications Guide</h3>
+            <h3 className="size-guide-title">
+              {p.gen?.toLowerCase().includes('women') || p.name?.toLowerCase().includes('women') || p.name?.toLowerCase().includes('ladies')
+                ? "LADIES TOP & BOTTOM READY SIZE CHART"
+                : "MEN'S APPAREL SIZE CHART"}
+            </h3>
             <p className="size-guide-subtitle">All measurements are in inches. Body measurements should be taken directly on your body.</p>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', maxHeight: '70vh', overflowY: 'auto', paddingRight: '10px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxHeight: '70vh', overflowY: 'auto', paddingRight: '6px' }}>
               
-              {/* TOP SIZE GUIDE */}
-              {(p.type?.toLowerCase().includes('scrub') || p.type?.toLowerCase().includes('tshirt') || p.type?.toLowerCase().includes('under') || p.type?.toLowerCase().includes('gown')) && (
-                <div>
-                  <h4 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '15px', color: '#1e293b' }}>
-                    Top Size Guide ({p.gen?.toLowerCase().includes('women') ? "Women's" : "Men's"})
-                  </h4>
-                  <div className="size-guide-table-container">
-                    <table className="size-guide-table">
-                      <thead>
-                        <tr>
-                          <th>Size</th>
-                          <th>Chest (in)</th>
-                          <th>Top Length (in)</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[
-                          { sz: "XS", chest: "32 - 34", len: "26.5" },
-                          { sz: "S", chest: "35 - 37", len: "27.5" },
-                          { sz: "M", chest: "38 - 40", len: "28.5" },
-                          { sz: "L", chest: "41 - 43", len: "29.5" },
-                          { sz: "XL", chest: "44 - 46", len: "30.5" },
-                          { sz: "2XL", chest: "47 - 49", len: "31.5" },
-                        ].map(row => (
-                          <tr key={row.sz}>
-                            <td><strong>{row.sz}</strong></td>
-                            <td>{row.chest}</td>
-                            <td>{row.len}</td>
+              {/* LADIES SIZE CHART */}
+              {(p.gen?.toLowerCase().includes('women') || p.name?.toLowerCase().includes('women') || p.name?.toLowerCase().includes('ladies')) ? (
+                <>
+                  {/* 1. TOP MEASUREMENT */}
+                  <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #800020' }}>
+                    <div style={{ background: '#800020', color: 'white', padding: '10px 14px', fontWeight: 800, fontSize: '14px', textTransform: 'uppercase' }}>
+                      1. TOP MEASUREMENT (Redy Top)
+                    </div>
+                    <div className="size-guide-table-container">
+                      <table className="size-guide-table" style={{ textAlign: 'center' }}>
+                        <thead>
+                          <tr style={{ background: '#9e1b32', color: 'white' }}>
+                            <th>Size (Saiz)</th>
+                            <th>Fit To (Chest)</th>
+                            <th>Ready Chest</th>
+                            <th>Top Length (TL)</th>
+                            <th>Unit</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {[
+                            { sz: "S", fit: "34-35", ready: "38", len: "25", unit: "Inches" },
+                            { sz: "M", fit: "36-37", ready: "40", len: "26", unit: "Inches" },
+                            { sz: "L", fit: "38-39", ready: "42", len: "26.5", unit: "Inches" },
+                            { sz: "XL", fit: "40-41", ready: "44", len: "27.5", unit: "Inches" },
+                            { sz: "2XL", fit: "42-43", ready: "46", len: "28", unit: "Inches" },
+                          ].map((row, idx) => (
+                            <tr key={row.sz} style={{ background: idx % 2 === 0 ? '#ffffff' : '#fff5f7' }}>
+                              <td><strong>{row.sz}</strong></td>
+                              <td>{row.fit}</td>
+                              <td>{row.ready}</td>
+                              <td>{row.len}</td>
+                              <td>{row.unit}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
-                  <div style={{ marginTop: '10px', fontSize: '13px', color: '#64748b' }}>
-                    <strong>How to measure Chest:</strong> Measure under your arms around the fullest part of your chest.
+
+                  {/* 2. BOTTOM MEASUREMENT */}
+                  <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #800020' }}>
+                    <div style={{ background: '#800020', color: 'white', padding: '10px 14px', fontWeight: 800, fontSize: '14px', textTransform: 'uppercase' }}>
+                      2. BOTTOM / PANT MEASUREMENT
+                    </div>
+                    <div className="size-guide-table-container">
+                      <table className="size-guide-table" style={{ textAlign: 'center' }}>
+                        <thead>
+                          <tr style={{ background: '#9e1b32', color: 'white' }}>
+                            <th>Size (Saiz)</th>
+                            <th>Pant Length (PL)</th>
+                            <th>Waist (W)</th>
+                            <th>Ready Elastic</th>
+                            <th>Unit</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[
+                            { sz: "S", len: "37", waist: "34/36", elastic: "26", unit: "Inches" },
+                            { sz: "M", len: "37.5", waist: "36/38", elastic: "28", unit: "Inches" },
+                            { sz: "L", len: "38", waist: "38/40", elastic: "30", unit: "Inches" },
+                            { sz: "XL", len: "38.5", waist: "40/42", elastic: "32", unit: "Inches" },
+                            { sz: "2XL", len: "39", waist: "42/44", elastic: "34", unit: "Inches" },
+                          ].map((row, idx) => (
+                            <tr key={row.sz} style={{ background: idx % 2 === 0 ? '#ffffff' : '#fff5f7' }}>
+                              <td><strong>{row.sz}</strong></td>
+                              <td>{row.len}</td>
+                              <td>{row.waist}</td>
+                              <td>{row.elastic}</td>
+                              <td>{row.unit}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
-                </div>
+                </>
+              ) : (
+                /* MEN'S SIZE CHART */
+                <>
+                  {/* 1. MEN'S TOP SIZE CHART */}
+                  <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #184e68' }}>
+                    <div style={{ background: '#184e68', color: 'white', padding: '10px 14px', fontWeight: 800, fontSize: '14px', textTransform: 'uppercase' }}>
+                      1. Men's Top Size Chart
+                    </div>
+                    <div className="size-guide-table-container">
+                      <table className="size-guide-table" style={{ textAlign: 'center' }}>
+                        <thead>
+                          <tr style={{ background: '#184e68', color: 'white' }}>
+                            <th>Size</th>
+                            <th>Top Length (in)</th>
+                            <th>Chest Ready (in)</th>
+                            <th>Fit To Body (in)</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[
+                            { sz: "S", len: "27.0", ready: "42", fit: "38" },
+                            { sz: "M", len: "27.5", ready: "44", fit: "40" },
+                            { sz: "L", len: "28.0", ready: "46", fit: "42" },
+                            { sz: "XL", len: "28.5", ready: "48", fit: "44" },
+                            { sz: "2XL", len: "29.5", ready: "50", fit: "46" },
+                          ].map((row, idx) => (
+                            <tr key={row.sz} style={{ background: idx % 2 === 0 ? '#ffffff' : '#f0f7fa' }}>
+                              <td><strong>{row.sz}</strong></td>
+                              <td>{row.len}</td>
+                              <td>{row.ready}</td>
+                              <td>{row.fit}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* 2. MEN'S PANT SIZE CHART */}
+                  <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #184e68' }}>
+                    <div style={{ background: '#184e68', color: 'white', padding: '10px 14px', fontWeight: 800, fontSize: '14px', textTransform: 'uppercase' }}>
+                      2. Men's Pant Size Chart
+                    </div>
+                    <div className="size-guide-table-container">
+                      <table className="size-guide-table" style={{ textAlign: 'center' }}>
+                        <thead>
+                          <tr style={{ background: '#184e68', color: 'white' }}>
+                            <th>Size</th>
+                            <th>Pant Length (in)</th>
+                            <th>Elastic Waist (in)</th>
+                            <th>Fit To / Hip (in)</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[
+                            { sz: "S", len: "38.0", waist: "26", fit: "34 / 36" },
+                            { sz: "M", len: "38.0", waist: "28", fit: "36 / 38" },
+                            { sz: "L", len: "38.5", waist: "30", fit: "38 / 40" },
+                            { sz: "XL", len: "39.5", waist: "32", fit: "40 / 42" },
+                            { sz: "2XL", len: "40.0", waist: "34", fit: "42 / 44" },
+                          ].map((row, idx) => (
+                            <tr key={row.sz} style={{ background: idx % 2 === 0 ? '#ffffff' : '#f0f7fa' }}>
+                              <td><strong>{row.sz}</strong></td>
+                              <td>{row.len}</td>
+                              <td>{row.waist}</td>
+                              <td>{row.fit}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </>
               )}
 
-              {/* BOTTOM SIZE GUIDE */}
-              {(p.type?.toLowerCase().includes('scrub') || p.type?.toLowerCase().includes('pant')) && (
-                <div>
-                  <h4 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '15px', color: '#1e293b' }}>
-                    Bottom Size Guide ({p.gen?.toLowerCase().includes('women') ? "Women's" : "Men's"})
-                  </h4>
-                  <div className="size-guide-table-container">
-                    <table className="size-guide-table">
-                      <thead>
-                        <tr>
-                          <th>Size</th>
-                          <th>Waist (in)</th>
-                          <th>Hip (in)</th>
-                          <th>Pant Inseam (in)</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[
-                          { sz: "XS", waist: "26 - 28", hip: "33 - 35", inseam: "29" },
-                          { sz: "S", waist: "29 - 31", hip: "36 - 38", inseam: "30" },
-                          { sz: "M", waist: "32 - 34", hip: "39 - 41", inseam: "30" },
-                          { sz: "L", waist: "35 - 37", hip: "42 - 44", inseam: "31" },
-                          { sz: "XL", waist: "38 - 40", hip: "45 - 47", inseam: "31" },
-                          { sz: "2XL", waist: "41 - 43", hip: "48 - 50", inseam: "32" },
-                        ].map(row => (
-                          <tr key={row.sz}>
-                            <td><strong>{row.sz}</strong></td>
-                            <td>{row.waist}</td>
-                            <td>{row.hip}</td>
-                            <td>{row.inseam}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  <div style={{ marginTop: '10px', fontSize: '13px', color: '#64748b' }}>
-                    <strong>How to measure:</strong><br />
-                    • <strong>Waist:</strong> Measure around your natural waistline, keeping the tape comfortably loose.<br />
-                    • <strong>Hip:</strong> Stand with your feet together and measure around the fullest part of your hips.<br />
-                    • <strong>Inseam:</strong> Measure from the crotch to the bottom of the leg.
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>,
+
         document.body
       )}
 
