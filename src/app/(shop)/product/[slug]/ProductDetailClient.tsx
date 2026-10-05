@@ -1462,29 +1462,32 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
       {/* SIZE GUIDE MODAL */}
       {showSizeGuide && mounted && createPortal(
         <div className="size-guide-backdrop" onClick={() => setShowSizeGuide(false)}>
-          <div className="size-guide-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '780px', width: '92%' }}>
+          <div className="size-guide-modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '840px', width: '92%', maxHeight: '88vh', display: 'flex', flexDirection: 'column' }}>
             <button className="size-guide-close" onClick={() => setShowSizeGuide(false)}>✕</button>
-            <h3 className="size-guide-title">
-              {p.gen?.toLowerCase().includes('women') || p.name?.toLowerCase().includes('women') || p.name?.toLowerCase().includes('ladies')
-                ? "LADIES TOP & BOTTOM READY SIZE CHART"
-                : "MEN'S APPAREL SIZE CHART"}
+            <h3 className="size-guide-title" style={{ fontSize: '22px', fontWeight: 800, color: '#0f172a', marginBottom: '6px' }}>
+              Medvarn Size Guide
             </h3>
-            <p className="size-guide-subtitle">All measurements are in inches. Body measurements should be taken directly on your body.</p>
+            <p className="size-guide-subtitle" style={{ fontSize: '14px', color: '#64748b', marginBottom: '20px' }}>
+              All measurements are in inches. Body measurements should be taken directly on your body.
+            </p>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', maxHeight: '70vh', overflowY: 'auto', paddingRight: '6px' }}>
-              
+            <div style={{ overflowY: 'auto', paddingRight: '6px', flex: 1 }}>
               {/* LADIES SIZE CHART */}
               {(p.gen?.toLowerCase().includes('women') || p.name?.toLowerCase().includes('women') || p.name?.toLowerCase().includes('ladies')) ? (
                 <>
+                  <div style={{ background: '#700018', color: '#ffffff', textTransform: 'uppercase', padding: '14px 20px', textAlign: 'center', fontSize: '16px', fontWeight: 900, letterSpacing: '1px', borderRadius: '12px 12px 0 0', marginBottom: '20px' }}>
+                    LADIES TOP & BOTTOM READY SIZE CHART
+                  </div>
+
                   {/* 1. TOP MEASUREMENT */}
-                  <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #800020' }}>
-                    <div style={{ background: '#800020', color: 'white', padding: '10px 14px', fontWeight: 800, fontSize: '14px', textTransform: 'uppercase' }}>
+                  <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1.5px solid #700018', marginBottom: '24px' }}>
+                    <div style={{ background: '#9e1b32', color: '#ffffff', padding: '10px 16px', fontWeight: 800, fontSize: '14px', textTransform: 'uppercase' }}>
                       1. TOP MEASUREMENT (Redy Top)
                     </div>
                     <div className="size-guide-table-container">
                       <table className="size-guide-table" style={{ textAlign: 'center' }}>
                         <thead>
-                          <tr style={{ background: '#9e1b32', color: 'white' }}>
+                          <tr style={{ background: '#700018', color: '#ffffff' }}>
                             <th>Size (Saiz)</th>
                             <th>Fit To (Chest)</th>
                             <th>Ready Chest</th>
@@ -1499,6 +1502,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                             { sz: "L", fit: "38-39", ready: "42", len: "26.5", unit: "Inches" },
                             { sz: "XL", fit: "40-41", ready: "44", len: "27.5", unit: "Inches" },
                             { sz: "2XL", fit: "42-43", ready: "46", len: "28", unit: "Inches" },
+                            { sz: "3XL", fit: "44-45", ready: "48", len: "28.5", unit: "Inches" },
                           ].map((row, idx) => (
                             <tr key={row.sz} style={{ background: idx % 2 === 0 ? '#ffffff' : '#fff5f7' }}>
                               <td><strong>{row.sz}</strong></td>
@@ -1514,14 +1518,14 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                   </div>
 
                   {/* 2. BOTTOM MEASUREMENT */}
-                  <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #800020' }}>
-                    <div style={{ background: '#800020', color: 'white', padding: '10px 14px', fontWeight: 800, fontSize: '14px', textTransform: 'uppercase' }}>
+                  <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1.5px solid #700018' }}>
+                    <div style={{ background: '#9e1b32', color: '#ffffff', padding: '10px 16px', fontWeight: 800, fontSize: '14px', textTransform: 'uppercase' }}>
                       2. BOTTOM / PANT MEASUREMENT
                     </div>
                     <div className="size-guide-table-container">
                       <table className="size-guide-table" style={{ textAlign: 'center' }}>
                         <thead>
-                          <tr style={{ background: '#9e1b32', color: 'white' }}>
+                          <tr style={{ background: '#700018', color: '#ffffff' }}>
                             <th>Size (Saiz)</th>
                             <th>Pant Length (PL)</th>
                             <th>Waist (W)</th>
@@ -1536,6 +1540,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                             { sz: "L", len: "38", waist: "38/40", elastic: "30", unit: "Inches" },
                             { sz: "XL", len: "38.5", waist: "40/42", elastic: "32", unit: "Inches" },
                             { sz: "2XL", len: "39", waist: "42/44", elastic: "34", unit: "Inches" },
+                            { sz: "3XL", len: "39.5", waist: "44/46", elastic: "36", unit: "Inches" },
                           ].map((row, idx) => (
                             <tr key={row.sz} style={{ background: idx % 2 === 0 ? '#ffffff' : '#fff5f7' }}>
                               <td><strong>{row.sz}</strong></td>
@@ -1553,15 +1558,19 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               ) : (
                 /* MEN'S SIZE CHART */
                 <>
+                  <div style={{ background: '#0b2545', color: '#ffffff', textTransform: 'uppercase', padding: '14px 20px', textAlign: 'center', fontSize: '16px', fontWeight: 900, letterSpacing: '1px', borderRadius: '12px 12px 0 0', marginBottom: '20px' }}>
+                    MEN'S APPAREL SIZE CHART
+                  </div>
+
                   {/* 1. MEN'S TOP SIZE CHART */}
-                  <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #184e68' }}>
-                    <div style={{ background: '#184e68', color: 'white', padding: '10px 14px', fontWeight: 800, fontSize: '14px', textTransform: 'uppercase' }}>
+                  <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1.5px solid #0b2545', marginBottom: '24px' }}>
+                    <div style={{ background: '#134074', color: '#ffffff', padding: '10px 16px', fontWeight: 800, fontSize: '14px', textTransform: 'uppercase' }}>
                       1. Men's Top Size Chart
                     </div>
                     <div className="size-guide-table-container">
                       <table className="size-guide-table" style={{ textAlign: 'center' }}>
                         <thead>
-                          <tr style={{ background: '#184e68', color: 'white' }}>
+                          <tr style={{ background: '#0b2545', color: '#ffffff' }}>
                             <th>Size</th>
                             <th>Top Length (in)</th>
                             <th>Chest Ready (in)</th>
@@ -1575,6 +1584,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                             { sz: "L", len: "28.0", ready: "46", fit: "42" },
                             { sz: "XL", len: "28.5", ready: "48", fit: "44" },
                             { sz: "2XL", len: "29.5", ready: "50", fit: "46" },
+                            { sz: "3XL", len: "30.0", ready: "52", fit: "48" },
                           ].map((row, idx) => (
                             <tr key={row.sz} style={{ background: idx % 2 === 0 ? '#ffffff' : '#f0f7fa' }}>
                               <td><strong>{row.sz}</strong></td>
@@ -1589,14 +1599,14 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                   </div>
 
                   {/* 2. MEN'S PANT SIZE CHART */}
-                  <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #184e68' }}>
-                    <div style={{ background: '#184e68', color: 'white', padding: '10px 14px', fontWeight: 800, fontSize: '14px', textTransform: 'uppercase' }}>
+                  <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1.5px solid #0b2545' }}>
+                    <div style={{ background: '#134074', color: '#ffffff', padding: '10px 16px', fontWeight: 800, fontSize: '14px', textTransform: 'uppercase' }}>
                       2. Men's Pant Size Chart
                     </div>
                     <div className="size-guide-table-container">
                       <table className="size-guide-table" style={{ textAlign: 'center' }}>
                         <thead>
-                          <tr style={{ background: '#184e68', color: 'white' }}>
+                          <tr style={{ background: '#0b2545', color: '#ffffff' }}>
                             <th>Size</th>
                             <th>Pant Length (in)</th>
                             <th>Elastic Waist (in)</th>
@@ -1610,6 +1620,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                             { sz: "L", len: "38.5", waist: "30", fit: "38 / 40" },
                             { sz: "XL", len: "39.5", waist: "32", fit: "40 / 42" },
                             { sz: "2XL", len: "40.0", waist: "34", fit: "42 / 44" },
+                            { sz: "3XL", len: "40.5", waist: "36", fit: "44 / 46" },
                           ].map((row, idx) => (
                             <tr key={row.sz} style={{ background: idx % 2 === 0 ? '#ffffff' : '#f0f7fa' }}>
                               <td><strong>{row.sz}</strong></td>
