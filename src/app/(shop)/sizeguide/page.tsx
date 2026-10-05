@@ -45,37 +45,37 @@ export default function SizeGuidePage() {
       
       {/* Hero Header */}
       <div style={{
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)',
+        background: 'linear-gradient(135deg, #0b2545 0%, #134074 100%)',
         borderRadius: '24px',
-        padding: '48px 40px',
+        padding: '52px 40px',
         marginBottom: '40px',
-        color: 'white',
+        color: '#ffffff',
         textAlign: 'center',
-        boxShadow: '0 12px 36px rgba(15, 23, 42, 0.12)'
+        boxShadow: '0 12px 36px rgba(11, 37, 69, 0.18)'
       }}>
-        <h1 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', fontWeight: 900, margin: '0 0 12px', letterSpacing: '-0.02em' }}>
+        <h1 style={{ fontSize: 'clamp(2rem, 4vw, 2.75rem)', fontWeight: 900, margin: '0 0 14px', color: '#ffffff', letterSpacing: '-0.02em', textShadow: '0 2px 4px rgba(0,0,0,0.3)' }}>
           Medvarn Size Guide
         </h1>
-        <p style={{ fontSize: '16px', color: 'rgba(255, 255, 255, 0.8)', maxWidth: '640px', margin: '0 auto', lineHeight: 1.6 }}>
+        <p style={{ fontSize: '17px', color: '#e2e8f0', maxWidth: '680px', margin: '0 auto', lineHeight: 1.6, fontWeight: 500 }}>
           Find your perfect fit for medical scrubs and workwear. All measurements are tailored for maximum comfort and flexibility.
         </p>
       </div>
 
       {/* Segmented Control Tabs */}
-      <div style={{ display: 'flex', justifyItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '36px' }}>
+      <div style={{ display: 'flex', justifyItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '40px' }}>
         <button
           onClick={() => setActiveTab('ladies')}
           style={{
-            padding: '12px 32px',
+            padding: '14px 36px',
             borderRadius: '12px',
             border: 'none',
-            fontSize: '15px',
+            fontSize: '16px',
             fontWeight: 800,
             cursor: 'pointer',
             transition: 'all 0.25s ease',
-            background: activeTab === 'ladies' ? '#800020' : '#f1f5f9',
-            color: activeTab === 'ladies' ? 'white' : '#64748b',
-            boxShadow: activeTab === 'ladies' ? '0 4px 14px rgba(128, 0, 32, 0.25)' : 'none'
+            background: activeTab === 'ladies' ? '#700018' : '#f1f5f9',
+            color: activeTab === 'ladies' ? '#ffffff' : '#475569',
+            boxShadow: activeTab === 'ladies' ? '0 4px 14px rgba(112, 0, 24, 0.3)' : 'none'
           }}
         >
           👩‍⚕️ Ladies Size Chart
@@ -83,16 +83,16 @@ export default function SizeGuidePage() {
         <button
           onClick={() => setActiveTab('mens')}
           style={{
-            padding: '12px 32px',
+            padding: '14px 36px',
             borderRadius: '12px',
             border: 'none',
-            fontSize: '15px',
+            fontSize: '16px',
             fontWeight: 800,
             cursor: 'pointer',
             transition: 'all 0.25s ease',
-            background: activeTab === 'mens' ? '#184e68' : '#f1f5f9',
-            color: activeTab === 'mens' ? 'white' : '#64748b',
-            boxShadow: activeTab === 'mens' ? '0 4px 14px rgba(24, 78, 104, 0.25)' : 'none'
+            background: activeTab === 'mens' ? '#0b2545' : '#f1f5f9',
+            color: activeTab === 'mens' ? '#ffffff' : '#475569',
+            boxShadow: activeTab === 'mens' ? '0 4px 14px rgba(11, 37, 69, 0.3)' : 'none'
           }}
         >
           👨‍⚕️ Men's Size Chart
@@ -101,24 +101,24 @@ export default function SizeGuidePage() {
 
       {/* LADIES SIZE CHART TAB */}
       {activeTab === 'ladies' && (
-        <div style={{ background: 'white', borderRadius: '20px', overflow: 'hidden', border: '1.5px solid #800020', boxShadow: '0 8px 24px rgba(128, 0, 32, 0.08)' }}>
+        <div style={{ background: '#ffffff', borderRadius: '20px', overflow: 'hidden', border: '2px solid #700018', boxShadow: '0 8px 24px rgba(112, 0, 24, 0.12)' }}>
           {/* Header Banner */}
-          <div style={{ background: '#800020', color: 'white', textTransform: 'uppercase', padding: '16px 24px', textAlign: 'center', fontSize: '18px', fontWeight: 900, letterSpacing: '1px' }}>
+          <div style={{ background: '#700018', color: '#ffffff', textTransform: 'uppercase', padding: '18px 24px', textAlign: 'center', fontSize: '19px', fontWeight: 900, letterSpacing: '1px' }}>
             LADIES TOP & BOTTOM READY SIZE CHART
           </div>
 
-          <div style={{ padding: '24px' }}>
+          <div style={{ padding: '28px' }}>
             {/* 1. TOP MEASUREMENT */}
-            <div style={{ marginBottom: '36px' }}>
-              <div style={{ background: '#9e1b32', color: 'white', padding: '10px 16px', fontWeight: 800, fontSize: '15px', borderRadius: '6px', marginBottom: '12px' }}>
+            <div style={{ marginBottom: '40px' }}>
+              <div style={{ background: '#9e1b32', color: '#ffffff', padding: '12px 18px', fontWeight: 800, fontSize: '16px', borderRadius: '8px', marginBottom: '16px' }}>
                 1. TOP MEASUREMENT (Redy Top)
               </div>
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
                   <thead>
-                    <tr style={{ background: '#800020', color: 'white' }}>
+                    <tr style={{ background: '#700018', color: '#ffffff' }}>
                       {['Size (Saiz)', 'Fit To (Chest)', 'Ready Chest', 'Top Length (TL)', 'Unit'].map((h, i) => (
-                        <th key={i} style={{ padding: '12px 16px', fontSize: '13px', fontWeight: 800, border: '1px solid rgba(255,255,255,0.2)' }}>{h}</th>
+                        <th key={i} style={{ padding: '14px 18px', fontSize: '14px', fontWeight: 800, border: '1px solid rgba(255,255,255,0.2)' }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -126,7 +126,7 @@ export default function SizeGuidePage() {
                     {ladiesTopData.map((row, idx) => (
                       <tr key={idx} style={{ background: idx % 2 === 0 ? '#ffffff' : '#fff5f7' }}>
                         {row.map((cell, cIdx) => (
-                          <td key={cIdx} style={{ padding: '12px 16px', fontSize: '14px', fontWeight: cIdx === 0 ? 800 : 500, color: '#334155', border: '1px solid #f1f5f9' }}>{cell}</td>
+                          <td key={cIdx} style={{ padding: '14px 18px', fontSize: '15px', fontWeight: cIdx === 0 ? 800 : 600, color: '#0f172a', border: '1px solid #e2e8f0' }}>{cell}</td>
                         ))}
                       </tr>
                     ))}
@@ -137,15 +137,15 @@ export default function SizeGuidePage() {
 
             {/* 2. BOTTOM MEASUREMENT */}
             <div>
-              <div style={{ background: '#9e1b32', color: 'white', padding: '10px 16px', fontWeight: 800, fontSize: '15px', borderRadius: '6px', marginBottom: '12px' }}>
+              <div style={{ background: '#9e1b32', color: '#ffffff', padding: '12px 18px', fontWeight: 800, fontSize: '16px', borderRadius: '8px', marginBottom: '16px' }}>
                 2. BOTTOM / PANT MEASUREMENT
               </div>
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
                   <thead>
-                    <tr style={{ background: '#800020', color: 'white' }}>
+                    <tr style={{ background: '#700018', color: '#ffffff' }}>
                       {['Size (Saiz)', 'Pant Length (PL)', 'Waist (W)', 'Ready Elastic', 'Unit'].map((h, i) => (
-                        <th key={i} style={{ padding: '12px 16px', fontSize: '13px', fontWeight: 800, border: '1px solid rgba(255,255,255,0.2)' }}>{h}</th>
+                        <th key={i} style={{ padding: '14px 18px', fontSize: '14px', fontWeight: 800, border: '1px solid rgba(255,255,255,0.2)' }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -153,7 +153,7 @@ export default function SizeGuidePage() {
                     {ladiesBottomData.map((row, idx) => (
                       <tr key={idx} style={{ background: idx % 2 === 0 ? '#ffffff' : '#fff5f7' }}>
                         {row.map((cell, cIdx) => (
-                          <td key={cIdx} style={{ padding: '12px 16px', fontSize: '14px', fontWeight: cIdx === 0 ? 800 : 500, color: '#334155', border: '1px solid #f1f5f9' }}>{cell}</td>
+                          <td key={cIdx} style={{ padding: '14px 18px', fontSize: '15px', fontWeight: cIdx === 0 ? 800 : 600, color: '#0f172a', border: '1px solid #e2e8f0' }}>{cell}</td>
                         ))}
                       </tr>
                     ))}
@@ -167,24 +167,24 @@ export default function SizeGuidePage() {
 
       {/* MEN'S SIZE CHART TAB */}
       {activeTab === 'mens' && (
-        <div style={{ background: 'white', borderRadius: '20px', overflow: 'hidden', border: '1.5px solid #184e68', boxShadow: '0 8px 24px rgba(24, 78, 104, 0.08)' }}>
+        <div style={{ background: '#ffffff', borderRadius: '20px', overflow: 'hidden', border: '2px solid #0b2545', boxShadow: '0 8px 24px rgba(11, 37, 69, 0.12)' }}>
           {/* Header Banner */}
-          <div style={{ background: '#184e68', color: 'white', textTransform: 'uppercase', padding: '16px 24px', textAlign: 'center', fontSize: '18px', fontWeight: 900, letterSpacing: '1px' }}>
+          <div style={{ background: '#0b2545', color: '#ffffff', textTransform: 'uppercase', padding: '18px 24px', textAlign: 'center', fontSize: '19px', fontWeight: 900, letterSpacing: '1px' }}>
             MEN'S APPAREL SIZE CHART
           </div>
 
-          <div style={{ padding: '24px' }}>
+          <div style={{ padding: '28px' }}>
             {/* 1. MEN'S TOP SIZE CHART */}
-            <div style={{ marginBottom: '36px' }}>
-              <div style={{ color: '#184e68', fontWeight: 800, fontSize: '16px', marginBottom: '12px', paddingLeft: '4px' }}>
+            <div style={{ marginBottom: '40px' }}>
+              <div style={{ background: '#134074', color: '#ffffff', padding: '12px 18px', fontWeight: 800, fontSize: '16px', borderRadius: '8px', marginBottom: '16px' }}>
                 1. Men's Top Size Chart
               </div>
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
                   <thead>
-                    <tr style={{ background: '#184e68', color: 'white' }}>
+                    <tr style={{ background: '#0b2545', color: '#ffffff' }}>
                       {['Size', 'Top Length (in)', 'Chest Ready (in)', 'Fit To Body (in)'].map((h, i) => (
-                        <th key={i} style={{ padding: '12px 16px', fontSize: '13px', fontWeight: 800, border: '1px solid rgba(255,255,255,0.2)' }}>{h}</th>
+                        <th key={i} style={{ padding: '14px 18px', fontSize: '14px', fontWeight: 800, border: '1px solid rgba(255,255,255,0.2)' }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -192,7 +192,7 @@ export default function SizeGuidePage() {
                     {mensTopData.map((row, idx) => (
                       <tr key={idx} style={{ background: idx % 2 === 0 ? '#ffffff' : '#f0f7fa' }}>
                         {row.map((cell, cIdx) => (
-                          <td key={cIdx} style={{ padding: '12px 16px', fontSize: '14px', fontWeight: cIdx === 0 ? 800 : 500, color: '#334155', border: '1px solid #f1f5f9' }}>{cell}</td>
+                          <td key={cIdx} style={{ padding: '14px 18px', fontSize: '15px', fontWeight: cIdx === 0 ? 800 : 600, color: '#0f172a', border: '1px solid #e2e8f0' }}>{cell}</td>
                         ))}
                       </tr>
                     ))}
@@ -203,15 +203,15 @@ export default function SizeGuidePage() {
 
             {/* 2. MEN'S PANT SIZE CHART */}
             <div>
-              <div style={{ color: '#184e68', fontWeight: 800, fontSize: '16px', marginBottom: '12px', paddingLeft: '4px' }}>
+              <div style={{ background: '#134074', color: '#ffffff', padding: '12px 18px', fontWeight: 800, fontSize: '16px', borderRadius: '8px', marginBottom: '16px' }}>
                 2. Men's Pant Size Chart
               </div>
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
                   <thead>
-                    <tr style={{ background: '#184e68', color: 'white' }}>
+                    <tr style={{ background: '#0b2545', color: '#ffffff' }}>
                       {['Size', 'Pant Length (in)', 'Elastic Waist (in)', 'Fit To / Hip (in)'].map((h, i) => (
-                        <th key={i} style={{ padding: '12px 16px', fontSize: '13px', fontWeight: 800, border: '1px solid rgba(255,255,255,0.2)' }}>{h}</th>
+                        <th key={i} style={{ padding: '14px 18px', fontSize: '14px', fontWeight: 800, border: '1px solid rgba(255,255,255,0.2)' }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -219,7 +219,7 @@ export default function SizeGuidePage() {
                     {mensBottomData.map((row, idx) => (
                       <tr key={idx} style={{ background: idx % 2 === 0 ? '#ffffff' : '#f0f7fa' }}>
                         {row.map((cell, cIdx) => (
-                          <td key={cIdx} style={{ padding: '12px 16px', fontSize: '14px', fontWeight: cIdx === 0 ? 800 : 500, color: '#334155', border: '1px solid #f1f5f9' }}>{cell}</td>
+                          <td key={cIdx} style={{ padding: '14px 18px', fontSize: '15px', fontWeight: cIdx === 0 ? 800 : 600, color: '#0f172a', border: '1px solid #e2e8f0' }}>{cell}</td>
                         ))}
                       </tr>
                     ))}
