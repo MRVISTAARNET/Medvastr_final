@@ -21,10 +21,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-    name = "reviews",
-    uniqueConstraints = {@UniqueConstraint(columnNames = {"product_id", "user_id"})}
-)
+@Table(name = "reviews")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -40,7 +37,7 @@ public class Review {
     private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
     @Column(nullable = false)

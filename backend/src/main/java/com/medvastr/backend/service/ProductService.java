@@ -458,20 +458,24 @@ public class ProductService {
         Product p = productRepo.findById(pid).orElseThrow(() -> new RuntimeException("Product not found"));
         String customName = (r.getReviewerName() != null && !r.getReviewerName().isBlank()) ? r.getReviewerName().trim() : null;
         
-        com.medvastr.backend.model.Review rev = reviewRepo.findByProductIdAndUserId(pid, user.getId())
-                .orElseGet(() -> com.medvastr.backend.model.Review.builder()
-                        .product(p)
-                        .user(user)
-                        .build());
+        com.medvastr.backend.model.Review rev = com.medvastr.backend.model.Review.builder()
+                .product(p)
+                .user(user)
+                .reviewerName(customName)
+                .rating(r.getRating())
+                .title(r.getTitle())
+                .body(r.getBody())
+                .approved(true) // Auto-approved so it shows up immediately
+                .verified(true)
+                .build();
 
-        rev.setReviewerName(customName);
-        rev.setRating(r.getRating());
-        rev.setTitle(r.getTitle());
-        rev.setBody(r.getBody());
-        rev.setApproved(true); // Auto-approved so it shows up immediately
-        rev.setVerified(true);
-
-        reviewRepo.save(rev);
+        try {
+            reviewRepo.save(rev);
+        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
+            // Fallback for existing database schema with legacy unique constraint: set user to null for manual reviews
+            rev.setUser(null);
+            reviewRepo.save(rev);
+        }
 
         // Update product rating stats immediately
         double avg = reviewRepo.avgRating(p.getId()).orElse(rev.getRating().doubleValue());
