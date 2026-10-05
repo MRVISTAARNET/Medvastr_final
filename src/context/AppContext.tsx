@@ -109,14 +109,17 @@ export const AppContext = createContext<AppContextType | null>(null);
 function cartReducer(state: CartItem[], action: any): CartItem[] {
   switch (action.type) {
     case "SET":
-      return action.data;
+      return Array.isArray(action.data)
+        ? action.data.map((i: any) => ({ ...i, qty: Math.max(1, Number(i.qty) || 1) }))
+        : [];
     case "ADD": {
       const { p, ci, sz, qty = 1, embroidery } = action;
+      const numQty = Math.max(1, Number(qty) || 1);
       const embKey = embroidery ? `-emb-${(embroidery.line1 || '').trim()}-${(embroidery.line2 || '').trim()}-${embroidery.selectedOption || ''}` : '';
       const k = `${p.id}-${ci}-${sz}${embKey}`;
       const existing = state.find((i) => i.k === k);
       if (existing) {
-        return state.map((i) => (i.k === k ? { ...i, qty: i.qty + qty } : i));
+        return state.map((i) => (i.k === k ? { ...i, qty: (Number(i.qty) || 1) + numQty } : i));
       }
       const col = p.clrs?.[ci] || p.clrs?.[0] || "#000";
       const extraPrice = embroidery?.totalEmbroideryPrice || 0;
@@ -129,7 +132,7 @@ function cartReducer(state: CartItem[], action: any): CartItem[] {
           col,
           colNm: p.clrNms?.[ci] || cn(col),
           size: sz,
-          qty,
+          qty: numQty,
           variantId: resolveVariantId(p, sz, col),
           embroidery,
         },
@@ -137,7 +140,7 @@ function cartReducer(state: CartItem[], action: any): CartItem[] {
     }
     case "QTY":
       return state
-        .map((i, idx) => (idx === action.index ? { ...i, qty: Math.max(0, i.qty + action.delta) } : i))
+        .map((i, idx) => (idx === action.index ? { ...i, qty: Math.max(0, (Number(i.qty) || 0) + Number(action.delta)) } : i))
         .filter((i) => i.qty > 0);
     case "DEL":
       return state.filter((_, idx) => idx !== action.index);
@@ -597,15 +600,43 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [toast]);
 
   const updateCartQty = useCallback(async (index: number, delta: number) => {
+    const targetItem = cart[index];
     dispatch({ type: "QTY", index, delta });
-    // Note: To fully sync exact quantities we'd need CartItemId from backend.
-    // For now, syncing relies on add/clear, or the initial pull.
-  }, []);
+    const token = getToken();
+    if (token && targetItem) {
+      const newQty = Math.max(0, (Number(targetItem.qty) || 0) + Number(delta));
+      try {
+        if (newQty === 0 && (targetItem as any).id) {
+          await fetch(`${API_BASE}/cart/item/${(targetItem as any).id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` }
+          });
+        } else {
+          await fetch(`${API_BASE}/cart/add`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ productId: targetItem.id, variantId: targetItem.variantId, quantity: delta })
+          });
+        }
+      } catch {}
+    }
+  }, [cart]);
 
   const removeFromCart = useCallback(async (index: number) => {
+    const targetItem = cart[index];
     dispatch({ type: "DEL", index });
-    // Similarly, we would need the backend CartItemId to call DELETE /cart/item/{id}.
-  }, []);
+    const token = getToken();
+    if (token && targetItem) {
+      try {
+        if ((targetItem as any).id) {
+          await fetch(`${API_BASE}/cart/item/${(targetItem as any).id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` }
+          });
+        }
+      } catch {}
+    }
+  }, [cart]);
 
   const clearCart = useCallback(async () => {
     dispatch({ type: "CLR" });

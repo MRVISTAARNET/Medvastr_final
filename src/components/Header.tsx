@@ -197,7 +197,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
   const pageRes = getMatchingPages();
 
   const resolvedNav = NAV_DATA;
-  const cc = cart.reduce((s, i) => s + i.qty, 0);
+  const cc = cart.reduce((s, i) => s + (Number(i.qty) || 1), 0);
   const wc = wishlist.length;
 
   return (
