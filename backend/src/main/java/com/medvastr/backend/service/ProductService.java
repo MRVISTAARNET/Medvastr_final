@@ -458,9 +458,13 @@ public class ProductService {
         Product p = productRepo.findById(pid).orElseThrow(() -> new RuntimeException("Product not found"));
         String customName = (r.getReviewerName() != null && !r.getReviewerName().isBlank()) ? r.getReviewerName().trim() : null;
         
+        // If custom reviewer name is provided (e.g. Admin manual review submission), set user to null
+        // so user_id is NULL in MySQL DB, which completely avoids legacy unique constraint collisions on (product_id, user_id).
+        com.medvastr.backend.model.User reviewUser = (customName != null) ? null : user;
+
         com.medvastr.backend.model.Review rev = com.medvastr.backend.model.Review.builder()
                 .product(p)
-                .user(user)
+                .user(reviewUser)
                 .reviewerName(customName)
                 .rating(r.getRating())
                 .title(r.getTitle())
@@ -469,13 +473,7 @@ public class ProductService {
                 .verified(true)
                 .build();
 
-        try {
-            reviewRepo.save(rev);
-        } catch (org.springframework.dao.DataIntegrityViolationException ex) {
-            // Fallback for existing database schema with legacy unique constraint: set user to null for manual reviews
-            rev.setUser(null);
-            reviewRepo.save(rev);
-        }
+        reviewRepo.save(rev);
 
         // Update product rating stats immediately
         double avg = reviewRepo.avgRating(p.getId()).orElse(rev.getRating().doubleValue());

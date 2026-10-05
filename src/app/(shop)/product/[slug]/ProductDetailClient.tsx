@@ -1483,13 +1483,13 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                   {/* 1. TOP MEASUREMENT */}
                   <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1.5px solid #700018', marginBottom: '24px' }}>
                     <div style={{ background: '#9e1b32', color: '#ffffff', padding: '10px 16px', fontWeight: 800, fontSize: '14px', textTransform: 'uppercase' }}>
-                      1. TOP MEASUREMENT (Redy Top)
+                      1. TOP MEASUREMENT
                     </div>
                     <div className="size-guide-table-container">
                       <table className="size-guide-table" style={{ textAlign: 'center' }}>
                         <thead>
                           <tr style={{ background: '#700018', color: '#ffffff' }}>
-                            <th>Size (Saiz)</th>
+                            <th>Size</th>
                             <th>Fit To (Chest)</th>
                             <th>Ready Chest</th>
                             <th>Top Length (TL)</th>
@@ -1527,7 +1527,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                       <table className="size-guide-table" style={{ textAlign: 'center' }}>
                         <thead>
                           <tr style={{ background: '#700018', color: '#ffffff' }}>
-                            <th>Size (Saiz)</th>
+                            <th>Size</th>
                             <th>Pant Length (PL)</th>
                             <th>Waist (W)</th>
                             <th>Ready Elastic</th>
@@ -1566,7 +1566,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                   {/* 1. MEN'S TOP SIZE CHART */}
                   <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1.5px solid #0b2545', marginBottom: '24px' }}>
                     <div style={{ background: '#134074', color: '#ffffff', padding: '10px 16px', fontWeight: 800, fontSize: '14px', textTransform: 'uppercase' }}>
-                      1. Men's Top Size Chart
+                      1. TOP MEASUREMENT
                     </div>
                     <div className="size-guide-table-container">
                       <table className="size-guide-table" style={{ textAlign: 'center' }}>
@@ -1574,8 +1574,8 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                           <tr style={{ background: '#0b2545', color: '#ffffff' }}>
                             <th>Size</th>
                             <th>Top Length (in)</th>
-                            <th>Chest Ready (in)</th>
-                            <th>Fit To Body (in)</th>
+                            <th>Ready Chest (in)</th>
+                            <th>Fit To Chest (in)</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -1602,7 +1602,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                   {/* 2. MEN'S PANT SIZE CHART */}
                   <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1.5px solid #0b2545' }}>
                     <div style={{ background: '#134074', color: '#ffffff', padding: '10px 16px', fontWeight: 800, fontSize: '14px', textTransform: 'uppercase' }}>
-                      2. Men's Pant Size Chart
+                      2. BOTTOM / PANT MEASUREMENT
                     </div>
                     <div className="size-guide-table-container">
                       <table className="size-guide-table" style={{ textAlign: 'center' }}>
@@ -1611,7 +1611,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                             <th>Size</th>
                             <th>Pant Length (in)</th>
                             <th>Elastic Waist (in)</th>
-                            <th>Fit To / Hip (in)</th>
+                            <th>Fit To Waist (in)</th>
                           </tr>
                         </thead>
                         <tbody>

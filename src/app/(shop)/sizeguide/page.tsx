@@ -111,13 +111,13 @@ export default function SizeGuidePage() {
             {/* 1. TOP MEASUREMENT */}
             <div style={{ marginBottom: '40px' }}>
               <div style={{ background: '#9e1b32', color: '#ffffff', padding: '12px 18px', fontWeight: 800, fontSize: '16px', borderRadius: '8px', marginBottom: '16px' }}>
-                1. TOP MEASUREMENT (Redy Top)
+                1. TOP MEASUREMENT
               </div>
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
                   <thead>
                     <tr style={{ background: '#700018', color: '#ffffff' }}>
-                      {['Size (Saiz)', 'Fit To (Chest)', 'Ready Chest', 'Top Length (TL)', 'Unit'].map((h, i) => (
+                      {['Size', 'Fit To (Chest)', 'Ready Chest', 'Top Length (TL)', 'Unit'].map((h, i) => (
                         <th key={i} style={{ padding: '14px 18px', fontSize: '14px', fontWeight: 800, border: '1px solid rgba(255,255,255,0.2)' }}>{h}</th>
                       ))}
                     </tr>
@@ -144,7 +144,7 @@ export default function SizeGuidePage() {
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
                   <thead>
                     <tr style={{ background: '#700018', color: '#ffffff' }}>
-                      {['Size (Saiz)', 'Pant Length (PL)', 'Waist (W)', 'Ready Elastic', 'Unit'].map((h, i) => (
+                      {['Size', 'Pant Length (PL)', 'Waist (W)', 'Ready Elastic', 'Unit'].map((h, i) => (
                         <th key={i} style={{ padding: '14px 18px', fontSize: '14px', fontWeight: 800, border: '1px solid rgba(255,255,255,0.2)' }}>{h}</th>
                       ))}
                     </tr>
@@ -177,13 +177,13 @@ export default function SizeGuidePage() {
             {/* 1. MEN'S TOP SIZE CHART */}
             <div style={{ marginBottom: '40px' }}>
               <div style={{ background: '#134074', color: '#ffffff', padding: '12px 18px', fontWeight: 800, fontSize: '16px', borderRadius: '8px', marginBottom: '16px' }}>
-                1. Men's Top Size Chart
+                1. TOP MEASUREMENT
               </div>
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
                   <thead>
                     <tr style={{ background: '#0b2545', color: '#ffffff' }}>
-                      {['Size', 'Top Length (in)', 'Chest Ready (in)', 'Fit To Body (in)'].map((h, i) => (
+                      {['Size', 'Top Length (in)', 'Ready Chest (in)', 'Fit To Chest (in)'].map((h, i) => (
                         <th key={i} style={{ padding: '14px 18px', fontSize: '14px', fontWeight: 800, border: '1px solid rgba(255,255,255,0.2)' }}>{h}</th>
                       ))}
                     </tr>
@@ -204,13 +204,13 @@ export default function SizeGuidePage() {
             {/* 2. MEN'S PANT SIZE CHART */}
             <div>
               <div style={{ background: '#134074', color: '#ffffff', padding: '12px 18px', fontWeight: 800, fontSize: '16px', borderRadius: '8px', marginBottom: '16px' }}>
-                2. Men's Pant Size Chart
+                2. BOTTOM / PANT MEASUREMENT
               </div>
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
                   <thead>
                     <tr style={{ background: '#0b2545', color: '#ffffff' }}>
-                      {['Size', 'Pant Length (in)', 'Elastic Waist (in)', 'Fit To / Hip (in)'].map((h, i) => (
+                      {['Size', 'Pant Length (in)', 'Elastic Waist (in)', 'Fit To Waist (in)'].map((h, i) => (
                         <th key={i} style={{ padding: '14px 18px', fontSize: '14px', fontWeight: 800, border: '1px solid rgba(255,255,255,0.2)' }}>{h}</th>
                       ))}
                     </tr>
