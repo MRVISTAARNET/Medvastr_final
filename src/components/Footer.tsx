@@ -147,14 +147,16 @@ export default function Footer() {
           </div>
           <ul className="ft-lnks connect-info">
             <li>
-              <span className="connect-icon">📞</span>
+              <div className="connect-icon-circle">📞</div>
               <div className="connect-details">
                 <a href={`tel:${B.phone1}`}>{B.phone1}</a>
               </div>
             </li>
             <li>
-              <span className="connect-icon">✉️</span>
-              <a href={`mailto:${B.email}`}>{B.email}</a>
+              <div className="connect-icon-circle">✉️</div>
+              <div className="connect-details">
+                <a href={`mailto:${B.email}`}>{B.email}</a>
+              </div>
             </li>
           </ul>
         </div>
@@ -286,32 +288,32 @@ export default function Footer() {
           opacity: 0.9;
         }
         .ft-desc { 
-          font-size: 13px; 
-          color: rgba(255, 255, 255, 0.72);
+          font-size: 13.5px; 
+          color: #cbd5e1;
           line-height: 1.65; 
           max-width: 320px; 
-          margin-bottom: 5px;
+          margin-bottom: 8px;
         }
         .ft-office-info {
-          font-size: 13px;
+          font-size: 13.5px;
           line-height: 1.6;
         }
         .ft-office-info strong {
-          color: rgba(255, 255, 255, 0.95);
+          color: #ffffff;
           display: block;
           margin-bottom: 4px;
           font-weight: 600;
         }
         .addr-text {
-          color: rgba(255, 255, 255, 0.65);
+          color: #cbd5e1;
         }
         
         /* Columns */
         .ft-col-heading {
-          font-size: 14px;
+          font-size: 15px;
           font-weight: 700; 
           text-transform: capitalize; 
-          margin-bottom: 20px; 
+          margin-bottom: 22px; 
           color: #ffffff;
           letter-spacing: 0.02em;
           position: relative;
@@ -323,35 +325,49 @@ export default function Footer() {
           position: absolute;
           left: 0;
           bottom: 0;
-          width: 24px;
+          width: 28px;
           height: 2px;
-          background: rgba(255, 255, 255, 0.4);
+          background: rgba(255, 255, 255, 0.35);
+          border-radius: 2px;
         }
         
         .ft-lnks { list-style: none; padding: 0; margin: 0; }
-        .ft-lnks li { margin-bottom: 10px; }
+        .ft-lnks li { margin-bottom: 12px; }
         .ft-lnks li a {
-          font-size: 13px;
-          color: rgba(255, 255, 255, 0.75) !important;
-          transition: color 0.2s;
+          font-size: 13.5px;
+          color: #cbd5e1 !important;
+          transition: all 0.2s ease;
           text-decoration: none !important;
           font-weight: 400;
           letter-spacing: 0.01em;
+          display: inline-block;
           -webkit-font-smoothing: antialiased;
         }
-        .ft-lnks li a:hover { color: #ffffff !important; }
+        .ft-lnks li a:hover { 
+          color: #ffffff !important; 
+          transform: translateX(3px);
+        }
         
         /* Connect Info */
         .connect-info li {
           display: flex;
-          align-items: flex-start;
-          gap: 10px;
-          font-size: 13px;
-          color: rgba(255, 255, 255, 0.72);
+          align-items: center;
+          gap: 12px;
+          font-size: 13.5px;
+          color: #cbd5e1;
+          margin-bottom: 14px;
         }
-        .connect-icon {
+        .connect-icon-circle {
+          width: 32px;
+          height: 32px;
+          min-width: 32px;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          display: flex;
+          align-items: center;
+          justify-content: center;
           font-size: 13px;
-          opacity: 0.85;
         }
         .connect-details {
           display: flex;
@@ -359,9 +375,10 @@ export default function Footer() {
           flex-wrap: wrap;
         }
         .connect-info a {
-          color: rgba(255, 255, 255, 0.82);
+          color: #e2e8f0;
           text-decoration: none;
           font-weight: 500;
+          transition: color 0.2s;
         }
         .connect-info a:hover {
           color: #ffffff;
@@ -381,26 +398,26 @@ export default function Footer() {
           align-items: center;
           justify-content: center;
           color: white;
-          background: rgba(255,255,255,0.06);
+          background: rgba(255,255,255,0.08);
           transition: all 0.25s ease;
-          border: 1px solid rgba(255,255,255,0.06);
+          border: 1px solid rgba(255,255,255,0.12);
         }
         .social-circle:hover {
           transform: translateY(-3px);
-          background: rgba(255,255,255,0.12);
+          background: rgba(255,255,255,0.2);
         }
 
         .ft-btm { 
           max-width: 1400px; 
-          margin: 60px auto 0; 
-          padding: 30px 40px 0; 
-          border-top: 1px solid rgba(255,255,255,0.08); 
+          margin: 50px auto 0; 
+          padding: 26px 40px 0; 
+          border-top: 1px solid rgba(255,255,255,0.1); 
           display: flex; 
           justify-content: space-between; 
           align-items: center; 
         }
-        .ft-copy { font-size: 13px; color: rgba(255, 255, 255, 0.6); font-weight: 400; line-height: 1.65; }
-        .ft-credit a { color: rgba(255, 255, 255, 0.7); font-weight: 600; text-decoration: none; }
+        .ft-copy { font-size: 13px; color: #cbd5e1; font-weight: 400; line-height: 1.65; }
+        .ft-credit a { color: #e2e8f0; font-weight: 600; text-decoration: none; }
         .ft-credit a:hover { color: white; }
         
         .ft-pay { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
@@ -408,10 +425,10 @@ export default function Footer() {
           font-size: 10px; 
           font-weight: 600; 
           padding: 4px 10px; 
-          background: rgba(255,255,255,0.04); 
+          background: rgba(255,255,255,0.06); 
           border-radius: 4px; 
-          color: rgba(255, 255, 255, 0.6); 
-          border: 1px solid rgba(255,255,255,0.1); 
+          color: #e2e8f0; 
+          border: 1px solid rgba(255,255,255,0.12); 
           text-transform: uppercase;
           letter-spacing: 0.05em;
         }

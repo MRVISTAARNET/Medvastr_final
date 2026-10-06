@@ -281,6 +281,12 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
   const colorImages = useMemo(() => (p ? getImagesForColor(p, ci ?? 0) : []), [p, ci]);
   const productSizes = useMemo(() => (p ? getSizesForColor(p, ci ?? 0) : []), [p, ci]);
+  const activeColorHex = useMemo(() => {
+    if (!p) return "#0b2545";
+    const selectedIdx = ci !== null ? ci : 0;
+    const colorHex = p.clrs?.[selectedIdx];
+    return colorHex && colorHex.startsWith("#") ? colorHex : "#0b2545";
+  }, [p, ci]);
 
   // DO NOT auto-preselect size — user must choose
   useEffect(() => {
@@ -698,6 +704,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             <div
               key={i}
               className={`pdp-side-thumb ${mainImg === i ? 'active' : ''}`}
+              style={mainImg === i ? { borderColor: activeColorHex, opacity: 1, boxShadow: `0 0 0 1.5px ${activeColorHex}` } : {}}
               onClick={() => scrollToImage(i)}
             >
               <img src={colorImages[i]} alt="" onError={() => setBrokenImages(prev => ({ ...prev, [i]: true }))} />
@@ -705,12 +712,18 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
           ))}
         </div>
 
-        {/* GALLERY - Horizontal Slider */}
-        <div className="pdp-gallery-wrap">
+        {/* GALLERY - Horizontal Slider with Dynamic Scrub Color Border & Nav Buttons */}
+        <div className="pdp-gallery-wrap" style={{ position: 'relative' }}>
           <div
             ref={scrollContainerRef}
             onScroll={handleSliderScroll}
             className="pdp-main-images horizontal-slider"
+            style={{
+              border: `2px solid ${activeColorHex}`,
+              borderRadius: '12px',
+              transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+              boxShadow: `0 4px 20px ${activeColorHex}22`
+            }}
           >
             {p.videoUrl && (
               <div className="pdp-main-image-item video-item" ref={el => { (imageRefs.current as any)[-1] = el }}>
@@ -733,11 +746,46 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             ))}
           </div>
 
+          {/* Previous Image Button */}
+          {visibleImageIndexes.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                const currPos = visibleImageIndexes.indexOf(activeImageIndex);
+                const prevPos = (currPos - 1 + visibleImageIndexes.length) % visibleImageIndexes.length;
+                scrollToImage(visibleImageIndexes[prevPos]);
+              }}
+              className="pdp-gallery-nav-btn prev"
+              aria-label="Previous Image"
+              style={{ borderColor: activeColorHex, color: activeColorHex }}
+            >
+              ‹
+            </button>
+          )}
+
+          {/* Next Image Button */}
+          {visibleImageIndexes.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                const currPos = visibleImageIndexes.indexOf(activeImageIndex);
+                const nextPos = (currPos + 1) % visibleImageIndexes.length;
+                scrollToImage(visibleImageIndexes[nextPos]);
+              }}
+              className="pdp-gallery-nav-btn next"
+              aria-label="Next Image"
+              style={{ borderColor: activeColorHex, color: activeColorHex }}
+            >
+              ›
+            </button>
+          )}
+
           {/* Carousel Pagination Dots */}
           <div className="pdp-gallery-dots">
             {p.videoUrl && (
               <button
                 className={`pdp-gallery-dot ${mainImg === -1 ? 'active' : ''}`}
+                style={mainImg === -1 ? { backgroundColor: activeColorHex } : {}}
                 onClick={() => scrollToImage(-1)}
                 aria-label="Go to video slide"
               />
@@ -746,6 +794,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               <button
                 key={i}
                 className={`pdp-gallery-dot ${mainImg === i ? 'active' : ''}`}
+                style={mainImg === i ? { backgroundColor: activeColorHex } : {}}
                 onClick={() => scrollToImage(i)}
                 aria-label={`Go to slide ${idx + 1}`}
               />

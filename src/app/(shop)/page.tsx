@@ -114,16 +114,70 @@ export default function Home() {
 
       {/* CATEGORIES */}
       <div className="sec">
-        <div className="sec-hd">
+        <div className="sec-hd" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
           <div>
             <div className="sec-t">Shop By Categories</div>
             <div className="sec-s">Everything a medical professional needs, all in one place</div>
           </div>
-          <Link href="/products" className="va">
-            View All Categories →
-          </Link>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button
+                onClick={() => {
+                  const el = document.getElementById("cat-grid-row");
+                  if (el) el.scrollBy({ left: -260, behavior: "smooth" });
+                }}
+                aria-label="Scroll Categories Left"
+                style={{
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "50%",
+                  border: "1.5px solid #cbd5e1",
+                  background: "#ffffff",
+                  color: "#0f172a",
+                  fontSize: "18px",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "all 0.2s ease",
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
+                }}
+              >
+                ‹
+              </button>
+              <button
+                onClick={() => {
+                  const el = document.getElementById("cat-grid-row");
+                  if (el) el.scrollBy({ left: 260, behavior: "smooth" });
+                }}
+                aria-label="Scroll Categories Right"
+                style={{
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "50%",
+                  border: "1.5px solid #cbd5e1",
+                  background: "#ffffff",
+                  color: "#0f172a",
+                  fontSize: "18px",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "all 0.2s ease",
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
+                }}
+              >
+                ›
+              </button>
+            </div>
+            <Link href="/products" className="va">
+              View All Categories →
+            </Link>
+          </div>
         </div>
-        <div className="cat-g">
+        <div className="cat-g" id="cat-grid-row" style={{ paddingTop: "8px", paddingBottom: "12px", marginTop: "-4px" }}>
           {[
             { nm: "Scrub Suit", href: "/products?type=scrubs", img: "/cat-scrub-suit.jpg" },
             { nm: "Cotton Crew T-Shirt", href: "/products?type=tshirts", img: "/cat-tshirt.jpg" },
@@ -338,17 +392,7 @@ function ProductRowSlider({
 
       <div
         ref={rowRef}
-        style={{
-          display: "grid",
-          gridAutoFlow: "column",
-          gridAutoColumns: "minmax(270px, 1fr)",
-          gap: "20px",
-          overflowX: "auto",
-          scrollBehavior: "smooth",
-          paddingBottom: "12px",
-          scrollbarWidth: "none",
-        }}
-        className="hide-scrollbar"
+        className="product-row-slider-grid hide-scrollbar"
       >
         {products.map((p) => (
           <ProductCard key={p.variantId || p.id} p={p} forceColor={p.displayColorHex} />
