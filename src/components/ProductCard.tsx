@@ -142,15 +142,19 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
               const val = b.trim();
               if (!val || val.toLowerCase() === 'none') return null;
               
-              let icon = "";
-              let badgeCls = "badge-simple";
+              let icon = "✨ ";
+              let badgeCls = "badge-new";
               const lower = val.toLowerCase();
+              
               if (lower.includes("bestseller") || lower.includes("best seller")) {
                 icon = "⭐ ";
                 badgeCls = "badge-bestseller";
-              } else if (lower.includes("new")) {
+              } else if (lower.includes("new arrival") || lower.includes("new launch") || lower.includes("new")) {
                 icon = "✨ ";
                 badgeCls = "badge-new";
+              } else if (lower.includes("solitaire") || lower.includes("classic")) {
+                icon = "💎 ";
+                badgeCls = "badge-bestseller";
               } else if (lower.includes("soft") || lower.includes("stretch") || lower.includes("flexi")) {
                 icon = "🩺 ";
                 badgeCls = "badge-soft";

@@ -79,13 +79,13 @@ export default function Home() {
     (p.badge || "").includes("New Launch")
   ).slice(0, 8);
 
-  const flexiBestsellers = flattenedProducts.filter(p => p.name.toLowerCase().includes("flexi fit v scrub") && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8);
-  const flexiFallback = flexiBestsellers.length === 0 ? flattenedProducts.filter(p => p.type === "scrubs" && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8) : [];
+  const flexiBestsellers = flattenedProducts.filter(p => p.name.toLowerCase().includes("flexi fit") || p.name.toLowerCase().includes("flexi-fit") || (p.type === "scrubs" && (p.badge || "").toLowerCase().includes("bestseller"))).slice(0, 10);
+  const flexiFallback = flexiBestsellers.length === 0 ? flattenedProducts.filter(p => p.type === "scrubs").slice(0, 10) : [];
   const hasFlexi = flexiBestsellers.length > 0 || flexiFallback.length > 0;
 
-  const tshirtBestsellers = flattenedProducts.filter(p => (p.name.toLowerCase().includes("t-shirt") || p.name.toLowerCase().includes("tshirt") || p.type === "tshirts") && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8);
-  const tshirtFallback = tshirtBestsellers.length === 0 ? flattenedProducts.filter(p => p.type === "tshirts" && (p.badge || "").toLowerCase().includes("bestseller")).slice(0, 8) : [];
-  const hasTshirts = tshirtBestsellers.length > 0 || tshirtFallback.length > 0;
+  const solitaireList = flattenedProducts.filter(p => p.name.toLowerCase().includes("solitaire") || p.name.toLowerCase().includes("classic") || (p.badge || "").toLowerCase().includes("classic") || (p.badge || "").toLowerCase().includes("new") || (p.badge || "").toLowerCase().includes("solitaire")).slice(0, 10);
+  const solitaireFallback = solitaireList.length === 0 ? flattenedProducts.filter(p => p.type === "scrubs").slice(0, 10) : [];
+  const finalSolitaire = solitaireList.length > 0 ? solitaireList : solitaireFallback;
 
   return (
     <div className="page">
@@ -166,50 +166,24 @@ export default function Home() {
 
       {/* BESTSELLING SECTION 1: FLEXI FIT V SCRUB */}
       {hasFlexi && (
-        <div className="sec">
-          <div className="sec-hd">
-            <div>
-              <div className="sec-t">Shop Flexi-Fit V Scrub</div>
-              <div className="sec-s">Classic comfort and durability for peak performance</div>
-            </div>
-            <Link href="/products?type=scrubs" className="va">
-              Shop All Scrubs →
-            </Link>
-          </div>
-
-          <div className="prod-grid">
-            {flexiBestsellers.map((p) => (
-                <ProductCard key={p.variantId || p.id} p={p} forceColor={p.displayColorHex} />
-              ))
-            }
-            {/* Fallback if no specific products found: show top scrubs */}
-            {flexiBestsellers.length === 0 &&
-              flexiFallback.map(p => (
-                <ProductCard key={p.variantId || p.id} p={p} forceColor={p.displayColorHex} />
-              ))
-            }
-          </div>
-        </div>
+        <ProductRowSlider
+          title="Shop Flexi-Fit V Scrub"
+          subtitle="Classic comfort and durability for peak performance"
+          linkHref="/products?type=scrubs"
+          linkText="Shop All Scrubs"
+          products={flexiBestsellers.length > 0 ? flexiBestsellers : flexiFallback}
+        />
       )}
 
-      {/* NEW ARRIVALS */}
-      {newArr.length > 0 && (
-        <div className="sec">
-          <div className="sec-hd">
-            <div>
-              <div className="sec-t">New Arrivals</div>
-              <div className="sec-s">Fresh additions to the Medvarn collection</div>
-            </div>
-            <Link href="/products" className="va">
-              View All New Arrivals →
-            </Link>
-          </div>
-          <div className="prod-grid">
-            {newArr.map((p) => (
-              <ProductCard key={p.variantId || p.id} p={p} forceColor={p.displayColorHex} />
-            ))}
-          </div>
-        </div>
+      {/* SECTION 2: CLASSIC SOLITAIRE SCRUBS */}
+      {solitaireList.length > 0 && (
+        <ProductRowSlider
+          title="Shop Classic Solitaire Scrubs"
+          subtitle="Premium elegance and tailored fit for medical professionals"
+          linkHref="/products?type=scrubs"
+          linkText="Shop Solitaire Collection"
+          products={solitaireList}
+        />
       )}
 
       <BulkOrderBanner />
@@ -276,6 +250,110 @@ export default function Home() {
       <AboutHomeSection />
 
 
+    </div>
+  );
+}
+
+function ProductRowSlider({
+  title,
+  subtitle,
+  linkHref,
+  linkText,
+  products,
+}: {
+  title: string;
+  subtitle: string;
+  linkHref: string;
+  linkText: string;
+  products: any[];
+}) {
+  const rowRef = React.useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: "left" | "right") => {
+    if (rowRef.current) {
+      const amount = direction === "left" ? -340 : 340;
+      rowRef.current.scrollBy({ left: amount, behavior: "smooth" });
+    }
+  };
+
+  return (
+    <div className="sec">
+      <div className="sec-hd" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "20px" }}>
+        <div>
+          <div className="sec-t">{title}</div>
+          <div className="sec-s">{subtitle}</div>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <button
+              onClick={() => scroll("left")}
+              aria-label="Scroll Left"
+              style={{
+                width: "38px",
+                height: "38px",
+                borderRadius: "50%",
+                border: "1.5px solid #cbd5e1",
+                background: "#ffffff",
+                color: "#0f172a",
+                fontSize: "18px",
+                fontWeight: 700,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "all 0.2s ease",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
+              }}
+            >
+              ‹
+            </button>
+            <button
+              onClick={() => scroll("right")}
+              aria-label="Scroll Right"
+              style={{
+                width: "38px",
+                height: "38px",
+                borderRadius: "50%",
+                border: "1.5px solid #cbd5e1",
+                background: "#ffffff",
+                color: "#0f172a",
+                fontSize: "18px",
+                fontWeight: 700,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                transition: "all 0.2s ease",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
+              }}
+            >
+              ›
+            </button>
+          </div>
+          <Link href={linkHref} className="va">
+            {linkText} →
+          </Link>
+        </div>
+      </div>
+
+      <div
+        ref={rowRef}
+        style={{
+          display: "grid",
+          gridAutoFlow: "column",
+          gridAutoColumns: "minmax(270px, 1fr)",
+          gap: "20px",
+          overflowX: "auto",
+          scrollBehavior: "smooth",
+          paddingBottom: "12px",
+          scrollbarWidth: "none",
+        }}
+        className="hide-scrollbar"
+      >
+        {products.map((p) => (
+          <ProductCard key={p.variantId || p.id} p={p} forceColor={p.displayColorHex} />
+        ))}
+      </div>
     </div>
   );
 }

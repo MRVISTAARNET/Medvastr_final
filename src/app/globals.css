@@ -8837,5 +8837,90 @@ h1, h2, h3, h4 {
   }
 }
 
+/* ==========================================================================
+   CATEGORY CIRCLE AVATARS & SMOOTH MINIMAL HOVER STYLES
+   ========================================================================== */
+.cat-c {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  transition: transform 0.25s ease;
+}
+
+.cat-c:hover {
+  transform: translateY(-3px);
+}
+
+.cat-img-box {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cat-c:hover .cat-img-box {
+  border-color: #700018;
+  box-shadow: 0 6px 18px rgba(112, 0, 24, 0.15);
+}
+
+.cat-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.cat-c:hover .cat-img-box img {
+  transform: scale(1.05);
+}
+
+.cat-l {
+  margin-top: 12px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #0f172a;
+  text-align: center;
+  transition: color 0.2s ease;
+}
+
+.cat-c:hover .cat-l {
+  color: #700018;
+}
+
+/* Smooth Minimal Product Card Hover Effect */
+.pc-modern {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  background: #ffffff;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.pc-modern:hover {
+  border-color: #700018 !important;
+  box-shadow: 0 4px 16px rgba(112, 0, 24, 0.08) !important;
+}
+
+/* Visual Borders for PDP, Checkout, and Panels */
+.pdp-spec-box, .checkout-section, .order-summary-box {
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  background: #ffffff;
+  transition: border-color 0.2s ease;
+}
+
+.pdp-spec-box:hover, .checkout-section:hover {
+  border-color: #cbd5e1 !important;
+}
+
 
 
