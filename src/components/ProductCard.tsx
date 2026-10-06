@@ -142,25 +142,25 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
               const val = b.trim();
               if (!val || val.toLowerCase() === 'none') return null;
               
-              let icon = "✨ ";
-              let badgeCls = "badge-new";
+              let icon = "★ ";
+              let badgeCls = "badge-bestseller";
               const lower = val.toLowerCase();
               
               let displayVal = val;
               if (lower.includes("bestseller") || lower.includes("best seller")) {
-                icon = "⭐ ";
+                icon = "★ ";
                 badgeCls = "badge-bestseller";
                 displayVal = "Bestseller";
               } else if (lower.includes("new arrival") || lower.includes("new launch") || lower.includes("new")) {
-                icon = "✨ ";
+                icon = "✦ ";
                 badgeCls = "badge-new";
                 displayVal = "New";
               } else if (lower.includes("solitaire") || lower.includes("classic")) {
-                icon = "💎 ";
+                icon = "✦ ";
                 badgeCls = "badge-bestseller";
                 displayVal = "Classic";
               } else if (lower.includes("soft") || lower.includes("stretch") || lower.includes("flexi")) {
-                icon = "🩺 ";
+                icon = "• ";
                 badgeCls = "badge-soft";
                 displayVal = "Flexi-Fit";
               }
