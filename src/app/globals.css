@@ -8745,11 +8745,11 @@ h1, h2, h3, h4 {
   overflow: hidden;
 }
 
-/* Ultra-Compact Top-Left Floating Badges (Fits Snugly Without Face Overlay) */
+/* Ultra-Compact Left-Border Ribbon Floating Badges (Zero Model Face Overlay) */
 .pc-badges {
   position: absolute !important;
-  top: 5px !important;
-  left: 5px !important;
+  top: 6px !important;
+  left: 0 !important;
   bottom: auto !important;
   z-index: 10 !important;
   display: flex !important;
@@ -8763,19 +8763,22 @@ h1, h2, h3, h4 {
   display: inline-flex !important;
   align-items: center !important;
   gap: 2px !important;
-  padding: 1.5px 5px !important;
-  font-size: 8.5px !important;
-  font-weight: 700 !important;
+  padding: 1.5px 5px 1.5px 4px !important;
+  font-size: 8px !important;
+  font-weight: 800 !important;
   letter-spacing: 0.01em !important;
   text-transform: uppercase !important;
-  border-radius: 3px !important;
-  background: rgba(15, 23, 42, 0.92) !important;
+  border-radius: 0 3px 3px 0 !important;
+  background: rgba(11, 37, 69, 0.94) !important;
   color: #ffffff !important;
   backdrop-filter: blur(4px) !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) !important;
   width: fit-content !important;
+  max-width: 65px !important;
   white-space: nowrap !important;
-  line-height: 1.2 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.1 !important;
 }
 
 .pc-badge.badge-bestseller {
@@ -9092,16 +9095,17 @@ h1, h2, h3, h4 {
     gap: 12px !important;
   }
   .pc-badges {
-    top: 8px !important;
+    top: 6px !important;
     left: 0 !important;
     bottom: auto !important;
-    max-width: 45% !important;
+    max-width: 40% !important;
   }
   .pc-badge {
-    font-size: 8px !important;
-    padding: 2px 6px 2px 5px !important;
-    border-radius: 0 4px 4px 0 !important;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15) !important;
+    font-size: 7px !important;
+    padding: 1px 4px 1px 3px !important;
+    border-radius: 0 3px 3px 0 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15) !important;
+    max-width: 58px !important;
   }
   .pc-product-name {
     font-size: 13.5px !important;
