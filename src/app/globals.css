@@ -8745,36 +8745,37 @@ h1, h2, h3, h4 {
   overflow: hidden;
 }
 
-/* Compact Non-Intrusive Floating Badges - Pinned to Bottom-Left to Avoid Face Overlay */
+/* Ultra-Compact Top-Left Floating Badges (Fits Snugly Without Face Overlay) */
 .pc-badges {
-  position: absolute;
-  bottom: 8px !important;
-  left: 8px !important;
-  top: auto !important;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  pointer-events: none;
-  max-width: 75%;
+  position: absolute !important;
+  top: 5px !important;
+  left: 5px !important;
+  bottom: auto !important;
+  z-index: 10 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 3px !important;
+  pointer-events: none !important;
+  max-width: 45% !important;
 }
 
 .pc-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 3px 7px;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  border-radius: 4px;
-  background: rgba(15, 23, 42, 0.9);
-  color: #ffffff;
-  backdrop-filter: blur(4px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
-  width: fit-content;
-  white-space: nowrap;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+  padding: 1.5px 5px !important;
+  font-size: 8.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+  text-transform: uppercase !important;
+  border-radius: 3px !important;
+  background: rgba(15, 23, 42, 0.92) !important;
+  color: #ffffff !important;
+  backdrop-filter: blur(4px) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
+  width: fit-content !important;
+  white-space: nowrap !important;
+  line-height: 1.2 !important;
 }
 
 .pc-badge.badge-bestseller {
@@ -9091,10 +9092,10 @@ h1, h2, h3, h4 {
     gap: 12px !important;
   }
   .pc-badges {
-    bottom: 6px !important;
-    left: 6px !important;
-    top: auto !important;
-    max-width: 70% !important;
+    top: 4px !important;
+    left: 4px !important;
+    bottom: auto !important;
+    max-width: 42% !important;
   }
   .pc-product-name {
     font-size: 13.5px !important;
@@ -9107,9 +9108,9 @@ h1, h2, h3, h4 {
     font-size: 12px !important;
   }
   .pc-badge {
-    font-size: 8px !important;
-    padding: 1.5px 5px !important;
-    border-radius: 3px !important;
+    font-size: 7.5px !important;
+    padding: 1px 4px !important;
+    border-radius: 2px !important;
   }
 }
 
