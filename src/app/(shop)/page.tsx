@@ -114,35 +114,20 @@ export default function Home() {
 
       {/* CATEGORIES */}
       <div className="sec">
-        <div className="sec-hd" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-          <div>
+        <div className="sec-hd-flex">
+          <div className="sec-title-group">
             <div className="sec-t">Shop By Categories</div>
             <div className="sec-s">Everything a medical professional needs, all in one place</div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <div style={{ display: "flex", gap: "8px" }}>
+          <div className="sec-controls-group">
+            <div className="sec-arrow-btns">
               <button
                 onClick={() => {
                   const el = document.getElementById("cat-grid-row");
                   if (el) el.scrollBy({ left: -260, behavior: "smooth" });
                 }}
                 aria-label="Scroll Categories Left"
-                style={{
-                  width: "36px",
-                  height: "36px",
-                  borderRadius: "50%",
-                  border: "1.5px solid #cbd5e1",
-                  background: "#ffffff",
-                  color: "#0f172a",
-                  fontSize: "18px",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  transition: "all 0.2s ease",
-                  boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
-                }}
+                className="sec-arrow-btn"
               >
                 ‹
               </button>
@@ -152,22 +137,7 @@ export default function Home() {
                   if (el) el.scrollBy({ left: 260, behavior: "smooth" });
                 }}
                 aria-label="Scroll Categories Right"
-                style={{
-                  width: "36px",
-                  height: "36px",
-                  borderRadius: "50%",
-                  border: "1.5px solid #cbd5e1",
-                  background: "#ffffff",
-                  color: "#0f172a",
-                  fontSize: "18px",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  transition: "all 0.2s ease",
-                  boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
-                }}
+                className="sec-arrow-btn"
               >
                 ›
               </button>
@@ -332,54 +302,24 @@ function ProductRowSlider({
 
   return (
     <div className="sec">
-      <div className="sec-hd" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "20px" }}>
-        <div>
+      <div className="sec-hd-flex">
+        <div className="sec-title-group">
           <div className="sec-t">{title}</div>
           <div className="sec-s">{subtitle}</div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-          <div style={{ display: "flex", gap: "8px" }}>
+        <div className="sec-controls-group">
+          <div className="sec-arrow-btns">
             <button
               onClick={() => scroll("left")}
               aria-label="Scroll Left"
-              style={{
-                width: "38px",
-                height: "38px",
-                borderRadius: "50%",
-                border: "1.5px solid #cbd5e1",
-                background: "#ffffff",
-                color: "#0f172a",
-                fontSize: "18px",
-                fontWeight: 700,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                transition: "all 0.2s ease",
-                boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
-              }}
+              className="sec-arrow-btn"
             >
               ‹
             </button>
             <button
               onClick={() => scroll("right")}
               aria-label="Scroll Right"
-              style={{
-                width: "38px",
-                height: "38px",
-                borderRadius: "50%",
-                border: "1.5px solid #cbd5e1",
-                background: "#ffffff",
-                color: "#0f172a",
-                fontSize: "18px",
-                fontWeight: 700,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                transition: "all 0.2s ease",
-                boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
-              }}
+              className="sec-arrow-btn"
             >
               ›
             </button>

@@ -704,7 +704,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             <div
               key={i}
               className={`pdp-side-thumb ${mainImg === i ? 'active' : ''}`}
-              style={mainImg === i ? { borderColor: activeColorHex, opacity: 1, boxShadow: `0 0 0 1.5px ${activeColorHex}` } : {}}
+              style={mainImg === i ? { opacity: 1, boxShadow: '0 2px 8px rgba(15,23,42,0.12)' } : {}}
               onClick={() => scrollToImage(i)}
             >
               <img src={colorImages[i]} alt="" onError={() => setBrokenImages(prev => ({ ...prev, [i]: true }))} />
@@ -712,17 +712,15 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
           ))}
         </div>
 
-        {/* GALLERY - Horizontal Slider with Dynamic Scrub Color Border & Nav Buttons */}
+        {/* GALLERY - Horizontal Slider (Clean Soft Grey Backdrop, No Border) */}
         <div className="pdp-gallery-wrap" style={{ position: 'relative' }}>
           <div
             ref={scrollContainerRef}
             onScroll={handleSliderScroll}
             className="pdp-main-images horizontal-slider"
             style={{
-              border: `2px solid ${activeColorHex}`,
-              borderRadius: '12px',
-              transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
-              boxShadow: `0 4px 20px ${activeColorHex}22`
+              borderRadius: '16px',
+              backgroundColor: '#f1f5f9',
             }}
           >
             {p.videoUrl && (
@@ -757,7 +755,6 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               }}
               className="pdp-gallery-nav-btn prev"
               aria-label="Previous Image"
-              style={{ borderColor: activeColorHex, color: activeColorHex }}
             >
               ‹
             </button>
@@ -774,7 +771,6 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
               }}
               className="pdp-gallery-nav-btn next"
               aria-label="Next Image"
-              style={{ borderColor: activeColorHex, color: activeColorHex }}
             >
               ›
             </button>
