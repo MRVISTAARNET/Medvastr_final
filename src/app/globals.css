@@ -9092,10 +9092,16 @@ h1, h2, h3, h4 {
     gap: 12px !important;
   }
   .pc-badges {
-    top: 4px !important;
-    left: 4px !important;
+    top: 8px !important;
+    left: 0 !important;
     bottom: auto !important;
-    max-width: 42% !important;
+    max-width: 45% !important;
+  }
+  .pc-badge {
+    font-size: 8px !important;
+    padding: 2px 6px 2px 5px !important;
+    border-radius: 0 4px 4px 0 !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15) !important;
   }
   .pc-product-name {
     font-size: 13.5px !important;
@@ -9106,11 +9112,6 @@ h1, h2, h3, h4 {
   }
   .pc-was-price {
     font-size: 12px !important;
-  }
-  .pc-badge {
-    font-size: 7.5px !important;
-    padding: 1px 4px !important;
-    border-radius: 2px !important;
   }
 }
 
