@@ -31,7 +31,7 @@ function DetailAccordion({ title, children, defaultOpen = false }: { title: stri
 
 function LightboxZoomImage({ src, onError }: { src: string; onError?: () => void }) {
   const [hovered, setHovered] = useState(false);
-  const [pos, setPos] = useState({ x: 50, y: 15 });
+  const [pos, setPos] = useState({ x: 50, y: 50 });
   const ref = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -59,7 +59,7 @@ function LightboxZoomImage({ src, onError }: { src: string; onError?: () => void
         justifyContent: 'center',
       }}
     >
-      {/* Base image — aligned top center so face/head is focused */}
+      {/* Base image with smooth transform scale on hover */}
       <img
         src={src}
         alt="Product Fullscreen"
@@ -71,26 +71,12 @@ function LightboxZoomImage({ src, onError }: { src: string; onError?: () => void
           objectPosition: 'top center',
           display: 'block',
           userSelect: 'none',
-          transition: 'opacity 0.2s ease',
-          opacity: hovered ? 0.2 : 1,
+          transition: hovered ? 'transform 0.1s ease-out' : 'transform 0.3s ease-out',
+          transform: hovered ? 'scale(1.35)' : 'scale(1)',
+          transformOrigin: `${pos.x}% ${pos.y}%`,
+          imageRendering: 'crisp-edges',
         }}
       />
-
-      {/* Zoom overlay — 120% scale (20% zoom increase) */}
-      {hovered && (
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: `url(${src})`,
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: '120%',
-            backgroundPosition: `${pos.x}% ${pos.y}%`,
-            pointerEvents: 'none',
-            borderRadius: '8px',
-          }}
-        />
-      )}
 
       {/* Hint label */}
       {!hovered && (

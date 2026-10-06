@@ -8633,5 +8633,209 @@ h1, h2, h3, h4 {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
 
+/* ==========================================================================
+   ELEGANT PRODUCT CARD & HIGH CONTRAST TYPOGRAPHY SYSTEM
+   ========================================================================== */
+.pc-modern {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.pc-modern:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.pc-image-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+/* Compact Non-Intrusive Floating Badges */
+.pc-badges {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  pointer-events: none;
+}
+
+.pc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 8px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  background: rgba(15, 23, 42, 0.88);
+  color: #ffffff;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  width: fit-content;
+  white-space: nowrap;
+}
+
+.pc-badge.badge-bestseller {
+  background: rgba(112, 0, 24, 0.92);
+  color: #ffffff;
+}
+
+.pc-badge.badge-new {
+  background: rgba(15, 23, 42, 0.9);
+  color: #ffffff;
+}
+
+.pc-badge.badge-soft {
+  background: rgba(15, 118, 110, 0.92);
+  color: #ffffff;
+}
+
+/* High Contrast Product Card Typography */
+.pc-info {
+  padding: 14px 16px 16px;
+}
+
+.pc-top-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.pc-brand-name {
+  font-size: 11px;
+  font-weight: 800;
+  color: #700018 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.pc-rating-box {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  background: #f8fafc;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.pc-star-avg {
+  color: #f59e0b;
+  font-size: 12px;
+}
+
+.pc-rating-val {
+  font-size: 12px;
+  font-weight: 800;
+  color: #0f172a !important;
+}
+
+.pc-product-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a !important;
+  line-height: 1.35;
+  margin-bottom: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.pc-product-name:hover {
+  color: #700018 !important;
+}
+
+.pc-price-line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.pc-curr-price {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a !important;
+}
+
+.pc-was-price {
+  font-size: 13px;
+  font-weight: 600;
+  color: #94a3b8 !important;
+  text-decoration: line-through;
+}
+
+/* Color Swatches */
+.pc-swatches {
+  margin-top: 4px;
+}
+
+.pc-swatch-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pc-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid #ffffff;
+  box-shadow: 0 0 0 1px #cbd5e1;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pc-swatch:hover,
+.pc-swatch.active {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 2px #700018;
+}
+
+.pc-swatch-more {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b !important;
+  margin-left: 2px;
+}
+
+/* Responsive Scaling for Mobile */
+@media (max-width: 768px) {
+  .pc-info {
+    padding: 10px 12px 12px;
+  }
+  .pc-badges {
+    top: 8px;
+    left: 8px;
+  }
+  .pc-badge {
+    padding: 2.5px 6px;
+    font-size: 9.5px;
+  }
+  .pc-product-name {
+    font-size: 13px;
+  }
+  .pc-curr-price {
+    font-size: 15px;
+  }
+}
+
 
 

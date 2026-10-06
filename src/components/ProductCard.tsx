@@ -135,14 +135,29 @@ export default function ProductCard({ p, forceColor }: PCardProps) {
 
 
 
-        {/* Quick Labels (Badges) - Simple & Clean */}
+        {/* Quick Labels (Badges) - Glowing Pills */}
         {p.badge && p.badge.toLowerCase() !== 'none' && p.badge.trim() !== '' && (
           <div className="pc-badges">
             {p.badge.split(',').map((b, i) => {
               const val = b.trim();
               if (!val || val.toLowerCase() === 'none') return null;
+              
+              let icon = "";
+              let badgeCls = "badge-simple";
+              const lower = val.toLowerCase();
+              if (lower.includes("bestseller") || lower.includes("best seller")) {
+                icon = "⭐ ";
+                badgeCls = "badge-bestseller";
+              } else if (lower.includes("new")) {
+                icon = "✨ ";
+                badgeCls = "badge-new";
+              } else if (lower.includes("soft") || lower.includes("stretch") || lower.includes("flexi")) {
+                icon = "🩺 ";
+                badgeCls = "badge-soft";
+              }
+              
               return (
-                <div key={i} className="pc-badge badge-simple">{val}</div>
+                <div key={i} className={`pc-badge ${badgeCls}`}>{icon}{val}</div>
               );
             })}
           </div>

@@ -78,10 +78,6 @@ public class User {
     @Builder.Default
     private List<Order> orders = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<WishlistItem> wishlistItems = new ArrayList<>();
-
     @CreationTimestamp
     private LocalDateTime createdAt;
 

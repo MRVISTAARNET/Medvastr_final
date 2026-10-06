@@ -8,13 +8,10 @@ import com.medvastr.backend.dto.ChangePasswordRequest;
 import com.medvastr.backend.dto.ProductDTO;
 import com.medvastr.backend.dto.UpdateProfileRequest;
 import com.medvastr.backend.dto.UserDTO;
-import com.medvastr.backend.dto.WishlistResponseDTO;
 import com.medvastr.backend.model.Address;
 import com.medvastr.backend.model.User;
-import com.medvastr.backend.model.WishlistItem;
 import com.medvastr.backend.repository.ProductRepository;
 import com.medvastr.backend.repository.UserRepository;
-import com.medvastr.backend.repository.WishlistItemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -34,7 +31,6 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepo;
     private final PasswordEncoder encoder;
-    private final WishlistItemRepository wishRepo;
     private final ProductRepository productRepo;
     private final ProductService productService;
     private final AuthService authService;
@@ -190,26 +186,6 @@ public class UserService {
                 .type(a.getType().name())
                 .isDefault(a.isDefault())
                 .build();
-    }
-
-    public void toggleWishlist(Long pid, String variantId) {
-        User u = me();
-        String vId = (variantId == null || variantId.isEmpty()) ? "default" : variantId;
-        wishRepo.findByUserIdAndProductIdAndVariantId(u.getId(), pid, vId).ifPresentOrElse(
-                wishRepo::delete,
-                () -> productRepo.findById(pid)
-                        .ifPresent(
-                                p -> wishRepo.save(WishlistItem.builder().user(u).product(p).variantId(vId).build())));
-    }
-
-    public List<WishlistResponseDTO> getWishlist() {
-        return wishRepo.findByUserId(me().getId()).stream()
-                .map(w -> WishlistResponseDTO.builder()
-                        .productId(w.getProduct().getId())
-                        .variantId(w.getVariantId())
-                        .product(productService.toDTO(w.getProduct()))
-                        .build())
-                .collect(Collectors.toList());
     }
 
     public Page<UserDTO> getAll(Pageable p) {

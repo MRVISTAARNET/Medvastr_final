@@ -192,37 +192,6 @@ export default function Home() {
         </div>
       )}
 
-      {/* BESTSELLING SECTION 2: COTTON CREW TSHIRT */}
-      {hasTshirts && (
-        <div className="sec">
-          <div className="sec-hd">
-            <div>
-              <div className="sec-t">Shop Cotton Crew T-Shirt</div>
-              <div className="sec-s">Premium essentials for your everyday routine</div>
-            </div>
-            <Link href="/products?type=tshirts" className="va">
-              Shop All T-Shirts →
-            </Link>
-          </div>
-
-          <div className="prod-grid">
-            {tshirtBestsellers.map((p) => (
-                <ProductCard key={p.variantId || p.id} p={p} forceColor={p.displayColorHex} />
-              ))
-            }
-            {/* Fallback: show top tshirts */}
-            {tshirtBestsellers.length === 0 &&
-              tshirtFallback.map(p => (
-                <ProductCard key={p.variantId || p.id} p={p} forceColor={p.displayColorHex} />
-              ))
-            }
-          </div>
-        </div>
-      )}
-
-
-
-
       {/* NEW ARRIVALS */}
       {newArr.length > 0 && (
         <div className="sec">

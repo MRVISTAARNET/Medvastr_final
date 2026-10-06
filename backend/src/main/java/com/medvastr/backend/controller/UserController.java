@@ -61,19 +61,6 @@ public class UserController {
         return ResponseEntity.ok(ApiResponse.ok("Deleted", null));
     }
 
-    @GetMapping("/me/wishlist")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ApiResponse<List<com.medvastr.backend.dto.WishlistResponseDTO>>> wish() {
-        return ResponseEntity.ok(ApiResponse.ok("Wishlist", s.getWishlist()));
-    }
-
-    @PostMapping("/me/wishlist/{id}")
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<ApiResponse<Void>> toggleWish(@PathVariable Long id, @RequestParam(required = false) String variantId) {
-        s.toggleWishlist(id, variantId);
-        return ResponseEntity.ok(ApiResponse.ok("Toggled", null));
-    }
-
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<UserDTO>>> all(
