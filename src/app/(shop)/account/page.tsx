@@ -340,7 +340,10 @@ export default function AccountPage() {
                               </div>
                             );
                           })()}
-                          <Link href={`/track?order=${o.orderNumber}`} className="pdp-buy-btn" style={{ height: "36px", padding: "0 20px", fontSize: "13px" }}>Track</Link>
+                          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                            <a href={`/invoice/${o.orderNumber}`} target="_blank" rel="noopener noreferrer" className="pdp-buy-btn" style={{ height: "36px", padding: "0 14px", fontSize: "13px", background: "#f1f5f9", color: "#0f172a", border: "1px solid #cbd5e1", textDecoration: "none", display: "inline-flex", alignItems: "center" }}>📄 Invoice</a>
+                            <Link href={`/track?order=${o.orderNumber}`} className="pdp-buy-btn" style={{ height: "36px", padding: "0 20px", fontSize: "13px" }}>Track</Link>
+                          </div>
                         </div>
                         <div style={{ borderTop: "1px solid #e2e8f0", paddingTop: "15px", display: "flex", gap: "10px", overflowX: "auto" }}>
                           {o.items?.map((item: any, idx: number) => (

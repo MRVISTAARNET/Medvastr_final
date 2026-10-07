@@ -605,9 +605,9 @@ export default function AdminOrders() {
                 </div>
                 <div className="fg">
                   <label>Invoice</label>
-                  <button type="button" className="btn-secondary" style={{ width: '100%' }} onClick={() => {
-                    alert(`Invoice generated for ${editingOrder.num}. Download started.`);
-                  }}>📄 Generate Invoice</button>
+                  <button type="button" className="btn-secondary" style={{ width: '100%', background: '#f0fdf4', border: '1px solid #86efac', color: '#166534', fontWeight: 700 }} onClick={() => {
+                    window.open(`/invoice/${editingOrder.num}`, '_blank');
+                  }}>📄 Generate Tax Invoice</button>
                 </div>
               </div>
 

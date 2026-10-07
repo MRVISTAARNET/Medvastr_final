@@ -264,29 +264,54 @@ function TrackContent() {
                         Your package is being shipped via <strong>{providerName}</strong>.<br />
                         AWB Tracking Number: <span style={{ fontFamily: "monospace", fontWeight: "700", color: "#0f172a", fontSize: "16px" }}>{tracking.trackingNumber}</span>
                       </p>
-                      <a 
-                        href={trackUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-t"
-                        style={{ 
-                          display: "inline-flex", 
-                          alignItems: "center", 
-                          justifyContent: "center",
-                          gap: "8px",
-                          background: isDelhivery ? "#b91c1c" : "#008080", 
-                          color: "white", 
-                          padding: "12px 28px", 
-                          borderRadius: "8px", 
-                          fontWeight: "700", 
-                          fontSize: "15px",
-                          textDecoration: "none",
-                          boxShadow: isDelhivery ? "0 4px 12px rgba(185, 28, 28, 0.2)" : "0 4px 12px rgba(0, 128, 128, 0.2)",
-                          transition: "all 0.2s ease"
-                        }}
-                      >
-                        {btnLabel}
-                      </a>
+                      <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
+                        <a 
+                          href={trackUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-t"
+                          style={{ 
+                            display: "inline-flex", 
+                            alignItems: "center", 
+                            justifyContent: "center",
+                            gap: "8px",
+                            background: isDelhivery ? "#b91c1c" : "#008080", 
+                            color: "white", 
+                            padding: "12px 24px", 
+                            borderRadius: "8px", 
+                            fontWeight: "700", 
+                            fontSize: "14.5px",
+                            textDecoration: "none",
+                            boxShadow: isDelhivery ? "0 4px 12px rgba(185, 28, 28, 0.2)" : "0 4px 12px rgba(0, 128, 128, 0.2)",
+                            transition: "all 0.2s ease"
+                          }}
+                        >
+                          {btnLabel}
+                        </a>
+
+                        <a 
+                          href={`/invoice/${orderData.orderNumber}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ 
+                            display: "inline-flex", 
+                            alignItems: "center", 
+                            justifyContent: "center",
+                            gap: "8px",
+                            background: "#ffffff", 
+                            color: "#0f172a", 
+                            border: "1.5px solid #cbd5e1",
+                            padding: "11px 22px", 
+                            borderRadius: "8px", 
+                            fontWeight: "700", 
+                            fontSize: "14.5px",
+                            textDecoration: "none",
+                            transition: "all 0.2s ease"
+                          }}
+                        >
+                          📄 Download Tax Invoice
+                        </a>
+                      </div>
                     </div>
                   ) : (
                     <div>
