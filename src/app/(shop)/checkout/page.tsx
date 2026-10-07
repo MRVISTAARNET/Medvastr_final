@@ -110,7 +110,7 @@ export default function CheckoutPage() {
     : 0;
 
   const codSurcharge = form.paymentMethod === 'COD' 
-    ? Math.round(Math.max(0, sub - volumeDiscount - activePromoDiscount) * 0.10) 
+    ? Math.round(sub * 0.10) 
     : 0;
 
   const tot = Math.max(0, sub - volumeDiscount + shippingCost - activePromoDiscount + codSurcharge);

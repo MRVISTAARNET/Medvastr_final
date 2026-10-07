@@ -257,11 +257,8 @@ public class OrderService {
 
         Order.PaymentMethod pm = r.getPaymentMethod() != null ? Order.PaymentMethod.valueOf(r.getPaymentMethod()) : Order.PaymentMethod.COD;
         BigDecimal codFee = BigDecimal.ZERO;
-        if (pm == Order.PaymentMethod.COD) {
-            BigDecimal netAfterDisc = subtotal.subtract(disc);
-            if (netAfterDisc.compareTo(BigDecimal.ZERO) > 0) {
-                codFee = netAfterDisc.multiply(new BigDecimal("0.10")).setScale(0, java.math.RoundingMode.HALF_UP);
-            }
+        if (pm == Order.PaymentMethod.COD && subtotal.compareTo(BigDecimal.ZERO) > 0) {
+            codFee = subtotal.multiply(new BigDecimal("0.10")).setScale(0, java.math.RoundingMode.HALF_UP);
         }
 
         BigDecimal total = subtotal.add(ship).add(codFee).subtract(disc).setScale(0, java.math.RoundingMode.HALF_UP);
