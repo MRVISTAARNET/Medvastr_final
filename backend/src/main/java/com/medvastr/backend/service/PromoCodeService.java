@@ -163,9 +163,7 @@ public class PromoCodeService {
         if (code == null || code.isBlank()) return;
         try {
             promoRepo.findByCodeIgnoreCaseAndActiveTrue(code.trim()).ifPresent(pc -> {
-                int current = pc.getUsedCount() != null ? pc.getUsedCount() : 0;
-                pc.setUsedCount(current + 1);
-                promoRepo.save(pc);
+                promoRepo.incrementUsage(pc.getId());
             });
         } catch (Exception e) {
             log.warn("Failed to increment usage for promo code {}: {}", code, e.getMessage());

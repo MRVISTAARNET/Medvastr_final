@@ -70,8 +70,17 @@ public class OtpService {
 
             OTP otp = otpOpt.get();
 
+            if (otp.getAttempts() >= 5) {
+                log.warn("[OtpService] Max OTP attempts reached for {}", email);
+                otp.setUsed(true); // invalidate it
+                otpRepo.save(otp);
+                return false;
+            }
+
             if (!otp.getCode().equals(code)) {
                 log.warn("[OtpService] Invalid OTP code for {}", email);
+                otp.setAttempts(otp.getAttempts() + 1);
+                otpRepo.save(otp);
                 return false;
             }
 

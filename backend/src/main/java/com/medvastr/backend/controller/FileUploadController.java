@@ -101,6 +101,9 @@ public class FileUploadController {
                 log.info("Deleted from S3: {}", key);
             } else if (url.startsWith("/api/media/")) {
                 String filename = url.replace("/api/media/", "");
+                if (filename.contains("..") || filename.contains("/") || filename.contains("\\")) {
+                    return ResponseEntity.badRequest().body(ApiResponse.err("Invalid filename"));
+                }
                 Files.deleteIfExists(Paths.get("uploads").resolve(filename));
                 log.info("Deleted locally: {}", filename);
             }

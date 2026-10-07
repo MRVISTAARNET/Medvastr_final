@@ -38,6 +38,10 @@ public class OTP {
     @Builder.Default
     private boolean used = false;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private int attempts = 0;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 

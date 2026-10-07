@@ -48,6 +48,7 @@ export const EmbroideryConfigurator: React.FC<EmbroideryConfiguratorProps> = ({
   onProceed,
 }) => {
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [nameError, setNameError] = useState(false);
 
   // Current title based on option
   const optionTitle =
@@ -127,15 +128,18 @@ export const EmbroideryConfigurator: React.FC<EmbroideryConfiguratorProps> = ({
 
           {/* Line 1 (Name) */}
           <div>
-            <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#334155', marginBottom: '6px' }}>Text</label>
+            <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#334155', marginBottom: '6px' }}>Text <span style={{ color: '#e11d48' }}>*</span></label>
             <div style={{ position: 'relative', width: '100%' }}>
               <input
                 type="text"
                 maxLength={22}
                 value={customization.line1}
-                onChange={(e) => onChangeCustomization({ line1: e.target.value })}
-                placeholder="Line 1 (Name)"
-                style={{ width: '100%', border: '1.5px solid #cbd5e1', borderRadius: '8px', padding: '8px 45px 8px 12px', fontSize: '14px', outline: 'none', backgroundColor: '#ffffff', color: '#0f172a', boxSizing: 'border-box' }}
+                onChange={(e) => {
+                  onChangeCustomization({ line1: e.target.value });
+                  if (e.target.value.trim()) setNameError(false);
+                }}
+                placeholder="Line 1 (Name) — Required"
+                style={{ width: '100%', border: `1.5px solid ${nameError ? '#e11d48' : '#cbd5e1'}`, borderRadius: '8px', padding: '8px 45px 8px 12px', fontSize: '14px', outline: 'none', backgroundColor: '#ffffff', color: '#0f172a', boxSizing: 'border-box' }}
               />
               <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
                 <span style={{ backgroundColor: '#f1f5f9', color: '#475569', fontSize: '10px', fontWeight: 700, padding: '2px 6px', borderRadius: '4px', border: '1px solid #cbd5e1' }}>
@@ -144,9 +148,10 @@ export const EmbroideryConfigurator: React.FC<EmbroideryConfiguratorProps> = ({
               </div>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px', fontSize: '11px' }}>
-              <span style={{ color: '#059669', fontWeight: 600 }}>
-                *on scrub top
-              </span>
+              {nameError
+                ? <span style={{ color: '#e11d48', fontWeight: 700 }}>⚠️ Please enter a name for embroidery</span>
+                : <span style={{ color: '#059669', fontWeight: 600 }}>*on scrub top</span>
+              }
               <span style={{ color: '#94a3b8' }}>{customization.line1.length}/22</span>
             </div>
           </div>
@@ -275,7 +280,13 @@ export const EmbroideryConfigurator: React.FC<EmbroideryConfiguratorProps> = ({
         </button>
         <button
           type="button"
-          onClick={onProceed}
+          onClick={() => {
+            if (!customization.line1.trim() && !customization.selectedIconId && !customization.customLogoUrl) {
+              setNameError(true);
+              return;
+            }
+            onProceed();
+          }}
           style={{ flex: 1, padding: '10px 20px', borderRadius: '8px', border: 'none', backgroundColor: '#1e1b4b', color: '#ffffff', fontWeight: 700, fontSize: '13px', cursor: 'pointer', textAlign: 'center' }}
         >
           PROCEED

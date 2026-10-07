@@ -27,4 +27,9 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
         List<ProductVariant> list = findAllByProductIdAndSizeAndColorHex(productId, size, colorHex);
         return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
     }
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.transaction.annotation.Transactional
+    @org.springframework.data.jpa.repository.Query("UPDATE ProductVariant p SET p.stockQuantity = p.stockQuantity - :quantity WHERE p.id = :id AND p.stockQuantity >= :quantity")
+    int decrementStockIfAvailable(@org.springframework.data.repository.query.Param("id") Long id, @org.springframework.data.repository.query.Param("quantity") int quantity);
 }

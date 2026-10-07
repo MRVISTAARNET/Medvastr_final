@@ -881,13 +881,19 @@ public class OrderService {
             return;
         for (OrderItem item : order.getItems()) {
             if (item.getVariant() != null) {
-                ProductVariant v = variantRepo.findById(item.getVariant().getId()).orElse(null);
+                Long variantId = item.getVariant().getId();
+                int qty = item.getQuantity();
+                
+                int updatedRows = variantRepo.decrementStockIfAvailable(variantId, qty);
+                if (updatedRows == 0) {
+                    throw new RuntimeException("Insufficient stock for " + item.getProductName() + " during final checkout.");
+                }
+
+                // Log the inventory change
+                ProductVariant v = variantRepo.findById(variantId).orElse(null);
                 if (v != null) {
-                    int prevStock = v.getStockQuantity() != null ? v.getStockQuantity() : 0;
-                    int qty = item.getQuantity();
-                    int newStock = Math.max(0, prevStock - qty);
-                    v.setStockQuantity(newStock);
-                    variantRepo.save(v);
+                    int newStock = v.getStockQuantity() != null ? v.getStockQuantity() : 0;
+                    int prevStock = newStock + qty;
 
                     InventoryLog logEntry = InventoryLog.builder()
                             .variant(v)
@@ -895,7 +901,7 @@ public class OrderService {
                             .previousStock(prevStock)
                             .newStock(newStock)
                             .actionType("PURCHASE")
-                            .notes("Stock deducted for purchase order: " + order.getOrderNumber())
+                            .notes("Stock deducted atomically for purchase order: " + order.getOrderNumber())
                             .build();
                     inventoryLogRepo.save(logEntry);
                 }

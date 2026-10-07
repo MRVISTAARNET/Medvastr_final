@@ -241,12 +241,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
               name: i.productName,
               short: i.productName,
               price: i.price,
+              type: "scrub suit", // Assumed default if backend doesn't provide it, or better yet, don't strict filter if missing
               imgs: [i.imageUrl],
               col: i.colorHex,
               colNm: i.colorName,
               size: i.size,
               qty: i.quantity,
               variantId: i.variantId,
+              embroidery: i.embroideryDetails ? JSON.parse(i.embroideryDetails) : undefined,
+              embroideryPrice: i.embroideryPrice,
             }));
             dispatch({ type: "SET", data: beCart });
           }

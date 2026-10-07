@@ -204,10 +204,8 @@ export function buildNavFromCategories(tree: CategoryNode[]) {
 export function isScrubSuitItem(item: any): boolean {
   if (!item) return false;
 
-  // Custom embroidery line items are not scrub suits
-  if (item.embroidery || item.embroideryCustomization) {
-    return false;
-  }
+  // NOTE: Items with embroidery are still scrub suits — embroidery is just a customization add-on.
+  // Do NOT exclude items based on embroidery presence.
 
   const name = (item.name || "").toLowerCase();
   const type = (item.type || "").toLowerCase();

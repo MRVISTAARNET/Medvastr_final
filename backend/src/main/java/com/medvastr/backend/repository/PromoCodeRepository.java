@@ -19,5 +19,10 @@ public interface PromoCodeRepository extends JpaRepository<PromoCode, Long> {
     boolean existsByCodeIgnoreCase(String code);
 
     List<PromoCode> findAllByOrderByCreatedAtDesc();
+
+    @org.springframework.data.jpa.repository.Modifying
+    @org.springframework.transaction.annotation.Transactional
+    @org.springframework.data.jpa.repository.Query("UPDATE PromoCode p SET p.usedCount = COALESCE(p.usedCount, 0) + 1 WHERE p.id = :id")
+    void incrementUsage(@org.springframework.data.repository.query.Param("id") Long id);
 }
 

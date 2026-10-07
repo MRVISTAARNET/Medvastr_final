@@ -93,11 +93,10 @@ export default function OrderInvoicePage() {
   
   // GST 5% Tax breakdown for HSN 6211 (CGST 2.5% + SGST 2.5% equal split)
   const taxableSubtotal = Math.max(0, subtotal - discount);
-  const rawTax = order.taxAmount ? Number(order.taxAmount) : (taxableSubtotal * (5 / 105));
-  const halfTax = rawTax / 2;
-  const cgst = Number(halfTax.toFixed(2));
-  const sgst = Number(halfTax.toFixed(2));
-  const totalTax = Number((cgst + sgst).toFixed(2));
+  const rawTax = order.taxAmount ? Number(order.taxAmount) : (taxableSubtotal * 5 / 105);
+  const totalTax = Math.round(rawTax * 100) / 100;
+  const cgst = Math.round((totalTax / 2) * 100) / 100;
+  const sgst = Number((totalTax - cgst).toFixed(2));
 
   const invoiceNo = `INV-${(order.orderNumber || orderNumber).replace(/[^a-zA-Z0-9-]/g, '')}`;
 

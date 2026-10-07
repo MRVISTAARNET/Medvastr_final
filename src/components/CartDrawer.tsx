@@ -1223,6 +1223,14 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
             width: 100%;
             text-align: center;
           }
+          .upsell-btn-duo {
+            flex-direction: column;
+            gap: 8px;
+          }
+          .upsell-emb-btn {
+            width: 100%;
+            padding: 10px 6px;
+          }
         }
       `}</style>
     </>

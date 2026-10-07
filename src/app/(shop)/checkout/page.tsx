@@ -95,7 +95,11 @@ export default function CheckoutPage() {
 
   // Filter Scrub Suit items to restrict coupons strictly to Scrub Suits
   const scrubSuitItems = cart.filter((i) => isScrubSuitItem(i));
-  const scrubSuitSubtotal = scrubSuitItems.reduce((s, i) => s + i.price * i.qty, 0);
+  // Use base product price (exclude embroidery addon) for coupon calculation
+  const scrubSuitSubtotal = scrubSuitItems.reduce((s, i) => {
+    const embPrice = (i.embroidery?.totalEmbroideryPrice || i.embroideryPrice || 0);
+    return s + (i.price - embPrice) * i.qty;
+  }, 0);
   const scrubSuitNetSubtotal = Math.max(0, scrubSuitSubtotal - Math.round(scrubSuitSubtotal * volumeRate));
 
   const activePromoDiscount = appliedPromo && scrubSuitNetSubtotal > 0
