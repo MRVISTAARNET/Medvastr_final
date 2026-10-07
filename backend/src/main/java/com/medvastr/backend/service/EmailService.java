@@ -221,7 +221,7 @@ public class EmailService {
                     </div>
                     <div style="background: #f9fafb; padding: 25px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #f1f5f9;">
                         © 2026 Medvarn | Premium Medical Apparel<br>
-                        Express Zone, Malad East, Mumbai – 400063
+                        Gagan Shopping Arcade Lower Level Shop No 1, Gokuldham, Goregaon East, Mumbai – 400063
                     </div>
                 </div>
                 """.formatted(name, type, message);
@@ -262,7 +262,7 @@ public class EmailService {
                     </div>
                     <div style="background: #f9fafb; padding: 25px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #f1f5f9;">
                         &copy; 2026 Medvarn | Premium Medical Apparel<br>
-                        Express Zone, Malad East, Mumbai – 400063
+                        Gagan Shopping Arcade Lower Level Shop No 1, Gokuldham, Goregaon East, Mumbai – 400063
                     </div>
                 </div>
                 """
@@ -551,7 +551,7 @@ public class EmailService {
 
                     <div style="background: #f9fafb; padding: 25px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #f1f5f9;">
                         © 2026 Medvarn | Premium Medical Apparel<br>
-                        Express Zone, Malad East, Mumbai – 400063
+                        Gagan Shopping Arcade Lower Level Shop No 1, Gokuldham, Goregaon East, Mumbai – 400063
                     </div>
                 </div>
                 """

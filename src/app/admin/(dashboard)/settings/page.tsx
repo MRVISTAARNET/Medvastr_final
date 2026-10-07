@@ -77,7 +77,7 @@ export default function AdminSettings() {
                 <div className="fg">
                   <label>Address</label>
                   <textarea style={{ ...inp, height: '80px', padding: '10px 14px', resize: 'vertical' }}
-                    defaultValue="F 81-B, Express Zone, Malad East, Mumbai – 400063" />
+                    defaultValue="Gagan Shopping Arcade Lower Level Shop No 1, Krishna Vatika Marg, Gokuldham, Goregaon East, Mumbai – 400063" />
                 </div>
                 <button className="btn-primary" style={{ opacity: 0.7, cursor: 'not-allowed' }}>Save Changes (local only)</button>
               </div>

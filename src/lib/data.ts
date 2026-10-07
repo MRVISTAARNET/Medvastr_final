@@ -4,7 +4,7 @@ export const B = {
   phone2: "8976488911",
   landline: "022 46089785",
   email: "info@medvarn.com",
-  addr: "F 81-B, Express Zone, Malad East, Mumbai – 400063",
+  addr: "Gagan Shopping Arcade Lower Level Shop No 1, Krishna Vatika Marg, Gokuldham, Goregaon East, Mumbai – 400063",
   ig: "https://www.instagram.com/medvarn/",
   fb: "https://www.facebook.com/medvarn/",
   li: "https://www.linkedin.com/company/medvarn/",

@@ -125,11 +125,11 @@ export default function OrderInvoicePage() {
         <div className="inv-header">
           <div>
             <div className="inv-brand-logo">MEDVARN</div>
-            <div className="inv-company-name">MR VISTAAR NET APPARELS</div>
+            <div className="inv-company-name">NAMOKAAR MEDVARN LLP</div>
             <div className="inv-company-address">
-              Express Zone, Western Express Highway, Malad East<br />
-              Mumbai, Maharashtra – 400063, India<br />
-              <strong>GSTIN:</strong> 27AABCM9876F1Z5 | <strong>PAN:</strong> AABCM9876F<br />
+              Gagan Shopping Arcade, Lower Level Shop No 1, Krishna Vatika Marg, Gokuldham<br />
+              Goregaon East, Mumbai, Maharashtra, India – 400063<br />
+              <strong>GSTIN:</strong> 27ABAFN4863B1ZG | <strong>PAN:</strong> ABAFN4863B<br />
               <strong>Email:</strong> info@medvarn.com | <strong>Web:</strong> www.medvarn.com
             </div>
           </div>
@@ -304,7 +304,7 @@ export default function OrderInvoicePage() {
           </div>
 
           <div className="inv-signature-box">
-            <div className="inv-sig-title">For MR VISTAAR NET (MEDVARN)</div>
+            <div className="inv-sig-title">For NAMOKAAR MEDVARN LLP</div>
             <div className="inv-stamp">Authorized Signatory</div>
           </div>
         </div>
