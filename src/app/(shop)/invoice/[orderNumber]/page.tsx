@@ -100,6 +100,34 @@ export default function OrderInvoicePage() {
 
   const invoiceNo = `INV-${(order.orderNumber || orderNumber).replace(/[^a-zA-Z0-9-]/g, '')}`;
 
+  const handleDownloadPDF = async () => {
+    try {
+      const { toPng } = await import('html-to-image');
+      const { jsPDF } = await import('jspdf');
+      
+      const invoiceElement = document.querySelector('.invoice-sheet') as HTMLElement;
+      if (!invoiceElement) return;
+
+      const dataUrl = await toPng(invoiceElement, { quality: 1.0, pixelRatio: 2 });
+      
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+      
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (invoiceElement.offsetHeight * pdfWidth) / invoiceElement.offsetWidth;
+      
+      pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Invoice_${invoiceNo}.pdf`);
+    } catch (err) {
+      console.error("Error generating PDF", err);
+      // Fallback to print dialog if PDF generation fails
+      window.print();
+    }
+  };
+
   return (
     <div className="invoice-container">
       {/* Top Floating Control Bar (Hidden on Print) */}
@@ -110,9 +138,8 @@ export default function OrderInvoicePage() {
             <span style={{ fontWeight: 800, fontSize: "15px", color: "#0f172a" }}>Tax Invoice #{order.orderNumber}</span>
           </div>
           <div style={{ display: "flex", gap: "12px" }}>
-            <button onClick={() => window.print()} className="print-btn">
-              🖨️ Print / Save PDF
-            </button>
+            <button onClick={handleDownloadPDF} className="print-btn">
+              🖨️ Download PDF
             <button onClick={() => window.close()} className="close-btn">
               ✕ Close
             </button>
