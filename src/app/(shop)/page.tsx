@@ -79,11 +79,25 @@ export default function Home() {
     (p.badge || "").includes("New Launch")
   ).slice(0, 8);
 
-  const flexiBestsellers = flattenedProducts.filter(p => p.name.toLowerCase().includes("flexi fit") || p.name.toLowerCase().includes("flexi-fit") || (p.type === "scrubs" && (p.badge || "").toLowerCase().includes("bestseller"))).slice(0, 10);
+  const flexiBestsellers = flattenedProducts.filter(p => 
+    p.type === "scrubs" && (
+      p.name.toLowerCase().includes("flexi fit") || 
+      p.name.toLowerCase().includes("flexi-fit") || 
+      (p.badge || "").toLowerCase().includes("bestseller")
+    )
+  ).slice(0, 10);
   const flexiFallback = flexiBestsellers.length === 0 ? flattenedProducts.filter(p => p.type === "scrubs").slice(0, 10) : [];
   const hasFlexi = flexiBestsellers.length > 0 || flexiFallback.length > 0;
 
-  const solitaireList = flattenedProducts.filter(p => p.name.toLowerCase().includes("solitaire") || p.name.toLowerCase().includes("classic") || (p.badge || "").toLowerCase().includes("classic") || (p.badge || "").toLowerCase().includes("new") || (p.badge || "").toLowerCase().includes("solitaire")).slice(0, 10);
+  const solitaireList = flattenedProducts.filter(p => 
+    p.type === "scrubs" && (
+      p.name.toLowerCase().includes("solitaire") || 
+      p.name.toLowerCase().includes("classic") || 
+      (p.badge || "").toLowerCase().includes("classic") || 
+      (p.badge || "").toLowerCase().includes("new") || 
+      (p.badge || "").toLowerCase().includes("solitaire")
+    )
+  ).slice(0, 10);
   const solitaireFallback = solitaireList.length === 0 ? flattenedProducts.filter(p => p.type === "scrubs").slice(0, 10) : [];
   const finalSolitaire = solitaireList.length > 0 ? solitaireList : solitaireFallback;
 
@@ -200,13 +214,13 @@ export default function Home() {
       )}
 
       {/* SECTION 2: CLASSIC SOLITAIRE SCRUBS */}
-      {solitaireList.length > 0 && (
+      {finalSolitaire.length > 0 && (
         <ProductRowSlider
           title="Shop Classic Solitaire Scrubs"
           subtitle="Premium elegance and tailored fit for medical professionals"
           linkHref="/products?type=scrubs"
           linkText="Shop Solitaire Collection"
-          products={solitaireList}
+          products={finalSolitaire}
         />
       )}
 
