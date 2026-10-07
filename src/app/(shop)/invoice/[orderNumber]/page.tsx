@@ -140,6 +140,7 @@ export default function OrderInvoicePage() {
           <div style={{ display: "flex", gap: "12px" }}>
             <button onClick={handleDownloadPDF} className="print-btn">
               🖨️ Download PDF
+            </button>
             <button onClick={() => window.close()} className="close-btn">
               ✕ Close
             </button>
