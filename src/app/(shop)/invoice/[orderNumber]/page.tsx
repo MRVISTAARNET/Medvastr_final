@@ -108,7 +108,27 @@ export default function OrderInvoicePage() {
       const invoiceElement = document.querySelector('.invoice-sheet') as HTMLElement;
       if (!invoiceElement) return;
 
-      const dataUrl = await toPng(invoiceElement, { quality: 1.0, pixelRatio: 2 });
+      // Force a consistent width (A4 proportions) so it doesn't crop on mobile/small screens
+      const targetWidth = 800; 
+      const originalWidth = invoiceElement.style.width;
+      const originalMaxWidth = invoiceElement.style.maxWidth;
+      const originalMargin = invoiceElement.style.margin;
+
+      invoiceElement.style.width = `${targetWidth}px`;
+      invoiceElement.style.maxWidth = 'none';
+      invoiceElement.style.margin = '0';
+
+      const dataUrl = await toPng(invoiceElement, { 
+        quality: 1.0, 
+        pixelRatio: 2,
+        width: targetWidth,
+        style: { transform: 'scale(1)', transformOrigin: 'top left' }
+      });
+
+      // Restore original styles
+      invoiceElement.style.width = originalWidth;
+      invoiceElement.style.maxWidth = originalMaxWidth;
+      invoiceElement.style.margin = originalMargin;
       
       const pdf = new jsPDF({
         orientation: 'portrait',
@@ -117,7 +137,7 @@ export default function OrderInvoicePage() {
       });
       
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (invoiceElement.offsetHeight * pdfWidth) / invoiceElement.offsetWidth;
+      const pdfHeight = (invoiceElement.offsetHeight * pdfWidth) / targetWidth;
       
       pdf.addImage(dataUrl, 'PNG', 0, 0, pdfWidth, pdfHeight);
       pdf.save(`Invoice_${invoiceNo}.pdf`);
@@ -158,7 +178,7 @@ export default function OrderInvoicePage() {
             <div className="inv-company-address">
               Gagan Shopping Arcade, Lower Level Shop No 1, Krishna Vatika Marg, Gokuldham<br />
               Goregaon East, Mumbai, Maharashtra, India – 400063<br />
-              <strong>GSTIN:</strong> 27ABAFN4863B1ZG | <strong>PAN:</strong> ABAFN4863B<br />
+              <strong>GSTIN:</strong> 27ABAFN4863B1ZG<br />
               <strong>Email:</strong> info@medvarn.com | <strong>Web:</strong> www.medvarn.com
             </div>
           </div>
