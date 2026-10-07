@@ -660,14 +660,23 @@ public class OrderService {
             log.info("[Track] Public tracking requested for order {}", o.getOrderNumber());
         }
 
-        // Sync order status from Shiprocket tracking in real time
+        // Sync order status from Delhivery Direct or Shiprocket in real time
         if (o.getTrackingNumber() != null && !o.getTrackingNumber().trim().isEmpty() && !o.getTrackingNumber().equalsIgnoreCase("null")
                 && o.getStatus() != Order.OrderStatus.DELIVERED
                 && o.getStatus() != Order.OrderStatus.CANCELLED
                 && o.getStatus() != Order.OrderStatus.RETURNED) {
-            shiprocketService.syncTrackingStatus(o);
-            // Refresh order reference to get updated status and estimated delivery date
-            o = orderRepo.findAnyMatchingOrder(cleanNum).orElse(o);
+            try {
+                boolean isDelhivery = o.getCourierName() != null && o.getCourierName().toLowerCase().contains("delhivery");
+                if (isDelhivery) {
+                    syncOrderFromDelhivery(o.getId());
+                } else {
+                    shiprocketService.syncTrackingStatus(o);
+                }
+                // Refresh order reference to get updated status and estimated delivery date
+                o = orderRepo.findAnyMatchingOrder(cleanNum).orElse(o);
+            } catch (Exception ex) {
+                log.warn("[Track] Live courier status sync failed for {}: {}", o.getOrderNumber(), ex.getMessage());
+            }
         }
 
         List<String> steps = Arrays.asList("PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED");

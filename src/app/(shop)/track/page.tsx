@@ -229,61 +229,73 @@ function TrackContent() {
                       }}>
                         {label}
                       </div>
-                      {srStatus && (
-                        <div style={{
-                          fontSize: "13px",
-                          color: "#475569",
-                          marginBottom: "20px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: "6px"
-                        }}>
-                          <span style={{ fontSize: "16px" }}>🚀</span>
-                          <span>Shiprocket: <strong>{srStatus}</strong></span>
-                        </div>
-                      )}
+                      {srStatus && (() => {
+                        const isDelhivery = Boolean(tracking.courierName && tracking.courierName.toLowerCase().includes("delhivery"));
+                        return (
+                          <div style={{
+                            fontSize: "13px",
+                            color: "#475569",
+                            marginBottom: "20px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "6px"
+                          }}>
+                            <span style={{ fontSize: "16px" }}>{isDelhivery ? "📦" : "🚀"}</span>
+                            <span>{isDelhivery ? "Delhivery" : "Shiprocket"}: <strong>{srStatus}</strong></span>
+                          </div>
+                        );
+                      })()}
                     </div>
                   );
                 })()}
 
-                {tracking.trackingNumber ? (
-                  <div style={{ width: "100%" }}>
-                    <p style={{ fontSize: "15px", color: "#475569", margin: "0 0 20px", fontWeight: "500", lineHeight: "1.6" }}>
-                      Your package is being shipped via <strong>{tracking.courierName || "Courier Partner"}</strong>.<br />
-                      AWB Tracking Number: <span style={{ fontFamily: "monospace", fontWeight: "700", color: "#0f172a", fontSize: "16px" }}>{tracking.trackingNumber}</span>
-                    </p>
-                    <a 
-                      href={`https://shiprocket.co/tracking/${tracking.trackingNumber}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-t"
-                      style={{ 
-                        display: "inline-flex", 
-                        alignItems: "center", 
-                        justifyContent: "center",
-                        gap: "8px",
-                        background: "#008080", 
-                        color: "white", 
-                        padding: "12px 28px", 
-                        borderRadius: "8px", 
-                        fontWeight: "700", 
-                        fontSize: "15px",
-                        textDecoration: "none",
-                        boxShadow: "0 4px 12px rgba(0, 128, 128, 0.2)",
-                        transition: "all 0.2s ease"
-                      }}
-                    >
-                      🚚 Track Live on Shiprocket
-                    </a>
-                  </div>
-                ) : (
-                  <div>
-                    <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
-                      Once your order is handed over to our courier partner, the tracking details and a direct AWB tracking link will appear here.
-                    </p>
-                  </div>
-                )}
+                {(() => {
+                  const isDelhivery = Boolean(tracking.courierName && tracking.courierName.toLowerCase().includes("delhivery"));
+                  const providerName = tracking.courierName || (isDelhivery ? "Delhivery Direct" : "Courier Partner");
+                  const trackUrl = isDelhivery 
+                    ? `https://www.delhivery.com/track/package/${tracking.trackingNumber}`
+                    : `https://shiprocket.co/tracking/${tracking.trackingNumber}`;
+                  const btnLabel = isDelhivery ? "🚚 Track Live on Delhivery" : "🚚 Track Live on Shiprocket";
+
+                  return tracking.trackingNumber ? (
+                    <div style={{ width: "100%" }}>
+                      <p style={{ fontSize: "15px", color: "#475569", margin: "0 0 20px", fontWeight: "500", lineHeight: "1.6" }}>
+                        Your package is being shipped via <strong>{providerName}</strong>.<br />
+                        AWB Tracking Number: <span style={{ fontFamily: "monospace", fontWeight: "700", color: "#0f172a", fontSize: "16px" }}>{tracking.trackingNumber}</span>
+                      </p>
+                      <a 
+                        href={trackUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-t"
+                        style={{ 
+                          display: "inline-flex", 
+                          alignItems: "center", 
+                          justifyContent: "center",
+                          gap: "8px",
+                          background: isDelhivery ? "#b91c1c" : "#008080", 
+                          color: "white", 
+                          padding: "12px 28px", 
+                          borderRadius: "8px", 
+                          fontWeight: "700", 
+                          fontSize: "15px",
+                          textDecoration: "none",
+                          boxShadow: isDelhivery ? "0 4px 12px rgba(185, 28, 28, 0.2)" : "0 4px 12px rgba(0, 128, 128, 0.2)",
+                          transition: "all 0.2s ease"
+                        }}
+                      >
+                        {btnLabel}
+                      </a>
+                    </div>
+                  ) : (
+                    <div>
+                      <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
+                        Once your order is handed over to our courier partner, the tracking details and a direct AWB tracking link will appear here.
+                      </p>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Order Details Grid */}

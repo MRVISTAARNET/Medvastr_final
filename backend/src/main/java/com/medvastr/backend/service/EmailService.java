@@ -42,6 +42,9 @@ public class EmailService {
     @Value("${app.frontend.url:https://www.medvarn.com}")
     private String frontendUrl;
 
+    @Value("${app.admin.email:info@medvarn.com}")
+    private String adminEmail;
+
     @PostConstruct
     public void logSmtpConfig() {
         log.info("========== SMTP DIAGNOSTICS ==========");
@@ -121,25 +124,107 @@ public class EmailService {
 
     @Async
     public void sendInquiryNotification(Inquiry i) {
-        String safeName = HtmlUtils.htmlEscape(i.getName());
-        String safeEmail = HtmlUtils.htmlEscape(i.getEmail());
-        String safePhone = HtmlUtils.htmlEscape(i.getPhone() != null ? i.getPhone() : "");
-        String safeMessage = HtmlUtils.htmlEscape(i.getMessage());
-        String safeType = HtmlUtils.htmlEscape(i.getType());
+        if (i == null) return;
 
-        String html = "<h2>New " + safeType + "</h2>" +
-                "<p><b>Name:</b> " + safeName + "</p>" +
-                "<p><b>Email:</b> " + safeEmail + "</p>" +
-                "<p><b>Phone:</b> " + safePhone + "</p>" +
-                "<p><b>Message:</b> " + safeMessage + "</p>";
-        sendHtmlEmail("info@medvarn.com", "New Inquiry: " + i.getType(), html, "no-reply@medvarn.com",
-                "Medvarn Bot");
+        String targetAdmin = (adminEmail != null && !adminEmail.isBlank()) ? adminEmail : "info@medvarn.com";
+        String safeName = HtmlUtils.htmlEscape(i.getName() != null ? i.getName() : "Customer");
+        String rawEmail = i.getEmail() != null ? i.getEmail().trim() : "";
+        String safeEmail = HtmlUtils.htmlEscape(rawEmail.isBlank() ? "N/A" : rawEmail);
+        String safePhone = HtmlUtils.htmlEscape(i.getPhone() != null ? i.getPhone() : "N/A");
+        String safeMessage = HtmlUtils.htmlEscape(i.getMessage() != null ? i.getMessage() : "");
+        String safeType = HtmlUtils.htmlEscape(i.getType() != null ? i.getType() : "General Inquiry");
 
-        if (i.getEmail() != null && i.getEmail().contains("@")) {
-            String replyHtml = "<p>Hi " + safeName
-                    + ",</p><p>We received your inquiry and our team will get back to you within 24 hours.</p><p>Regards,<br>Medvarn Team</p>";
-            sendHtmlEmail(i.getEmail(), "Inquiry Received", replyHtml, "info@medvarn.com", "Medvarn Support");
+        log.info("[EmailService] Processing inquiry notification — Type: {} | From Name: {} | Email: {}", safeType, safeName, safeEmail);
+
+        // 1. Send Admin Notification Email
+        String adminHtml = getInquiryAdminHtml(safeType, safeName, safeEmail, safePhone, safeMessage);
+        try {
+            sendHtmlEmailInner(targetAdmin, "📩 New Inquiry: " + safeType + " (" + safeName + ")", adminHtml, "no-reply@medvarn.com", "Medvarn Bot");
+            log.info("[EmailService] Inquiry ADMIN email successfully delivered to {}", targetAdmin);
+        } catch (Exception ex) {
+            log.error("[EmailService] Failed to send inquiry ADMIN email to {}: {}", targetAdmin, ex.getMessage(), ex);
         }
+
+        // 2. Send Customer Auto-Reply Email (if valid email provided)
+        if (rawEmail.contains("@") && !rawEmail.isBlank()) {
+            String customerHtml = getInquiryCustomerHtml(safeName, safeType, safeMessage);
+            try {
+                sendHtmlEmailInner(rawEmail, "We Received Your Message | Medvarn Support", customerHtml, "info@medvarn.com", "Medvarn Support");
+                log.info("[EmailService] Inquiry CUSTOMER auto-reply email successfully delivered to {}", rawEmail);
+            } catch (Exception ex) {
+                log.error("[EmailService] Failed to send inquiry CUSTOMER auto-reply email to {}: {}", rawEmail, ex.getMessage(), ex);
+            }
+        } else {
+            log.info("[EmailService] Skipping customer auto-reply email — no valid email address provided in inquiry");
+        }
+    }
+
+    private String getInquiryAdminHtml(String type, String name, String email, String phone, String message) {
+        return """
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.04);">
+                    <div style="background: %s; padding: 30px; text-align: center; color: white;">
+                        <h1 style="margin: 0; font-size: 22px; font-weight: 800;">📩 New Contact Inquiry Received</h1>
+                        <p style="margin: 8px 0 0; opacity: 0.9; font-size: 14px;">Medvarn Customer Portal</p>
+                    </div>
+                    <div style="padding: 35px; color: #1e293b; line-height: 1.6;">
+                        <table style="width: 100%%; border-collapse: collapse; margin-bottom: 25px;">
+                            <tr style="border-bottom: 1px solid #f1f5f9;">
+                                <td style="padding: 10px 0; font-weight: 700; color: #64748b; width: 130px;">Inquiry Type:</td>
+                                <td style="padding: 10px 0; font-weight: 800; color: #008080;">%s</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #f1f5f9;">
+                                <td style="padding: 10px 0; font-weight: 700; color: #64748b;">Customer Name:</td>
+                                <td style="padding: 10px 0; font-weight: 700; color: #0f172a;">%s</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #f1f5f9;">
+                                <td style="padding: 10px 0; font-weight: 700; color: #64748b;">Email Address:</td>
+                                <td style="padding: 10px 0; color: #2563eb; font-weight: 600;">%s</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid #f1f5f9;">
+                                <td style="padding: 10px 0; font-weight: 700; color: #64748b;">Mobile Phone:</td>
+                                <td style="padding: 10px 0; color: #0f172a; font-weight: 700;">%s</td>
+                            </tr>
+                        </table>
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 30px;">
+                            <h4 style="margin: 0 0 10px; font-size: 12px; text-transform: uppercase; color: #64748b; letter-spacing: 1px;">Message Content</h4>
+                            <p style="margin: 0; font-size: 14px; color: #334155; white-space: pre-line; line-height: 1.6;">%s</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <a href="%s/admin/inquiries" style="background: #008080; color: white; padding: 14px 28px; text-decoration: none; border-radius: 10px; font-weight: 700; font-size: 14px; display: inline-block;">View in Admin Dashboard</a>
+                        </div>
+                    </div>
+                </div>
+                """.formatted(SECONDARY_COLOR, type, name, email, phone, message, frontendUrl);
+    }
+
+    private String getInquiryCustomerHtml(String name, String type, String message) {
+        return """
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #f1f5f9; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+                    <div style="background: linear-gradient(135deg, #008080 0%%, #1a2b4a 100%%); padding: 40px 30px; text-align: center; color: white;">
+                        <div style="font-size: 36px; margin-bottom: 12px;">✉️</div>
+                        <h1 style="margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 0.5px;">We Received Your Message!</h1>
+                        <p style="margin: 8px 0 0; opacity: 0.9; font-size: 14px;">Medvarn Customer Support</p>
+                    </div>
+                    <div style="padding: 40px; color: #1e293b; line-height: 1.7;">
+                        <p style="margin-top: 0; font-size: 16px;">Hi <b>%s</b>,</p>
+                        <p>Thank you for reaching out to <b>Medvarn</b>. We have successfully received your inquiry regarding <b>%s</b>.</p>
+                        <p>Our dedicated support team is reviewing your request and will get back to you within <b>2 to 4 business hours</b>.</p>
+
+                        <div style="background: #f8fafc; border-left: 4px solid #008080; border-radius: 0 12px 12px 0; padding: 20px; margin: 30px 0;">
+                            <h4 style="margin: 0 0 8px; font-size: 12px; text-transform: uppercase; color: #008080; letter-spacing: 1px;">Summary of your message</h4>
+                            <p style="margin: 0; font-size: 14px; color: #475569; font-style: italic; white-space: pre-line;">"%s"</p>
+                        </div>
+
+                        <p style="font-size: 14px; color: #64748b;">If you have any additional details or urgent requests, simply reply directly to this email or contact us via WhatsApp.</p>
+                        <hr style="border: none; border-top: 1px solid #f1f5f9; margin: 35px 0;">
+                        <p style="font-size: 15px; font-weight: 700; color: #1a2b4a; margin-bottom: 0;">Warm regards,<br>Team Medvarn Support</p>
+                    </div>
+                    <div style="background: #f9fafb; padding: 25px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #f1f5f9;">
+                        © 2026 Medvarn | Premium Medical Apparel<br>
+                        Express Zone, Malad East, Mumbai – 400063
+                    </div>
+                </div>
+                """.formatted(name, type, message);
     }
 
     @Async
