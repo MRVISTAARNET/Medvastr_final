@@ -87,7 +87,11 @@ export interface Product {
 
 
 
-export const fmt = (n: number) => "₹ " + Number(n || 0).toLocaleString("en-IN");
+export const fmt = (n: number) => {
+  if (n === null || n === undefined || isNaN(n)) return "₹ 0";
+  const val = Math.round(Number(n));
+  return "₹ " + val.toLocaleString("en-IN");
+};
 export const fmtNum = (n: number) => Number(n || 0).toLocaleString("en-IN");
 export const fmtDate = (d: string | Date) => {
   if (!d) return "—";

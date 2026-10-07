@@ -85,17 +85,19 @@ export default function OrderInvoicePage() {
   }
 
   const items = order.items || [];
-  const subtotal = order.subtotal || 0;
-  const shipping = order.shippingAmount || 0;
-  const codFee = order.codFee || 0;
-  const discount = order.discountAmount || 0;
-  const total = order.totalAmount || 0;
+  const subtotal = Math.round(order.subtotal || 0);
+  const shipping = Math.round(order.shippingAmount || 0);
+  const codFee = Math.round(order.codFee || 0);
+  const discount = Math.round(order.discountAmount || 0);
+  const total = Math.round(order.totalAmount || (subtotal + shipping + codFee - discount));
   
-  // Tax breakdown (GST 5% included for HSN 6211)
-  const taxableSubtotal = subtotal - discount;
-  const totalTax = order.taxAmount || Math.round(taxableSubtotal * 0.05);
-  const cgst = Math.round(totalTax / 2);
-  const sgst = totalTax - cgst;
+  // GST 5% Tax breakdown for HSN 6211 (CGST 2.5% + SGST 2.5% equal split)
+  const taxableSubtotal = Math.max(0, subtotal - discount);
+  const rawTax = order.taxAmount ? Number(order.taxAmount) : (taxableSubtotal * (5 / 105));
+  const halfTax = rawTax / 2;
+  const cgst = Number(halfTax.toFixed(2));
+  const sgst = Number(halfTax.toFixed(2));
+  const totalTax = Number((cgst + sgst).toFixed(2));
 
   const invoiceNo = `INV-${(order.orderNumber || orderNumber).replace(/[^a-zA-Z0-9-]/g, '')}`;
 
@@ -249,15 +251,15 @@ export default function OrderInvoicePage() {
                 <tbody>
                   <tr>
                     <td>CGST (2.5%):</td>
-                    <td style={{ textAlign: "right", fontWeight: 600 }}>{fmt(cgst)}</td>
+                    <td style={{ textAlign: "right", fontWeight: 600 }}>₹ {cgst.toFixed(2)}</td>
                   </tr>
                   <tr>
                     <td>SGST (2.5%):</td>
-                    <td style={{ textAlign: "right", fontWeight: 600 }}>{fmt(sgst)}</td>
+                    <td style={{ textAlign: "right", fontWeight: 600 }}>₹ {sgst.toFixed(2)}</td>
                   </tr>
                   <tr style={{ borderTop: "1px solid #cbd5e1" }}>
                     <td><strong>Total Tax Included:</strong></td>
-                    <td style={{ textAlign: "right", fontWeight: 800 }}>{fmt(totalTax)}</td>
+                    <td style={{ textAlign: "right", fontWeight: 800 }}>₹ {totalTax.toFixed(2)}</td>
                   </tr>
                 </tbody>
               </table>

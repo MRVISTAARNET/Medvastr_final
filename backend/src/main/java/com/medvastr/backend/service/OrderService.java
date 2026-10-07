@@ -253,7 +253,7 @@ public class OrderService {
             }
         }
 
-        BigDecimal disc = volumeDiscount.add(promoDiscount);
+        BigDecimal disc = volumeDiscount.add(promoDiscount).setScale(0, java.math.RoundingMode.HALF_UP);
 
         Order.PaymentMethod pm = r.getPaymentMethod() != null ? Order.PaymentMethod.valueOf(r.getPaymentMethod()) : Order.PaymentMethod.COD;
         BigDecimal codFee = BigDecimal.ZERO;
@@ -264,7 +264,7 @@ public class OrderService {
             }
         }
 
-        BigDecimal total = subtotal.add(ship).add(codFee).subtract(disc);
+        BigDecimal total = subtotal.add(ship).add(codFee).subtract(disc).setScale(0, java.math.RoundingMode.HALF_UP);
         if (total.compareTo(BigDecimal.ZERO) < 0) {
             total = BigDecimal.ZERO;
         }
@@ -285,6 +285,7 @@ public class OrderService {
                     .divide(new BigDecimal("100").add(itemTaxPercent), 2, java.math.RoundingMode.HALF_UP);
             taxVal = taxVal.add(itemTax);
         }
+        taxVal = taxVal.setScale(0, java.math.RoundingMode.HALF_UP);
 
         Order o = Order.builder()
                 .orderNumber(tempNum)
