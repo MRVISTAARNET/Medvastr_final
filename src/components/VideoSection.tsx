@@ -69,13 +69,18 @@ export default function VideoSection() {
           Watch real healthcare professionals perform in high-pressure clinical environments wearing Medvarn scrubs.
         </p>
 
-        {/* Portrait Video Reels (Natural 9:16 Ratio - No Cropping) */}
+      </div>
+
+      {/* Portrait Video Reels - Full Bleed Width */}
+      <div className="vid-reels-full-wrapper">
         <div className="vid-reels-row">
           {reels.map((reel) => (
             <ReelCard key={reel.id} reel={reel} />
           ))}
         </div>
+      </div>
 
+      <div className="vid-in">
         {/* Scroll Indicator */}
         <div className="vid-scroll-indicator">
           <span className="vid-scroll-text">← Swipe to explore more videos →</span>
