@@ -5,12 +5,18 @@ import { API_BASE } from "@/lib/api";
 
 const DEFAULT_VIDEO_1 = "https://medvastr-assets.s3.ap-south-1.amazonaws.com/videos/doctor-review-1.mp4";
 const DEFAULT_VIDEO_2 = "https://medvastr-assets.s3.ap-south-1.amazonaws.com/videos/doctor-review-2.mp4";
+const DEFAULT_VIDEO_3 = "https://medvastr-assets.s3.ap-south-1.amazonaws.com/videos/doctor-review-3.mp4";
+const DEFAULT_VIDEO_4 = "https://medvastr-assets.s3.ap-south-1.amazonaws.com/videos/doctor-review-4.mp4";
 
 export default function VideoSection() {
   const [video1, setVideo1] = useState(DEFAULT_VIDEO_1);
   const [video2, setVideo2] = useState(DEFAULT_VIDEO_2);
+  const [video3, setVideo3] = useState(DEFAULT_VIDEO_3);
+  const [video4, setVideo4] = useState(DEFAULT_VIDEO_4);
   const [title1, setTitle1] = useState("FlexiFit Women's V-Neck Scrub Suit");
   const [title2, setTitle2] = useState("Classic Solitaire Scrub Suit");
+  const [title3, setTitle3] = useState("Pro-Active Men's Scrub");
+  const [title4, setTitle4] = useState("Medvarn Signature Scrub");
 
   useEffect(() => {
     Promise.all([
@@ -37,6 +43,18 @@ export default function VideoSection() {
       title: title2 ? title2.replace(/™/g, "") : "Classic Solitaire Scrub Suit",
       sub: "Performance in Action ✨",
       url: video2 || DEFAULT_VIDEO_2
+    },
+    {
+      id: 3,
+      title: title3 ? title3.replace(/™/g, "") : "Pro-Active Men's Scrub",
+      sub: "All-Day Comfort 💯",
+      url: video3 || DEFAULT_VIDEO_3
+    },
+    {
+      id: 4,
+      title: title4 ? title4.replace(/™/g, "") : "Medvarn Signature Scrub",
+      sub: "Premium Quality 🌟",
+      url: video4 || DEFAULT_VIDEO_4
     }
   ];
 
@@ -51,11 +69,16 @@ export default function VideoSection() {
           Watch real healthcare professionals perform in high-pressure clinical environments wearing Medvarn scrubs.
         </p>
 
-        {/* 2 Portrait Video Reels (Natural 9:16 Ratio - No Cropping) */}
+        {/* Portrait Video Reels (Natural 9:16 Ratio - No Cropping) */}
         <div className="vid-reels-row">
           {reels.map((reel) => (
             <ReelCard key={reel.id} reel={reel} />
           ))}
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="vid-scroll-indicator">
+          <span className="vid-scroll-text">← Swipe to explore more videos →</span>
         </div>
 
         {/* Feature Badges Strip */}

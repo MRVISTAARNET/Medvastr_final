@@ -8576,20 +8576,53 @@ h1, h2, h3, h4 {
   line-height: 1.6;
 }
 
-/* Centered 2 Portrait Reel Row */
+/* Centered Portrait Reel Row */
 .vid-reels-row {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 32px;
   margin-bottom: 40px;
-  flex-wrap: wrap;
+  overflow-x: auto;
+  padding: 0 10px 20px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.vid-reels-row::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+/* Scroll Indicator */
+.vid-scroll-indicator {
+  text-align: center;
+  margin-top: -20px;
+  margin-bottom: 30px;
+  animation: pulse-scroll 2s infinite ease-in-out;
+}
+.vid-scroll-text {
+  font-size: 13px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  background: #f1f5f9;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+}
+@keyframes pulse-scroll {
+  0%, 100% { opacity: 0.7; transform: translateX(0); }
+  50% { opacity: 1; transform: translateX(4px); }
 }
 
 .vid-reel-card-portrait {
   position: relative;
+  flex: 0 0 auto;
+  scroll-snap-align: center;
   width: 350px;
-  max-width: 90vw;
+  max-width: 85vw;
   height: 520px;
   border-radius: 24px;
   overflow: hidden;
