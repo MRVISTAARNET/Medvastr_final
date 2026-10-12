@@ -155,11 +155,13 @@ function ProductsContent() {
       } else if (tFilter === "tshirts" || tFilter === "tshirt") {
         if (!pType.includes("tshirt") && !pType.includes("t-shirt")) return false;
       } else if (tFilter === "scrubs" || tFilter === "scrub") {
-        if (!pType.includes("scrub") || pType.includes("under")) return false;
+        const isApron = pType.includes("apron") || (p.name || "").toLowerCase().includes("apron");
+        if (!pType.includes("scrub") || pType.includes("under") || isApron) return false;
       } else if (tFilter === "surgical" || tFilter === "surgical-wear") {
         if (!pType.includes("surgical") && !pType.includes("gown") && !pType.includes("cap")) return false;
       } else if (tFilter === "apron" || tFilter === "lab-coat" || tFilter === "doctor-apron") {
-        if (!pType.includes("apron") && !pType.includes("lab-coat") && !pType.includes("coat")) return false;
+        const isApron = pType.includes("apron") || pType.includes("lab-coat") || (p.name || "").toLowerCase().includes("apron") || (p.name || "").toLowerCase().includes("lab coat");
+        if (!isApron) return false;
       } else if (pType !== tFilter) {
         return false;
       }

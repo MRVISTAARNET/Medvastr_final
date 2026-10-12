@@ -92,8 +92,135 @@ export function productMatchesCategory(
   if (!categorySlug || categorySlug === "all") return true;
 
   const slug = categorySlug.toLowerCase();
-  
-  // 1. Check ID-based mapping from category tree if available
+
+  // 1. Gender Verification
+  const gen = (product.gen || "").toLowerCase();
+  const pGens = gen.split(',').map(g => g.trim().toLowerCase()).filter(Boolean);
+
+  const matchesTargetGender = (target: "men" | "women") => {
+    if (pGens.length === 0 || pGens.includes("all") || pGens.includes("unisex")) return true;
+    return pGens.includes(target);
+  };
+
+  const isGenderAll = !activeGenderFilter || activeGenderFilter.toLowerCase() === "all";
+  if (!isGenderAll) {
+    if (activeGenderFilter.toLowerCase() === "men" && !matchesTargetGender("men")) return false;
+    if (activeGenderFilter.toLowerCase() === "women" && !matchesTargetGender("women")) return false;
+  }
+  if (slug.startsWith("men-") && !matchesTargetGender("men")) return false;
+  if (slug.startsWith("women-") && !matchesTargetGender("women")) return false;
+
+  // 2. Identify Product's Distinct Apparel Kind
+  const name = (product.name || "").toLowerCase();
+  const type = (product.type || "").toLowerCase();
+  const pCatName = (product.categoryName || "").toLowerCase();
+  const pSubCatName = (product.subcategoryName || "").toLowerCase();
+  const pChildCatName = (product.childCategoryName || "").toLowerCase();
+  const allText = `${name} ${type} ${pCatName} ${pSubCatName} ${pChildCatName}`;
+
+  const isApron =
+    allText.includes("apron") ||
+    allText.includes("lab coat") ||
+    allText.includes("doctor coat") ||
+    allText.includes("lab-coat") ||
+    type === "apron";
+
+  const isUnderscrub =
+    allText.includes("underscrub") ||
+    allText.includes("under-scrub") ||
+    allText.includes("under scrub");
+
+  const isTShirt =
+    allText.includes("t-shirt") ||
+    allText.includes("tshirt");
+
+  const isGown =
+    allText.includes("gown");
+
+  const isCap =
+    allText.includes("cap") ||
+    allText.includes("head");
+
+  const isScrubSuit =
+    !isApron &&
+    !isUnderscrub &&
+    !isTShirt &&
+    !isGown &&
+    !isCap &&
+    (allText.includes("scrub") || type === "scrubs" || type === "scrub");
+
+  // 3. Strict routing by requested category
+
+  // 3a. Doctor Apron / Lab Coat Categories
+  if (slug.includes("doctor-apron") || slug.includes("lab-coat") || slug.includes("apron")) {
+    return isApron;
+  }
+
+  // If the product IS an Apron, it must NEVER match any other category below (Scrub Suit, T-Shirt, etc.)
+  if (isApron) {
+    // Only top-level gender collections like 'men' or 'women' or 'all' may include aprons
+    if (slug === "men") return matchesTargetGender("men");
+    if (slug === "women") return matchesTargetGender("women");
+    return false;
+  }
+
+  // 3b. Scrub Suit Categories
+  const isScrubSuitCategory =
+    slug.includes("scrub-suit") ||
+    slug === "scrubs" ||
+    slug === "scrub" ||
+    slug.includes("classic-solitaire") ||
+    slug.includes("flexi-fit") ||
+    slug.includes("flexi-v-scrub");
+
+  if (isScrubSuitCategory) {
+    if (!isScrubSuit) return false;
+    if (slug.includes("classic-solitaire") || slug.includes("classic-solitaire-scrubs")) {
+      return name.includes("classic") || name.includes("solitaire") || pChildCatName.includes("classic") || pChildCatName.includes("solitaire");
+    }
+    if (slug.includes("flexi-fit-v-scrub") || slug.includes("flexi-v-scrub") || slug.includes("flexi")) {
+      return name.includes("flexi") || pChildCatName.includes("flexi") || !name.includes("classic");
+    }
+    return true;
+  }
+
+  // 3c. Cotton T-Shirt Categories
+  if (slug.includes("cotton-tshirt") || slug.includes("t-shirt") || slug.includes("tshirt")) {
+    return isTShirt;
+  }
+
+  // 3d. Under Scrub Categories
+  if (slug.includes("underscrub") || slug.includes("under-scrub") || slug.includes("full-sleeve")) {
+    return isUnderscrub;
+  }
+
+  // 3e. Surgical Gown Categories
+  if (slug.includes("surgeon-gown") || slug.includes("surgical-gown")) {
+    return isGown;
+  }
+
+  // 3f. Surgical Cap Categories
+  if (slug.includes("surgeon-cap") || slug.includes("surgical-cap")) {
+    return isCap;
+  }
+
+  // 3g. Surgical Wear Parent Category
+  if (slug === "surgical-wear" || slug.includes("surgical-wear")) {
+    return isGown || isCap;
+  }
+
+  // 3h. Top-level Gender Collections
+  if (slug === "men") return matchesTargetGender("men");
+  if (slug === "women") return matchesTargetGender("women");
+
+  // 3i. Bulk & Hospital Linen
+  if (slug.includes("bulk-order")) return true;
+  if (slug.includes("linen") || slug.includes("bedding")) return allText.includes("linen") || allText.includes("bedding");
+  if (slug.includes("blanket")) return allText.includes("blanket");
+  if (slug.includes("patient")) return allText.includes("patient");
+  if (slug.includes("maternity")) return allText.includes("maternity");
+
+  // 4. Fallback Category Tree ID Match for any dynamic/unmapped category
   const cat = findCategoryBySlug(tree, categorySlug);
   if (cat) {
     const ids = new Set(collectDescendantIds(cat));
@@ -106,86 +233,6 @@ export function productMatchesCategory(
       return true;
     }
   }
-
-  // 2. Extract Gender requirements from slug
-  const gen = (product.gen || "").toLowerCase();
-  let reqGen: string | null = null;
-  if (slug.startsWith("men-")) reqGen = "men";
-  else if (slug.startsWith("women-")) reqGen = "women";
-
-  // If active gender filter is 'all', ignore gender restriction from slug prefix!
-  const isGenderAll = !activeGenderFilter || activeGenderFilter.toLowerCase() === "all";
-
-  if (reqGen && gen !== "all" && !isGenderAll) {
-    const pGens = gen.split(',').map(g => g.trim().toLowerCase());
-    if (pGens.length > 0 && !pGens.includes(reqGen) && !pGens.includes("unisex")) {
-      return false; // Strict reject if gender explicitly doesn't match
-    }
-  }
-
-  // 3. Fallback semantic checks
-  const name = (product.name || "").toLowerCase();
-  const type = (product.type || "").toLowerCase();
-  
-  const pCatName = (product.categoryName || "").toLowerCase();
-  const pSubCatName = (product.subcategoryName || "").toLowerCase();
-  const pChildCatName = (product.childCategoryName || "").toLowerCase();
-
-  // If node name matches category tree name
-  if (cat) {
-    const catName = cat.name.toLowerCase();
-    if (pCatName.includes(catName) || pSubCatName.includes(catName) || pChildCatName.includes(catName)) {
-      return true;
-    }
-  }
-
-  // Specific child category semantic overrides FIRST
-  if (slug.includes("classic-solitaire") || slug.includes("classic-solitaire-scrubs")) {
-    return type.includes("scrub") && !type.includes("under") && (name.includes("classic") || name.includes("solitaire") || pChildCatName.includes("classic") || pChildCatName.includes("solitaire"));
-  }
-  if (slug.includes("flexi-fit-v-scrub") || slug.includes("flexi-v-scrub") || slug.includes("flexi")) {
-    return type.includes("scrub") && !type.includes("under") && (name.includes("flexi") || pChildCatName.includes("flexi") || !name.includes("classic"));
-  }
-  // General scrub suit override SECOND
-  if (slug.includes("scrub-suit") || slug === "scrubs" || slug === "scrub") {
-    return type.includes("scrub") && !type.includes("under");
-  }
-  if (slug.includes("cotton-tshirt") || slug.includes("t-shirt") || slug.includes("tshirt")) {
-    return type.includes("tshirt") || type.includes("t-shirt") || name.includes("t-shirt") || name.includes("tshirt");
-  }
-  if (slug.includes("full-sleeve") || slug.includes("underscrub") || slug.includes("under-scrub")) {
-    return type.includes("under") || name.includes("under");
-  }
-  if (slug.includes("surgeon-gown") || slug.includes("surgical-gown")) {
-    return type.includes("gown") || name.includes("gown");
-  }
-  if (slug.includes("surgeon-cap") || slug.includes("surgical-cap")) {
-    return type.includes("cap") || name.includes("cap") || name.includes("head");
-  }
-  if (slug.includes("surgical-wear") || slug === "surgical-wear") {
-    return type.includes("surgical") || type.includes("gown") || type.includes("cap") || name.includes("surgical") || name.includes("surgeon") || name.includes("gown") || name.includes("cap");
-  }
-  if (slug.includes("doctor-apron") || slug.includes("lab-coat") || slug.includes("apron")) {
-    return (
-      type.includes("apron") ||
-      type.includes("lab-coat") ||
-      type.includes("coat") ||
-      name.includes("apron") ||
-      name.includes("lab coat") ||
-      name.includes("doctor coat") ||
-      pCatName.includes("apron") ||
-      pCatName.includes("lab coat") ||
-      pSubCatName.includes("apron") ||
-      pSubCatName.includes("lab coat")
-    );
-  }
-
-  // Bulk and others
-  if (slug.includes("bulk-order")) return true;
-  if (slug.includes("linen") || slug.includes("bedding")) return type.includes("linen") || name.includes("linen") || name.includes("bedding");
-  if (slug.includes("blanket")) return type.includes("blanket") || name.includes("blanket");
-  if (slug.includes("patient")) return type.includes("patient") || name.includes("patient");
-  if (slug.includes("maternity")) return type.includes("maternity") || name.includes("maternity");
 
   return false;
 }

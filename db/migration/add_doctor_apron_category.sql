@@ -66,8 +66,26 @@ WHERE (LOWER(color_hex) = '#6b7280' OR LOWER(color_code) = '#6b7280')
       WHERE LOWER(TRIM(color_name)) IN ('milky white', 'milky-white', 'milk white', 'white', 'pure white', 'doctor white')
   );
 
+-- 5. Re-point existing Doctor Apron products to the Doctor Apron category
+UPDATE products p
+JOIN categories c ON c.slug = 'women-doctor-apron-lab-coat'
+SET p.subcategory_id = c.id, 
+    p.type = 'apron', 
+    p.category_ids = CONCAT('2,', c.id)
+WHERE (LOWER(p.name) LIKE '%apron%' OR LOWER(p.name) LIKE '%lab coat%')
+  AND (LOWER(p.gender) = 'women' OR LOWER(p.gender) = 'female');
+
+UPDATE products p
+JOIN categories c ON c.slug = 'men-doctor-apron-lab-coat'
+SET p.subcategory_id = c.id, 
+    p.type = 'apron', 
+    p.category_ids = CONCAT('1,', c.id)
+WHERE (LOWER(p.name) LIKE '%apron%' OR LOWER(p.name) LIKE '%lab coat%')
+  AND (LOWER(p.gender) = 'men' OR LOWER(p.gender) = 'male');
+
 -- Verification Query:
 -- SELECT id, name, slug, parent_id, active, show_in_nav FROM categories WHERE slug LIKE '%doctor-apron%';
+-- SELECT id, name, type, category_id, subcategory_id, category_ids FROM products WHERE LOWER(name) LIKE '%apron%';
 
 -- Rollback Script (if ever needed):
 -- DELETE FROM categories WHERE slug IN ('men-doctor-apron-lab-coat', 'women-doctor-apron-lab-coat', 'doctor-apron-lab-coat');

@@ -123,6 +123,24 @@ public class DataInitializer {
             } catch (Exception ex) {
                 log.warn("[DataInitializer] Could not update Milky White variant hex: {}", ex.getMessage());
             }
+
+            // Ensure Doctor Apron products are linked to Doctor Apron category in database
+            try {
+                jdbcTemplate.update("UPDATE products p " +
+                        "JOIN categories c ON c.slug = 'women-doctor-apron-lab-coat' " +
+                        "SET p.subcategory_id = c.id, p.type = 'apron', p.category_ids = CONCAT('2,', c.id) " +
+                        "WHERE (LOWER(p.name) LIKE '%apron%' OR LOWER(p.name) LIKE '%lab coat%') " +
+                        "AND (LOWER(p.gender) = 'women' OR LOWER(p.gender) = 'female')");
+
+                jdbcTemplate.update("UPDATE products p " +
+                        "JOIN categories c ON c.slug = 'men-doctor-apron-lab-coat' " +
+                        "SET p.subcategory_id = c.id, p.type = 'apron', p.category_ids = CONCAT('1,', c.id) " +
+                        "WHERE (LOWER(p.name) LIKE '%apron%' OR LOWER(p.name) LIKE '%lab coat%') " +
+                        "AND (LOWER(p.gender) = 'men' OR LOWER(p.gender) = 'male')");
+                log.info("[DataInitializer] Linked Doctor Apron products to doctor-apron categories");
+            } catch (Exception ex) {
+                log.warn("[DataInitializer] Could not link doctor apron products: {}", ex.getMessage());
+            }
         };
     }
 }
