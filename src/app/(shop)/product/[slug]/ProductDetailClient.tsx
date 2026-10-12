@@ -300,75 +300,17 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
     fetch(`${API_BASE}/products/${p.id}/reviews?size=50`)
       .then((r) => r.json())
       .then((d) => {
-        if (d.success && d.data?.content && d.data.content.length > 0) {
+        if (d.success && Array.isArray(d.data?.content)) {
           setReviews(d.data.content);
-          setReviewCount(d.data?.totalElements ?? d.data.content.length);
+          setReviewCount(typeof d.data?.totalElements === "number" ? d.data.totalElements : d.data.content.length);
         } else {
-          setReviews([
-            {
-              reviewerName: "Dr. Ananya Sharma",
-              userName: "Dr. Ananya Sharma",
-              rating: 5,
-              review: "The fit is absolutely perfect! Fabric is ultra breathable during long 12-hour hospital shifts. Medvarn scrubs are definitely best in class.",
-              createdAt: "2026-09-18T10:00:00Z"
-            },
-            {
-              reviewerName: "Dr. Rajesh Kumar",
-              userName: "Dr. Rajesh Kumar",
-              rating: 5,
-              review: "Exceptional quality fabric and stitching. Embroidery customization looks super professional. Highly recommended for all medical personnel!",
-              createdAt: "2026-09-22T14:30:00Z"
-            },
-            {
-              reviewerName: "Dr. Priya Patel",
-              userName: "Dr. Priya Patel",
-              rating: 5,
-              review: "Featherlight material with super soft texture. Color doesn't fade after multiple machine washes. Will order again!",
-              createdAt: "2026-09-25T09:15:00Z"
-            },
-            {
-              reviewerName: "Dr. Vikram Sethi",
-              userName: "Dr. Vikram Sethi",
-              rating: 5,
-              review: "Great fit for men's scrubs! Pockets are deep and reinforced. Quick delivery in 3 days to Mumbai.",
-              createdAt: "2026-09-28T16:45:00Z"
-            }
-          ]);
-          setReviewCount(p.rev || 128);
+          setReviews([]);
+          setReviewCount(p.rev || 0);
         }
       })
       .catch(() => {
-        setReviews([
-          {
-            reviewerName: "Dr. Ananya Sharma",
-            userName: "Dr. Ananya Sharma",
-            rating: 5,
-            review: "The fit is absolutely perfect! Fabric is ultra breathable during long 12-hour hospital shifts. Medvarn scrubs are definitely best in class.",
-            createdAt: "2026-09-18T10:00:00Z"
-          },
-          {
-            reviewerName: "Dr. Rajesh Kumar",
-            userName: "Dr. Rajesh Kumar",
-            rating: 5,
-            review: "Exceptional quality fabric and stitching. Embroidery customization looks super professional. Highly recommended for all medical personnel!",
-            createdAt: "2026-09-22T14:30:00Z"
-          },
-          {
-            reviewerName: "Dr. Priya Patel",
-            userName: "Dr. Priya Patel",
-            rating: 5,
-            review: "Featherlight material with super soft texture. Color doesn't fade after multiple machine washes. Will order again!",
-            createdAt: "2026-09-25T09:15:00Z"
-          },
-          {
-            reviewerName: "Dr. Vikram Sethi",
-            userName: "Dr. Vikram Sethi",
-            rating: 5,
-            review: "Great fit for men's scrubs! Pockets are deep and reinforced. Quick delivery in 3 days to Mumbai.",
-            createdAt: "2026-09-28T16:45:00Z"
-          }
-        ]);
-        setReviewCount(p.rev || 128);
+        setReviews([]);
+        setReviewCount(p.rev || 0);
       });
   }, [p?.id]);
 
@@ -567,7 +509,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
 
   const avgRating = reviews.length > 0
     ? (reviews.reduce((s, r) => s + (r.rating || 5), 0) / reviews.length).toFixed(1)
-    : p.rating;
+    : reviewCount > 0 && p.rating ? Number(p.rating).toFixed(1) : null;
 
   const isSet = (p as any).style?.toLowerCase() === "set";
   const selectedVariant = ci !== null ? p.variants?.find((v: any) => v.size === sz && v.colorHex === p.clrs?.[ci]) : undefined;
@@ -603,26 +545,28 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
       "itemCondition": "https://schema.org/NewCondition",
       "availability": isOutOfStock ? "https://schema.org/OutOfStock" : "https://schema.org/InStock"
     },
-    ...(reviews.length > 0 ? {
+    ...(reviewCount > 0 && avgRating ? {
       "aggregateRating": {
         "@type": "AggregateRating",
         "ratingValue": avgRating,
         "reviewCount": reviewCount
       },
-      "review": reviews.slice(0, 5).map((r: any) => ({
-        "@type": "Review",
-        "author": {
-          "@type": "Person",
-          "name": r.userName || "Verified Customer"
-        },
-        "datePublished": r.createdAt ? r.createdAt.split('T')[0] : new Date().toISOString().split('T')[0],
-        "reviewBody": r.body || r.comment || "",
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": r.rating || 5,
-          "bestRating": "5"
-        }
-      }))
+      ...(reviews.length > 0 ? {
+        "review": reviews.slice(0, 5).map((r: any) => ({
+          "@type": "Review",
+          "author": {
+            "@type": "Person",
+            "name": r.userName || r.reviewerName || "Verified Customer"
+          },
+          "datePublished": r.createdAt ? r.createdAt.split('T')[0] : new Date().toISOString().split('T')[0],
+          "reviewBody": r.body || r.comment || r.review || "",
+          "reviewRating": {
+            "@type": "Rating",
+            "ratingValue": r.rating || 5,
+            "bestRating": "5"
+          }
+        }))
+      } : {})
     } : {})
   };
 
@@ -833,10 +777,21 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
                 )}
               </div>
               <div onClick={scrollToReviews} className="pdp-rating-row" style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: 0, cursor: 'pointer' }}>
-                <div className="pdp-rating-stars" style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#fef08a', color: '#ca8a04', padding: '4px 10px', borderRadius: '20px', fontSize: '14px', fontWeight: 700 }}>
-                  <span style={{ fontSize: '16px', color: '#eab308' }}>★</span> {avgRating}
-                </div>
-                <a href="#pdp-reviews-sec" onClick={scrollToReviews} className="pdp-review-count" style={{ fontSize: '13px', color: '#64748b', fontWeight: 600, textDecoration: 'underline' }}>({reviewCount} Reviews)</a>
+                {reviewCount > 0 ? (
+                  <>
+                    <div className="pdp-rating-stars" style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#fef08a', color: '#ca8a04', padding: '4px 10px', borderRadius: '20px', fontSize: '14px', fontWeight: 700 }}>
+                      <span style={{ fontSize: '16px', color: '#eab308' }}>★</span> {avgRating || '5.0'}
+                    </div>
+                    <a href="#pdp-reviews-sec" onClick={scrollToReviews} className="pdp-review-count" style={{ fontSize: '13px', color: '#64748b', fontWeight: 600, textDecoration: 'underline' }}>({reviewCount} {reviewCount === 1 ? 'Review' : 'Reviews'})</a>
+                  </>
+                ) : (
+                  <>
+                    <div className="pdp-rating-stars" style={{ display: 'flex', alignItems: 'center', gap: '4px', background: '#f1f5f9', color: '#475569', padding: '4px 10px', borderRadius: '20px', fontSize: '13px', fontWeight: 600 }}>
+                      <span style={{ fontSize: '14px', color: '#94a3b8' }}>★</span> New
+                    </div>
+                    <a href="#pdp-reviews-sec" onClick={scrollToReviews} className="pdp-review-count" style={{ fontSize: '13px', color: '#64748b', fontWeight: 600, textDecoration: 'underline' }}>(0 Reviews)</a>
+                  </>
+                )}
               </div>
             </div>
             <span className="pdp-tax-msg">Includes all applicable taxes and handling</span>
@@ -1261,12 +1216,14 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             
             {/* Rating Score */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-              <div style={{ fontSize: '48px', fontWeight: 900, color: '#0f172a', lineHeight: 1 }}>{avgRating}</div>
+              <div style={{ fontSize: '48px', fontWeight: 900, color: '#0f172a', lineHeight: 1 }}>{reviewCount > 0 ? (avgRating || '5.0') : '—'}</div>
               <div>
                 <div style={{ display: 'flex', gap: '4px', fontSize: '20px', color: '#f59e0b', marginBottom: '4px' }}>
-                  {[1, 2, 3, 4, 5].map(s => <span key={s} style={{ color: s <= Math.round(Number(avgRating)) ? '#f59e0b' : '#cbd5e1' }}>★</span>)}
+                  {[1, 2, 3, 4, 5].map(s => <span key={s} style={{ color: reviewCount > 0 && s <= Math.round(Number(avgRating || 5)) ? '#f59e0b' : '#cbd5e1' }}>★</span>)}
                 </div>
-                <div style={{ fontSize: '14px', fontWeight: 600, color: '#64748b' }}>Based on {reviewCount} verified reviews</div>
+                <div style={{ fontSize: '14px', fontWeight: 600, color: '#64748b' }}>
+                  {reviewCount > 0 ? `Based on ${reviewCount} verified review${reviewCount > 1 ? 's' : ''}` : 'No verified reviews yet'}
+                </div>
               </div>
             </div>
 
@@ -1274,7 +1231,7 @@ export default function ProductDetailClient({ initialProduct }: { initialProduct
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxWidth: '320px', width: '100%' }}>
               {[5, 4, 3, 2, 1].map(stars => {
                 const count = reviews.filter((r: any) => (r.rating || 5) === stars).length;
-                const pct = reviewCount > 0 ? Math.round((count / reviewCount) * 100) : stars >= 4 ? (stars === 5 ? 85 : 15) : 0;
+                const pct = reviewCount > 0 ? Math.round((count / reviewCount) * 100) : 0;
                 return (
                   <div key={stars} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', fontWeight: 600, color: '#475569' }}>
                     <span style={{ width: '24px' }}>{stars}★</span>

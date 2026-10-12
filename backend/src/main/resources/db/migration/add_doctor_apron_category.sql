@@ -51,6 +51,21 @@ WHERE NOT EXISTS (
     SELECT 1 FROM categories WHERE slug = 'doctor-apron-lab-coat'
 );
 
+-- 4. Correct any Milky White / White variants or tagged images that were saved with placeholder #6b7280
+UPDATE product_variants 
+SET color_hex = '#ffffff' 
+WHERE LOWER(TRIM(color_name)) IN ('milky white', 'milky-white', 'milk white', 'white', 'pure white', 'doctor white') 
+  AND (color_hex IS NULL OR LOWER(color_hex) IN ('#6b7280', '#808080', '#cccccc'));
+
+UPDATE product_images 
+SET color_hex = '#ffffff', color_code = '#ffffff' 
+WHERE (LOWER(color_hex) = '#6b7280' OR LOWER(color_code) = '#6b7280') 
+  AND product_id IN (
+      SELECT DISTINCT product_id 
+      FROM product_variants 
+      WHERE LOWER(TRIM(color_name)) IN ('milky white', 'milky-white', 'milk white', 'white', 'pure white', 'doctor white')
+  );
+
 -- Verification Query:
 -- SELECT id, name, slug, parent_id, active, show_in_nav FROM categories WHERE slug LIKE '%doctor-apron%';
 

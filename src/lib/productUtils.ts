@@ -15,6 +15,25 @@ function sortSizes(sizes: string[]): string[] {
 }
 
 export const GLOBAL_COLOR_MAP: Record<string, string> = {
+  // Whites
+  'white': '#ffffff',
+  'milky white': '#ffffff',
+  'milky-white': '#ffffff',
+  'milk white': '#ffffff',
+  'milky': '#ffffff',
+  'pure white': '#ffffff',
+  'doctor white': '#ffffff',
+  'medical white': '#ffffff',
+  'snow white': '#ffffff',
+  'bright white': '#ffffff',
+  'clean white': '#ffffff',
+  'classic white': '#ffffff',
+  'off white': '#faf9f6',
+  'off-white': '#faf9f6',
+  'cream': '#fffdd0',
+  'ivory': '#fffff0',
+
+  // Blues
   'dark navy': '#1b2a4a',
   'navy': '#000080',
   'navy blue': '#1a2b4a',
@@ -25,42 +44,79 @@ export const GLOBAL_COLOR_MAP: Record<string, string> = {
   'sky blue': '#87ceeb',
   'ceil blue': '#92a8d1',
   'caribbean blue': '#008b8b',
+  'steel blue': '#4682b4',
+  'blue': '#2563eb',
+
+  // Reds / Purples
   'maroon': '#800000',
   'wine': '#3D274E',
   'burgundy': '#800020',
+  'red': '#dc2626',
+  'pink': '#ffc0cb',
+  'purple': '#800080',
+  'lavender': '#e6e6fa',
+
+  // Neutrals / Greys / Blacks
   'black': '#000000',
-  'white': '#ffffff',
+  'charcoal': '#333333',
   'grey': '#6b7280',
   'gray': '#6b7280',
   'dark grey': '#374151',
   'dark gray': '#374151',
   'light grey': '#d1d5db',
   'light gray': '#d1d5db',
-  'charcoal': '#333333',
   'slate': '#708090',
   'slate grey': '#708090',
   'slate gray': '#708090',
-  'steel blue': '#4682b4',
+
+  // Greens
   'green': '#2e7d32',
   'hunter green': '#355e3b',
   'olive': '#556b2f',
-  'teal': '#008080',
-  'pink': '#ffc0cb',
-  'purple': '#800080',
-  'lavender': '#e6e6fa',
-  'red': '#dc2626',
-  'blue': '#2563eb'
+  'teal': '#008080'
 };
 
 export function getColorHex(name: string, fallbackHex?: string): string {
-  if (!name) return fallbackHex || '#6b7280';
-  const n = name.trim().toLowerCase();
+  if (!name) return fallbackHex || '#ffffff';
+  const raw = name.trim();
+  const n = raw.toLowerCase().replace(/[-_]/g, ' ').replace(/\s+/g, ' ');
   if (GLOBAL_COLOR_MAP[n]) return GLOBAL_COLOR_MAP[n];
-  if (n.startsWith('#')) return name.trim();
-  if (fallbackHex && fallbackHex.startsWith('#') && fallbackHex !== '#cccccc' && fallbackHex !== '#808080') {
+  if (raw.startsWith('#') && (raw.length === 4 || raw.length === 7)) {
+    // If raw hex is an unwanted grey fallback for a white or doctor apron product, override it
+    if ((raw.toLowerCase() === '#6b7280' || raw.toLowerCase() === '#808080' || raw.toLowerCase() === '#cccccc') &&
+        (n.includes('white') || n.includes('milky') || n.includes('milk') || n.includes('apron') || n.includes('coat'))) {
+      return '#ffffff';
+    }
+    return raw;
+  }
+
+  // Smart color keyword matching
+  if (n.includes('white') || n.includes('milky') || n.includes('milk')) {
+    if (n.includes('off') || n.includes('cream') || n.includes('ivory')) return '#faf9f6';
+    return '#ffffff';
+  }
+  if (n.includes('navy')) return '#1b2a4a';
+  if (n.includes('royal')) return '#4169e1';
+  if (n.includes('ceil')) return '#92a8d1';
+  if (n.includes('sky')) return '#87ceeb';
+  if (n.includes('teal')) return '#008080';
+  if (n.includes('maroon') || n.includes('burgundy')) return '#800000';
+  if (n.includes('wine')) return '#3D274E';
+  if (n.includes('olive')) return '#556b2f';
+  if (n.includes('black')) return '#000000';
+  if (n.includes('charcoal')) return '#333333';
+  if (n.includes('grey') || n.includes('gray')) return '#6b7280';
+  if (n.includes('green')) return '#2e7d32';
+  if (n.includes('blue')) return '#2563eb';
+  if (n.includes('pink')) return '#ffc0cb';
+  if (n.includes('purple')) return '#800080';
+  if (n.includes('lavender')) return '#e6e6fa';
+  if (n.includes('red')) return '#dc2626';
+
+  if (fallbackHex && fallbackHex.startsWith('#') && fallbackHex !== '#cccccc' && fallbackHex !== '#808080' && fallbackHex !== '#6b7280') {
     return fallbackHex;
   }
-  return '#6b7280';
+  return '#ffffff';
 }
 
 function uniqueColors(variants: any[]): { hex: string; name: string }[] {

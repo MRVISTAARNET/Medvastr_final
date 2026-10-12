@@ -861,7 +861,7 @@ public class OrderService {
         if (itemReq.getVariantId() != null) {
             return variantRepo.findByIdAndProductId(itemReq.getVariantId(), product.getId()).orElse(null);
         }
-        if (itemReq.getSize() != null && itemReq.getColorHex() != null) {
+        if (itemReq.getSize() != null) {
             String lookupSize = itemReq.getSize();
             if (lookupSize.startsWith("Top: ")) {
                 String[] parts = lookupSize.split("/");
@@ -869,9 +869,21 @@ public class OrderService {
                     lookupSize = parts[0].replace("Top:", "").trim();
                 }
             }
-            return variantRepo
-                    .findByProductIdAndSizeAndColorHex(product.getId(), lookupSize, itemReq.getColorHex())
-                    .orElse(null);
+            if (itemReq.getColorHex() != null) {
+                var found = variantRepo
+                        .findByProductIdAndSizeAndColorHex(product.getId(), lookupSize, itemReq.getColorHex());
+                if (found.isPresent()) {
+                    return found.get();
+                }
+            }
+            if (itemReq.getColorName() != null && !itemReq.getColorName().isBlank()) {
+                var list = variantRepo.findByProductIdOrderBySizeAsc(product.getId());
+                for (var v : list) {
+                    if (lookupSize.equalsIgnoreCase(v.getSize()) && itemReq.getColorName().trim().equalsIgnoreCase(v.getColorName())) {
+                        return v;
+                    }
+                }
+            }
         }
         return null;
     }

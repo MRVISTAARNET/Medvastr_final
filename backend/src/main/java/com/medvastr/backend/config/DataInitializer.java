@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
@@ -25,6 +26,7 @@ public class DataInitializer {
     private final PromoCodeRepository promoRepo;
     private final PasswordEncoder passwordEncoder;
     private final CategoryRepository categoryRepo;
+    private final JdbcTemplate jdbcTemplate;
 
     @Value("${app.admin.email:info@medvarn.com}")
     private String adminEmail;
@@ -111,6 +113,15 @@ public class DataInitializer {
                 }
             } catch (Exception ex) {
                 log.warn("[DataInitializer] Could not seed categories: {}", ex.getMessage());
+            }
+
+            // Correct any variants or images added with Milky White or White to have #ffffff
+            try {
+                jdbcTemplate.update("UPDATE product_variants SET color_hex = '#ffffff' WHERE LOWER(TRIM(color_name)) IN ('milky white', 'milky-white', 'milk white', 'white', 'pure white', 'doctor white') AND (color_hex IS NULL OR LOWER(color_hex) IN ('#6b7280', '#808080', '#cccccc'))");
+                jdbcTemplate.update("UPDATE product_images SET color_hex = '#ffffff', color_code = '#ffffff' WHERE (LOWER(color_hex) = '#6b7280' OR LOWER(color_code) = '#6b7280') AND product_id IN (SELECT DISTINCT product_id FROM product_variants WHERE LOWER(TRIM(color_name)) IN ('milky white', 'milky-white', 'milk white', 'white', 'pure white', 'doctor white'))");
+                log.info("[DataInitializer] Corrected Milky White / White color hex codes in product variants");
+            } catch (Exception ex) {
+                log.warn("[DataInitializer] Could not update Milky White variant hex: {}", ex.getMessage());
             }
         };
     }

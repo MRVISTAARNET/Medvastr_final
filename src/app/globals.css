@@ -6152,14 +6152,14 @@ html {
   outline: 1.5px solid rgba(0,0,0,0.18);
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.1);
 }
 
 .pdp-color-dot.on {
   outline-color: #1e293b;
   outline-width: 2.5px;
   transform: scale(1.18);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.15);
 }
 
 .pdp-size-btn-grid {
