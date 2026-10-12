@@ -35,7 +35,8 @@ export const HARDCODED_CATEGORIES: CategoryNode[] = [
                 ]
             },
             { id: 13, name: "Surgical Gown", slug: "men-surgeon-gown" },
-            { id: 14, name: "Surgical Cap", slug: "men-surgeon-cap" }
+            { id: 14, name: "Surgical Cap", slug: "men-surgeon-cap" },
+            { id: 15, name: "Doctor Apron / Lab Coat", slug: "men-doctor-apron-lab-coat" }
         ]
     },
     {
@@ -56,7 +57,8 @@ export const HARDCODED_CATEGORIES: CategoryNode[] = [
                 ]
             },
             { id: 23, name: "Surgical Gown", slug: "women-surgeon-gown" },
-            { id: 24, name: "Surgical Cap", slug: "women-surgeon-cap" }
+            { id: 24, name: "Surgical Cap", slug: "women-surgeon-cap" },
+            { id: 25, name: "Doctor Apron / Lab Coat", slug: "women-doctor-apron-lab-coat" }
         ]
     },
     {
@@ -65,6 +67,9 @@ export const HARDCODED_CATEGORIES: CategoryNode[] = [
             { id: 30, name: "Surgical Gown", slug: "surgical-surgeon-gown" },
             { id: 31, name: "Surgical Cap", slug: "surgical-surgeon-cap" }
         ]
+    },
+    {
+        id: 5, name: "Doctor Apron / Lab Coat", slug: "doctor-apron-lab-coat"
     },
     {
         id: 4, name: "Bulk Orders", slug: "bulk-orders",
@@ -103,6 +108,7 @@ export const NAV_DATA: NavItem[] = [
                 items: [
                     { label: 'Surgical Gown', href: '/products?cat=women-surgeon-gown&gender=women' },
                     { label: 'Surgical Cap', href: '/products?cat=women-surgeon-cap&gender=women' },
+                    { label: 'Doctor Apron / Lab Coat', href: '/products?cat=women-doctor-apron-lab-coat&gender=women' },
                 ]
             }
         ]
@@ -132,6 +138,7 @@ export const NAV_DATA: NavItem[] = [
                 items: [
                     { label: 'Surgical Gown', href: '/products?cat=men-surgeon-gown&gender=men' },
                     { label: 'Surgical Cap', href: '/products?cat=men-surgeon-cap&gender=men' },
+                    { label: 'Doctor Apron / Lab Coat', href: '/products?cat=men-doctor-apron-lab-coat&gender=men' },
                 ]
             }
         ]

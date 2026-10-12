@@ -1,7 +1,9 @@
 package com.medvastr.backend.config;
 
+import com.medvastr.backend.model.Category;
 import com.medvastr.backend.model.PromoCode;
 import com.medvastr.backend.model.User;
+import com.medvastr.backend.repository.CategoryRepository;
 import com.medvastr.backend.repository.PromoCodeRepository;
 import com.medvastr.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ public class DataInitializer {
     private final UserRepository userRepo;
     private final PromoCodeRepository promoRepo;
     private final PasswordEncoder passwordEncoder;
+    private final CategoryRepository categoryRepo;
 
     @Value("${app.admin.email:info@medvarn.com}")
     private String adminEmail;
@@ -76,6 +79,38 @@ public class DataInitializer {
                         .active(true)
                         .build());
                 log.info("[DataInitializer] Seeded MEDVASTR10 promo code");
+            }
+
+            // Seed Doctor Apron / Lab Coat categories idempotently if not exist
+            try {
+                if (categoryRepo.findBySlug("men-doctor-apron-lab-coat").isEmpty()) {
+                    categoryRepo.findBySlug("men").ifPresent(menCat -> {
+                        categoryRepo.save(Category.builder()
+                                .name("Doctor Apron / Lab Coat")
+                                .slug("men-doctor-apron-lab-coat")
+                                .parent(menCat)
+                                .active(true)
+                                .showInNav(true)
+                                .displayOrder(5)
+                                .build());
+                        log.info("[DataInitializer] Seeded men-doctor-apron-lab-coat category");
+                    });
+                }
+                if (categoryRepo.findBySlug("women-doctor-apron-lab-coat").isEmpty()) {
+                    categoryRepo.findBySlug("women").ifPresent(womenCat -> {
+                        categoryRepo.save(Category.builder()
+                                .name("Doctor Apron / Lab Coat")
+                                .slug("women-doctor-apron-lab-coat")
+                                .parent(womenCat)
+                                .active(true)
+                                .showInNav(true)
+                                .displayOrder(5)
+                                .build());
+                        log.info("[DataInitializer] Seeded women-doctor-apron-lab-coat category");
+                    });
+                }
+            } catch (Exception ex) {
+                log.warn("[DataInitializer] Could not seed categories: {}", ex.getMessage());
             }
         };
     }

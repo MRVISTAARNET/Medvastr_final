@@ -767,6 +767,7 @@ export default function AdminProducts() {
                             <option value="scrubs">Scrubs</option>
                             <option value="tshirts">T-Shirts</option>
                             <option value="underscrub">Underscrub</option>
+                            <option value="apron">Doctor Apron / Lab Coat</option>
                             <option value="surgical">Surgical Wear</option>
                             <option value="bedding">Linen & Bedding</option>
                             <option value="blanket">Blanket</option>

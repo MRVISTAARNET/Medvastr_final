@@ -101,6 +101,11 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
         { key: "cap",        match: ["cap"] },
         { key: "gown",       match: ["gown"] },
         { key: "surgical",   match: ["surgical"] },
+        { key: "apron",      match: ["apron"] },
+        { key: "lab coat",   match: ["lab coat", "labcoat", "apron"] },
+        { key: "labcoat",    match: ["lab coat", "labcoat", "apron"] },
+        { key: "doctor apron", match: ["apron", "lab coat", "doctor"] },
+        { key: "doctor coat",  match: ["coat", "apron", "lab"] },
       ];
 
       const pNameLower = p.name.toLowerCase();
@@ -306,6 +311,7 @@ export default function Header({ onCart, onWish, onAcct, user }: HeaderProps) {
                         { label: 'Navy Blue Scrubs', term: 'Navy' },
                         { label: 'Cotton Crew T-Shirt', term: 'T-Shirt' },
                         { label: 'Surgical Gowns', term: 'Surgical' },
+                        { label: 'Doctor Apron', term: 'Apron' },
                         { label: 'Under Scrub', term: 'Under Scrub' },
                         { label: 'Size Guide', href: '/sizeguide' },
                         { label: 'Track Order', href: '/track' },

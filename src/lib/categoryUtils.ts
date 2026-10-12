@@ -165,6 +165,20 @@ export function productMatchesCategory(
   if (slug.includes("surgical-wear") || slug === "surgical-wear") {
     return type.includes("surgical") || type.includes("gown") || type.includes("cap") || name.includes("surgical") || name.includes("surgeon") || name.includes("gown") || name.includes("cap");
   }
+  if (slug.includes("doctor-apron") || slug.includes("lab-coat") || slug.includes("apron")) {
+    return (
+      type.includes("apron") ||
+      type.includes("lab-coat") ||
+      type.includes("coat") ||
+      name.includes("apron") ||
+      name.includes("lab coat") ||
+      name.includes("doctor coat") ||
+      pCatName.includes("apron") ||
+      pCatName.includes("lab coat") ||
+      pSubCatName.includes("apron") ||
+      pSubCatName.includes("lab coat")
+    );
+  }
 
   // Bulk and others
   if (slug.includes("bulk-order")) return true;
@@ -228,6 +242,8 @@ export function isScrubSuitItem(item: any): boolean {
     combined.includes("under scrub") ||
     combined.includes("lab coat") ||
     combined.includes("doctor coat") ||
+    combined.includes("doctor apron") ||
+    combined.includes("apron") ||
     combined.includes("gown") ||
     combined.includes("cap") ||
     combined.includes("linen") ||

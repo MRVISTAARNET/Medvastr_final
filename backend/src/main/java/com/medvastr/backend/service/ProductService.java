@@ -160,6 +160,13 @@ public class ProductService {
             return productRepo.searchByNameOnly("under scrub", "underscrub", p).map(this::toDTO);
         }
 
+        if (normClean.contains("apron") || normClean.contains("labcoat")) {
+            if (excludedGenders != null) {
+                return productRepo.searchByNameOnlyForGender("apron", "lab coat", excludedGenders, p).map(this::toDTO);
+            }
+            return productRepo.searchByNameOnly("apron", "lab coat", p).map(this::toDTO);
+        }
+
         if (excludedGenders != null) {
             return productRepo.searchForGender(cleanQuery, excludedGenders, p).map(this::toDTO);
         }
@@ -789,6 +796,7 @@ public class ProductService {
                 if (s.contains("scrub-suit") || s.contains("scrubs")) return "scrubs";
                 if (s.contains("t-shirt") || s.contains("tshirt")) return "tshirts";
                 if (s.contains("underscrub")) return "underscrub";
+                if (s.contains("apron") || s.contains("lab-coat") || s.contains("coat")) return "apron";
                 if (s.contains("gown") || s.contains("cap")) return "surgical";
                 return "scrubs";
             }).orElse("scrubs");
@@ -796,6 +804,7 @@ public class ProductService {
         if (categoryId != null) {
             return catRepo.findById(categoryId).map(c -> {
                 String s = c.getSlug().toLowerCase();
+                if (s.contains("apron") || s.contains("lab-coat") || s.contains("coat")) return "apron";
                 if (s.contains("surgical")) return "surgical";
                 if (s.contains("bulk")) return "bulk";
                 return "scrubs";

@@ -158,6 +158,8 @@ function ProductsContent() {
         if (!pType.includes("scrub") || pType.includes("under")) return false;
       } else if (tFilter === "surgical" || tFilter === "surgical-wear") {
         if (!pType.includes("surgical") && !pType.includes("gown") && !pType.includes("cap")) return false;
+      } else if (tFilter === "apron" || tFilter === "lab-coat" || tFilter === "doctor-apron") {
+        if (!pType.includes("apron") && !pType.includes("lab-coat") && !pType.includes("coat")) return false;
       } else if (pType !== tFilter) {
         return false;
       }
@@ -258,6 +260,21 @@ function ProductsContent() {
       ico: "🧢",
       l: "Surgical Cap",
       d: "Complete your professional look with our range of high-quality caps, compression socks, and other healthcare essentials."
+    },
+    apron: {
+      ico: "🥼",
+      l: "Doctor Aprons & Lab Coats",
+      d: "Engineered for healthcare professionals, our doctor aprons and lab coats combine fluid-resistant protection, functional pockets, and breathable all-day comfort."
+    },
+    "doctor-apron": {
+      ico: "🥼",
+      l: "Doctor Aprons & Lab Coats",
+      d: "Engineered for healthcare professionals, our doctor aprons and lab coats combine fluid-resistant protection, functional pockets, and breathable all-day comfort."
+    },
+    "lab-coat": {
+      ico: "🥼",
+      l: "Doctor Aprons & Lab Coats",
+      d: "Engineered for healthcare professionals, our doctor aprons and lab coats combine fluid-resistant protection, functional pockets, and breathable all-day comfort."
     }
   };
   const catKey = cat.toLowerCase();
@@ -311,6 +328,7 @@ function ProductsContent() {
       { id: "scrub-suit", l: "Scrub Suits", depth: 0 },
       { id: "underscrub", l: "Underscrubs", depth: 0 },
       { id: "cotton-tshirt", l: "Cotton T-Shirts", depth: 0 },
+      { id: "doctor-apron-lab-coat", l: "Doctor Aprons / Lab Coats", depth: 0 },
       { id: "surgical-wear", l: "Surgical Wear", depth: 0 }
     ];
   }
@@ -324,6 +342,9 @@ function ProductsContent() {
     scrubs: 'All Scrub Suits',
     tshirts: 'All Cotton T-Shirts',
     underscrubs: 'All Under Scrubs',
+    apron: 'All Doctor Aprons & Lab Coats',
+    'lab-coat': 'All Doctor Aprons & Lab Coats',
+    'doctor-apron': 'All Doctor Aprons & Lab Coats',
     'surgical-gown': 'All Surgical Gowns',
     'surgical-cap': 'All Surgical Caps',
   };
@@ -352,6 +373,8 @@ function ProductsContent() {
     bannerCat = "surgeon-gown";
   } else if (bannerCat.includes("surgeon-cap") || bannerCat.includes("surgical-cap")) {
     bannerCat = "surgeon-cap";
+  } else if (bannerCat.includes("apron") || bannerCat.includes("lab-coat") || bannerCat.includes("doctor-apron")) {
+    bannerCat = "doctor-apron";
   } else if ((bannerCat.includes('scrub') || bannerCat.includes('flexi') || bannerCat.includes('fit')) && !bannerCat.includes('underscrub')) {
     bannerCat = 'scrub-suit';
   }
