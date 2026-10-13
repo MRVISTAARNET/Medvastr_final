@@ -1689,7 +1689,7 @@ p {
   flex-direction: row !important;
   flex-wrap: nowrap !important;
   overflow-x: auto !important;
-  gap: 16px;
+  gap: 28px;
   margin-top: 24px;
   width: 100% !important;
   -webkit-overflow-scrolling: touch;
@@ -1750,8 +1750,8 @@ p {
 }
 
 .cat-img-box {
-  height: 142px;
-  width: 142px;
+  height: 160px;
+  width: 160px;
   border-radius: 50%;
   overflow: hidden;
   background: #f8fafc;
@@ -1783,8 +1783,8 @@ p {
 }
 
 .cat-l {
-  padding: 12px 6px 4px;
-  font-size: 13px !important;
+  padding: 12px 8px 4px;
+  font-size: 14px !important;
   font-weight: 500 !important;
   color: #1e293b;
   text-transform: capitalize !important;
@@ -1801,8 +1801,8 @@ p {
 
 @media (max-width: 768px) {
   .cat-img-box {
-    width: 112px;
-    height: 112px;
+    width: 130px;
+    height: 130px;
   }
 }
 
