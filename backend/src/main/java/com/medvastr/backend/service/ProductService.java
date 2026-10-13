@@ -604,6 +604,7 @@ public class ProductService {
                 .childCategoryName(p.getChildCategory() != null ? p.getChildCategory().getName() : null)
                 .variants(
                         p.getVariants().stream()
+                                .filter(v -> v.getActive() == null || v.getActive())
                                 .map(v -> VariantDTO.builder()
                                         .id(v.getId())
                                         .size(v.getSize())
@@ -620,6 +621,7 @@ public class ProductService {
                                 .collect(Collectors.toList()))
                 .sizes(
                         p.getVariants().stream()
+                                .filter(v -> v.getActive() == null || v.getActive())
                                 .map(ProductVariant::getSize)
                                 .filter(s -> s != null && !s.isBlank())
                                 .collect(Collectors.toCollection(LinkedHashSet::new))
