@@ -1685,36 +1685,30 @@ p {
 
 /* Category Grid - Refined for Premium Look */
 .cat-g {
-  display: grid !important;
-  grid-template-columns: repeat(8, 1fr) !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
   gap: 16px;
   margin-top: 24px;
   width: 100% !important;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 8px;
 }
 
-@media (max-width: 1600px) {
-  .cat-g {
-    grid-template-columns: repeat(6, 1fr) !important;
-  }
+.cat-g::-webkit-scrollbar {
+  display: none;
 }
 
-@media (max-width: 1200px) {
-  .cat-g {
-    grid-template-columns: repeat(4, 1fr) !important;
-  }
-}
-
-@media (max-width: 1024px) {
-  .cat-g {
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 20px;
-  }
+.cat-g .cat-c {
+  flex: 0 0 auto !important;
+  width: 120px !important;
 }
 
 @media (max-width: 640px) {
-  .cat-g {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 16px;
+  .cat-g .cat-c {
+    width: 100px !important;
   }
 }
 

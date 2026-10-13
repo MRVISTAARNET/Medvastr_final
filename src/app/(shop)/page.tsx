@@ -169,7 +169,7 @@ export default function Home() {
             { nm: "Doctor Apron / Lab Coat", href: "/products?type=apron", img: "https://medvastr-assets.s3.ap-south-1.amazonaws.com/media/9e8230d3-98ec-4074-a3f0-0e5dd0007886.jpg" },
             { nm: "Surgical Gown", href: "/products?cat=surgical-surgeon-gown", img: "/cat-gown.jpg" },
             { nm: "Surgical Cap", href: "/products?cat=surgical-surgeon-cap", img: "/cat-cap.jpg" },
-            { nm: "Bulk Orders", href: "/bulk-orders", img: "https://d2tnzshqdaedbc.cloudfront.net/home-bulk-banner.jpg" },
+            { nm: "Bulk Orders", href: "/bulk-orders", img: "/cat-bulk.jpg" },
           ].map(c => (
             <Link href={c.href} className="cat-c" key={c.nm}>
               <div className="cat-img-box">
