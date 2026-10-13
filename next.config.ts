@@ -26,6 +26,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "api.medvarn.com",
+      },
+      {
+        protocol: "https",
         hostname: "d2tnzshqdaedbc.cloudfront.net",
       },
       {
