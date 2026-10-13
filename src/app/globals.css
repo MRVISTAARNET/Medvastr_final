@@ -1703,14 +1703,8 @@ p {
 
 .cat-g .cat-c {
   flex: 0 0 auto !important;
-  width: 120px !important;
 }
 
-@media (max-width: 640px) {
-  .cat-g .cat-c {
-    width: 100px !important;
-  }
-}
 
 /* STICKY REINFORCEMENT */
 .bulk-product-layout {
