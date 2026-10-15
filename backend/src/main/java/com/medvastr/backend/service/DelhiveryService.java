@@ -81,6 +81,19 @@ public class DelhiveryService {
             return response;
         }
 
+        // ── Safety guard: block double-booking ─────────────────────────────────
+        if (order.getTrackingNumber() != null && !order.getTrackingNumber().isBlank()
+                && !order.getTrackingNumber().equalsIgnoreCase("null")) {
+            String existingCourier = order.getCourierName() != null ? order.getCourierName() : "Unknown Courier";
+            String msg = "Order " + order.getOrderNumber() + " already has a tracking number (" +
+                    order.getTrackingNumber() + ") via " + existingCourier +
+                    ". Cancel or clear the existing shipment before pushing again.";
+            log.warn("[Delhivery] Blocked double-booking: {}", msg);
+            response.put("success", false);
+            response.put("message", msg);
+            return response;
+        }
+
         try {
             log.info("[Delhivery] Pushing order {} (ID: {}) to Delhivery Direct...", order.getOrderNumber(), order.getId());
 
@@ -93,7 +106,7 @@ public class DelhiveryService {
             pickupObj.put("city", "Mumbai");
             pickupObj.put("state", "Maharashtra");
             pickupObj.put("country", "India");
-            pickupObj.put("phone", "9867041115");
+            pickupObj.put("phone", "8976488911");
             pickupObj.put("add", "Gagan Shopping Arcade Lower Level Shop No 1 Mumbai Goregaon East");
 
             rootObj.put("pickup_location", pickupObj);
@@ -112,7 +125,7 @@ public class DelhiveryService {
             String phone = order.getShippingPhone();
             if (phone != null && phone.startsWith("+91")) phone = phone.substring(3);
             if (phone != null && phone.startsWith("91") && phone.length() == 12) phone = phone.substring(2);
-            sObj.put("phone", phone != null ? phone : "9867041115");
+            sObj.put("phone", phone != null ? phone : "8976488911");
 
             sObj.put("order", order.getOrderNumber());
             
@@ -144,7 +157,7 @@ public class DelhiveryService {
             sObj.put("return_city", "Mumbai");
             sObj.put("return_state", "Maharashtra");
             sObj.put("return_country", "India");
-            sObj.put("return_phone", "9867041115");
+            sObj.put("return_phone", "8976488911");
             sObj.put("return_add", "Gagan Shopping Arcade Lower Level Shop No 1 Mumbai Goregaon East");
 
             shipmentsArr.put(sObj);

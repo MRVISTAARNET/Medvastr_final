@@ -136,11 +136,8 @@ public class PaymentService {
                         } catch (Exception e) {
                             log.error("Failed to send WhatsApp order alerts", e);
                         }
-                        try {
-                            shiprocketService.createOrder(order.getId());
-                        } catch (Exception e) {
-                            log.error("Failed to push order to Shiprocket", e);
-                        }
+                        // Shiprocket push is MANUAL — admin initiates from dashboard
+                        log.info("[PaymentService] Order {} confirmed. Shiprocket push is manual-only.", order.getOrderNumber());
                     }
                 }
             );
@@ -160,11 +157,8 @@ public class PaymentService {
             } catch (Exception e) {
                 log.error("Failed to send WhatsApp order alerts", e);
             }
-            try {
-                shiprocketService.createOrder(order.getId());
-            } catch (Exception e) {
-                log.error("Failed to push order to Shiprocket", e);
-            }
+            // Shiprocket push is MANUAL — admin initiates from dashboard
+            log.info("[PaymentService] Order {} confirmed (else-path). Shiprocket push is manual-only.", order.getOrderNumber());
         }
     }
 }

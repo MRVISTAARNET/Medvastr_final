@@ -793,19 +793,11 @@ public class OrderService {
         }
     }
 
+    // Shiprocket push is MANUAL — admin clicks "Push to Shiprocket" in the dashboard.
+    // This method is intentionally disabled to prevent automatic courier booking.
+    @SuppressWarnings("unused")
     private void pushToShiprocketAfterCommit(Long orderId) {
-        if (org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive()) {
-            org.springframework.transaction.support.TransactionSynchronizationManager.registerSynchronization(
-                new org.springframework.transaction.support.TransactionSynchronization() {
-                    @Override
-                    public void afterCommit() {
-                        shiprocketService.createOrder(orderId);
-                    }
-                }
-            );
-        } else {
-            shiprocketService.createOrder(orderId);
-        }
+        log.info("[OrderService] Shiprocket push is manual-only. Order {} will NOT be auto-pushed. Admin must click push button.", orderId);
     }
 
     private OrderItem buildOrderItem(CartItemRequest itemReq) {
