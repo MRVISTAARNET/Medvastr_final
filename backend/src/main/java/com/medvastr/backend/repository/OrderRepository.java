@@ -57,6 +57,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT o FROM Order o ORDER BY o.createdAt DESC")
     List<Order> findRecent(Pageable p);
 
+    @Query("SELECT o FROM Order o WHERE o.createdAt >= :start AND o.createdAt <= :end ORDER BY o.createdAt ASC")
+    List<Order> findCreatedBetween(@Param("start") java.time.LocalDateTime start,
+                                   @Param("end") java.time.LocalDateTime end);
+
     @Query("SELECT COUNT(o) FROM Order o WHERE o.createdAt >= :start AND o.createdAt <= :end")
     long countOrdersBetween(@Param("start") java.time.LocalDateTime start, @Param("end") java.time.LocalDateTime end);
 

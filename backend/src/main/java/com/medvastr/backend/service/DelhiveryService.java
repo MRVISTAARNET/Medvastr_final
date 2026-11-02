@@ -15,13 +15,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+
 
 @Service
 @RequiredArgsConstructor
@@ -29,9 +25,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DelhiveryService {
 
     private final OrderRepository orderRepository;
-    private final SmsService smsService;
     private final RestTemplate restTemplate = new RestTemplate();
-    private final Set<Long> ongoingSyncs = ConcurrentHashMap.newKeySet();
+
 
     @Value("${delhivery.enabled:true}")
     private boolean enabled;

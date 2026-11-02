@@ -36,23 +36,39 @@ public class WhatsAppService {
     @Value("${whatsapp.admin.numbers:}")
     private String adminNumbers;
 
+    // Order confirmation template (must be approved in MSG91 WhatsApp panel)
+    // Set WHATSAPP_ORDER_TEMPLATE_NAME in EB env vars once approved
+    @Value("${whatsapp.order.template.name:}")
+    private String orderTemplateName;
+
+    @Value("${whatsapp.order.template.namespace:}")
+    private String orderTemplateNamespace;
+
     private final com.medvastr.backend.repository.ProductRepository productRepo;
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Async
     public void sendOrderAlerts(Order order) {
-        // Build the message text
-        String messageText = buildOrderMessage(order);
+        // WhatsApp Business API requires approved templates for business-initiated messages.
+        // Free-form text (content_type=text) is rejected by META for outbound orders.
+        // Only send if a template name is configured in EB env vars.
+        if (orderTemplateName == null || orderTemplateName.isBlank()) {
+            log.info("[WhatsApp] Skipping order alert — WHATSAPP_ORDER_TEMPLATE_NAME not configured. "
+                    + "Get an order template approved in MSG91 panel then set this env var.");
+            return;
+        }
 
-        String firstProductImg = getFirstProductImageUrl(order);
+        String effectiveKey = (apiKey != null && !apiKey.isBlank()) ? apiKey : msg91AuthKey;
+        if (effectiveKey == null || effectiveKey.isBlank()) {
+            log.warn("[WhatsApp] No API key configured — skipping order alerts.");
+            return;
+        }
 
         // 1. Send to Customer
         String customerPhone = order.getShippingPhone() != null ? order.getShippingPhone().replaceAll("[^0-9]", "") : "";
         if (!customerPhone.isEmpty()) {
-            if (customerPhone.length() == 10) {
-                customerPhone = "91" + customerPhone;
-            }
-            sendWhatsAppMessageWithMedia(customerPhone, messageText, firstProductImg);
+            if (customerPhone.length() == 10) customerPhone = "91" + customerPhone;
+            sendOrderTemplateApi(customerPhone, order, effectiveKey);
         }
 
         // 2. Send to Admins
@@ -61,12 +77,69 @@ public class WhatsAppService {
             for (String number : numbers) {
                 String cleanNum = number.trim().replaceAll("[^0-9]", "");
                 if (!cleanNum.isEmpty()) {
-                    if (cleanNum.length() == 10) {
-                        cleanNum = "91" + cleanNum;
-                    }
-                    sendWhatsAppMessageWithMedia(cleanNum, messageText, firstProductImg);
+                    if (cleanNum.length() == 10) cleanNum = "91" + cleanNum;
+                    sendOrderTemplateApi(cleanNum, order, effectiveKey);
                 }
             }
+        }
+    }
+
+    /**
+     * Sends order confirmation using an approved WhatsApp template.
+     * Template variables (body_1, body_2, body_3) map to:
+     *   body_1 = customer name
+     *   body_2 = order number
+     *   body_3 = total amount
+     * Adjust the components map to match your approved template's variables.
+     */
+    private void sendOrderTemplateApi(String phone, Order order, String effectiveKey) {
+        String bulkUrl = "https://control.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/";
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("authkey", effectiveKey);
+
+            Map<String, Object> body = new HashMap<>();
+            body.put("integrated_number", "918976488911");
+            body.put("content_type", "template");
+
+            Map<String, Object> templateObj = new HashMap<>();
+            templateObj.put("name", orderTemplateName);
+            templateObj.put("language", Map.of("code", "en", "policy", "deterministic"));
+            if (orderTemplateNamespace != null && !orderTemplateNamespace.isBlank()) {
+                templateObj.put("namespace", orderTemplateNamespace);
+            }
+
+            // Standard order confirmation template variables
+            // Adjust key names to match your approved MSG91 template exactly
+            String customerName = order.getShippingName() != null ? order.getShippingName() : "Customer";
+            String orderNum = order.getOrderNumber();
+            String amount = order.getTotalAmount() != null ? "\u20B9" + order.getTotalAmount().toPlainString() : "";
+
+            Map<String, Object> components = new java.util.LinkedHashMap<>();
+            components.put("body_1", Map.of("type", "text", "value", customerName));
+            components.put("body_2", Map.of("type", "text", "value", orderNum));
+            components.put("body_3", Map.of("type", "text", "value", amount));
+
+            Map<String, Object> toComp = new HashMap<>();
+            toComp.put("to", java.util.List.of(phone));
+            toComp.put("components", components);
+
+            templateObj.put("to_and_components", java.util.List.of(toComp));
+
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("messaging_product", "whatsapp");
+            payload.put("type", "template");
+            payload.put("template", templateObj);
+
+            body.put("payload", payload);
+
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+            ResponseEntity<String> response = restTemplate.postForEntity(bulkUrl, entity, String.class);
+            log.info("[WhatsApp] Order template sent to {}: Status={} | Response={}",
+                    maskPhone(phone), response.getStatusCode(), response.getBody());
+        } catch (Exception e) {
+            log.error("[WhatsApp] Failed to send order template to {}: {}", maskPhone(phone), e.getMessage());
         }
     }
 

@@ -5,7 +5,6 @@ import com.medvastr.backend.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,16 +15,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PaymentService {
 
-    @Value("${razorpay.key.id}")
-    private String keyId;
-
-    @Value("${razorpay.key.secret}")
-    private String keySecret;
 
     private final RazorpayService razorpayService;
     private final OrderRepository orderRepository;
     private final EmailService emailService;
-    private final ShiprocketService shiprocketService;
     private final WhatsAppService whatsAppService;
     private final org.springframework.beans.factory.ObjectProvider<OrderService> orderServiceProvider;
 

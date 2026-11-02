@@ -43,6 +43,7 @@ const AdminSidebar = () => {
     {
       section: 'Finance', items: [
         { name: 'Revenue', icon: '💰', href: '/admin/revenue' },
+        { name: 'GST Reports', icon: '🧾', href: '/admin/gst-reports' },
       ]
     },
     {
