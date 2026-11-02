@@ -4,6 +4,7 @@ import com.medvastr.backend.model.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -73,5 +74,13 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     default long countCompletedOrdersBetween(java.time.LocalDateTime start, java.time.LocalDateTime end) {
         return countCompletedOrdersBetweenWithStatus(start, end, Order.PaymentStatus.PAID, Order.OrderStatus.CANCELLED);
     }
+
+    /** Delivered COD orders have had their cash collected by the courier. */
+    @Modifying
+    @Query("UPDATE Order o SET o.paymentStatus = com.medvastr.backend.model.Order$PaymentStatus.PAID " +
+           "WHERE o.paymentMethod = com.medvastr.backend.model.Order$PaymentMethod.COD " +
+           "AND o.status = com.medvastr.backend.model.Order$OrderStatus.DELIVERED " +
+           "AND (o.paymentStatus IS NULL OR o.paymentStatus = com.medvastr.backend.model.Order$PaymentStatus.PENDING)")
+    int markDeliveredCodOrdersPaid();
 }
 

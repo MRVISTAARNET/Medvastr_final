@@ -35,9 +35,11 @@ export default function InvoiceSheet({ order, orderNumber }: { order: any; order
   const discount = Math.round(order.discountAmount || 0);
   const total = Math.round(order.totalAmount || (subtotal + shipping + codFee - discount));
   
-  // GST 5% Tax breakdown for HSN 6211 (CGST 2.5% + SGST 2.5% equal split)
-  const taxableSubtotal = Math.max(0, subtotal - discount);
-  const rawTax = order.taxAmount ? Number(order.taxAmount) : (taxableSubtotal * 5 / 105);
+  // GST 5% Tax breakdown for HSN 6211 (CGST 2.5% + SGST 2.5% equal split).
+  // Computed from the exact (unrounded) values so it matches the admin GST register to the paisa;
+  // order.taxAmount is stored rounded to whole rupees and is only a fallback.
+  const taxableSubtotal = Math.max(0, Number(order.subtotal || 0) - Number(order.discountAmount || 0));
+  const rawTax = taxableSubtotal > 0 ? (taxableSubtotal * 5 / 105) : Number(order.taxAmount || 0);
   const totalTax = Math.round(rawTax * 100) / 100;
   const cgst = Math.round((totalTax / 2) * 100) / 100;
   const sgst = Number((totalTax - cgst).toFixed(2));

@@ -251,7 +251,10 @@ export default function AdminGstReports() {
             </div>
           )}
 
-          {/* Register */}
+          <div style={{ marginBottom: 22, padding: '12px 16px', borderRadius: 10, background: '#f0f9ff', border: '1px solid #bae6fd', color: '#075985', fontSize: 13 }}>
+            ℹ️ Seller GSTIN is in Maharashtra: deliveries inside Maharashtra show CGST 2.5% + SGST 2.5%; deliveries to any
+            other state show IGST 5% (CGST/SGST will be blank for those, which is correct).
+          </div>
           <div className="table-card">
             <div className="table-hd">
               <div className="table-hd-left">
@@ -308,6 +311,11 @@ export default function AdminGstReports() {
                           <span className={`badge ${r.paymentStatus === 'PAID' ? 'b-grn' : 'b-warn'}`}>
                             {r.paymentMethod} · {r.paymentStatus}
                           </span>
+                          {r.orderStatus && (
+                            <div style={{ fontSize: 11, color: 'var(--txt3)', marginTop: 4 }}>
+                              Order: {r.orderStatus.replace(/_/g, ' ')}
+                            </div>
+                          )}
                         </td>
                         <td>
                           <a href={`/invoice/${encodeURIComponent(r.orderNumber)}`} target="_blank" rel="noopener noreferrer"

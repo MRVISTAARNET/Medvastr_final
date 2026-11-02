@@ -466,6 +466,7 @@ public class OrderService {
         o.setStatus(Order.OrderStatus.valueOf(status));
         if ("DELIVERED".equals(status)) {
             o.setDeliveredAt(LocalDateTime.now());
+            markCodCollectedOnDelivery(o);
         }
         Order saved = orderRepo.save(o);
         if (oldStatus != Order.OrderStatus.SHIPPED && saved.getStatus() == Order.OrderStatus.SHIPPED) {
@@ -476,6 +477,14 @@ public class OrderService {
             }
         }
         return toDTO(saved);
+    }
+
+    /** Courier collects the cash at the doorstep, so a delivered COD order is a paid order. */
+    private void markCodCollectedOnDelivery(Order o) {
+        if (o.getPaymentMethod() == Order.PaymentMethod.COD
+                && (o.getPaymentStatus() == null || o.getPaymentStatus() == Order.PaymentStatus.PENDING)) {
+            o.setPaymentStatus(Order.PaymentStatus.PAID);
+        }
     }
 
     public OrderDTO updatePaymentStatus(Long id, String paymentStatus) {
@@ -540,6 +549,7 @@ public class OrderService {
                 if ("Delivered".equalsIgnoreCase(status)) {
                     o.setStatus(Order.OrderStatus.DELIVERED);
                     o.setDeliveredAt(LocalDateTime.now());
+                    markCodCollectedOnDelivery(o);
                 } else if ("In Transit".equalsIgnoreCase(status) || "Dispatched".equalsIgnoreCase(status)) {
                     o.setStatus(Order.OrderStatus.SHIPPED);
                 } else if ("Out for Delivery".equalsIgnoreCase(status)) {
